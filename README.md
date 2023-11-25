@@ -7,6 +7,8 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 
 ## Developing
 
+Create a copy `.env.example`, update the values and save it as `.env`. 
+
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```bash
