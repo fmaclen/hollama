@@ -7,13 +7,11 @@
 	export let data: PageData;
 
 	let messageWindow: HTMLElement;
-	let session: Session = { id: '######', messages: [], context: [] };
+	let session: Session;
 	let completion: string;
-	let prompt = 'Who would win in a fight between Jessica Alba and Emma Watson?';
+	let prompt: string;
 
-	function resetSession() {
-		session = { id: Math.random().toString(36).substring(2, 8), messages: [], context: [] };
-	}
+	$: session = loadSession(data.id);
 
 	function scrollToBottom() {
 		messageWindow.scrollTop = messageWindow.scrollHeight;
@@ -103,16 +101,6 @@
 			handleError(error);
 		}
 	}
-
-	onMount(async () => {
-		if (data.id) {
-			session.id = data.id;
-			session = await loadSession(session.id);
-			prompt = ''; // Reset default prompt
-		} else {
-			resetSession();
-		}
-	});
 </script>
 
 <div class="chat">

@@ -31,5 +31,4 @@ export interface Settings {
 }
 
 export const settingsStore = createLocalStorageStore<Settings>(`${LOCAL_STORAGE_PREFIX}-settings`);
-export const testResultsStore = createLocalStorageStore<Session[]>(`${LOCAL_STORAGE_PREFIX}-sessions`); // prettier-ignore
-export const selectedResultIdStore = writable<string | null>(null);
+export const sessionsStore = createLocalStorageStore<Session[]>(`${LOCAL_STORAGE_PREFIX}-sessions`);
