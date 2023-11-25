@@ -1,166 +1,69 @@
 <script lang="ts">
+	import { settingsStore } from '$lib/store';
 	import { onMount } from 'svelte';
-	import { env } from '$env/dynamic/public';
-	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
 
-	let messageWindow: HTMLElement;
-	let session: Session = { id: '######', messages: [], context: [] };
-	let completion: string;
-	let prompt = 'Who would win in a fight between Jessica Alba and Emma Watson?';
+	export let ollamaURL: URL | null = null;
 
-	function resetSession() {
-		session = { id: Math.random().toString(36).substring(2, 8), messages: [], context: [] };
-	}
+	const DETAULT_OLLAMA_SERVER = 'http://localhost:11434';
+	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
+	let ollamaModel = $settingsStore?.ollamaModel || '';
 
-	function scrollToBottom() {
-		messageWindow.scrollTop = messageWindow.scrollHeight;
-	}
+	$: settingsStore.set({
+		ollamaServer,
+		ollamaModel
+	});
 
-	function speak() {
-		const message = session.messages[session.messages.length - 1].content;
-		const utterance = new SpeechSynthesisUtterance(message);
-		utterance.rate = 0.8;
-		if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-			const voices = speechSynthesis.getVoices();
-			utterance.voice = voices.find((voice) => voice.name === 'Samantha') || voices[0];
-		}
-		speechSynthesis.speak(utterance);
-	}
-
-	function handleError(error: any) {
-		console.error(error);
-		const message: Message = {
-			role: 'system',
-			content: error ? error : 'Sorry, something went wrong.'
-		};
-		session.messages = [...session.messages, message];
-	}
-
-	function handleKeyDown(event: KeyboardEvent) {
-		if (event.key === 'Enter' && !event.shiftKey) {
-			event.preventDefault();
-			handleSubmit();
-		}
-	}
-
-	async function handleCompletionDone(completion: string, context: number[]) {
-		const message: Message = { role: 'ai', content: completion };
-		session.messages = [...session.messages, message];
-		completion = '';
-		await saveSession({ messages: session.messages, id: session.id, context });
-	}
-
-	async function handleSubmit() {
-		if (!prompt) return;
-
-		let message: Message = { role: 'user', content: prompt };
-		prompt = '';
-		completion = '';
-		session.messages = [...session.messages, message];
-		scrollToBottom();
-
-		try {
-			const ollama = await fetch('/api/ollama', {
-				method: 'POST',
-				headers: { 'Content-Type': 'text/event-stream' },
-				body: JSON.stringify({
-					prompt: message.content,
-					context: session.context
-				})
-			});
-
-			if (ollama.ok && ollama.body) {
-				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
-
-				while (true) {
-					const { value, done } = await reader.read();
-
-					if (done) {
-						handleCompletionDone(completion, session.context);
-						break;
-					}
-
-					scrollToBottom(); // Auto-scroll
-
-					if (!value) continue;
-
-					const jsonLines = value.split('\n').filter((line) => line);
-					for (const line of jsonLines) {
-						const { response, context } = JSON.parse(line);
-
-						// AI likes to respond with `\n and a space` at the beggining of the completion
-						completion += response.replace('\n ', '');
-						session.context = context;
-					}
-				}
-			} else {
-				throw new Error('Failed to retrieve AI completion');
-			}
-		} catch (error) {
-			handleError(error);
-		}
-	}
-
-	onMount(async () => {
-		const urlParams = new URLSearchParams(window.location.search);
-		const sessionIdParam = urlParams.get('sessionId');
-		if (sessionIdParam) {
-			session.id = sessionIdParam;
-			session = await loadSession(session.id);
-			prompt = ''; // Reset default prompt
-		} else {
-			resetSession();
+	onMount(() => {
+		// Get the current URL
+		ollamaURL = new URL(window.location.href);
+		if (ollamaURL.port) {
+			ollamaURL = new URL(
+				`${ollamaURL.protocol}//${ollamaURL.hostname}${ollamaURL.pathname}${ollamaURL.search}${ollamaURL.hash}`
+			);
 		}
 	});
 </script>
 
-<div class="chat">
-	<header class="chat__header">
-		<a href="/" title="New session" on:click={resetSession}>
-			<img class="chat__logo" src="/favicon.png" alt="Ollama" width="48" height="48" />
+<div class="menu">
+	<header class="menu__header">
+		<a href="/" title="Main menu">
+			<img class="menu__logo" src="/favicon.png" alt="Ollama" width="64" height="64" />
 		</a>
-		<div class="chat__model">
-			<p class="chat__model-name">Session: <a href={`?sessionId=${session.id}`}>{session.id}</a></p>
-			<p class="chat__model-label">Model: {env.PUBLIC_MODEL}</p>
+		<div class="menu__app">
+			<p class="menu__app-name">Hollama</p>
 		</div>
-
-		<nav class="chat__modes">
-			<!-- <button title="Keyboard" class="chat__modes-button chat__modes-button--active">⌨️</button> -->
-			<button title="Voice" class="chat__modes-button" on:click={() => speak()}>🎧</button>
-		</nav>
 	</header>
 
-	<main class="chat__messages" bind:this={messageWindow}>
-		{#each session.messages as message}
-			<article class="chat__article">
-				<p class="chat__role chat__role--{message.role}">{message.role}</p>
-				<p class="chat__message">{message.content}</p>
-			</article>
-		{/each}
-
-		{#if session.messages[session.messages.length - 1]?.role === 'user'}
-			<article class="chat__article">
-				<p class="chat__role chat__role--ai">AI</p>
-				<p class="chat__message">{completion || '...'}</p>
-			</article>
-		{/if}
-	</main>
-
-	<footer class="chat__footer">
-		<div class="chat__type">
-			<textarea
-				class="chat__textarea"
-				placeholder="Type your message here"
-				bind:value={prompt}
-				on:keydown={handleKeyDown}
-			/>
-			<button on:click={handleSubmit}>Send</button>
-		</div>
-	</footer>
+	<form>
+		<fieldset class="menu__fieldset">
+			<legend>Sessions</legend>
+			<a href={`/${Math.random().toString(36).substring(2, 8)}`}>New session</a>
+		</fieldset>
+		<fieldset class="menu__fieldset">
+			<legend>Ollama settings</legend>
+			<label class="menu__label">
+				<strong>Server</strong>
+				<input type="text" placeholder={DETAULT_OLLAMA_SERVER} bind:value={ollamaServer} />
+				<p class="footnote">
+					Needs to allow {#if ollamaURL}<code>{ollamaURL.origin}</code>{/if} in
+					<code>OLLAMA_ORIGINS</code>.
+					<a
+						href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
+					>
+						Docs
+					</a>
+				</p>
+			</label>
+			<label class="menu__label">
+				<strong>Model</strong>
+				<input type="text" placeholder="yarn-mistral" bind:value={ollamaModel} />
+			</label>
+		</fieldset>
+	</form>
 </div>
 
 <style lang="scss">
-	.chat {
+	.menu {
 		--color-border: rgba(0, 0, 0, 0.1);
 		--color-active: #007aff;
 
@@ -189,115 +92,54 @@
 			display: block;
 		}
 
-		&__modes {
-			display: flex;
-			gap: 8px;
-			margin-left: auto;
-		}
-
-		&__modes-button {
-			border: 1px solid var(--color-border);
-			background-color: unset;
-			padding: 6px;
+		&__app-name {
 			font-size: 18px;
-
-			&--active {
-				pointer-events: none;
-				background-color: var(--color-active);
-			}
-		}
-
-		&__messages {
-			overflow-y: auto;
-		}
-
-		&__article {
-			margin-block: 24px;
-			display: grid;
-			grid-template-columns: 72px auto;
-		}
-
-		&__role {
+			margin-block: unset;
 			font-weight: 600;
-			margin-block: unset;
-			text-transform: uppercase;
-			font-size: 12px;
-			letter-spacing: 1px;
-			line-height: 20px;
-
-			&--user {
-				color: rgba(0, 0, 0, 0.33);
-			}
 		}
 
-		&__message {
-			margin-block: unset;
-			white-space: pre-wrap;
-		}
-
-		&__model {
+		&__fieldset {
+			margin-block: 32px;
+			margin-inline: 32px;
+			padding-block: 24px;
+			padding-inline: 24px;
 			display: flex;
 			flex-direction: column;
-			gap: 4px;
-		}
+			gap: 24px;
+			border-color: var(--color-border);
 
-		&__model-label,
-		&__model-name {
-			font-size: 12px;
-			margin-block: unset;
-		}
-
-		&__model-label {
-			color: rgba(0, 0, 0, 0.33);
-		}
-
-		&__model-name {
-			font-weight: 600;
+			legend {
+				font-size: 12px;
+				opacity: 0.5;
+			}
 
 			a {
-				color: unset;
+				color: #333;
 			}
 		}
 
-		&__footer {
-			position: sticky;
-			bottom: 0;
+		&__label {
 			display: flex;
-			gap: 16px;
-			border-top: 1px solid var(--color-border);
-			background-color: white;
+			flex-direction: column;
+			gap: 8px;
+			font-size: 14px;
+
+			input {
+				padding: 8px;
+				font-size: 14px;
+			}
 		}
+	}
 
-		&__type {
-			display: flex;
-			width: 100%;
-			gap: 16px;
+	.footnote {
+		margin: unset;
+		color: #999;
 
-			textarea,
-			button {
-				padding-block: 24px;
-				padding-inline: 24px;
-				font-size: 16px;
-				border: unset;
-				font-family: var(--font-family);
-			}
-
-			textarea {
-				display: block;
-				width: 100%;
-				min-height: 96px;
-				padding-right: unset;
-				outline: none;
-			}
-
-			button {
-				background-color: unset;
-				padding-left: unset;
-				font-weight: 600;
-				align-self: flex-start;
-				cursor: pointer;
-				color: var(--color-active);
-			}
+		code {
+			color: #666;
+			background-color: #e2e2e2;
+			padding-block: 3px;
+			padding-inline: 8px;
 		}
 	}
 </style>
