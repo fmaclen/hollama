@@ -2,6 +2,9 @@
 
 A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) servers.
 
+![image](https://github.com/fmaclen/hollama/assets/1434675/430f53d5-c2c5-4d5f-9d79-ff8a7c97f956)
+
+
 ## Developing
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
