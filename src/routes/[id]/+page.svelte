@@ -48,7 +48,7 @@
 		const message: Message = { role: 'ai', content: completion };
 		session.messages = [...session.messages, message];
 		completion = '';
-		await saveSession({ messages: session.messages, id: session.id, context });
+		saveSession({ ...session, context });
 	}
 
 	async function handleSubmit() {
@@ -110,7 +110,7 @@
 		</a>
 		<div class="chat__model">
 			<p class="chat__model-name">Session: <a href={`/${session.id}`}>{session.id}</a></p>
-			<p class="chat__model-label">Model: {env.PUBLIC_MODEL}</p>
+			<p class="chat__model-label">Model: {session.model}</p>
 		</div>
 
 		<nav class="chat__modes">

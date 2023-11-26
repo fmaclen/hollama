@@ -8,12 +8,13 @@ export interface Message {
 
 export interface Session {
 	id: string;
+	model: string;
 	messages: Message[];
 	context: number[];
 }
 
 export const loadSession = (id: string): Session => {
-	let session: Session = { id, messages: [], context: [] }
+	let session: Session | null = null;
 
 	// Retrieve the current sessions
 	const currentSessions = get(sessionsStore);
@@ -24,7 +25,18 @@ export const loadSession = (id: string): Session => {
 		existingSession && (session = existingSession);
 	}
 
-	// Return the session or null if not found
+	if (!session) {
+		// Get the current model
+		const model = get(settingsStore)?.ollamaModel;
+
+		// Create a new session with the default model
+		if (model) {
+			session = { id, model, messages: [], context: [] };
+		} else {
+			session = { id, model: "Not set", messages: [{ role: 'system', content: 'No model selected, choose one in the settings.' }], context: [] };
+		}
+	}
+
 	return session;
 };
 
@@ -36,11 +48,11 @@ export const saveSession = (session: Session): void => {
 	const existingSessionIndex = currentSessions.findIndex(s => s.id === session.id);
 
 	if (existingSessionIndex !== -1) {
-			// Update the existing session
-			currentSessions[existingSessionIndex] = session;
+		// Update the existing session
+		currentSessions[existingSessionIndex] = session;
 	} else {
-			// Add the new session if it doesn't exist
-			currentSessions.push(session);
+		// Add the new session if it doesn't exist
+		currentSessions.push(session);
 	}
 
 	// Update the store, which will trigger the localStorage update
