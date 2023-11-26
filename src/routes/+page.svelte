@@ -27,14 +27,14 @@
 <div class="menu">
 	<header class="menu__header">
 		<a href="/" title="Main menu">
-			<img class="menu__logo" src="/favicon.png" alt="Ollama" width="64" height="64" />
+			<img class="menu__logo" src="/favicon.png" alt="Ollama" width="96" height="96" />
 		</a>
 		<div class="menu__app">
 			<p class="menu__app-name">Hollama</p>
 		</div>
 	</header>
 
-	<form>
+	<form class="menu__form">
 		<fieldset class="menu__fieldset">
 			<legend>Sessions</legend>
 			<a href={`/${Math.random().toString(36).substring(2, 8)}`}>New session</a>
@@ -59,6 +59,15 @@
 				<input type="text" placeholder="yarn-mistral" bind:value={ollamaModel} />
 			</label>
 		</fieldset>
+		<fieldset class="menu__fieldset menu__fieldset--about">
+			<legend>About</legend>
+			<span>
+				<strong>Hollama</strong> is a minimalistic web interface for
+				<a href="https://github.com/jmorganca/ollama/">Ollama</a>
+				servers. Code is open source and available on <a href="https://github.com/fmaclen/hollama">Github</a>.
+				<br/><br/>Made by <a href="https://fernando.is">@fmaclen</a>
+			</span>
+		</fieldset>
 	</form>
 </div>
 
@@ -72,13 +81,9 @@
 		height: 100dvh;
 		grid-template-rows: max-content auto max-content;
 
-		&__header,
-		&__messages {
+		&__header {
 			padding-block: 16px;
 			padding-inline: 24px;
-		}
-
-		&__header {
 			display: flex;
 			gap: 16px;
 			align-items: center;
@@ -93,12 +98,19 @@
 		}
 
 		&__app-name {
-			font-size: 18px;
+			font-size: 20px;
 			margin-block: unset;
 			font-weight: 600;
 		}
 
+		&__form {
+			place-self: center;
+			max-width: 640px;
+			margin-inline: auto;
+		}
+
 		&__fieldset {
+			font-size: 14px;
 			margin-block: 32px;
 			margin-inline: 32px;
 			padding-block: 24px;
@@ -108,8 +120,11 @@
 			gap: 24px;
 			border-color: var(--color-border);
 
+			&--about {
+				gap: 16px;
+			}
+
 			legend {
-				font-size: 12px;
 				opacity: 0.5;
 			}
 
