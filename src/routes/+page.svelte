@@ -64,7 +64,7 @@
 			<span>
 				<strong>Hollama</strong> is a minimalistic web interface for
 				<a href="https://github.com/jmorganca/ollama/">Ollama</a>
-				servers. Code is open source and available on <a href="https://github.com/fmaclen/hollama">Github</a>.
+				servers. Code is available on <a href="https://github.com/fmaclen/hollama">Github</a>.
 				<br/><br/>Made by <a href="https://fernando.is">@fmaclen</a>
 			</span>
 		</fieldset>
