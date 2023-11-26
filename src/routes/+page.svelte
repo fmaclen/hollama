@@ -3,15 +3,42 @@
 	import { onMount } from 'svelte';
 
 	export let ollamaURL: URL | null = null;
+	let modelList: ModelList | null = null;
 
 	const DETAULT_OLLAMA_SERVER = 'http://localhost:11434';
 	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
 	let ollamaModel = $settingsStore?.ollamaModel || '';
+	let serverStatus: 'connected' | 'disconnected' = 'disconnected';
 
 	$: settingsStore.set({
 		ollamaServer,
 		ollamaModel
 	});
+
+	$: if ($settingsStore?.ollamaServer) getModelsList();
+
+	interface ModelList {
+		models: Model[];
+	}
+
+	interface Model {
+		name: string;
+		modified_at: string;
+		size: number;
+		digest: string;
+	}
+
+	async function getModelsList(): Promise<void> {
+		try {
+			const response = await fetch(`${ollamaServer}/api/tags`);
+			const data = await response.json();
+			modelList = data;
+			serverStatus = 'connected';
+		} catch {
+			modelList = null;
+			serverStatus = 'disconnected';
+		}
+	}
 
 	onMount(() => {
 		// Get the current URL
@@ -41,7 +68,7 @@
 		</fieldset>
 		<fieldset class="menu__fieldset">
 			<legend>Ollama settings</legend>
-			<label class="menu__label">
+			<label class="menu__label menu__label--{serverStatus}">
 				<strong>Server</strong>
 				<input type="text" placeholder={DETAULT_OLLAMA_SERVER} bind:value={ollamaServer} />
 				{#if ollamaURL}
@@ -51,7 +78,7 @@
 						<a
 							href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama" target="_blank"
 							>see docs</a
-						>.
+						>. Also check no browser extensions are blocking the connection.
 					</p>
 					{#if ollamaURL.protocol === 'https:'}
 						<p class="footnote">
@@ -64,8 +91,16 @@
 				{/if}
 			</label>
 			<label class="menu__label">
-				<strong>Model</strong>
-				<input type="text" placeholder="yarn-mistral" bind:value={ollamaModel} />
+				<strong>Available models</strong>
+				<select bind:value={ollamaModel} disabled={!modelList || modelList.models.length === 0}>
+					{#if modelList}
+						{#each modelList.models as model}
+							<option value={model.name}>{model.name}</option>
+						{/each}
+					{:else}
+						<option value="">Loading...</option>
+					{/if}
+				</select>
 			</label>
 		</fieldset>
 		<fieldset class="menu__fieldset menu__fieldset--about">
@@ -147,10 +182,22 @@
 			flex-direction: column;
 			gap: 8px;
 			font-size: 14px;
+			--color-server-status: #666;
 
+			select,
 			input {
 				padding: 8px;
 				font-size: 14px;
+				outline-color: var(--color-server-status);
+				border: 1px solid var(--color-server-status);
+			}
+
+			&--connected {
+				--color-server-status: #14b8a6;
+			}
+
+			&--disconnected {
+				--color-server-status: #f59e0b;
 			}
 		}
 	}
