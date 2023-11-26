@@ -16,7 +16,9 @@
 		ollamaModel
 	});
 
-	$: if ($settingsStore?.ollamaServer) getModelsList();
+	// HACK: triggers function when selecting all and pressing the delete
+	// key on the Ollama server input.
+	$: typeof ollamaServer === 'string' && getModelsList();
 
 	interface ModelList {
 		models: Model[];
