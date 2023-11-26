@@ -111,7 +111,7 @@
 							<option value={model.name}>{model.name}</option>
 						{/each}
 					{:else}
-						<option value="">Loading...</option>
+						<option value="">No models available</option>
 					{/if}
 				</select>
 			</label>
