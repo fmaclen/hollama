@@ -15,14 +15,12 @@ export async function ollamaGenerate(session: Session) {
 	const payload: OllamaCompletionRequest = {
 		model: session.model,
 		context: session.context,
-		prompt: session.messages.map(m => m.content).join('\n')
+		prompt: session.messages[session.messages.length - 1].content
 	};
 
-	const response = await fetch(`${settings.ollamaServer}/api/generate`, {
+	return await fetch(`${settings.ollamaServer}/api/generate`, {
 		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
+		headers: { 'Content-Type': 'text/event-stream' },
 		body: JSON.stringify(payload)
 	});
-
-	return response.json();
 }

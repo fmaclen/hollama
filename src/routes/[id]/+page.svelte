@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ollamaGenerate } from '$lib/ollama';
 	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
 	import type { PageData } from './$types';
 
@@ -59,20 +60,15 @@
 		scrollToBottom();
 
 		try {
-			const ollama = await fetch('/api/ollama', {
-				method: 'POST',
-				headers: { 'Content-Type': 'text/event-stream' },
-				body: JSON.stringify({
-					prompt: message.content,
-					context: session.context
-				})
-			});
+			const ollama = await ollamaGenerate(session);
 
-			if (ollama.ok && ollama.body) {
+			if (ollama && ollama.body) {
 				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
 
 				while (true) {
 					const { value, done } = await reader.read();
+
+					if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
 
 					if (done) {
 						handleCompletionDone(completion, session.context);
@@ -93,7 +89,7 @@
 					}
 				}
 			} else {
-				throw new Error('Failed to retrieve AI completion');
+				throw new Error("Couldn't connect to Ollama")
 			}
 		} catch (error) {
 			handleError(error);
