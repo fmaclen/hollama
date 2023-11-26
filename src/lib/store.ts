@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
-import type { Session } from './sessions';
+import type { Session } from '$lib/sessions';
 
 function createLocalStorageStore<T>(key: string, initialValue: T | null = null) {
 	const localStorageValue: string | null = browser ? window.localStorage.getItem(key) : null;

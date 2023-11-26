@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { settingsStore, sessionsStore } from "./store";
+import { settingsStore, sessionsStore } from "$lib/store";
 
 export interface Message {
 	role: 'user' | 'ai' | 'system';
