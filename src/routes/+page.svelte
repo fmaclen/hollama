@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { settingsStore } from '$lib/store';
 	import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
 
 	export let ollamaURL: URL | null = null;
 	let modelList: ModelList | null = null;
@@ -66,29 +67,41 @@
 			<legend>Sessions</legend>
 			<a href={`/${Math.random().toString(36).substring(2, 8)}`}>New session</a>
 		</fieldset>
+
 		<fieldset class="menu__fieldset">
 			<legend>Ollama settings</legend>
 			<label class="menu__label menu__label--{serverStatus}">
 				<strong>Server</strong>
 				<input type="text" placeholder={DETAULT_OLLAMA_SERVER} bind:value={ollamaServer} />
-				{#if ollamaURL}
-					<p class="footnote">
-						Needs to allow connections from <code>{ollamaURL.origin}</code> in
-						<code>OLLAMA_ORIGINS</code>,
-						<a
-							href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama" target="_blank"
-							>see docs</a
-						>. Also check no browser extensions are blocking the connection.
-					</p>
-					{#if ollamaURL.protocol === 'https:'}
+
+				{#if ollamaURL && serverStatus === 'disconnected'}
+					<div transition:slide>
 						<p class="footnote">
-							If trying to connect to an Ollama server that is not available on <code>localhost</code> or <code>127.0.0.1</code> you will need to 
+							Needs to allow connections from <code>{ollamaURL.origin}</code> in
+							<code>OLLAMA_ORIGINS</code>,
 							<a
-								href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/" target="_blank"
-								>create a tunnel</a> to your server or <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources" target="_blank">allow mixed content</a> in this browser's site settings.
+								href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
+								target="_blank">see docs</a
+							>. Also check no browser extensions are blocking the connection.
 						</p>
-					{/if}
+						{#if ollamaURL.protocol === 'https:'}
+							<p class="footnote">
+								If trying to connect to an Ollama server that is not available on
+								<code>localhost</code> or <code>127.0.0.1</code> you will need to
+								<a
+									href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
+									target="_blank">create a tunnel</a
+								>
+								to your server or
+								<a
+									href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
+									target="_blank">allow mixed content</a
+								> in this browser's site settings.
+							</p>
+						{/if}
+					</div>
 				{/if}
+
 			</label>
 			<label class="menu__label">
 				<strong>Available models</strong>
@@ -103,12 +116,14 @@
 				</select>
 			</label>
 		</fieldset>
+
 		<fieldset class="menu__fieldset menu__fieldset--about">
 			<legend>About</legend>
 			<span>
 				<strong>Hollama</strong> is a minimalistic web interface for
 				<a href="https://github.com/jmorganca/ollama/" target="_blank">Ollama</a>
-				servers. Code is available on <a href="https://github.com/fmaclen/hollama" target="_blank">Github</a>.
+				servers. Code is available on
+				<a href="https://github.com/fmaclen/hollama" target="_blank">Github</a>.
 				<br /><br />Made by <a href="https://fernando.is" target="_blank">@fmaclen</a>
 			</span>
 		</fieldset>
@@ -190,6 +205,10 @@
 				font-size: 14px;
 				outline-color: var(--color-server-status);
 				border: 1px solid var(--color-server-status);
+			}
+
+			select:disabled {
+				background-color: var(--color-border);
 			}
 
 			&--connected {
