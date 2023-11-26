@@ -9,6 +9,7 @@
 	let session: Session;
 	let completion: string;
 	let prompt: string;
+	let isSpeaking: boolean = false;
 
 	$: session = loadSession(data.id);
 
@@ -17,6 +18,12 @@
 	}
 
 	function speak() {
+		if (isSpeaking) {
+			speechSynthesis.cancel()
+			isSpeaking = false;
+			return
+		};
+
 		const message = session.messages[session.messages.length - 1].content;
 		const utterance = new SpeechSynthesisUtterance(message);
 		utterance.rate = 0.8;
@@ -25,6 +32,7 @@
 			utterance.voice = voices.find((voice) => voice.name === 'Samantha') || voices[0];
 		}
 		speechSynthesis.speak(utterance);
+		isSpeaking = true;
 	}
 
 	function handleError(error: any) {
@@ -109,7 +117,7 @@
 
 		<nav class="chat__modes">
 			<!-- <button title="Keyboard" class="chat__modes-button chat__modes-button--active">⌨️</button> -->
-			<button title="Voice" class="chat__modes-button" on:click={() => speak()}>🎧</button>
+			<button title="Voice" class="chat__modes-button {isSpeaking && 'chat__modes-button--is-speaking'}" on:click={speak}>🎧</button>
 		</nav>
 	</header>
 
@@ -184,8 +192,7 @@
 			padding: 6px;
 			font-size: 18px;
 
-			&--active {
-				pointer-events: none;
+			&--is-speaking {
 				background-color: var(--color-active);
 			}
 		}
