@@ -3,6 +3,9 @@
 <style>
 	:root {
 		--font-family: 'SF Mono', monospace;
+	}
+
+	:global(*) {
 		font-family: var(--font-family);
 	}
 
