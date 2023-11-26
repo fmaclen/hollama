@@ -89,7 +89,7 @@
 					}
 				}
 			} else {
-				throw new Error("Couldn't connect to Ollama")
+				throw new Error("Couldn't connect to Ollama");
 			}
 		} catch (error) {
 			handleError(error);
@@ -148,7 +148,7 @@
 		--color-active: #007aff;
 
 		display: grid;
-		width: 100dvw;
+		width: 100%;
 		height: 100dvh;
 		grid-template-rows: max-content auto max-content;
 
@@ -156,6 +156,7 @@
 		&__messages {
 			padding-block: 16px;
 			padding-inline: 24px;
+			background-color: var(--color-background);
 		}
 
 		&__header {
@@ -163,7 +164,6 @@
 			gap: 16px;
 			align-items: center;
 			border-bottom: 1px solid var(--color-border);
-			background-color: white;
 			position: sticky;
 			top: 0;
 		}

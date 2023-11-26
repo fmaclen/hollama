@@ -9,7 +9,7 @@
 	const DETAULT_OLLAMA_SERVER = 'http://localhost:11434';
 	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
 	let ollamaModel = $settingsStore?.ollamaModel || '';
-	let serverStatus: 'connected' | 'disconnected' = 'disconnected';
+	let serverStatus: 'connected' | 'disconnected' = 'connected';
 
 	$: settingsStore.set({
 		ollamaServer,
@@ -136,9 +136,10 @@
 		--color-active: #007aff;
 
 		display: grid;
-		width: 100dvw;
+		width: 100%;
 		height: 100dvh;
 		grid-template-rows: max-content auto max-content;
+		background-color: var(--color-background);
 
 		&__header {
 			padding-block: 16px;
@@ -163,15 +164,13 @@
 		}
 
 		&__form {
-			place-self: center;
-			max-width: 640px;
 			margin-inline: auto;
 		}
 
 		&__fieldset {
 			font-size: 14px;
-			margin-block: 32px;
-			margin-inline: 32px;
+			margin-block: 48px;
+			margin-inline: 48px;
 			padding-block: 24px;
 			padding-inline: 24px;
 			display: flex;
