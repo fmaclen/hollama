@@ -9,7 +9,7 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 ### Features
 
 - Streams responses
-- Saves sessions/context in a local JSON file (though it would be interesting to move that behavior to the browser's `localStorage` so it can run on Cloudflare Pages)
+- Saves sessions/context in your browser's `localStorage`
 - Uses the browser's built-in TTS to read the last AI message out loud
 
 ## Developing
