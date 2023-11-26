@@ -44,15 +44,24 @@
 			<label class="menu__label">
 				<strong>Server</strong>
 				<input type="text" placeholder={DETAULT_OLLAMA_SERVER} bind:value={ollamaServer} />
-				<p class="footnote">
-					Needs to allow {#if ollamaURL}<code>{ollamaURL.origin}</code>{/if} in
-					<code>OLLAMA_ORIGINS</code>.
-					<a
-						href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
-					>
-						Docs
-					</a>
-				</p>
+				{#if ollamaURL}
+					<p class="footnote">
+						Needs to allow connections from <code>{ollamaURL.origin}</code> in
+						<code>OLLAMA_ORIGINS</code>,
+						<a
+							href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama" target="_blank"
+							>see docs</a
+						>.
+					</p>
+					{#if ollamaURL.protocol === 'https:'}
+						<p class="footnote">
+							If trying to connect to an Ollama server that is not available on <code>localhost</code> or <code>127.0.0.1</code> you will need to 
+							<a
+								href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/" target="_blank"
+								>create a tunnel</a> to your server or <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources" target="_blank">allow mixed content</a> in this browser's site settings.
+						</p>
+					{/if}
+				{/if}
 			</label>
 			<label class="menu__label">
 				<strong>Model</strong>
@@ -63,9 +72,9 @@
 			<legend>About</legend>
 			<span>
 				<strong>Hollama</strong> is a minimalistic web interface for
-				<a href="https://github.com/jmorganca/ollama/">Ollama</a>
-				servers. Code is available on <a href="https://github.com/fmaclen/hollama">Github</a>.
-				<br/><br/>Made by <a href="https://fernando.is">@fmaclen</a>
+				<a href="https://github.com/jmorganca/ollama/" target="_blank">Ollama</a>
+				servers. Code is available on <a href="https://github.com/fmaclen/hollama" target="_blank">Github</a>.
+				<br /><br />Made by <a href="https://fernando.is" target="_blank">@fmaclen</a>
 			</span>
 		</fieldset>
 	</form>
@@ -149,12 +158,13 @@
 	.footnote {
 		margin: unset;
 		color: #999;
+		line-height: 1.5em;
 
 		code {
 			color: #666;
 			background-color: #e2e2e2;
-			padding-block: 3px;
-			padding-inline: 8px;
+			padding-block: 2px;
+			padding-inline: 4px;
 		}
 	}
 </style>
