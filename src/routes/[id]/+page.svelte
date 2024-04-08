@@ -1,9 +1,12 @@
 <script lang="ts">
+	import MarkdownIt from 'markdown-it';
 	import { ollamaGenerate } from '$lib/ollama';
 	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	const md = new MarkdownIt();
 
 	let messageWindow: HTMLElement;
 	let session: Session;
@@ -127,7 +130,9 @@
 		{#each session.messages as message}
 			<article class="chat__article">
 				<p class="chat__role chat__role--{message.role}">{message.role}</p>
-				<p class="chat__message">{message.content}</p>
+				<div class="markdown">
+					{@html md.render(message.content)}
+				</div>
 			</article>
 		{/each}
 
@@ -135,7 +140,9 @@
 			<article class="chat__article">
 				<p class="chat__role chat__role--ai">AI</p>
 				{#if completion}
-					{@html completion}
+					<div class="markdown">
+						{@html md.render(completion)}
+					</div>
 				{:else}
 					<p class="chat__message">...</p>
 				{/if}
@@ -293,6 +300,36 @@
 				align-self: flex-start;
 				cursor: pointer;
 				color: var(--color-active);
+			}
+		}
+
+		.markdown {
+			width: 100%;
+			overflow: auto;
+
+			:global(p:first-child) {
+				margin-top: unset;
+			}
+
+			:global(p:last-child) {
+				margin-top: unset;
+			}
+
+			:global(code) {
+				background-color: var(--color-border);
+				padding-inline: 6px;
+				padding-block: 2px;
+				opacity: 0.66;
+			}
+
+			:global(pre code) {
+				display: block;
+				overflow-y: auto;
+				width: 100%;
+				padding: 20px;
+				font-size: 13px;
+				margin-block: 12px;
+				box-sizing: border-box;
 			}
 		}
 	}
