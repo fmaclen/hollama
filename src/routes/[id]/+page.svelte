@@ -19,10 +19,10 @@
 
 	function speak() {
 		if (isSpeaking) {
-			speechSynthesis.cancel()
+			speechSynthesis.cancel();
 			isSpeaking = false;
-			return
-		};
+			return;
+		}
 
 		const message = session.messages[session.messages.length - 1].content;
 		const utterance = new SpeechSynthesisUtterance(message);
@@ -90,9 +90,7 @@
 					const jsonLines = value.split('\n').filter((line) => line);
 					for (const line of jsonLines) {
 						const { response, context } = JSON.parse(line);
-
-						// AI likes to respond with `\n and a space` at the beggining of the completion
-						completion += response.replace('\n ', '');
+						completion += response;
 						session.context = context;
 					}
 				}
@@ -117,7 +115,11 @@
 
 		<nav class="chat__modes">
 			<!-- <button title="Keyboard" class="chat__modes-button chat__modes-button--active">⌨️</button> -->
-			<button title="Voice" class="chat__modes-button {isSpeaking && 'chat__modes-button--is-speaking'}" on:click={speak}>🎧</button>
+			<button
+				title="Voice"
+				class="chat__modes-button {isSpeaking && 'chat__modes-button--is-speaking'}"
+				on:click={speak}>🎧</button
+			>
 		</nav>
 	</header>
 
@@ -132,7 +134,11 @@
 		{#if session.messages[session.messages.length - 1]?.role === 'user'}
 			<article class="chat__article">
 				<p class="chat__role chat__role--ai">AI</p>
-				<p class="chat__message">{completion || '...'}</p>
+				{#if completion}
+					{@html completion}
+				{:else}
+					<p class="chat__message">...</p>
+				{/if}
 			</article>
 		{/if}
 	</main>
