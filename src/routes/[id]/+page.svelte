@@ -1,9 +1,12 @@
 <script lang="ts">
+	import MarkdownIt from 'markdown-it';
 	import { ollamaGenerate } from '$lib/ollama';
 	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+
+	const md = new MarkdownIt();
 
 	let messageWindow: HTMLElement;
 	let session: Session;
@@ -19,10 +22,10 @@
 
 	function speak() {
 		if (isSpeaking) {
-			speechSynthesis.cancel()
+			speechSynthesis.cancel();
 			isSpeaking = false;
-			return
-		};
+			return;
+		}
 
 		const message = session.messages[session.messages.length - 1].content;
 		const utterance = new SpeechSynthesisUtterance(message);
@@ -90,9 +93,7 @@
 					const jsonLines = value.split('\n').filter((line) => line);
 					for (const line of jsonLines) {
 						const { response, context } = JSON.parse(line);
-
-						// AI likes to respond with `\n and a space` at the beggining of the completion
-						completion += response.replace('\n ', '');
+						completion += response;
 						session.context = context;
 					}
 				}
@@ -117,7 +118,11 @@
 
 		<nav class="chat__modes">
 			<!-- <button title="Keyboard" class="chat__modes-button chat__modes-button--active">⌨️</button> -->
-			<button title="Voice" class="chat__modes-button {isSpeaking && 'chat__modes-button--is-speaking'}" on:click={speak}>🎧</button>
+			<button
+				title="Voice"
+				class="chat__modes-button {isSpeaking && 'chat__modes-button--is-speaking'}"
+				on:click={speak}>🎧</button
+			>
 		</nav>
 	</header>
 
@@ -125,14 +130,22 @@
 		{#each session.messages as message}
 			<article class="chat__article">
 				<p class="chat__role chat__role--{message.role}">{message.role}</p>
-				<p class="chat__message">{message.content}</p>
+				<div class="markdown">
+					{@html md.render(message.content)}
+				</div>
 			</article>
 		{/each}
 
 		{#if session.messages[session.messages.length - 1]?.role === 'user'}
 			<article class="chat__article">
 				<p class="chat__role chat__role--ai">AI</p>
-				<p class="chat__message">{completion || '...'}</p>
+				{#if completion}
+					<div class="markdown">
+						{@html md.render(completion)}
+					</div>
+				{:else}
+					<p class="chat__message">...</p>
+				{/if}
 			</article>
 		{/if}
 	</main>
@@ -287,6 +300,36 @@
 				align-self: flex-start;
 				cursor: pointer;
 				color: var(--color-active);
+			}
+		}
+
+		.markdown {
+			width: 100%;
+			overflow: auto;
+
+			:global(p:first-child) {
+				margin-top: unset;
+			}
+
+			:global(p:last-child) {
+				margin-top: unset;
+			}
+
+			:global(code) {
+				background-color: var(--color-border);
+				padding-inline: 6px;
+				padding-block: 2px;
+				opacity: 0.66;
+			}
+
+			:global(pre code) {
+				display: block;
+				overflow-y: auto;
+				width: 100%;
+				padding: 20px;
+				font-size: 13px;
+				margin-block: 12px;
+				box-sizing: border-box;
 			}
 		}
 	}
