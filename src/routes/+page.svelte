@@ -58,33 +58,66 @@
 			);
 		}
 	});
+
+	// Styles
+	const _pHelp = `
+		text-sm
+		my-4
+		text-neutral-500
+	`
+
+	const _code = `
+		text-neutral-800
+	`
+
+	const _pAbout = `
+		text-sm
+		my-4
+		text-neutral-700
+	`
+
+	const _container = `
+		flex
+		flex-col
+		m-6
+	`
+
+	const _label = `
+		flex
+		items-center
+		gap-x-2
+		py-2
+	`
 </script>
 
 <div class="flex w-full flex-col bg-gray-100">
 	<div class="justify-content-center m-auto w-1/2">
-		<div class="m-4">
-			<Label>
+		<div class={_container}>
+			<Label class={_label}>
 				Server
+				<Badge class="capitalize" variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
+					{serverStatus}
+				</Badge>
 			</Label>
-			<Badge variant={serverStatus === 'disconnected' ? 'destructive' : 'default'}>
-				{serverStatus}
-			</Badge>
 			<Input bind:value={ollamaServer} placeholder={DETAULT_OLLAMA_SERVER} />
 
-			{#if ollamaURL && serverStatus === 'disconnected'}
+			{#if ollamaURL}
+			<!-- {#if ollamaURL && serverStatus === 'disconnected'} -->
 				<div transition:slide>
-					<p class="footnote">
-						Needs to allow connections from <code>{ollamaURL.origin}</code> in
-						<code>OLLAMA_ORIGINS</code>,
+					<p class={_pHelp}>
+						Needs to allow connections from
+						<code class={_code}>{"https://www.dev.hollama.fernando.is"}</code>
+						in
+						<code class={_code}>OLLAMA_ORIGINS</code>,
 						<a
 							href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
 							target="_blank">see docs</a
 						>. Also check no browser extensions are blocking the connection.
 					</p>
-					{#if ollamaURL.protocol === 'https:'}
-						<p class="footnote">
-							If trying to connect to an Ollama server that is not available on
-							<code>localhost</code> or <code>127.0.0.1</code> you will need to
+					<!-- {#if ollamaURL.protocol === 'https:'} -->
+					<p class={_pHelp}>
+						If trying to connect to an Ollama server that is not available on
+							<code class={_code}>localhost</code> or <code class={_code}>127.0.0.1</code> you will need to
 							<a
 								href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
 								target="_blank">create a tunnel</a
@@ -95,13 +128,13 @@
 								target="_blank">allow mixed content</a
 							> in this browser's site settings.
 						</p>
-					{/if}
+					<!-- {/if} -->
 				</div>
 			{/if}
 		</div>
 
-		<div class="m-4">
-			<Label>Model</Label>
+		<div class={_container}>
+			<Label class={_label}>Model</Label>
 			<Select.Root bind:selected={ollamaModel} disabled={!modelList || modelList.models.length === 0}>
 				<Select.Trigger>
 					<Select.Value placeholder={ollamaModel.value} />
@@ -118,14 +151,16 @@
 			</Select.Root>
 		</div>
 
-		<div class="m-4">
-			<p>About</p>
-			<p>
+		<div class={_container}>
+			<Label class={_label}>About</Label>
+			<p class={_pAbout}>
 				<strong>Hollama</strong> is a minimalistic web interface for
 				<a href="https://github.com/jmorganca/ollama/" target="_blank">Ollama</a>
 				servers. Code is available on
 				<a href="https://github.com/fmaclen/hollama" target="_blank">Github</a>.
-				<br /><br />Made by <a href="https://fernando.is" target="_blank">@fmaclen</a>
+			</p>
+			<p class={_pAbout}>
+				Made by <a href="https://fernando.is" target="_blank">@fmaclen</a>
 			</p>
 		</div>
 	</div>

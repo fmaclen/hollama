@@ -4,7 +4,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 </script>
 
-<div class="h-screen w-screen grid grid-cols-[240px,1fr]">
+<div class="h-screen w-screen grid grid-cols-[240px,1fr] text-current">
 	<aside class="flex flex-col gap-y-4 p-4">
 		<a href="/" class="flex items-center gap-x-2">
 			<img src="/favicon.png" alt="Hollama logo" width="56" height="56" />
