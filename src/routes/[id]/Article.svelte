@@ -8,7 +8,7 @@
 </script>
 
 <article class="grid grid-cols-[1fr_11fr] gap-x-4">
-	<p class="text-sm font-semibold uppercase">{message.role}</p>
+	<p class="text-xs leading-7 font-semibold uppercase">{message.role}</p>
 	<div class="
 		w-full overflow-x-auto text-lg
 

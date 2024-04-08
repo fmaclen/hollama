@@ -89,7 +89,7 @@
 	}
 </script>
 
-<Resizable.Pane defaultSize={95} class="h-screen">
+<div class="h-screen w-full">
 	<Resizable.PaneGroup direction="horizontal">
 		<Resizable.Pane defaultSize={40} minSize={30}>
 			<div class="flex h-screen flex-col gap-y-4 bg-gray-100 p-4">
@@ -124,4 +124,4 @@
 			</div>
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
-</Resizable.Pane>
+</div>
