@@ -1,24 +1,14 @@
-<div class="wrapper">
-	<slot/>
-</div>
+<script lang="ts">
+	import '../app.pcss';
+	import * as Resizable from '$lib/components/ui/resizable/index.js';
+</script>
 
-<style>
-	:root {
-		--font-family: 'SF Mono', monospace;
-		--color-background: #FFF;
-	}
-
-	:global(*) {
-		font-family: var(--font-family);
-	}
-
-	:global(body) {
-		margin: unset;
-		background-color: #f4f4f4;
-	}
-
-	div.wrapper {
-		max-width: 768px;
-		margin-inline: auto;
-	}
-</style>
+<Resizable.PaneGroup direction="horizontal" class="h-screen w-screen">
+	<Resizable.Pane minSize={15} maxSize={50} class="h-screen">
+		<a href="/" title="Main menu">
+			<img class="" src="/favicon.png" alt="Hollama logo" width="56" height="56" />
+		</a>
+	</Resizable.Pane>
+	<Resizable.Handle />
+	<slot />
+</Resizable.PaneGroup>

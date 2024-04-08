@@ -1,41 +1,24 @@
 <script lang="ts">
-	import MarkdownIt from 'markdown-it';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import * as Resizable from '$lib/components/ui/resizable/index.js';
+	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
+
 	import { ollamaGenerate } from '$lib/ollama';
 	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
 	import type { PageData } from './$types';
+	import Article from './Article.svelte';
 
 	export let data: PageData;
-
-	const md = new MarkdownIt();
 
 	let messageWindow: HTMLElement;
 	let session: Session;
 	let completion: string;
 	let prompt: string;
-	let isSpeaking: boolean = false;
 
 	$: session = loadSession(data.id);
 
 	function scrollToBottom() {
 		messageWindow.scrollTop = messageWindow.scrollHeight;
-	}
-
-	function speak() {
-		if (isSpeaking) {
-			speechSynthesis.cancel();
-			isSpeaking = false;
-			return;
-		}
-
-		const message = session.messages[session.messages.length - 1].content;
-		const utterance = new SpeechSynthesisUtterance(message);
-		utterance.rate = 0.8;
-		if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-			const voices = speechSynthesis.getVoices();
-			utterance.voice = voices.find((voice) => voice.name === 'Samantha') || voices[0];
-		}
-		speechSynthesis.speak(utterance);
-		isSpeaking = true;
 	}
 
 	function handleError(error: any) {
@@ -106,231 +89,39 @@
 	}
 </script>
 
-<div class="chat">
-	<header class="chat__header">
-		<a href="/" title="Main menu">
-			<img class="chat__logo" src="/favicon.png" alt="Ollama" width="48" height="48" />
-		</a>
-		<div class="chat__model">
-			<p class="chat__model-name">Session: <a href={`/${session.id}`}>{session.id}</a></p>
-			<p class="chat__model-label">Model: {session.model}</p>
-		</div>
-
-		<nav class="chat__modes">
-			<!-- <button title="Keyboard" class="chat__modes-button chat__modes-button--active">⌨️</button> -->
-			<button
-				title="Voice"
-				class="chat__modes-button {isSpeaking && 'chat__modes-button--is-speaking'}"
-				on:click={speak}>🎧</button
-			>
-		</nav>
-	</header>
-
-	<main class="chat__messages" bind:this={messageWindow}>
-		{#each session.messages as message}
-			<article class="chat__article">
-				<p class="chat__role chat__role--{message.role}">{message.role}</p>
-				<div class="markdown">
-					{@html md.render(message.content)}
+<Resizable.Pane defaultSize={95} class="h-screen">
+	<Resizable.PaneGroup direction="horizontal">
+		<Resizable.Pane defaultSize={40} minSize={30}>
+			<div class="flex h-screen flex-col gap-y-4 bg-gray-100 p-4">
+				<div class="space-y-1">
+					<p class="text-sm font-medium leading-none">
+						Session: <a href={`/${session.id}`}>{session.id}</a>
+					</p>
+					<p class="text-sm text-muted-foreground">Model: {session.model}</p>
 				</div>
-			</article>
-		{/each}
+				<Textarea
+					placeholder="Prompt"
+					class="h-screen"
+					bind:value={prompt}
+					on:keydown={handleKeyDown}
+				/>
+				<Button on:click={handleSubmit}>Send</Button>
+			</div>
+		</Resizable.Pane>
+		<Resizable.Handle />
+		<Resizable.Pane defaultSize={40} minSize={30}>
+			<div
+				class="flex h-screen flex-col gap-y-8 overflow-y-auto bg-gray-100 p-4 text-neutral-800"
+				bind:this={messageWindow}
+			>
+				{#each session.messages as message}
+					<Article {message} />
+				{/each}
 
-		{#if session.messages[session.messages.length - 1]?.role === 'user'}
-			<article class="chat__article">
-				<p class="chat__role chat__role--ai">AI</p>
-				{#if completion}
-					<div class="markdown">
-						{@html md.render(completion)}
-					</div>
-				{:else}
-					<p class="chat__message">...</p>
+				{#if session.messages[session.messages.length - 1]?.role === 'user'}
+					<Article message={{ role: 'ai', content: completion || '...' }} />
 				{/if}
-			</article>
-		{/if}
-	</main>
-
-	<footer class="chat__footer">
-		<div class="chat__type">
-			<textarea
-				class="chat__textarea"
-				placeholder="Type your message here"
-				bind:value={prompt}
-				on:keydown={handleKeyDown}
-			/>
-			<button on:click={handleSubmit}>Send</button>
-		</div>
-	</footer>
-</div>
-
-<style lang="scss">
-	.chat {
-		--color-border: rgba(0, 0, 0, 0.1);
-		--color-active: #007aff;
-
-		display: grid;
-		width: 100%;
-		height: 100dvh;
-		grid-template-rows: max-content auto max-content;
-
-		&__header,
-		&__messages {
-			padding-block: 16px;
-			padding-inline: 24px;
-			background-color: var(--color-background);
-		}
-
-		&__header {
-			display: flex;
-			gap: 16px;
-			align-items: center;
-			border-bottom: 1px solid var(--color-border);
-			position: sticky;
-			top: 0;
-		}
-
-		&__logo {
-			display: block;
-		}
-
-		&__modes {
-			display: flex;
-			gap: 8px;
-			margin-left: auto;
-		}
-
-		&__modes-button {
-			border: 1px solid var(--color-border);
-			background-color: unset;
-			padding: 6px;
-			font-size: 18px;
-
-			&--is-speaking {
-				background-color: var(--color-active);
-			}
-		}
-
-		&__messages {
-			overflow-y: auto;
-		}
-
-		&__article {
-			margin-block: 24px;
-			display: grid;
-			grid-template-columns: 72px auto;
-		}
-
-		&__role {
-			font-weight: 600;
-			margin-block: unset;
-			text-transform: uppercase;
-			font-size: 12px;
-			letter-spacing: 1px;
-			line-height: 20px;
-
-			&--user {
-				color: rgba(0, 0, 0, 0.33);
-			}
-		}
-
-		&__message {
-			margin-block: unset;
-			white-space: pre-wrap;
-		}
-
-		&__model {
-			display: flex;
-			flex-direction: column;
-			gap: 4px;
-		}
-
-		&__model-label,
-		&__model-name {
-			font-size: 12px;
-			margin-block: unset;
-		}
-
-		&__model-label {
-			color: rgba(0, 0, 0, 0.33);
-		}
-
-		&__model-name {
-			font-weight: 600;
-
-			a {
-				color: unset;
-			}
-		}
-
-		&__footer {
-			position: sticky;
-			bottom: 0;
-			display: flex;
-			gap: 16px;
-			border-top: 1px solid var(--color-border);
-			background-color: white;
-		}
-
-		&__type {
-			display: flex;
-			width: 100%;
-			gap: 16px;
-
-			textarea,
-			button {
-				padding-block: 24px;
-				padding-inline: 24px;
-				font-size: 16px;
-				border: unset;
-				font-family: var(--font-family);
-			}
-
-			textarea {
-				display: block;
-				width: 100%;
-				min-height: 96px;
-				padding-right: unset;
-				outline: none;
-			}
-
-			button {
-				background-color: unset;
-				padding-left: unset;
-				font-weight: 600;
-				align-self: flex-start;
-				cursor: pointer;
-				color: var(--color-active);
-			}
-		}
-
-		.markdown {
-			width: 100%;
-			overflow: auto;
-
-			:global(p:first-child) {
-				margin-top: unset;
-			}
-
-			:global(p:last-child) {
-				margin-top: unset;
-			}
-
-			:global(code) {
-				background-color: var(--color-border);
-				padding-inline: 6px;
-				padding-block: 2px;
-				opacity: 0.66;
-			}
-
-			:global(pre code) {
-				display: block;
-				overflow-y: auto;
-				width: 100%;
-				padding: 20px;
-				font-size: 13px;
-				margin-block: 12px;
-				box-sizing: border-box;
-			}
-		}
-	}
-</style>
+			</div>
+		</Resizable.Pane>
+	</Resizable.PaneGroup>
+</Resizable.Pane>
