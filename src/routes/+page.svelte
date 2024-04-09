@@ -8,6 +8,7 @@
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 
 	export let ollamaURL: URL | null = null;
 	let modelList: ModelList | null = null;
@@ -60,53 +61,67 @@
 	});
 
 	// Styles
+	const _help = `
+		flex
+		flex-col
+		gap-y-3
+	`;
+
 	const _pHelp = `
 		text-sm
-		my-4
 		text-neutral-500
-	`
+	`;
 
 	const _code = `
 		text-neutral-800
-	`
+	`;
 
 	const _pAbout = `
 		text-sm
-		my-4
-		text-neutral-700
-	`
+		text-neutral-800
+	`;
 
 	const _container = `
 		flex
 		flex-col
-		m-6
-	`
+		gap-y-3
+		mt-6
+		mb-6
+	`;
 
 	const _label = `
 		flex
 		items-center
 		gap-x-2
-		py-2
-	`
+	`;
+
+	const _a = `
+		underline
+		underline-offset-4
+		hover:text-neutral-500
+	`;
 </script>
 
 <div class="flex w-full flex-col bg-gray-100">
-	<div class="justify-content-center m-auto w-1/2">
+	<div class="justify-content-center m-auto max-w-96">
 		<div class={_container}>
 			<Label class={_label}>
 				Server
-				<Badge class="capitalize" variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
+				<Badge
+					class="capitalize"
+					variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}
+				>
 					{serverStatus}
 				</Badge>
 			</Label>
 			<Input bind:value={ollamaServer} placeholder={DETAULT_OLLAMA_SERVER} />
 
-			{#if ollamaURL}
-			<!-- {#if ollamaURL && serverStatus === 'disconnected'} -->
-				<div transition:slide>
+			<!-- {#if ollamaURL} -->
+			{#if ollamaURL && serverStatus === 'disconnected'}
+				<div transition:slide class={_help}>
 					<p class={_pHelp}>
 						Needs to allow connections from
-						<code class={_code}>{"https://www.dev.hollama.fernando.is"}</code>
+						<code class={_code}>{'https://www.dev.hollama.fernando.is'}</code>
 						in
 						<code class={_code}>OLLAMA_ORIGINS</code>,
 						<a
@@ -114,28 +129,36 @@
 							target="_blank">see docs</a
 						>. Also check no browser extensions are blocking the connection.
 					</p>
-					<!-- {#if ollamaURL.protocol === 'https:'} -->
-					<p class={_pHelp}>
-						If trying to connect to an Ollama server that is not available on
-							<code class={_code}>localhost</code> or <code class={_code}>127.0.0.1</code> you will need to
+					{#if ollamaURL.protocol === 'https:'}
+						<p class={_pHelp}>
+							If trying to connect to an Ollama server that is not available on
+							<code class={_code}>localhost</code> or <code class={_code}>127.0.0.1</code> you will
+							need to
 							<a
 								href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
-								target="_blank">create a tunnel</a
+								target="_blank"
 							>
+								create a tunnel
+							</a>
 							to your server or
 							<a
 								href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
-								target="_blank">allow mixed content</a
-							> in this browser's site settings.
+								target="_blank"
+							>
+								allow mixed content
+							</a> in this browser's site settings.
 						</p>
-					<!-- {/if} -->
+					{/if}
 				</div>
 			{/if}
 		</div>
 
 		<div class={_container}>
 			<Label class={_label}>Model</Label>
-			<Select.Root bind:selected={ollamaModel} disabled={!modelList || modelList.models.length === 0}>
+			<Select.Root
+				bind:selected={ollamaModel}
+				disabled={!modelList || modelList.models.length === 0}
+			>
 				<Select.Trigger>
 					<Select.Value placeholder={ollamaModel.value} />
 				</Select.Trigger>
@@ -151,16 +174,16 @@
 			</Select.Root>
 		</div>
 
+		<Separator class="mb-8 mt-8" />
+
 		<div class={_container}>
 			<Label class={_label}>About</Label>
 			<p class={_pAbout}>
 				<strong>Hollama</strong> is a minimalistic web interface for
-				<a href="https://github.com/jmorganca/ollama/" target="_blank">Ollama</a>
+				<a class={_a} href="https://github.com/jmorganca/ollama/" target="_blank">Ollama</a>
 				servers. Code is available on
-				<a href="https://github.com/fmaclen/hollama" target="_blank">Github</a>.
-			</p>
-			<p class={_pAbout}>
-				Made by <a href="https://fernando.is" target="_blank">@fmaclen</a>
+				<a class={_a} href="https://github.com/fmaclen/hollama" target="_blank">Github</a>.
+				Made by <a class={_a} href="https://fernando.is" target="_blank">@fmaclen</a>
 			</p>
 		</div>
 	</div>
