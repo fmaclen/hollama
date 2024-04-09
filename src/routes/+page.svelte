@@ -1,19 +1,26 @@
 <script lang="ts">
+	import * as Select from '$lib/components/ui/select';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import Label from '$lib/components/ui/label/label.svelte';
+
 	import { settingsStore } from '$lib/store';
+
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
+	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 
 	export let ollamaURL: URL | null = null;
 	let modelList: ModelList | null = null;
 
 	const DETAULT_OLLAMA_SERVER = 'http://localhost:11434';
 	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
-	let ollamaModel = $settingsStore?.ollamaModel || '';
+	let ollamaModel = { value: $settingsStore?.ollamaModel || '' };
 	let serverStatus: 'connected' | 'disconnected' = 'connected';
 
 	$: settingsStore.set({
 		ollamaServer,
-		ollamaModel
+		ollamaModel: ollamaModel.value
 	});
 
 	// HACK: triggers function when selecting all and pressing the delete
@@ -52,186 +59,137 @@
 			);
 		}
 	});
+
+	// Styles
+	const _help = `
+		flex
+		flex-col
+		gap-y-3
+	`;
+
+	const _pHelp = `
+		text-sm
+		text-neutral-500
+	`;
+
+	const _code = `
+		text-neutral-800
+	`;
+
+	const _pAbout = `
+		text-sm
+		text-neutral-800
+	`;
+
+	const _container = `
+		flex
+		flex-col
+		gap-y-3
+		mt-6
+		mb-6
+	`;
+
+	const _label = `
+		flex
+		items-center
+		gap-x-2
+	`;
+
+	const _a = `
+		underline
+		underline-offset-4
+		hover:text-neutral-600
+	`;
 </script>
 
-<div class="menu">
-	<header class="menu__header">
-		<a href="/" title="Main menu">
-			<img class="menu__logo" src="/favicon.png" alt="Ollama" width="96" height="96" />
-		</a>
-		<div class="menu__app">
-			<p class="menu__app-name">Hollama</p>
-		</div>
-	</header>
+<div class="flex w-full flex-col bg-gray-100">
+	<div class="justify-content-center m-auto max-w-[40ch] p-6">
+		<div class={_container}>
+			<Label class={_label}>
+				Server
+				<Badge
+					class="capitalize"
+					variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}
+				>
+					{serverStatus}
+				</Badge>
+			</Label>
+			<Input bind:value={ollamaServer} placeholder={DETAULT_OLLAMA_SERVER} />
 
-	<form class="menu__form">
-		<fieldset class="menu__fieldset">
-			<legend>Sessions</legend>
-			<a href={`/${Math.random().toString(36).substring(2, 8)}`}>New session</a>
-		</fieldset>
-
-		<fieldset class="menu__fieldset">
-			<legend>Ollama settings</legend>
-			<label class="menu__label menu__label--{serverStatus}">
-				<strong>Server</strong>
-				<input type="text" placeholder={DETAULT_OLLAMA_SERVER} bind:value={ollamaServer} />
-
-				{#if ollamaURL && serverStatus === 'disconnected'}
-					<div transition:slide>
-						<p class="footnote">
-							Needs to allow connections from <code>{ollamaURL.origin}</code> in
-							<code>OLLAMA_ORIGINS</code>,
+			<!-- {#if ollamaURL} -->
+			{#if ollamaURL && serverStatus === 'disconnected'}
+				<div transition:slide class={_help}>
+					<p class={_pHelp}>
+						Needs to allow connections from
+						<code class={_code}>{ollamaURL.origin}</code>
+						in
+						<code class={_code}>OLLAMA_ORIGINS</code>,
+						<a
+							class={_a}
+							href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
+							target="_blank"
+						>
+							see docs
+						</a>
+						. Also check no browser extensions are blocking the connection.
+					</p>
+					{#if ollamaURL.protocol === 'https:'}
+						<p class={_pHelp}>
+							If trying to connect to an Ollama server that is not available on
+							<code class={_code}>localhost</code> or <code class={_code}>127.0.0.1</code> you will
+							need to
 							<a
-								href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
-								target="_blank">see docs</a
-							>. Also check no browser extensions are blocking the connection.
+								href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
+								target="_blank"
+							>
+								create a tunnel
+							</a>
+							to your server or
+							<a
+								href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
+								target="_blank"
+							>
+								allow mixed content
+							</a> in this browser's site settings.
 						</p>
-						{#if ollamaURL.protocol === 'https:'}
-							<p class="footnote">
-								If trying to connect to an Ollama server that is not available on
-								<code>localhost</code> or <code>127.0.0.1</code> you will need to
-								<a
-									href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
-									target="_blank">create a tunnel</a
-								>
-								to your server or
-								<a
-									href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
-									target="_blank">allow mixed content</a
-								> in this browser's site settings.
-							</p>
-						{/if}
-					</div>
-				{/if}
+					{/if}
+				</div>
+			{/if}
+		</div>
 
-			</label>
-			<label class="menu__label">
-				<strong>Available models</strong>
-				<select bind:value={ollamaModel} disabled={!modelList || modelList.models.length === 0}>
+		<div class={_container}>
+			<Label class={_label}>Model</Label>
+			<Select.Root
+				bind:selected={ollamaModel}
+				disabled={!modelList || modelList.models.length === 0}
+			>
+				<Select.Trigger>
+					<Select.Value placeholder={ollamaModel.value} />
+				</Select.Trigger>
+				<Select.Content>
 					{#if modelList}
 						{#each modelList.models as model}
-							<option value={model.name}>{model.name}</option>
+							<Select.Item value={model.name}>{model.name}</Select.Item>
 						{/each}
 					{:else}
-						<option value="">No models available</option>
+						<Select.Item value="">No models available</Select.Item>
 					{/if}
-				</select>
-			</label>
-		</fieldset>
+				</Select.Content>
+			</Select.Root>
+		</div>
 
-		<fieldset class="menu__fieldset menu__fieldset--about">
-			<legend>About</legend>
-			<span>
+		<Separator class="mb-8 mt-8" />
+
+		<div class={_container}>
+			<Label class={_label}>About</Label>
+			<p class={_pAbout}>
 				<strong>Hollama</strong> is a minimalistic web interface for
-				<a href="https://github.com/jmorganca/ollama/" target="_blank">Ollama</a>
+				<a class={_a} href="https://github.com/jmorganca/ollama/" target="_blank">Ollama</a>
 				servers. Code is available on
-				<a href="https://github.com/fmaclen/hollama" target="_blank">Github</a>.
-				<br /><br />Made by <a href="https://fernando.is" target="_blank">@fmaclen</a>
-			</span>
-		</fieldset>
-	</form>
+				<a class={_a} href="https://github.com/fmaclen/hollama" target="_blank">Github</a>
+				. Made by
+				<a class={_a} href="https://fernando.is" target="_blank">@fmaclen</a>
+			</p>
+		</div>
+	</div>
 </div>
-
-<style lang="scss">
-	.menu {
-		--color-border: rgba(0, 0, 0, 0.1);
-		--color-active: #007aff;
-
-		display: grid;
-		width: 100%;
-		height: 100dvh;
-		grid-template-rows: max-content auto max-content;
-		background-color: var(--color-background);
-
-		&__header {
-			padding-block: 16px;
-			padding-inline: 24px;
-			display: flex;
-			gap: 16px;
-			align-items: center;
-			border-bottom: 1px solid var(--color-border);
-			background-color: white;
-			position: sticky;
-			top: 0;
-		}
-
-		&__logo {
-			display: block;
-		}
-
-		&__app-name {
-			font-size: 20px;
-			margin-block: unset;
-			font-weight: 600;
-		}
-
-		&__form {
-			margin-inline: auto;
-		}
-
-		&__fieldset {
-			font-size: 14px;
-			margin-block: 48px;
-			margin-inline: 48px;
-			padding-block: 24px;
-			padding-inline: 24px;
-			display: flex;
-			flex-direction: column;
-			gap: 24px;
-			border-color: var(--color-border);
-
-			&--about {
-				gap: 16px;
-			}
-
-			legend {
-				opacity: 0.5;
-			}
-
-			a {
-				color: #333;
-			}
-		}
-
-		&__label {
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-			font-size: 14px;
-			--color-server-status: #666;
-
-			select,
-			input {
-				padding: 8px;
-				font-size: 14px;
-				outline-color: var(--color-server-status);
-				border: 1px solid var(--color-server-status);
-			}
-
-			select:disabled {
-				background-color: var(--color-border);
-			}
-
-			&--connected {
-				--color-server-status: #14b8a6;
-			}
-
-			&--disconnected {
-				--color-server-status: #f59e0b;
-			}
-		}
-	}
-
-	.footnote {
-		margin: unset;
-		color: #999;
-		line-height: 1.5em;
-
-		code {
-			color: #666;
-			background-color: #e2e2e2;
-			padding-block: 2px;
-			padding-inline: 4px;
-		}
-	}
-</style>
