@@ -29,10 +29,11 @@
 		[&>pre>code]:rounded-md
 		[&>pre>code]:text-sm
 		[&>pre>code]:p-4
-		[&>pre>code]:my-4
+		[&>pre:not(:first-child,:last-child)>code]:my-4
 		
-		[&>p]:w-[60ch]
-		[&>ul]:w-[60ch]
+		[&>p]:max-w-[60ch]
+		[&>p:not(:first-child,:last-child)]:my-4
+		[&>ul]:max-w-[60ch]
 		[&>ul]:my-4
 		[&>ul]:flex
 		[&>ul]:flex-col

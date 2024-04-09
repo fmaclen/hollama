@@ -1,6 +1,6 @@
 <script lang="ts">
+	import * as Resizable from '$lib/components/ui/resizable';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Resizable from '$lib/components/ui/resizable/index.js';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 
@@ -17,13 +17,14 @@
 	let prompt: string;
 
 	$: session = loadSession(data.id);
+	$: isLastMessageFromUser = session.messages[session.messages.length - 1]?.role === 'user';
 
 	function scrollToBottom() {
 		messageWindow.scrollTop = messageWindow.scrollHeight;
 	}
 
 	function handleError(error: any) {
-		console.error(error);
+		// console.error(error);
 		const message: Message = {
 			role: 'system',
 			content: typeof(error) === 'string' ? error : 'Sorry, something went wrong.'
@@ -125,15 +126,19 @@
 				bind:this={messageWindow}
 			>
 				{#each session.messages as message, i}
-				{@const isFirst = i === 0}
-				{@const isLast = i === session.messages.length - 1}
+					{@const isFirst = i === 0}
+					{@const isLast = i === session.messages.length - 1}
 					<Separator class={isFirst ? 'opacity-0' : ''} />
 					<Article {message} />
-					{#if isLast}<Separator class="opacity-0" />{/if}
+					{#if isLast && !isLastMessageFromUser}
+						<Separator class="opacity-0" />
+					{/if}
 				{/each}
 
-				{#if session.messages[session.messages.length - 1]?.role === 'user'}
+				{#if isLastMessageFromUser}
+					<Separator />
 					<Article message={{ role: 'ai', content: completion || '...' }} />
+					<Separator class="opacity-0" />
 				{/if}
 			</div>
 		</Resizable.Pane>

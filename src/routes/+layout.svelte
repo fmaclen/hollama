@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../app.pcss';
-	import * as Resizable from '$lib/components/ui/resizable/index.js';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 </script>

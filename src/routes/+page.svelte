@@ -103,7 +103,7 @@
 </script>
 
 <div class="flex w-full flex-col bg-gray-100">
-	<div class="justify-content-center m-auto max-w-96">
+	<div class="justify-content-center m-auto max-w-[40ch] p-6">
 		<div class={_container}>
 			<Label class={_label}>
 				Server
