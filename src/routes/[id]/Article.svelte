@@ -15,9 +15,9 @@
 		font-bold
 		leading-7
 		uppercase
-		w-[3ch]
+		w-[6ch]
 	">
-		{message.role === 'user' ? 'You' : 'AI'}
+		{message.role === 'user' ? 'You' : message.role}
 	</p>
 	<div class="
 		overflow-x-auto text-md

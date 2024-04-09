@@ -26,7 +26,7 @@
 		console.error(error);
 		const message: Message = {
 			role: 'system',
-			content: error ? error : 'Sorry, something went wrong.'
+			content: typeof(error) === 'string' ? error : 'Sorry, something went wrong.'
 		};
 		session.messages = [...session.messages, message];
 	}
@@ -115,7 +115,7 @@
 					bind:value={prompt}
 					on:keydown={handleKeyDown}
 				/>
-				<Button on:click={handleSubmit}>Send</Button>
+				<Button on:click={handleSubmit} disabled={!prompt}>Send</Button>
 			</div>
 		</Resizable.Pane>
 		<Resizable.Handle />
