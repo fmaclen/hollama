@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 
 	import { ollamaGenerate } from '$lib/ollama';
@@ -87,21 +88,30 @@
 			handleError(error);
 		}
 	}
+
+	const _a = `
+		underline
+		underline-offset-4
+		hover:text-neutral-500
+	`;
 </script>
 
-<div class="h-screen w-full">
+<div class="h-screen w-full flex flex-col">
+	<div class="space-y-1 px-6 py-4">
+		<p class="text-sm leading-none">
+			Session <a class={_a} href={`/${session.id}`}>#{session.id}</a>
+		</p>
+		<p class="text-sm text-muted-foreground">{session.model}</p>
+	</div>
+
+	<Separator />
+
 	<Resizable.PaneGroup direction="horizontal">
 		<Resizable.Pane defaultSize={40} minSize={30}>
-			<div class="flex h-screen flex-col gap-y-4 bg-gray-100 p-4">
-				<div class="space-y-1">
-					<p class="text-sm font-medium leading-none">
-						Session: <a href={`/${session.id}`}>{session.id}</a>
-					</p>
-					<p class="text-sm text-muted-foreground">Model: {session.model}</p>
-				</div>
+			<div class="flex h-full flex-col gap-y-6 bg-gray-100 p-6">
 				<Textarea
 					placeholder="Prompt"
-					class="h-screen"
+					class="h-full resize-none"
 					bind:value={prompt}
 					on:keydown={handleKeyDown}
 				/>
@@ -111,11 +121,15 @@
 		<Resizable.Handle />
 		<Resizable.Pane defaultSize={40} minSize={30}>
 			<div
-				class="flex h-screen flex-col gap-y-8 overflow-y-auto bg-gray-100 p-4 text-neutral-800"
+				class="h-full flex flex-col gap-y-4 overflow-y-auto bg-gray-100 p-6 text-neutral-800"
 				bind:this={messageWindow}
 			>
-				{#each session.messages as message}
+				{#each session.messages as message, i}
+				{@const isFirst = i === 0}
+				{@const isLast = i === session.messages.length - 1}
+					<Separator class={isFirst ? 'opacity-0' : ''} />
 					<Article {message} />
+					{#if isLast}<Separator class="opacity-0" />{/if}
 				{/each}
 
 				{#if session.messages[session.messages.length - 1]?.role === 'user'}

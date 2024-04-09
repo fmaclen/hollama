@@ -7,10 +7,20 @@
 	export let message: Message;
 </script>
 
-<article class="grid grid-cols-[1fr_11fr] gap-x-4">
-	<p class="text-xs leading-7 font-semibold uppercase">{message.role}</p>
+<article class="grid grid-cols-[max-content_auto] gap-x-6">
+	<p class="
+		text-xs
+		text-neutral-900
+		text-center
+		font-bold
+		leading-7
+		uppercase
+		w-[3ch]
+	">
+		{message.role === 'user' ? 'You' : 'AI'}
+	</p>
 	<div class="
-		w-full overflow-x-auto text-lg
+		overflow-x-auto text-md
 
 		[&>pre>code]:block
 		[&>pre>code]:opacity-75
@@ -21,6 +31,8 @@
 		[&>pre>code]:p-4
 		[&>pre>code]:my-4
 		
+		[&>p]:w-[60ch]
+
 		[&>p>code]:opacity-75
 		[&>p>code]:bg-gray-300
 		[&>p>code]:rounded-md
