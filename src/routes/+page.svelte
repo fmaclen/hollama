@@ -98,7 +98,7 @@
 	const _a = `
 		underline
 		underline-offset-4
-		hover:text-neutral-500
+		hover:text-neutral-600
 	`;
 </script>
 
@@ -121,13 +121,17 @@
 				<div transition:slide class={_help}>
 					<p class={_pHelp}>
 						Needs to allow connections from
-						<code class={_code}>{'https://www.dev.hollama.fernando.is'}</code>
+						<code class={_code}>{ollamaURL.origin}</code>
 						in
 						<code class={_code}>OLLAMA_ORIGINS</code>,
 						<a
+							class={_a}
 							href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
-							target="_blank">see docs</a
-						>. Also check no browser extensions are blocking the connection.
+							target="_blank"
+						>
+							see docs
+						</a>
+						. Also check no browser extensions are blocking the connection.
 					</p>
 					{#if ollamaURL.protocol === 'https:'}
 						<p class={_pHelp}>
@@ -182,8 +186,9 @@
 				<strong>Hollama</strong> is a minimalistic web interface for
 				<a class={_a} href="https://github.com/jmorganca/ollama/" target="_blank">Ollama</a>
 				servers. Code is available on
-				<a class={_a} href="https://github.com/fmaclen/hollama" target="_blank">Github</a>.
-				Made by <a class={_a} href="https://fernando.is" target="_blank">@fmaclen</a>
+				<a class={_a} href="https://github.com/fmaclen/hollama" target="_blank">Github</a>
+				. Made by
+				<a class={_a} href="https://fernando.is" target="_blank">@fmaclen</a>
 			</p>
 		</div>
 	</div>
