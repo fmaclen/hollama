@@ -32,6 +32,13 @@
 		[&>pre>code]:my-4
 		
 		[&>p]:w-[60ch]
+		[&>ul]:w-[60ch]
+		[&>ul]:my-4
+		[&>ul]:flex
+		[&>ul]:flex-col
+		[&>ul]:gap-y-1
+		[&>ul]:list-inside
+		[&>ul]:list-disc
 
 		[&>p>code]:opacity-75
 		[&>p>code]:bg-gray-300
