@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_API_TAGS_RESPONSE } from './utils';
+import { MOCK_API_TAGS_RESPONSE, MOCK_COMPLETION_RESPONSE_1, MOCK_COMPLETION_RESPONSE_2 } from './utils';
+import type { OllamaCompletionResponse } from '$lib/ollama';
 
 test.beforeEach(async ({ page }) => {
   // Enable request interception and mock the API response
@@ -12,13 +13,13 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test('creates new session', async ({ page }) => {
+test('creates new session and chats', async ({ page }) => {
   await page.goto('/');
   await page.click('button[data-melt-select-trigger]'); // Open model list
   await page.click('div[role="option"]:has-text("gemma:7b")'); // Select model
   await expect(page.getByTestId('session-id')).not.toBeVisible();
   await expect(page.getByTestId('model-name')).not.toBeVisible();
-  
+
   await page.getByText('New session').click();
   await expect(page.getByTestId('session-id')).toBeVisible();
   await expect(page.getByTestId('session-id')).toHaveText(/Session #[a-z0-9]{2,8}/);
@@ -28,35 +29,57 @@ test('creates new session', async ({ page }) => {
   await expect(page.getByPlaceholder('Prompt')).toHaveText('');
   await expect(page.getByText('Send')).toBeVisible();
   await expect(page.getByText('Send')).toBeDisabled();
-  
+
   await page.getByPlaceholder('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
   await expect(page.getByText('Send')).not.toBeDisabled();
+  await expect(page.locator('article', {
+    hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+  })).not.toBeVisible();
+
+  await page.route('**/generate', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(MOCK_COMPLETION_RESPONSE_1)
+    });
+  });
+
+  await page.getByText('Send').click();
+  await expect(page.locator('article', {
+    hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+  })).toBeVisible();
+
+  await page.getByPlaceholder('Prompt').fill("I understand, it's okay");
+  await expect(page.locator('article', {
+    hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask'
+  })).not.toBeVisible();
+  await expect(page.locator('article', { hasText: "I understand, it's okay" })).not.toBeVisible();
+
+  await page.route('**/generate', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(MOCK_COMPLETION_RESPONSE_2)
+    });
+  });
+
+  await page.keyboard.press('Enter');
+  await expect(page.locator('article', { hasText: "I understand, it's okay" })).toBeVisible();
+  await expect(page.locator('article', {
+    hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask'
+  })).toBeVisible();
+  await expect(page.getByText('AI')).toHaveCount(2);
+  expect(await page.getByText('You').count()).toBeGreaterThan(1);
 });
 
-// test('sends user prompt and receives AI response', async ({ page }) => {
-//   // TODO: Implement the test
-// });
+test.skip('handles API error when generating AI response', async ({ page }) => {
+  // TODO: Implement the test
+});
 
-// test('handles API error when generating AI response', async ({ page }) => {
-//   // TODO: Implement the test
-// });
+test.skip('displays system message when an error occurs', async ({ page }) => {
+  // TODO: Implement the test
+});
 
-// test('auto-scrolls to the bottom when new messages are added', async ({ page }) => {
-//   // TODO: Implement the test
-// });
-
-// test('resizes the prompt and chat panes', async ({ page }) => {
-//   // TODO: Implement the test
-// });
-
-// test('disables the "Send" button when the prompt is empty', async ({ page }) => {
-//   // TODO: Implement the test
-// });
-
-// test('submits the prompt when pressing Enter key', async ({ page }) => {
-//   // TODO: Implement the test
-// });
-
-// test('displays system message when an error occurs', async ({ page }) => {
-//   // TODO: Implement the test
-// });
+test.skip('auto-scrolls to the bottom when new messages are added', async ({ page }) => {
+  // TODO: Implement the test
+});
