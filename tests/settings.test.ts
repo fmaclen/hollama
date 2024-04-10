@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
+import type { OllamaTagResponse } from '$lib/ollama';
 
-const MOCK_API_TAGS_RESPONSE = {
+const MOCK_API_TAGS_RESPONSE: OllamaTagResponse = {
 	models: [
 		{
 			name: 'gemma:7b',

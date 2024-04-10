@@ -9,9 +9,10 @@
 	import { slide } from 'svelte/transition';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import type { OllamaTagResponse } from '$lib/ollama';
 
 	export let ollamaURL: URL | null = null;
-	let modelList: ModelList | null = null;
+	let ollamaTagResponse: OllamaTagResponse | null = null;
 
 	const DETAULT_OLLAMA_SERVER = 'http://localhost:11434';
 	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
@@ -27,10 +28,6 @@
 	// key on the Ollama server input.
 	$: typeof ollamaServer === 'string' && getModelsList();
 
-	interface ModelList {
-		models: Model[];
-	}
-
 	interface Model {
 		name: string;
 		modified_at: string;
@@ -41,11 +38,11 @@
 	async function getModelsList(): Promise<void> {
 		try {
 			const response = await fetch(`${ollamaServer}/api/tags`);
-			const data = await response.json();
-			modelList = data;
+			const data = await response.json() as OllamaTagResponse;
+			ollamaTagResponse = data;
 			serverStatus = 'connected';
 		} catch {
-			modelList = null;
+			ollamaTagResponse = null;
 			serverStatus = 'disconnected';
 		}
 	}
@@ -160,14 +157,14 @@
 			<Label class={_label}>Model</Label>
 			<Select.Root
 				bind:selected={ollamaModel}
-				disabled={!modelList || modelList.models.length === 0}
+				disabled={!ollamaTagResponse || ollamaTagResponse.models.length === 0}
 			>
 				<Select.Trigger>
 					<Select.Value placeholder={ollamaModel.value} />
 				</Select.Trigger>
 				<Select.Content>
-					{#if modelList}
-						{#each modelList.models as model}
+					{#if ollamaTagResponse}
+						{#each ollamaTagResponse.models as model}
 							<Select.Item value={model.name}>{model.name}</Select.Item>
 						{/each}
 					{:else}
