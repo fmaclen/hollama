@@ -116,7 +116,6 @@
 			</Label>
 			<Input bind:value={ollamaServer} placeholder={DETAULT_OLLAMA_SERVER} />
 
-			<!-- {#if ollamaURL} -->
 			{#if ollamaURL && serverStatus === 'disconnected'}
 				<div transition:slide class={_help}>
 					<p class={_pHelp}>
