@@ -99,10 +99,10 @@
 
 <div class="h-screen w-full flex flex-col">
 	<div class="space-y-1 px-6 py-4">
-		<p class="text-sm leading-none">
+		<p data-testid="session-id" class="text-sm leading-none">
 			Session <a class={_a} href={`/${session.id}`}>#{session.id}</a>
 		</p>
-		<p class="text-sm text-muted-foreground">{session.model}</p>
+		<p data-testid="model-name" class="text-sm text-muted-foreground">{session.model}</p>
 	</div>
 
 	<Separator />
