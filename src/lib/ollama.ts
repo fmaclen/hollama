@@ -3,9 +3,23 @@ import type { Session } from "$lib/sessions";
 import { settingsStore } from "$lib/store";
 
 type OllamaCompletionRequest = {
-	model: string;
-	prompt: string;
 	context: number[];
+	prompt: string;
+	model: string;
+}
+
+export type OllamaCompletionResponse = {
+	model: string;
+	created_at: string;
+	response: string;
+	done: boolean;
+	context: number[];
+	total_duration: number;
+	load_duration: number;
+	prompt_eval_count: number;
+	prompt_eval_duration: number;
+	eval_count: number;
+	eval_duration: number;
 }
 
 export type OllamaModel = {
