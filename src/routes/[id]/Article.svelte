@@ -48,7 +48,9 @@
 		[&>p>code]:p-1
 		[&>p>code]:my-4
 	">
-		{@html md.render(message.content)}
+		{#if message.content}
+			{@html md.render(message.content)}
+		{/if}
 	</div>
 </article>
 
