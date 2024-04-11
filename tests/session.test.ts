@@ -81,22 +81,19 @@ test('creates new session and chats', async ({ page }) => {
 
 test('generates a random session id', async ({ page }) => {
   await page.goto('/');
+
+  const sessionIds = [];
   const newSessionButton = page.getByText('New session');
-  const sessionId1 = await newSessionButton.getAttribute('href');
-  expect(sessionId1).toMatch(/[a-z0-9]{2,8}/);
 
-  await newSessionButton.click();
-  const sessionId2 = await newSessionButton.getAttribute('href');
-  expect(sessionId2).toMatch(/[a-z0-9]{2,8}/);
+  // Check it generates a new session id 3 times in a row
+  for (let i = 0; i < 3; i++) {
+    const sessionId = await newSessionButton.getAttribute('href');
+    expect(sessionId).toMatch(/[a-z0-9]{2,8}/);
+    sessionIds.push(sessionId);
+    await newSessionButton.click();
+  }
 
-  expect(sessionId1).not.toEqual(sessionId2);
-
-  await newSessionButton.click();
-  const sessionId3 = await newSessionButton.getAttribute('href');
-  expect(sessionId3).toMatch(/[a-z0-9]{2,8}/);
-
-  expect(sessionId1).not.toEqual(sessionId3);
-  expect(sessionId2).not.toEqual(sessionId3);
+  expect(new Set(sessionIds).size).toBe(3);
 });
 
 test.skip('handles API error when generating AI response', async ({ page }) => {
