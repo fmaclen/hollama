@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_API_TAGS_RESPONSE, mockTagsResponse } from './utils';
+import { mockTagsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
   await mockTagsResponse(page);
@@ -35,15 +35,6 @@ test('displays model list and updates settings store', async ({ page }) => {
 test('handles server status updates correctly', async ({ page }) => {
   await page.goto('/');
   await page.waitForSelector('label:has-text("Server")');
-
-  // Mock the API to return a successful response
-  await page.route('**/api/tags', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(MOCK_API_TAGS_RESPONSE)
-    });
-  });
 
   // Trigger a new API request by typing in the input field
   await page.fill('input[placeholder="http://localhost:11434"]', 'http://example.com');
