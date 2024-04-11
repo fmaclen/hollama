@@ -79,6 +79,26 @@ test('creates new session and chats', async ({ page }) => {
   await expect(page.locator('article')).toHaveCount(4);
 });
 
+test('generates a random session id', async ({ page }) => {
+  await page.goto('/');
+  const newSessionButton = page.getByText('New session');
+  const sessionId1 = await newSessionButton.getAttribute('href');
+  expect(sessionId1).toMatch(/[a-z0-9]{2,8}/);
+
+  await newSessionButton.click();
+  const sessionId2 = await newSessionButton.getAttribute('href');
+  expect(sessionId2).toMatch(/[a-z0-9]{2,8}/);
+
+  expect(sessionId1).not.toEqual(sessionId2);
+
+  await newSessionButton.click();
+  const sessionId3 = await newSessionButton.getAttribute('href');
+  expect(sessionId3).toMatch(/[a-z0-9]{2,8}/);
+
+  expect(sessionId1).not.toEqual(sessionId3);
+  expect(sessionId2).not.toEqual(sessionId3);
+});
+
 test.skip('handles API error when generating AI response', async ({ page }) => {
   // TODO: Implement the test
 });
