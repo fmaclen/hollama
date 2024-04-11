@@ -1,21 +1,22 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
+
 	import '../app.pcss';
 	import Settings from 'lucide-svelte/icons/settings';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import { onMount } from 'svelte';
+
 	import { sessionsStore } from '$lib/store';
-	import { slide } from 'svelte/transition';
 	import type { Session } from '$lib/sessions';
 
 	let newSessionId: string;
 
 	function createNewSession() {
-		// Example: `zbvxte`
-		newSessionId = Math.random().toString(36).substring(2, 8);
+		newSessionId = Math.random().toString(36).substring(2, 8); // E.g. `z7avx9`
 	}
 
-	let sessionList: Session[] | null = null
+	let sessionList: Session[] | null = null;
 	$: if ($sessionsStore) sessionList = $sessionsStore.reverse();
 
 	onMount(createNewSession);
@@ -48,7 +49,7 @@
 
 		<Separator />
 
-		<div class="flex h-full flex-col py-3 overflow-y-auto">
+		<div class="flex h-full flex-col overflow-y-auto py-3">
 			{#if sessionList}
 				{#each sessionList as session}
 					<a
@@ -67,13 +68,15 @@
 						<p class="max-w-full truncate whitespace-nowrap text-sm font-bold">
 							{session.messages[0].content}
 						</p>
-						<p class="flex max-w-full gap-x-2 whitespace-nowrap text-sm truncate text-muted-foreground">
+						<p
+							class="flex max-w-full gap-x-2 truncate whitespace-nowrap text-sm text-muted-foreground"
+						>
 							{session.model}
 						</p>
 					</a>
 				{/each}
 			{:else}
-				<p class="w-full h-full flex items-center justify-center text-sm text-muted-foreground">
+				<p class="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
 					No sessions in history
 				</p>
 			{/if}
