@@ -22,7 +22,7 @@
 >
 	<a href="/" class="flex flex-col items-center justify-between py-4 hover:bg-accent">
 		<img src="/favicon.png" alt="Hollama logo" width="56" height="56" />
-		<h1 class="logo__wordmark text-2xl font-medium">Hollama</h1>
+		<h1 class="hollama-wordmark text-2xl font-medium">Hollama</h1>
 	</a>
 
 	<Separator orientation="vertical" />
@@ -81,7 +81,7 @@
 </div>
 
 <style>
-	.logo__wordmark {
+	.hollama-wordmark {
 		width: max-content;
 		height: 7ch;
 		line-height: 7ch;
