@@ -5,6 +5,7 @@
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { onMount } from 'svelte';
 	import { sessionsStore } from '$lib/store';
+	import { slide } from 'svelte/transition';
 
 	let newSessionId: string;
 
@@ -43,13 +44,14 @@
 
 		<Separator />
 
-		<div class="flex h-full flex-col gap-y-4 overflow-y-auto">
+		<div class="flex h-full flex-col py-3 overflow-y-auto">
 			{#if $sessionsStore}
 				{#each $sessionsStore as session}
 					<a
 						href={`/${session.id}`}
-						class="flex flex-col p-6"
+						class="flex flex-col px-6 py-3"
 						aria-label={`Session ${session.id}`}
+						transition:slide
 					>
 						<p class="max-w-full truncate whitespace-nowrap text-sm font-bold">
 							{session.messages[0].content}
