@@ -18,11 +18,11 @@ export const MOCK_API_TAGS_RESPONSE: OllamaTagResponse = {
 			}
 		},
 		{
-			name: "mistral:latest",
-			model: "mistral:latest",
-			modified_at: "2023-11-24T16:32:44.035655802-05:00",
-			size: 4108916866,
-			digest: "d364aa8d131ef7abfc1275db682d281a307d9451fc00f96abe154d0059b0be49",
+			name: "openhermes2.5-mistral:latest",
+			model: "openhermes2.5-mistral:latest",
+			modified_at: "2023-12-01T10:06:18.679361519-05:00",
+			size: 4108928240,
+			digest: "ca4cd4e8a562465d7cf0512fc4d4dff3407f07800b01c9a6ee9dd107001704b9",
 			details: {
 				parent_model: "",
 				format: "gguf",
@@ -35,7 +35,7 @@ export const MOCK_API_TAGS_RESPONSE: OllamaTagResponse = {
 	]
 };
 
-export const MOCK_COMPLETION_RESPONSE_1: OllamaCompletionResponse = {
+export const MOCK_SESSION_1_RESPONSE_1: OllamaCompletionResponse = {
 	model: "gemma:7b",
 	created_at: "2024-04-10T22:54:40.310905Z",
 	response: "I am unable to provide subjective or speculative information, including fight outcomes between individuals.",
@@ -89,7 +89,7 @@ export const MOCK_COMPLETION_RESPONSE_1: OllamaCompletionResponse = {
 	eval_duration: 296374000,
 };
 
-export const MOCK_COMPLETION_RESPONSE_2: OllamaCompletionResponse = {
+export const MOCK_SESSION_1_RESPONSE_2: OllamaCompletionResponse = {
 	model: "gemma:7b",
 	created_at: "2024-04-10T23:08:33.419483Z",
 	response: "No problem! If you have any other questions or would like to discuss something else, feel free to ask.",
@@ -181,3 +181,43 @@ export const MOCK_COMPLETION_RESPONSE_2: OllamaCompletionResponse = {
 	eval_count: 23,
 	eval_duration: 399362000,
 };
+
+export const MOCK_SESSION_2_RESPONSE_1: OllamaCompletionResponse = {
+	model: "openhermes2.5-mistral:latest",
+	created_at: "2024-04-11T12:50:18.826017Z",
+	response: 'The fox says various things, such as "ring-a-ding-ding," "bada bing-bing" and "higglety-pigglety pop.',
+	done: true,
+	context: [123,4567,890],
+	total_duration: 8048965583,
+	load_duration: 5793693500,
+	prompt_eval_count: 22,
+	prompt_eval_duration: 73410000,
+	eval_count: 142,
+	eval_duration: 2181595000
+}
+
+export async function chooseModelFromSettings(page: any, modelName: string) {
+	await page.getByTitle('Settings').click();
+	await page.locator('button[data-melt-select-trigger]').click();
+	await page.click(`div[role="option"]:has-text('${modelName}')`);
+}
+
+export async function mockTagsResponse(page: any) {
+	await page.route('**/api/tags', async (route: any) => {
+		await route.fulfill({
+			status: 200,
+			contentType: 'application/json',
+			body: JSON.stringify(MOCK_API_TAGS_RESPONSE)
+		});
+	});
+}
+
+export async function mockCompletionResponse(page: any, response: OllamaCompletionResponse) {
+	await page.route('**/generate', async (route: any) => {
+		await route.fulfill({
+			status: 200,
+			contentType: 'application/json',
+			body: JSON.stringify(response)
+		});
+	});
+}
