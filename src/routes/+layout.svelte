@@ -16,9 +16,6 @@
 		newSessionId = Math.random().toString(36).substring(2, 8); // E.g. `z7avx9`
 	}
 
-	let sessionList: Session[] | null = null;
-	$: if ($sessionsStore) sessionList = $sessionsStore.reverse();
-
 	onMount(createNewSession);
 </script>
 
@@ -50,8 +47,9 @@
 		<Separator />
 
 		<div class="flex h-full flex-col overflow-y-auto py-3">
-			{#if sessionList}
-				{#each sessionList as session}
+			{#if $sessionsStore}
+				<!-- Using slice() to reverse $sessionsStore without affecting the original array -->
+				{#each $sessionsStore.slice().reverse() as session (session.id)}
 					<a
 						data-testid="session-item"
 						href={`/${session.id}`}
