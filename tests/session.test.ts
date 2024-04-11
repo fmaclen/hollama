@@ -14,27 +14,33 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('creates new session and chats', async ({ page }) => {
+  const modelTrigger = page.locator('button[data-melt-select-trigger]');
+  const sessionIdLocator = page.getByTestId('session-id');
+  const modelNameLocator = page.getByTestId('model-name');
+  const newSessionButton = page.getByText('New session');
+  const promptTextarea = page.getByPlaceholder('Prompt');
+  const sendButton = page.getByText('Send');
+  const articleLocator = page.locator('article');
+
   await page.goto('/');
-  await page.click('button[data-melt-select-trigger]'); // Open model list
-  await page.click('div[role="option"]:has-text("gemma:7b")'); // Select model
-  await expect(page.getByTestId('session-id')).not.toBeVisible();
-  await expect(page.getByTestId('model-name')).not.toBeVisible();
+  await modelTrigger.click();
+  await page.click('div[role="option"]:has-text("gemma:7b")');
+  await expect(sessionIdLocator).not.toBeVisible();
+  await expect(modelNameLocator).not.toBeVisible();
 
-  await page.getByText('New session').click();
-  await expect(page.getByTestId('session-id')).toBeVisible();
-  await expect(page.getByTestId('session-id')).toHaveText(/Session #[a-z0-9]{2,8}/);
-  await expect(page.getByTestId('model-name')).toBeVisible();
-  await expect(page.getByTestId('model-name')).toHaveText('gemma:7b');
-  await expect(page.getByPlaceholder('Prompt')).toBeVisible();
-  await expect(page.getByPlaceholder('Prompt')).toHaveText('');
-  await expect(page.getByText('Send')).toBeVisible();
-  await expect(page.getByText('Send')).toBeDisabled();
+  await newSessionButton.click();
+  await expect(sessionIdLocator).toBeVisible();
+  await expect(sessionIdLocator).toHaveText(/Session #[a-z0-9]{2,8}/);
+  await expect(modelNameLocator).toBeVisible();
+  await expect(modelNameLocator).toHaveText('gemma:7b');
+  await expect(promptTextarea).toBeVisible();
+  await expect(promptTextarea).toHaveValue('');
+  await expect(sendButton).toBeVisible();
+  await expect(sendButton).toBeDisabled();
 
-  await page.getByPlaceholder('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
-  await expect(page.getByText('Send')).not.toBeDisabled();
-  await expect(page.locator('article', {
-    hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
-  })).not.toBeVisible();
+  await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+  await expect(sendButton).toBeEnabled();
+  await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).not.toBeVisible();
 
   await page.route('**/generate', async (route) => {
     await route.fulfill({
@@ -44,15 +50,11 @@ test('creates new session and chats', async ({ page }) => {
     });
   });
 
-  await page.getByText('Send').click();
-  await expect(page.locator('article', {
-    hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
-  })).toBeVisible();
+  await sendButton.click();
+  await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).toBeVisible();
 
-  await page.getByPlaceholder('Prompt').fill("I understand, it's okay");
-  await expect(page.locator('article', {
-    hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask'
-  })).not.toBeVisible();
+  await promptTextarea.fill("I understand, it's okay");
+  await expect(page.locator('article', { hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask' })).not.toBeVisible();
   await expect(page.locator('article', { hasText: "I understand, it's okay" })).not.toBeVisible();
 
   await page.route('**/generate', async (route) => {
@@ -65,18 +67,16 @@ test('creates new session and chats', async ({ page }) => {
 
   await page.keyboard.press('Enter');
   await expect(page.locator('article', { hasText: "I understand, it's okay" })).toBeVisible();
-  await expect(page.locator('article', {
-    hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask'
-  })).toBeVisible();
+  await expect(page.locator('article', { hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask' })).toBeVisible();
   await expect(page.getByText('AI')).toHaveCount(2);
   expect(await page.getByText('You').count()).toBeGreaterThan(1);
 
   // Check the session is saved to localStorage
-  await page.getByText('New session').click();
-  await expect(page.locator('article')).toHaveCount(0);
+  await newSessionButton.click();
+  await expect(articleLocator).toHaveCount(0);
 
   await page.goBack();
-  await expect(page.locator('article')).toHaveCount(4);
+  await expect(articleLocator).toHaveCount(4);
 });
 
 test('generates a random session id', async ({ page }) => {
