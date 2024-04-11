@@ -70,6 +70,13 @@ test('creates new session and chats', async ({ page }) => {
   })).toBeVisible();
   await expect(page.getByText('AI')).toHaveCount(2);
   expect(await page.getByText('You').count()).toBeGreaterThan(1);
+
+  // Check the session is saved to localStorage
+  await page.getByText('New session').click();
+  await expect(page.locator('article')).toHaveCount(0);
+
+  await page.goBack();
+  await expect(page.locator('article')).toHaveCount(4);
 });
 
 test.skip('handles API error when generating AI response', async ({ page }) => {
