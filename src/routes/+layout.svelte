@@ -20,7 +20,7 @@
 <div
 	class="grid h-screen w-screen grid-cols-[max-content,max-content,280px,max-content,1fr] text-current"
 >
-	<a href="/" class="flex flex-col items-center justify-between py-4">
+	<a href="/" class="flex flex-col items-center justify-between py-4 hover:bg-accent">
 		<img src="/favicon.png" alt="Hollama logo" width="56" height="56" />
 		<h1 class="logo__wordmark text-2xl font-medium">Hollama</h1>
 	</a>
@@ -49,7 +49,13 @@
 				{#each $sessionsStore as session}
 					<a
 						href={`/${session.id}`}
-						class="flex flex-col px-6 py-3"
+						class="
+							flex
+							flex-col
+							px-6
+							py-3
+							hover:bg-accent
+						"
 						aria-label={`Session ${session.id}`}
 						transition:slide
 					>
