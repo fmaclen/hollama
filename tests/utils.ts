@@ -1,4 +1,5 @@
 import type { OllamaCompletionResponse, OllamaTagResponse } from "$lib/ollama";
+import type { Page, Route } from "@playwright/test";
 
 export const MOCK_API_TAGS_RESPONSE: OllamaTagResponse = {
 	models: [
@@ -196,14 +197,14 @@ export const MOCK_SESSION_2_RESPONSE_1: OllamaCompletionResponse = {
 	eval_duration: 2181595000
 }
 
-export async function chooseModelFromSettings(page: any, modelName: string) {
+export async function chooseModelFromSettings(page: Page, modelName: string) {
 	await page.getByTitle('Settings').click();
 	await page.locator('button[data-melt-select-trigger]').click();
 	await page.click(`div[role="option"]:has-text('${modelName}')`);
 }
 
-export async function mockTagsResponse(page: any) {
-	await page.route('**/api/tags', async (route: any) => {
+export async function mockTagsResponse(page: Page) {
+	await page.route('**/api/tags', async (route: Route) => {
 		await route.fulfill({
 			status: 200,
 			contentType: 'application/json',
@@ -212,8 +213,8 @@ export async function mockTagsResponse(page: any) {
 	});
 }
 
-export async function mockCompletionResponse(page: any, response: OllamaCompletionResponse) {
-	await page.route('**/generate', async (route: any) => {
+export async function mockCompletionResponse(page: Page, response: OllamaCompletionResponse) {
+	await page.route('**/generate', async (route: Route) => {
 		await route.fulfill({
 			status: 200,
 			contentType: 'application/json',
