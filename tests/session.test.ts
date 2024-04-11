@@ -72,6 +72,47 @@ test('generates a random session id', async ({ page }) => {
   expect(new Set(sessionIds).size).toBe(3);
 });
 
+test('can navigate older sessions from sidebar', async ({ page }) => {
+  await page.goto('/');
+  await chooseModelFromSettings(page, 'gemma:7b');
+  await expect(page.getByText('No sessions in history')).toBeVisible();
+  await expect(page.locator('aside', { hasText: 'Who would win in a fight between Emma Watson and Jessica Alba?' })).not.toBeVisible();
+
+  await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+  await page.getByText('New session').click();
+  await page.getByPlaceholder('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+  await page.getByText('Send').click();
+  await page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.").isVisible();
+  await expect(page.getByText('No sessions in history')).not.toBeVisible();
+  expect(await page.getByTestId('session-item').textContent()).toContain("Who would win in a fight between Emma Watson and Jessica Alba?");
+  expect(await page.getByTestId('session-item').textContent()).toContain("gemma:7b");
+  expect(await page.getByTestId('session-item').count()).toBe(1);
+
+  // Leave the conversation by visiting the settings page
+  await page.getByTitle('Settings').click();
+  await expect(page.getByText('Who would win in a fight between Emma Watson and Jessica Alba?')).toBeVisible();
+  await expect(page.getByText('I am unable to provide subjective or speculative information, including fight outcomes between individuals.')).not.toBeVisible();
+
+  // Navigate back to the conversation
+  await page.getByTestId('session-item').click();
+  await expect(page.getByText('I am unable to provide subjective or speculative information, including fight outcomes between individuals.')).toBeVisible();
+
+  // Create a new session
+  await mockCompletionResponse(page, MOCK_SESSION_2_RESPONSE_1);
+  await chooseModelFromSettings(page, 'openhermes2.5-mistral:latest');
+  await page.getByText('New session').click();
+  await page.getByPlaceholder('Prompt').fill('What does the fox say?');
+  await page.getByText('Send').click();
+  await expect(page.getByText('The fox says various things, such as "ring-a-ding-ding," "bada bing-bing" and "higglety-pigglety pop')).toBeVisible();
+  expect(await page.getByTestId('session-item').count()).toBe(2);
+
+  // Check the sessions are listed in the correct order
+  expect(await page.getByTestId('session-item').first().textContent()).toContain("What does the fox say?");
+  expect(await page.getByTestId('session-item').first().textContent()).toContain("openhermes2.5-mistral:latest");
+  expect(await page.getByTestId('session-item').last().textContent()).toContain("Who would win in a fight between Emma Watson and Jessica Alba?");
+  expect(await page.getByTestId('session-item').last().textContent()).toContain("gemma:7b");
+});
+
 test.skip('handles API error when generating AI response', async ({ page }) => {
   // TODO: Implement the test
 });

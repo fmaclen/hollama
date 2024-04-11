@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte';
 	import { sessionsStore } from '$lib/store';
 	import { slide } from 'svelte/transition';
+	import type { Session } from '$lib/sessions';
 
 	let newSessionId: string;
 
@@ -13,6 +14,9 @@
 		// Example: `zbvxte`
 		newSessionId = Math.random().toString(36).substring(2, 8);
 	}
+
+	let sessionList: Session[] | null = null
+	$: if ($sessionsStore) sessionList = $sessionsStore.reverse();
 
 	onMount(createNewSession);
 </script>
@@ -29,7 +33,7 @@
 
 	<aside class="flex h-screen flex-col">
 		<div class="flex gap-x-2 p-6">
-			<Button variant="outline" size="icon" href="/">
+			<Button title="Settings" variant="outline" size="icon" href="/">
 				<Settings class="h-4 w-4" />
 			</Button>
 			<Button
@@ -45,9 +49,10 @@
 		<Separator />
 
 		<div class="flex h-full flex-col py-3 overflow-y-auto">
-			{#if $sessionsStore}
-				{#each $sessionsStore as session}
+			{#if sessionList}
+				{#each sessionList as session}
 					<a
+						data-testid="session-item"
 						href={`/${session.id}`}
 						class="
 							flex
