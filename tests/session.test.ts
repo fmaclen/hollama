@@ -1,20 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_API_TAGS_RESPONSE, MOCK_COMPLETION_RESPONSE_1, MOCK_COMPLETION_RESPONSE_2 } from './utils';
-import type { OllamaCompletionResponse } from '$lib/ollama';
+import { MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
-  // Enable request interception and mock the API response
-  await page.route('**/api/tags', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(MOCK_API_TAGS_RESPONSE)
-    });
-  });
+  await mockTagsResponse(page);
 });
 
 test('creates new session and chats', async ({ page }) => {
-  const modelTrigger = page.locator('button[data-melt-select-trigger]');
   const sessionIdLocator = page.getByTestId('session-id');
   const modelNameLocator = page.getByTestId('model-name');
   const newSessionButton = page.getByText('New session');
@@ -23,8 +14,7 @@ test('creates new session and chats', async ({ page }) => {
   const articleLocator = page.locator('article');
 
   await page.goto('/');
-  await modelTrigger.click();
-  await page.click('div[role="option"]:has-text("gemma:7b")');
+  await chooseModelFromSettings(page, 'gemma:7b');
   await expect(sessionIdLocator).not.toBeVisible();
   await expect(modelNameLocator).not.toBeVisible();
 
@@ -42,14 +32,7 @@ test('creates new session and chats', async ({ page }) => {
   await expect(sendButton).toBeEnabled();
   await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).not.toBeVisible();
 
-  await page.route('**/generate', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(MOCK_COMPLETION_RESPONSE_1)
-    });
-  });
-
+  await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
   await sendButton.click();
   await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).toBeVisible();
 
@@ -57,14 +40,7 @@ test('creates new session and chats', async ({ page }) => {
   await expect(page.locator('article', { hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask' })).not.toBeVisible();
   await expect(page.locator('article', { hasText: "I understand, it's okay" })).not.toBeVisible();
 
-  await page.route('**/generate', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(MOCK_COMPLETION_RESPONSE_2)
-    });
-  });
-
+  await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_2);
   await page.keyboard.press('Enter');
   await expect(page.locator('article', { hasText: "I understand, it's okay" })).toBeVisible();
   await expect(page.locator('article', { hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask' })).toBeVisible();
@@ -94,6 +70,47 @@ test('generates a random session id', async ({ page }) => {
   }
 
   expect(new Set(sessionIds).size).toBe(3);
+});
+
+test('can navigate older sessions from sidebar', async ({ page }) => {
+  await page.goto('/');
+  await chooseModelFromSettings(page, 'gemma:7b');
+  await expect(page.getByText('No sessions in history')).toBeVisible();
+  await expect(page.locator('aside', { hasText: 'Who would win in a fight between Emma Watson and Jessica Alba?' })).not.toBeVisible();
+
+  await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+  await page.getByText('New session').click();
+  await page.getByPlaceholder('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+  await page.getByText('Send').click();
+  await page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.").isVisible();
+  await expect(page.getByText('No sessions in history')).not.toBeVisible();
+  expect(await page.getByTestId('session-item').textContent()).toContain("Who would win in a fight between Emma Watson and Jessica Alba?");
+  expect(await page.getByTestId('session-item').textContent()).toContain("gemma:7b");
+  expect(await page.getByTestId('session-item').count()).toBe(1);
+
+  // Leave the conversation by visiting the settings page
+  await page.getByTitle('Settings').click();
+  await expect(page.getByText('Who would win in a fight between Emma Watson and Jessica Alba?')).toBeVisible();
+  await expect(page.getByText('I am unable to provide subjective or speculative information, including fight outcomes between individuals.')).not.toBeVisible();
+
+  // Navigate back to the conversation
+  await page.getByTestId('session-item').click();
+  await expect(page.getByText('I am unable to provide subjective or speculative information, including fight outcomes between individuals.')).toBeVisible();
+
+  // Create a new session
+  await mockCompletionResponse(page, MOCK_SESSION_2_RESPONSE_1);
+  await chooseModelFromSettings(page, 'openhermes2.5-mistral:latest');
+  await page.getByText('New session').click();
+  await page.getByPlaceholder('Prompt').fill('What does the fox say?');
+  await page.getByText('Send').click();
+  await expect(page.getByText('The fox says various things, such as "ring-a-ding-ding," "bada bing-bing" and "higglety-pigglety pop')).toBeVisible();
+  expect(await page.getByTestId('session-item').count()).toBe(2);
+
+  // Check the sessions are listed in the correct order
+  expect(await page.getByTestId('session-item').first().textContent()).toContain("What does the fox say?");
+  expect(await page.getByTestId('session-item').first().textContent()).toContain("openhermes2.5-mistral:latest");
+  expect(await page.getByTestId('session-item').last().textContent()).toContain("Who would win in a fight between Emma Watson and Jessica Alba?");
+  expect(await page.getByTestId('session-item').last().textContent()).toContain("gemma:7b");
 });
 
 test.skip('handles API error when generating AI response', async ({ page }) => {

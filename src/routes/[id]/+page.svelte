@@ -109,7 +109,7 @@
 
 	<Resizable.PaneGroup direction="horizontal">
 		<Resizable.Pane defaultSize={40} minSize={30}>
-			<div class="flex h-full flex-col gap-y-6 bg-gray-100 p-6">
+			<div class="flex h-full flex-col gap-y-6 bg-accent p-6">
 				<Textarea
 					placeholder="Prompt"
 					class="h-full resize-none"
@@ -122,7 +122,7 @@
 		<Resizable.Handle />
 		<Resizable.Pane defaultSize={40} minSize={30}>
 			<div
-				class="h-full flex flex-col gap-y-4 overflow-y-auto bg-gray-100 p-6 text-neutral-800"
+				class="h-full flex flex-col gap-y-4 overflow-y-auto bg-accent p-6 text-current"
 				bind:this={messageWindow}
 			>
 				{#each session.messages as message, i}
