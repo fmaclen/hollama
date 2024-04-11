@@ -2,6 +2,16 @@
 	import '../app.pcss';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import { onMount } from 'svelte';
+
+	let newSessionId: string;
+
+	function createNewSession() {
+		// Example: `zbvxte`
+		newSessionId = Math.random().toString(36).substring(2, 8);
+	}
+
+	onMount(createNewSession);
 </script>
 
 <div class="grid h-screen w-screen grid-cols-[240px,max-content,1fr] text-current">
@@ -12,7 +22,12 @@
 		</a>
 		<Separator />
 		<div class="p-6">
-			<Button class="w-full" variant="outline" href={`/${Math.random().toString(36).substring(2, 8)}`}>
+			<Button
+				class="w-full"
+				variant="outline"
+				href={`/${newSessionId}`}
+				on:click={() => createNewSession()}
+			>
 				New session
 			</Button>
 		</div>

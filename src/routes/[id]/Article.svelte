@@ -8,7 +8,7 @@
 </script>
 
 <article class="grid grid-cols-[max-content_auto] gap-x-6">
-	<p class="
+	<p data-testid="session-role" class="
 		text-xs
 		text-neutral-900
 		text-center

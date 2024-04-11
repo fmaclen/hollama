@@ -4,7 +4,7 @@
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 
-	import { ollamaGenerate } from '$lib/ollama';
+	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
 	import type { PageData } from './$types';
 	import Article from './Article.svelte';
@@ -77,7 +77,7 @@
 
 					const jsonLines = value.split('\n').filter((line) => line);
 					for (const line of jsonLines) {
-						const { response, context } = JSON.parse(line);
+						const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
 						completion += response;
 						session.context = context;
 					}
@@ -99,10 +99,10 @@
 
 <div class="h-screen w-full flex flex-col">
 	<div class="space-y-1 px-6 py-4">
-		<p class="text-sm leading-none">
+		<p data-testid="session-id" class="text-sm leading-none">
 			Session <a class={_a} href={`/${session.id}`}>#{session.id}</a>
 		</p>
-		<p class="text-sm text-muted-foreground">{session.model}</p>
+		<p data-testid="model-name" class="text-sm text-muted-foreground">{session.model}</p>
 	</div>
 
 	<Separator />
