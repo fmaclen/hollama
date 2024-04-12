@@ -6,13 +6,12 @@
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import { Trash2 } from 'lucide-svelte';
-
+	import Article from './Article.svelte';
+	
+	import { sessionsStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
 	import type { PageData } from './$types';
-	import Article from './Article.svelte';
-
-	import { sessionsStore } from '$lib/store';
 
 	export let data: PageData;
 
