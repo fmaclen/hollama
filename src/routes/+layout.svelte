@@ -47,7 +47,7 @@
 		<Separator />
 
 		<div class="flex h-full flex-col overflow-y-auto py-3">
-			{#if $sessionsStore}
+			{#if $sessionsStore && $sessionsStore.length > 0}
 				<!-- Using slice() to reverse $sessionsStore without affecting the original array -->
 				{#each $sessionsStore.slice().reverse() as session (session.id)}
 					<a
@@ -74,7 +74,7 @@
 					</a>
 				{/each}
 			{:else}
-				<p class="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
+				<p transition:slide class="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
 					No sessions in history
 				</p>
 			{/if}
