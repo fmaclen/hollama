@@ -1,13 +1,17 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+
 	import * as Resizable from '$lib/components/ui/resizable';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-
+	import { Trash2 } from 'lucide-svelte';
+	import Article from './Article.svelte';
+	
+	import { sessionsStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
 	import type { PageData } from './$types';
-	import Article from './Article.svelte';
 
 	export let data: PageData;
 
@@ -24,10 +28,9 @@
 	}
 
 	function handleError(error: any) {
-		// console.error(error);
 		const message: Message = {
 			role: 'system',
-			content: typeof(error) === 'string' ? error : 'Sorry, something went wrong.'
+			content: typeof error === 'string' ? error : 'Sorry, something went wrong.'
 		};
 		session.messages = [...session.messages, message];
 	}
@@ -37,6 +40,17 @@
 			event.preventDefault();
 			handleSubmit();
 		}
+	}
+
+	function deleteSession() {
+		const confirmed = confirm('Are you sure you want to delete this session?');
+		if (!confirmed) return;
+
+		if ($sessionsStore) {
+			const updatedSessions = $sessionsStore.filter((s) => s.id !== session.id);
+			$sessionsStore = updatedSessions;
+		}
+		goto('/');
 	}
 
 	async function handleCompletionDone(completion: string, context: number[]) {
@@ -97,12 +111,17 @@
 	`;
 </script>
 
-<div class="h-screen w-full flex flex-col">
-	<div class="space-y-1 px-6 py-4">
-		<p data-testid="session-id" class="text-sm leading-none">
-			Session <a class={_a} href={`/${session.id}`}>#{session.id}</a>
-		</p>
-		<p data-testid="model-name" class="text-sm text-muted-foreground">{session.model}</p>
+<div class="flex h-screen w-full flex-col">
+	<div class="flex items-center justify-between px-6 py-4">
+		<div class="space-y-1">
+			<p data-testid="session-id" class="text-sm font-bold leading-none">
+				Session <a class={_a} href={`/${session.id}`}>#{session.id}</a><br />
+			</p>
+			<p data-testid="model-name" class="text-sm text-muted-foreground">{session.model}</p>
+		</div>
+		<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
+			<Trash2 class="h-4 w-4" />
+		</Button>
 	</div>
 
 	<Separator />
@@ -122,7 +141,7 @@
 		<Resizable.Handle />
 		<Resizable.Pane defaultSize={40} minSize={30}>
 			<div
-				class="h-full flex flex-col gap-y-4 overflow-y-auto bg-accent p-6 text-current"
+				class="flex h-full flex-col gap-y-4 overflow-y-auto bg-accent p-6 text-current"
 				bind:this={messageWindow}
 			>
 				{#each session.messages as message, i}

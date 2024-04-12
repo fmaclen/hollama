@@ -113,6 +113,25 @@ test('can navigate older sessions from sidebar', async ({ page }) => {
   expect(await page.getByTestId('session-item').last().textContent()).toContain("gemma:7b");
 });
 
+test('deletes a session from the sidebar', async ({ page }) => {
+  await page.goto('/');
+  await chooseModelFromSettings(page, 'gemma:7b');
+  await expect(page.getByText('No sessions in history')).toBeVisible();
+
+  await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+  await page.getByText('New session').click();
+  await page.getByPlaceholder('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+  await page.getByText('Send').click();
+  await page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.").isVisible();
+  await expect(page.getByText('No sessions in history')).not.toBeVisible();
+  expect(await page.getByTestId('session-item').count()).toBe(1);
+
+  page.on('dialog', dialog => dialog.accept("Are you sure you want to delete this session?"));
+  await page.getByTitle('Delete session').click();
+  await expect(page.getByText('No sessions in history')).toBeVisible();
+  expect(await page.getByTestId('session-item').count()).toBe(0);
+});
+
 test.skip('handles API error when generating AI response', async ({ page }) => {
   // TODO: Implement the test
 });
