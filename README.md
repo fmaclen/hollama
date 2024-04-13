@@ -8,8 +8,10 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 
 ### Features
 
+- Large prompt fields
 - Streams responses
 - Saves sessions/context in your browser's `localStorage`
+- Markdown parsing
 
 ## Developing
 
