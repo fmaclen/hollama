@@ -2,8 +2,8 @@
 
 A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) servers.
 
+> ![image](https://github.com/fmaclen/hollama/assets/1434675/da94d369-3642-45b2-8843-e4ffe648ffcf)
 > ![localhost_5173_iavqp6 (1)](https://github.com/fmaclen/hollama/assets/1434675/8ad2e4d0-94e7-4d9e-ac62-69a05b00a77f)
-> ![localhost_5173_iavqp6](https://github.com/fmaclen/hollama/assets/1434675/a4855f22-e927-4926-ba77-676dd6242bd6)
 
 
 ### Features
