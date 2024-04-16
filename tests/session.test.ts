@@ -146,13 +146,13 @@ test('copies the raw text of a message to clipboard', async ({ page }) => {
   // HACK: Wait for the clipboard to be updated
   setTimeout(async () => {
     expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("Who would win in a fight between Emma Watson and Jessica Alba?");
-  }, 150);
+  }, 1000);
   
   await page.getByTitle('Copy').last().click();
   // HACK: Wait for the clipboard to be updated
   setTimeout(async () => {
     expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("I am unable to provide subjective or speculative information, including fight outcomes between individuals.");
-  }, 150);
+  }, 1000);
 });
 
 test.skip('handles API error when generating AI response', async ({ page }) => {
