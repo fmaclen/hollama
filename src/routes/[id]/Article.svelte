@@ -1,24 +1,44 @@
 <script lang="ts">
 	import MarkdownIt from 'markdown-it';
 	import { type Message } from '$lib/sessions';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { Files } from 'lucide-svelte';
 
 	const md = new MarkdownIt();
 
 	export let message: Message;
+
+	function copyMessage() {
+		navigator.clipboard.writeText(message.content);
+	}
 </script>
 
-<article class="grid grid-cols-[max-content_auto] gap-x-6">
-	<p data-testid="session-role" class="
-		text-xs
-		text-neutral-900
-		text-center
-		font-bold
-		leading-7
-		uppercase
-		w-[6ch]
-	">
-		{message.role === 'user' ? 'You' : message.role}
-	</p>
+<article class="flex flex-col gap-y-3 max-w-[60ch] mx-auto">
+	<nav class="grid grid-cols-[max-content_auto_max-content] items-center">
+		<p data-testid="session-role" class="
+			text-xs
+			text-muted-foreground
+			text-center
+			font-bold
+			leading-7
+			uppercase
+			mr-3
+		">
+			{message.role === 'user' ? 'You' : message.role}
+		</p>
+		<Separator />
+		<Button
+			class="opacity-25 hover:opacity-100"
+			title="Delete session"
+			variant="ghost"
+			size="icon"
+			on:click={copyMessage}
+		>
+			<Files class="h-4 w-4" />
+		</Button>
+	</nav>
+
 	<div class="
 		overflow-x-auto text-md
 
