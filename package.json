@@ -45,7 +45,7 @@
 		"bits-ui": "^0.21.2",
 		"clsx": "^2.1.0",
 		"lucide-svelte": "^0.365.0",
-		"paneforge": "^0.0.3",
+		"paneforge": "^0.0.4",
 		"tailwind-merge": "^2.2.2",
 		"tailwind-variants": "^0.2.1"
 	}

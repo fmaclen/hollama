@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
@@ -122,7 +122,7 @@ test('deletes a session from the sidebar', async ({ page }) => {
   await page.getByText('New session').click();
   await page.getByPlaceholder('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
   await page.getByText('Send').click();
-  await page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.").isVisible();
+  await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
   await expect(page.getByText('No sessions in history')).not.toBeVisible();
   expect(await page.getByTestId('session-item').count()).toBe(1);
 
@@ -130,6 +130,29 @@ test('deletes a session from the sidebar', async ({ page }) => {
   await page.getByTitle('Delete session').click();
   await expect(page.getByText('No sessions in history')).toBeVisible();
   expect(await page.getByTestId('session-item').count()).toBe(0);
+});
+
+test('copies the raw text of a message to clipboard', async ({ page }) => {
+  await page.goto('/');
+  await chooseModelFromSettings(page, 'gemma:7b');
+  await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+  await page.getByText('New session').click();
+  await page.getByPlaceholder('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+  await page.getByText('Send').click();
+  await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("");
+
+  await page.getByTitle('Copy').first().click();
+  // HACK: Wait for the clipboard to be updated
+  setTimeout(async () => {
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("Who would win in a fight between Emma Watson and Jessica Alba?");
+  }, 250);
+  
+  await page.getByTitle('Copy').last().click();
+  // HACK: Wait for the clipboard to be updated
+  setTimeout(async () => {
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("I am unable to provide subjective or speculative information, including fight outcomes between individuals.");
+  }, 250);
 });
 
 test.skip('handles API error when generating AI response', async ({ page }) => {

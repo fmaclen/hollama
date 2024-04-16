@@ -145,19 +145,11 @@
 				bind:this={messageWindow}
 			>
 				{#each session.messages as message, i}
-					{@const isFirst = i === 0}
-					{@const isLast = i === session.messages.length - 1}
-					<Separator class={isFirst ? 'opacity-0' : ''} />
 					<Article {message} />
-					{#if isLast && !isLastMessageFromUser}
-						<Separator class="opacity-0" />
-					{/if}
 				{/each}
 
 				{#if isLastMessageFromUser}
-					<Separator />
 					<Article message={{ role: 'ai', content: completion || '...' }} />
-					<Separator class="opacity-0" />
 				{/if}
 			</div>
 		</Resizable.Pane>
