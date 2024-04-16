@@ -128,6 +128,18 @@
 
 	<Resizable.PaneGroup direction="horizontal">
 		<Resizable.Pane defaultSize={40} minSize={30}>
+			<div class="flex h-full flex-col gap-y-6 bg-accent p-6">
+				<Textarea
+					placeholder="Prompt"
+					class="h-full resize-none"
+					bind:value={prompt}
+					on:keydown={handleKeyDown}
+				/>
+				<Button on:click={handleSubmit} disabled={!prompt}>Send</Button>
+			</div>
+		</Resizable.Pane>
+		<Resizable.Handle />
+		<Resizable.Pane defaultSize={40} minSize={30}>
 			<div
 				class="flex h-full flex-col gap-y-4 overflow-y-auto bg-accent p-6 text-current"
 				bind:this={messageWindow}
@@ -139,18 +151,6 @@
 				{#if isLastMessageFromUser}
 					<Article message={{ role: 'ai', content: completion || '...' }} />
 				{/if}
-			</div>
-		</Resizable.Pane>
-		<Resizable.Handle />
-		<Resizable.Pane defaultSize={40} minSize={30}>
-			<div class="flex h-full flex-col gap-y-6 bg-accent p-6">
-				<Textarea
-					placeholder="Prompt"
-					class="h-full resize-none"
-					bind:value={prompt}
-					on:keydown={handleKeyDown}
-				/>
-				<Button on:click={handleSubmit} disabled={!prompt}>Send</Button>
 			</div>
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
