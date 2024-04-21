@@ -99,23 +99,19 @@
 		}
 
 		:global(h1) {
-			@apply text-4xl font-bold;
-		}
-
-		:global(h2) {
 			@apply text-3xl font-bold;
 		}
 
-		:global(h3) {
+		:global(h2) {
 			@apply text-2xl font-bold;
 		}
 
-		:global(h4) {
+		:global(h3) {
 			@apply text-xl font-bold;
 		}
 
-		:global(h3),
 		:global(h4),
+		:global(h5),
 		:global(h5) {
 			@apply text-lg font-bold;
 		}
