@@ -35,6 +35,7 @@
 				<Settings class="h-4 w-4" />
 			</Button>
 			<Button
+				data-testid="new-session"
 				class="w-full"
 				variant="outline"
 				href={`/${newSessionId}`}

@@ -8,15 +8,17 @@ test.beforeEach(async ({ page }) => {
 test('creates new session and chats', async ({ page }) => {
   const sessionIdLocator = page.getByTestId('session-id');
   const modelNameLocator = page.getByTestId('model-name');
-  const newSessionButton = page.getByText('New session');
+  const newSessionButton = page.getByTestId('new-session');
   const promptTextarea = page.getByPlaceholder('Prompt');
   const sendButton = page.getByText('Send');
   const articleLocator = page.locator('article');
+  const newPromptHelp = page.getByText('Write a prompt to start a new session');
 
   await page.goto('/');
   await chooseModelFromSettings(page, 'gemma:7b');
   await expect(sessionIdLocator).not.toBeVisible();
   await expect(modelNameLocator).not.toBeVisible();
+  await expect(newPromptHelp).not.toBeVisible();
 
   await newSessionButton.click();
   await expect(sessionIdLocator).toBeVisible();
@@ -27,6 +29,7 @@ test('creates new session and chats', async ({ page }) => {
   await expect(promptTextarea).toHaveValue('');
   await expect(sendButton).toBeVisible();
   await expect(sendButton).toBeDisabled();
+  await expect(newPromptHelp).toBeVisible();
 
   await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
   await expect(sendButton).toBeEnabled();
@@ -35,6 +38,7 @@ test('creates new session and chats', async ({ page }) => {
   await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
   await sendButton.click();
   await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).toBeVisible();
+  await expect(newPromptHelp).not.toBeVisible();
 
   await promptTextarea.fill("I understand, it's okay");
   await expect(page.locator('article', { hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask' })).not.toBeVisible();
