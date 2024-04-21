@@ -7,11 +7,12 @@
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import { Trash2 } from 'lucide-svelte';
 	import Article from './Article.svelte';
-	
+
 	import { sessionsStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
 	import type { PageData } from './$types';
+	import { slide } from 'svelte/transition';
 
 	export let data: PageData;
 
@@ -63,7 +64,7 @@
 	async function handleSubmit() {
 		if (!prompt) return;
 
-		let message: Message = { role: 'user', content: prompt };
+		const message: Message = { role: 'user', content: prompt };
 		prompt = '';
 		completion = '';
 		session.messages = [...session.messages, message];
@@ -114,7 +115,7 @@
 <div class="flex h-screen w-full flex-col">
 	<div class="flex items-center justify-between px-6 py-4">
 		<div class="space-y-1">
-			<p data-testid="session-id" class="text-foreground text-sm font-bold leading-none">
+			<p data-testid="session-id" class="text-sm font-bold leading-none text-foreground">
 				Session <a class={_a} href={`/${session.id}`}>#{session.id}</a><br />
 			</p>
 			<p data-testid="model-name" class="text-sm text-muted-foreground">{session.model}</p>
@@ -127,6 +128,30 @@
 	<Separator />
 
 	<Resizable.PaneGroup direction="horizontal">
+		<Resizable.Pane defaultSize={60} minSize={30}>
+			<div
+				class="flex h-full flex-col gap-y-4 overflow-y-auto bg-accent pt-6 pb-12 px-6 text-current"
+				bind:this={messageWindow}
+			>
+				{#if session.messages.length === 0}
+					<div
+						class="align-center flex h-full w-full items-center justify-center text-muted-foreground"
+						transition:slide
+					>
+						Write a prompt to start a new session
+					</div>
+				{/if}
+
+				{#each session.messages as message, i}
+					<Article {message} />
+				{/each}
+
+				{#if isLastMessageFromUser}
+					<Article message={{ role: 'ai', content: completion || '...' }} />
+				{/if}
+			</div>
+		</Resizable.Pane>
+		<Resizable.Handle />
 		<Resizable.Pane defaultSize={40} minSize={30}>
 			<div class="flex h-full flex-col gap-y-6 bg-accent p-6">
 				<Textarea
@@ -136,21 +161,6 @@
 					on:keydown={handleKeyDown}
 				/>
 				<Button on:click={handleSubmit} disabled={!prompt}>Send</Button>
-			</div>
-		</Resizable.Pane>
-		<Resizable.Handle />
-		<Resizable.Pane defaultSize={40} minSize={30}>
-			<div
-				class="flex h-full flex-col gap-y-4 overflow-y-auto bg-accent p-6 text-current"
-				bind:this={messageWindow}
-			>
-				{#each session.messages as message, i}
-					<Article {message} />
-				{/each}
-
-				{#if isLastMessageFromUser}
-					<Article message={{ role: 'ai', content: completion || '...' }} />
-				{/if}
 			</div>
 		</Resizable.Pane>
 	</Resizable.PaneGroup>

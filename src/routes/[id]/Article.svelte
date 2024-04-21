@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { slide } from 'svelte/transition';
 	import MarkdownIt from 'markdown-it';
 	import hljs from 'highlight.js';
 	import 'highlight.js/styles/github.css';
@@ -22,19 +23,20 @@
 	});
 
 	export let message: Message;
+	const isUserRole = message.role === 'user';
 
 	function copyMessage() {
 		navigator.clipboard.writeText(message.content);
 	}
 </script>
 
-<article class="mx-auto flex w-full max-w-[70ch] flex-col gap-y-3">
+<article class="mx-auto flex w-full max-w-[70ch] flex-col gap-y-3" in:slide={{duration: isUserRole ? 400 : 0 }}>
 	<nav class="grid grid-cols-[max-content_auto_max-content] items-center">
 		<p
 			data-testid="session-role"
 			class="mr-3 text-center text-xs font-bold uppercase leading-7 text-muted-foreground"
 		>
-			{message.role === 'user' ? 'You' : message.role}
+			{isUserRole ? 'You' : message.role}
 		</p>
 		<Separator />
 		<Button
@@ -48,7 +50,7 @@
 		</Button>
 	</nav>
 
-	<div id="markdown" class="text-md mx-auto w-full overflow-x-auto px-[3ch]">
+	<div id="markdown" class="text-md mx-auto w-full overflow-x-auto px-[4ch]">
 		{#if message.content}
 			{@html md.render(message.content)}
 		{/if}
