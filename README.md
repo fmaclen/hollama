@@ -2,16 +2,17 @@
 
 A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) servers.
 
-> ![image](https://github.com/fmaclen/hollama/assets/1434675/da94d369-3642-45b2-8843-e4ffe648ffcf)
+> ![localhost_5173_5ggycv](https://github.com/fmaclen/hollama/assets/1434675/e75b5f6b-5bb7-4912-9583-36be5d6ac54b)
 > ![localhost_5173_iavqp6 (1)](https://github.com/fmaclen/hollama/assets/1434675/8ad2e4d0-94e7-4d9e-ac62-69a05b00a77f)
 
 
 ### Features
 
 - Large prompt fields
-- Streams responses
+- Streams completions
+- Copy completions as raw text
+- Markdown parsing w/syntax highlighting
 - Saves sessions/context in your browser's `localStorage`
-- Markdown parsing
 
 ## Developing
 
