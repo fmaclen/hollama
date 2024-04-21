@@ -15,7 +15,7 @@
 	}
 </script>
 
-<article class="flex flex-col gap-y-3">
+<article class="flex flex-col gap-y-3 max-w-[70ch] w-full mx-auto">
 	<nav class="grid grid-cols-[max-content_auto_max-content] items-center">
 		<p
 			data-testid="session-role"
@@ -48,7 +48,6 @@
 		px-[3ch]
 		mx-auto
 		w-full
-		max-w-[60ch]
 		text-md overflow-x-auto
 
 		[&>p:not(:first-child,:last-child)]:my-4
