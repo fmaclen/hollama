@@ -8,7 +8,6 @@
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 
 	import { sessionsStore } from '$lib/store';
-	import type { Session } from '$lib/sessions';
 
 	let newSessionId: string;
 
