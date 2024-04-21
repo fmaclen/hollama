@@ -9,17 +9,17 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 
 	const md: MarkdownIt = new MarkdownIt({
-	highlight: function (str, lang) {
-		if (lang && hljs.getLanguage(lang)) {
-			try {
-				return `<pre><code class="hljs">${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`;
-			} catch (__) {}
-		}
+		highlight: function (str, lang) {
+			if (lang && hljs.getLanguage(lang)) {
+				try {
+					return `<pre><code class="hljs">${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`;
+				} catch (__) {}
+			}
 
-		return `<pre><code class="hljs">${md.utils.escapeHtml(str)}</code></pre>
+			return `<pre><code class="hljs">${md.utils.escapeHtml(str)}</code></pre>
 		`;
-	}
-});
+		}
+	});
 
 	export let message: Message;
 
@@ -32,15 +32,7 @@
 	<nav class="grid grid-cols-[max-content_auto_max-content] items-center">
 		<p
 			data-testid="session-role"
-			class="
-			mr-3
-			text-center
-			text-xs
-			font-bold
-			uppercase
-			leading-7
-			text-muted-foreground
-		"
+			class="mr-3 text-center text-xs font-bold uppercase leading-7 text-muted-foreground"
 		>
 			{message.role === 'user' ? 'You' : message.role}
 		</p>
@@ -78,11 +70,12 @@
 		}
 
 		:global(pre > code) {
-			@apply rounded-md p-4 text-sm opacity-75;
+			@apply rounded-md p-4 text-sm;
 		}
 
+		:global(li > code),
 		:global(p > code) {
-			@apply rounded-md p-1 text-sm opacity-75;
+			@apply rounded-md bg-code p-1 text-sm opacity-75;
 		}
 
 		:global(ol),
