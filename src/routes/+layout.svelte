@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
+	import { page } from '$app/stores';
 
 	import '../app.pcss';
 	import Settings from 'lucide-svelte/icons/settings';
@@ -57,7 +58,7 @@
 							flex-col
 							px-6
 							py-3
-							hover:bg-accent
+							{$page.url.pathname.includes(session.id) ? 'bg-accent' : 'hover:bg-accent'}
 						"
 						aria-label={`Session ${session.id}`}
 						transition:slide

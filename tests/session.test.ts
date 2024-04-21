@@ -111,6 +111,12 @@ test('can navigate older sessions from sidebar', async ({ page }) => {
   expect(await page.getByTestId('session-item').first().textContent()).toContain("openhermes2.5-mistral:latest");
   expect(await page.getByTestId('session-item').last().textContent()).toContain("Who would win in a fight between Emma Watson and Jessica Alba?");
   expect(await page.getByTestId('session-item').last().textContent()).toContain("gemma:7b");
+
+  // Check the current session is highlighted in the sidebar
+  await expect(page.getByTestId('session-item').first()).not.toHaveClass(/hover:bg-accent/);
+  await expect(page.getByTestId('session-item').first()).toHaveClass(/ bg-accent/);
+  await expect(page.getByTestId('session-item').last()).not.toHaveClass(/ bg-accent/);
+  await expect(page.getByTestId('session-item').last()).toHaveClass(/hover:bg-accent/);
 });
 
 test('deletes a session from the sidebar', async ({ page }) => {
