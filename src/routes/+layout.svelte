@@ -19,7 +19,7 @@
 </script>
 
 <div
-	class="grid h-screen w-screen grid-cols-[max-content,max-content,280px,max-content,1fr] text-current"
+	class="grid h-screen w-screen grid-cols-[max-content,max-content,280px,max-content,1fr] text-current bg-body"
 >
 	<a href="/" class="flex flex-col items-center justify-between py-6 hover:bg-accent">
 		<img src="/favicon.png" alt="Hollama logo" width="48" height="48" />
@@ -62,7 +62,7 @@
 						aria-label={`Session ${session.id}`}
 						transition:slide
 					>
-						<p class="max-w-full truncate whitespace-nowrap text-sm font-bold">
+						<p class="max-w-full truncate whitespace-nowrap text-sm font-bold text-foreground">
 							{session.messages[0].content}
 						</p>
 						<p

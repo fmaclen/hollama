@@ -15,7 +15,7 @@
 	}
 </script>
 
-<article class="flex flex-col gap-y-3 max-w-[70ch] w-full mx-auto">
+<article class="mx-auto flex w-full max-w-[70ch] flex-col gap-y-3">
 	<nav class="grid grid-cols-[max-content_auto_max-content] items-center">
 		<p
 			data-testid="session-role"
@@ -43,41 +43,68 @@
 		</Button>
 	</nav>
 
-	<div
-		class="
-		px-[3ch]
-		mx-auto
-		w-full
-		text-md overflow-x-auto
-
-		[&>p:not(:first-child,:last-child)]:my-4
-		[&>p>code]:my-4
-		[&>p>code]:rounded-md
-		[&>p>code]:bg-gray-300
-		[&>p>code]:p-1
-		[&>p>code]:text-sm
-		[&>p>code]:opacity-75
-		
-		[&>pre:not(:first-child,:last-child)>code]:my-4
-		[&>pre>code]:block
-		[&>pre>code]:overflow-y-auto
-		[&>pre>code]:rounded-md
-		[&>pre>code]:bg-gray-300
-		[&>pre>code]:p-4
-		[&>pre>code]:text-sm
-		[&>pre>code]:opacity-75
-		
-		[&>ul]:flex
-		[&>ul]:list-outside
-		[&>ul]:list-disc
-		[&>ul]:flex-col
-		[&>ul]:gap-y-1
-		[&>ul]:my-4
-		[&>ul]:mx-8
-	"
-	>
+	<div id="markdown" class="text-md mx-auto w-full overflow-x-auto px-[3ch]">
 		{#if message.content}
 			{@html md.render(message.content)}
 		{/if}
 	</div>
 </article>
+
+<style lang="scss">
+	#markdown {
+		:global(> *) {
+			@apply text-foreground;
+		}
+
+		:global(> *:not(:first-child)) {
+			@apply mt-4;
+		}
+
+		:global(> *:not(:last-child)) {
+			@apply mb-4;
+		}
+
+		:global(pre) {
+			@apply rounded-md bg-code p-4 text-sm opacity-75;
+		}
+
+		:global(p > code) {
+			@apply rounded-md bg-code p-1 text-sm opacity-75;
+		}
+
+		:global(ol),
+		:global(ul) {
+			@apply flex list-outside flex-col gap-y-1 mx-8;
+		}
+
+		:global(ol) {
+			@apply list-decimal;
+		}
+
+		:global(ul) {
+			@apply list-disc;
+		}
+
+		:global(h1) {
+			@apply font-bold text-4xl;
+		}
+
+		:global(h2) {
+			@apply font-bold text-3xl;
+		}
+
+		:global(h3) {
+			@apply font-bold text-2xl;
+		}
+
+		:global(h4) {
+			@apply font-bold text-xl;
+		}
+
+		:global(h3),
+		:global(h4),
+		:global(h5) {
+			@apply font-bold text-lg;
+		}
+	}
+</style>
