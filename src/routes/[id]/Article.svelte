@@ -1,12 +1,25 @@
 <script lang="ts">
 	import MarkdownIt from 'markdown-it';
+	import hljs from 'highlight.js';
+	import 'highlight.js/styles/github.css';
 	import { Files } from 'lucide-svelte';
 
 	import { type Message } from '$lib/sessions';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 
-	const md = new MarkdownIt();
+	const md: MarkdownIt = new MarkdownIt({
+	highlight: function (str, lang) {
+		if (lang && hljs.getLanguage(lang)) {
+			try {
+				return `<pre><code class="hljs">${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`;
+			} catch (__) {}
+		}
+
+		return `<pre><code class="hljs">${md.utils.escapeHtml(str)}</code></pre>
+		`;
+	}
+});
 
 	export let message: Message;
 
@@ -64,17 +77,17 @@
 			@apply mb-4;
 		}
 
-		:global(pre) {
-			@apply rounded-md bg-code p-4 text-sm opacity-75;
+		:global(pre > code) {
+			@apply rounded-md p-4 text-sm opacity-75;
 		}
 
 		:global(p > code) {
-			@apply rounded-md bg-code p-1 text-sm opacity-75;
+			@apply rounded-md p-1 text-sm opacity-75;
 		}
 
 		:global(ol),
 		:global(ul) {
-			@apply flex list-outside flex-col gap-y-1 mx-8;
+			@apply mx-8 flex list-outside flex-col gap-y-1;
 		}
 
 		:global(ol) {
@@ -86,25 +99,25 @@
 		}
 
 		:global(h1) {
-			@apply font-bold text-4xl;
+			@apply text-4xl font-bold;
 		}
 
 		:global(h2) {
-			@apply font-bold text-3xl;
+			@apply text-3xl font-bold;
 		}
 
 		:global(h3) {
-			@apply font-bold text-2xl;
+			@apply text-2xl font-bold;
 		}
 
 		:global(h4) {
-			@apply font-bold text-xl;
+			@apply text-xl font-bold;
 		}
 
 		:global(h3),
 		:global(h4),
 		:global(h5) {
-			@apply font-bold text-lg;
+			@apply text-lg font-bold;
 		}
 	}
 </style>
