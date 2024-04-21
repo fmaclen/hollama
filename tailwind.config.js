@@ -47,18 +47,24 @@ const config = {
 				card: {
 					DEFAULT: "hsl(var(--card) / <alpha-value>)",
 					foreground: "hsl(var(--card-foreground) / <alpha-value>)"
-				}
-			},
-			borderRadius: {
-				lg: "var(--radius)",
-				md: "calc(var(--radius) - 2px)",
-				sm: "calc(var(--radius) - 4px)"
-			},
-			fontFamily: {
-				sans: [...fontFamily.sans]
+				},
+				body: {
+					DEFAULT: "hsl(var(--background) / <alpha-value>)"
+				},
+				code: {
+					DEFAULT: "hsl(var(--code) / <alpha-value>)"
+				},
 			}
+		},
+		borderRadius: {
+			lg: "var(--radius)",
+			md: "calc(var(--radius) - 2px)",
+			sm: "calc(var(--radius) - 4px)"
+		},
+		fontFamily: {
+			sans: [...fontFamily.sans]
 		}
-	},
+	}
 };
 
 export default config;

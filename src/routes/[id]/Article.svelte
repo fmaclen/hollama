@@ -1,12 +1,25 @@
 <script lang="ts">
 	import MarkdownIt from 'markdown-it';
+	import hljs from 'highlight.js';
+	import 'highlight.js/styles/github.css';
 	import { Files } from 'lucide-svelte';
 
 	import { type Message } from '$lib/sessions';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 
-	const md = new MarkdownIt();
+	const md: MarkdownIt = new MarkdownIt({
+		highlight: function (str, lang) {
+			if (lang && hljs.getLanguage(lang)) {
+				try {
+					return `<pre><code class="hljs">${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`;
+				} catch (__) {}
+			}
+
+			return `<pre><code class="hljs">${md.utils.escapeHtml(str)}</code></pre>
+		`;
+		}
+	});
 
 	export let message: Message;
 
@@ -15,19 +28,11 @@
 	}
 </script>
 
-<article class="flex flex-col gap-y-3">
+<article class="mx-auto flex w-full max-w-[70ch] flex-col gap-y-3">
 	<nav class="grid grid-cols-[max-content_auto_max-content] items-center">
 		<p
 			data-testid="session-role"
-			class="
-			mr-3
-			text-center
-			text-xs
-			font-bold
-			uppercase
-			leading-7
-			text-muted-foreground
-		"
+			class="mr-3 text-center text-xs font-bold uppercase leading-7 text-muted-foreground"
 		>
 			{message.role === 'user' ? 'You' : message.role}
 		</p>
@@ -43,42 +48,65 @@
 		</Button>
 	</nav>
 
-	<div
-		class="
-		px-[3ch]
-		mx-auto
-		w-full
-		max-w-[60ch]
-		text-md overflow-x-auto
-
-		[&>p:not(:first-child,:last-child)]:my-4
-		[&>p>code]:my-4
-		[&>p>code]:rounded-md
-		[&>p>code]:bg-gray-300
-		[&>p>code]:p-1
-		[&>p>code]:text-sm
-		[&>p>code]:opacity-75
-		
-		[&>pre:not(:first-child,:last-child)>code]:my-4
-		[&>pre>code]:block
-		[&>pre>code]:overflow-y-auto
-		[&>pre>code]:rounded-md
-		[&>pre>code]:bg-gray-300
-		[&>pre>code]:p-4
-		[&>pre>code]:text-sm
-		[&>pre>code]:opacity-75
-		
-		[&>ul]:flex
-		[&>ul]:list-outside
-		[&>ul]:list-disc
-		[&>ul]:flex-col
-		[&>ul]:gap-y-1
-		[&>ul]:my-4
-		[&>ul]:mx-8
-	"
-	>
+	<div id="markdown" class="text-md mx-auto w-full overflow-x-auto px-[3ch]">
 		{#if message.content}
 			{@html md.render(message.content)}
 		{/if}
 	</div>
 </article>
+
+<style lang="scss">
+	#markdown {
+		:global(> *) {
+			@apply text-foreground;
+		}
+
+		:global(> *:not(:first-child)) {
+			@apply mt-4;
+		}
+
+		:global(> *:not(:last-child)) {
+			@apply mb-4;
+		}
+
+		:global(pre > code) {
+			@apply rounded-md p-4 text-sm;
+		}
+
+		:global(li > code),
+		:global(p > code) {
+			@apply rounded-md bg-code p-1 text-sm opacity-75;
+		}
+
+		:global(ol),
+		:global(ul) {
+			@apply mx-8 flex list-outside flex-col gap-y-1;
+		}
+
+		:global(ol) {
+			@apply list-decimal;
+		}
+
+		:global(ul) {
+			@apply list-disc;
+		}
+
+		:global(h1) {
+			@apply text-3xl font-bold;
+		}
+
+		:global(h2) {
+			@apply text-2xl font-bold;
+		}
+
+		:global(h3) {
+			@apply text-xl font-bold;
+		}
+
+		:global(h4),
+		:global(h5),
+		:global(h5) {
+			@apply text-lg font-bold;
+		}
+	}
+</style>

@@ -114,7 +114,7 @@
 <div class="flex h-screen w-full flex-col">
 	<div class="flex items-center justify-between px-6 py-4">
 		<div class="space-y-1">
-			<p data-testid="session-id" class="text-sm font-bold leading-none">
+			<p data-testid="session-id" class="text-foreground text-sm font-bold leading-none">
 				Session <a class={_a} href={`/${session.id}`}>#{session.id}</a><br />
 			</p>
 			<p data-testid="model-name" class="text-sm text-muted-foreground">{session.model}</p>
