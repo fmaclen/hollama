@@ -1,7 +1,7 @@
 <script lang="ts">
 	let className: string | undefined | null = undefined;
 	export let href: string | undefined = undefined;
-	export let variant: Variant = 'default';
+	export let variant: 'positive' | 'warning';
 	export { className as class };
 </script>
 
