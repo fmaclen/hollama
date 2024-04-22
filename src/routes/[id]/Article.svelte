@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { slide } from 'svelte/transition';
 	import MarkdownIt from 'markdown-it';
 	import hljs from 'highlight.js';
 	import 'highlight.js/styles/github.css';
+	import { slide } from 'svelte/transition';
 	import { Files } from 'lucide-svelte';
 
 	import { type Message } from '$lib/sessions';
 	import Separator from '$lib/components/Separator.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import Button from '$lib/components/Button.svelte';
 
 	const md: MarkdownIt = new MarkdownIt({
 		highlight: function (str, lang) {
@@ -30,7 +30,10 @@
 	}
 </script>
 
-<article class="mx-auto flex w-full max-w-[70ch] flex-col gap-y-3" in:slide={{duration: isUserRole ? 400 : 0 }}>
+<article
+	class="mx-auto flex w-full max-w-[70ch] flex-col gap-y-3"
+	in:slide={{ duration: isUserRole ? 400 : 0 }}
+>
 	<nav class="grid grid-cols-[max-content_auto_max-content] items-center">
 		<p
 			data-testid="session-role"
@@ -39,13 +42,7 @@
 			{isUserRole ? 'You' : message.role}
 		</p>
 		<Separator />
-		<Button
-			class="opacity-25 hover:opacity-100"
-			title="Copy message"
-			variant="ghost"
-			size="icon"
-			on:click={copyMessage}
-		>
+		<Button title="Copy message" variant="icon" size="icon" on:click={copyMessage}>
 			<Files class="h-4 w-4" />
 		</Button>
 	</nav>
@@ -57,8 +54,8 @@
 	</div>
 </article>
 
-<style lang="postcss">
-	/* #markdown {
+<style lang="scss">
+	#markdown {
 		:global(> *) {
 			@apply text-foreground;
 		}
@@ -110,5 +107,5 @@
 		:global(h5) {
 			@apply text-lg font-bold;
 		}
-	} */
+	}
 </style>

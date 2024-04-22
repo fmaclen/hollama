@@ -3,7 +3,7 @@
 	import { Trash2 } from 'lucide-svelte';
 
 	import * as Resizable from '$lib/components/ui/resizable';
-	import Button from '$lib/components/ui/button/button.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import Separator from '$lib/components/Separator.svelte';
 	import Article from './Article.svelte';
 
