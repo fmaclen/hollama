@@ -1,15 +1,14 @@
 <script lang="ts">
-	import * as Select from '$lib/components/ui/select';
-
-	import { settingsStore } from '$lib/store';
-
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
+
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Label from '$lib/components/Label.svelte';
 	import Separator from '$lib/components/Separator.svelte';
+	import FieldModels from '$lib/components/FieldModels.svelte';
 	import type { OllamaTagResponse } from '$lib/ollama';
+	import { settingsStore } from '$lib/store';
 
 	export let ollamaURL: URL | null = null;
 	let ollamaTagResponse: OllamaTagResponse | null = null;
@@ -108,24 +107,7 @@
 		</div>
 
 		<div class="container">
-			<Label>Model</Label>
-			<Select.Root
-				bind:selected={ollamaModel}
-				disabled={!ollamaTagResponse || ollamaTagResponse.models.length === 0}
-			>
-				<Select.Trigger>
-					<Select.Value placeholder={ollamaModel.value} />
-				</Select.Trigger>
-				<Select.Content>
-					{#if ollamaTagResponse}
-						{#each ollamaTagResponse.models as model}
-							<Select.Item value={model.name}>{model.name}</Select.Item>
-						{/each}
-					{:else}
-						<Select.Item value="">No models available</Select.Item>
-					{/if}
-				</Select.Content>
-			</Select.Root>
+			<FieldModels models={ollamaTagResponse?.models || []} bind:value={ollamaModel.value} />
 		</div>
 
 		<Separator class="mb-8 mt-8" />
