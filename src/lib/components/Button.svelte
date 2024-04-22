@@ -15,9 +15,18 @@
 </script>
 
 {#if href}
-	<a {...$$restProps} {href} class="button button--{variant} button--size-{size} {className}"
-		><slot /></a
+	<a
+		{...$$restProps}
+		{href}
+		class="
+			button button--{variant}
+			button--size-{size}
+			{className}
+		"
+		on:click
 	>
+		<slot />
+	</a>
 {:else}
 	<button
 		{...$$restProps}

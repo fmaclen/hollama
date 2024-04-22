@@ -39,7 +39,7 @@
 				class="w-full"
 				variant="outline"
 				href={`/${newSessionId}`}
-				on:click={() => createNewSession()}
+				on:click={createNewSession}
 			>
 				New session
 			</Button>

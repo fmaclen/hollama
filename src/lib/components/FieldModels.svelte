@@ -9,7 +9,7 @@
 <Field name="model">
 	<span slot="title">Model</span>
 	<select
-		name="model"
+		id="model"
 		class="select"
 		disabled={!models.length}
 		bind:value

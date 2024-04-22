@@ -37,7 +37,7 @@
 		}
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		// Get the current URL
 		ollamaURL = new URL(window.location.href);
 		if (ollamaURL.port) {
@@ -46,7 +46,7 @@
 			);
 		}
 
-		getModelsList();
+		await getModelsList();
 	});
 </script>
 
@@ -61,10 +61,10 @@
 					</Badge>
 				</span>
 				<input
-					name="server"
-					class="input"
-					bind:value={ollamaServer}
 					placeholder={DETAULT_OLLAMA_SERVER}
+					class="input"
+					id="server"
+					bind:value={ollamaServer}
 					on:keyup={getModelsList}
 				/>
 			</Field>
