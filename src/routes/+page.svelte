@@ -6,7 +6,7 @@
 
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
-	import Badge from '$lib/components/ui/badge/badge.svelte';
+	import Badge from '$lib/components/Badge.svelte';
 	import Separator from '$lib/components/Separator.svelte';
 	import type { OllamaTagResponse } from '$lib/ollama';
 	import Button from '$lib/components/Button.svelte';
@@ -24,10 +24,6 @@
 		ollamaModel: ollamaModel.value
 	});
 
-	// HACK: triggers function when selecting all and pressing the delete
-	// key on the Ollama server input.
-	$: typeof ollamaServer === 'string' && getModelsList();
-
 	interface Model {
 		name: string;
 		modified_at: string;
@@ -37,6 +33,8 @@
 
 	async function getModelsList(): Promise<void> {
 		try {
+			if (!ollamaServer) throw new Error('No server provided');
+
 			const response = await fetch(`${ollamaServer}/api/tags`);
 			const data = (await response.json()) as OllamaTagResponse;
 			ollamaTagResponse = data;
@@ -55,6 +53,8 @@
 				`${ollamaURL.protocol}//${ollamaURL.hostname}${ollamaURL.pathname}${ollamaURL.search}${ollamaURL.hash}`
 			);
 		}
+
+		getModelsList();
 	});
 </script>
 
@@ -64,13 +64,12 @@
 			<Label>
 				Server
 				<Badge
-					class="capitalize"
 					variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}
 				>
 					{serverStatus}
 				</Badge>
 			</Label>
-			<input class="input" bind:value={ollamaServer} placeholder={DETAULT_OLLAMA_SERVER} />
+			<input class="input" bind:value={ollamaServer} placeholder={DETAULT_OLLAMA_SERVER} on:keyup={getModelsList} />
 
 			{#if ollamaURL && serverStatus === 'disconnected'}
 				<div transition:slide class="help">
