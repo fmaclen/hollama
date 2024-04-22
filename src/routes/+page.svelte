@@ -4,9 +4,9 @@
 
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import Label from '$lib/components/Label.svelte';
 	import Separator from '$lib/components/Separator.svelte';
 	import FieldModels from '$lib/components/FieldModels.svelte';
+	import Field from '$lib/components/Field.svelte';
 	import type { OllamaTagResponse } from '$lib/ollama';
 	import { settingsStore } from '$lib/store';
 
@@ -53,18 +53,21 @@
 <div class="flex w-full flex-col bg-secondary">
 	<div class="justify-content-center m-auto max-w-[40ch] p-6">
 		<div class="container">
-			<Label>
-				Server
-				<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
-					{serverStatus}
-				</Badge>
-			</Label>
-			<input
-				class="input"
-				bind:value={ollamaServer}
-				placeholder={DETAULT_OLLAMA_SERVER}
-				on:keyup={getModelsList}
-			/>
+			<Field name="server">
+				<span slot="title">
+					Server
+					<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
+						{serverStatus}
+					</Badge>
+				</span>
+				<input
+					name="server"
+					class="input"
+					bind:value={ollamaServer}
+					placeholder={DETAULT_OLLAMA_SERVER}
+					on:keyup={getModelsList}
+				/>
+			</Field>
 
 			{#if ollamaURL && serverStatus === 'disconnected'}
 				<div transition:slide class="help">
@@ -113,7 +116,7 @@
 		<Separator class="mb-8 mt-8" />
 
 		<div class="container">
-			<Label>About</Label>
+			<p class="p"><strong>About</strong></p>
 			<p class="p">
 				<strong>Hollama</strong> is a minimalistic web interface for
 				<Button
@@ -158,7 +161,7 @@
 		@apply text-sm text-neutral-600;
 
 		strong {
-			@apply text-primary;
+			@apply font-medium leading-none;
 		}
 	}
 </style>

@@ -1,21 +1,24 @@
 <script lang="ts">
 	import type { OllamaModel } from "$lib/ollama";
-	import Label from "./Label.svelte";
+	import Field from "./Field.svelte";
 
 	export let models: OllamaModel[];
   export let value: string;
 </script>
 
-<Label>Model</Label>
-<select
-	class="select"
-	disabled={!models.length}
-  bind:value
->
-  {#each models as model}
-    <option value={model.name}>{model.name}</option>
-  {/each}
-</select>
+<Field name="model">
+	<span slot="title">Model</span>
+	<select
+		name="model"
+		class="select"
+		disabled={!models.length}
+		bind:value
+	>
+		{#each models as model}
+			<option value={model.name}>{model.name}</option>
+		{/each}
+	</select>
+</Field>
 
 <style lang="scss">
 	.select {
