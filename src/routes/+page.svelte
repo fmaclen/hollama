@@ -1,15 +1,15 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
-	import Label from '$lib/components/Label.svelte';
 
 	import { settingsStore } from '$lib/store';
 
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import Badge from '$lib/components/Badge.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import Label from '$lib/components/Label.svelte';
 	import Separator from '$lib/components/Separator.svelte';
 	import type { OllamaTagResponse } from '$lib/ollama';
-	import Button from '$lib/components/Button.svelte';
 
 	export let ollamaURL: URL | null = null;
 	let ollamaTagResponse: OllamaTagResponse | null = null;
@@ -23,13 +23,6 @@
 		ollamaServer,
 		ollamaModel: ollamaModel.value
 	});
-
-	interface Model {
-		name: string;
-		modified_at: string;
-		size: number;
-		digest: string;
-	}
 
 	async function getModelsList(): Promise<void> {
 		try {
@@ -63,13 +56,16 @@
 		<div class="container">
 			<Label>
 				Server
-				<Badge
-					variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}
-				>
+				<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
 					{serverStatus}
 				</Badge>
 			</Label>
-			<input class="input" bind:value={ollamaServer} placeholder={DETAULT_OLLAMA_SERVER} on:keyup={getModelsList} />
+			<input
+				class="input"
+				bind:value={ollamaServer}
+				placeholder={DETAULT_OLLAMA_SERVER}
+				on:keyup={getModelsList}
+			/>
 
 			{#if ollamaURL && serverStatus === 'disconnected'}
 				<div transition:slide class="help">
