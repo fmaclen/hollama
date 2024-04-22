@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { Trash2 } from 'lucide-svelte';
 
 	import * as Resizable from '$lib/components/ui/resizable';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Separator from '$lib/components/Separator.svelte';
-	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
-	import { Trash2 } from 'lucide-svelte';
 	import Article from './Article.svelte';
 
 	import { sessionsStore } from '$lib/store';
@@ -154,9 +153,9 @@
 		<Resizable.Handle />
 		<Resizable.Pane defaultSize={40} minSize={30}>
 			<div class="flex h-full flex-col gap-y-6 bg-accent p-6">
-				<Textarea
+				<textarea
 					placeholder="Prompt"
-					class="h-full resize-none"
+					class="textarea"
 					bind:value={prompt}
 					on:keydown={handleKeyDown}
 				/>
@@ -165,3 +164,9 @@
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
 </div>
+
+<style lang="scss">
+	.textarea {
+		@apply h-full resize-none flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+	}
+</style>
