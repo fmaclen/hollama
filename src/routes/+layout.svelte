@@ -5,8 +5,8 @@
 
 	import '../app.pcss';
 	import Settings from 'lucide-svelte/icons/settings';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import Separator from '$lib/components/Separator.svelte';
 
 	import { sessionsStore } from '$lib/store';
 
@@ -39,7 +39,7 @@
 				class="w-full"
 				variant="outline"
 				href={`/${newSessionId}`}
-				on:click={() => createNewSession()}
+				on:click={createNewSession}
 			>
 				New session
 			</Button>
@@ -87,7 +87,7 @@
 	<slot />
 </div>
 
-<style>
+<style lang="scss">
 	.hollama-wordmark {
 		width: max-content;
 		height: 7ch;

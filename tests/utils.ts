@@ -199,8 +199,7 @@ export const MOCK_SESSION_2_RESPONSE_1: OllamaCompletionResponse = {
 
 export async function chooseModelFromSettings(page: Page, modelName: string) {
 	await page.getByTitle('Settings').click();
-	await page.locator('button[data-melt-select-trigger]').click();
-	await page.click(`div[role="option"]:has-text('${modelName}')`);
+	await page.getByLabel('Model').selectOption(modelName);
 }
 
 export async function mockTagsResponse(page: Page) {

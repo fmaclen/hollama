@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-
-	import * as Resizable from '$lib/components/ui/resizable';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
-	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 	import { Trash2 } from 'lucide-svelte';
+
+	import { PaneGroup, Pane, PaneResizer } from "paneforge";
+	import Button from '$lib/components/Button.svelte';
+	import Separator from '$lib/components/Separator.svelte';
 	import Article from './Article.svelte';
 
 	import { sessionsStore } from '$lib/store';
@@ -127,10 +126,10 @@
 
 	<Separator />
 
-	<Resizable.PaneGroup direction="horizontal">
-		<Resizable.Pane defaultSize={60} minSize={30}>
+	<PaneGroup direction="horizontal" class="bg-accent">
+		<Pane defaultSize={60} minSize={30}>
 			<div
-				class="flex h-full flex-col gap-y-4 overflow-y-auto bg-accent pt-6 pb-12 px-6 text-current"
+				class="flex h-full flex-col gap-y-4 overflow-y-auto pt-6 pb-12 px-6 text-current"
 				bind:this={messageWindow}
 			>
 				{#if session.messages.length === 0}
@@ -150,18 +149,27 @@
 					<Article message={{ role: 'ai', content: completion || '...' }} />
 				{/if}
 			</div>
-		</Resizable.Pane>
-		<Resizable.Handle />
-		<Resizable.Pane defaultSize={40} minSize={30}>
-			<div class="flex h-full flex-col gap-y-6 bg-accent p-6">
-				<Textarea
+		</Pane>
+		<PaneResizer class="flex gap-x-1 px-2">
+			<Separator orientation="vertical" />
+			<Separator orientation="vertical" />
+		</PaneResizer>
+		<Pane defaultSize={40} minSize={30}>
+			<div class="flex h-full flex-col gap-y-6 p-6">
+				<textarea
 					placeholder="Prompt"
-					class="h-full resize-none"
+					class="textarea"
 					bind:value={prompt}
 					on:keydown={handleKeyDown}
 				/>
 				<Button on:click={handleSubmit} disabled={!prompt}>Send</Button>
 			</div>
-		</Resizable.Pane>
-	</Resizable.PaneGroup>
+		</Pane>
+	</PaneGroup>
 </div>
+
+<style lang="scss">
+	.textarea {
+		@apply h-full resize-none flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+	}
+</style>
