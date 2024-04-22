@@ -1,7 +1,6 @@
 <script lang="ts">
 	import * as Select from '$lib/components/ui/select';
-	import Input from '$lib/components/ui/input/input.svelte';
-	import Label from '$lib/components/ui/label/label.svelte';
+	import Label from '$lib/components/Label.svelte';
 
 	import { settingsStore } from '$lib/store';
 
@@ -86,12 +85,6 @@
 		mb-6
 	`;
 
-	const _label = `
-		flex
-		items-center
-		gap-x-2
-	`;
-
 	const _a = `
 		underline
 		underline-offset-4
@@ -102,7 +95,7 @@
 <div class="flex w-full flex-col bg-secondary">
 	<div class="justify-content-center m-auto max-w-[40ch] p-6">
 		<div class={_container}>
-			<Label class={_label}>
+			<Label>
 				Server
 				<Badge
 					class="capitalize"
@@ -111,7 +104,7 @@
 					{serverStatus}
 				</Badge>
 			</Label>
-			<Input bind:value={ollamaServer} placeholder={DETAULT_OLLAMA_SERVER} />
+			<input class="input" bind:value={ollamaServer} placeholder={DETAULT_OLLAMA_SERVER} />
 
 			{#if ollamaURL && serverStatus === 'disconnected'}
 				<div transition:slide class={_help}>
@@ -154,7 +147,7 @@
 		</div>
 
 		<div class={_container}>
-			<Label class={_label}>Model</Label>
+			<Label>Model</Label>
 			<Select.Root
 				bind:selected={ollamaModel}
 				disabled={!ollamaTagResponse || ollamaTagResponse.models.length === 0}
@@ -177,7 +170,7 @@
 		<Separator class="mb-8 mt-8" />
 
 		<div class={_container}>
-			<Label class={_label}>About</Label>
+			<Label>About</Label>
 			<p class={_pAbout}>
 				<strong>Hollama</strong> is a minimalistic web interface for
 				<a class={_a} href="https://github.com/jmorganca/ollama/" target="_blank">Ollama</a>
@@ -189,3 +182,9 @@
 		</div>
 	</div>
 </div>
+
+<style lang="scss">
+	.input {
+		@apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+	}
+</style>

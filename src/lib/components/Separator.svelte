@@ -2,7 +2,7 @@
 	export let orientation: 'horizontal' | 'vertical' | undefined = 'horizontal';
 </script>
 
-<hr class="hr hr--{orientation}">
+<hr class="hr hr--{orientation}" {...$$restProps}>
 
 <style lang="scss">
 	.hr {
