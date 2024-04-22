@@ -10,21 +10,28 @@
 		| 'link'
 		| 'icon'
 		| undefined = 'default';
-	export let size: 'default' | 'icon' | undefined = 'default';
+	export let size: 'default' | 'icon' | 'link' | undefined = 'default';
 	export let href: string | undefined = undefined;
 </script>
 
 {#if href}
-	<a {...$$restProps} {href} class="button button--{variant} button--size-{size} {className}"><slot /></a>
+	<a {...$$restProps} {href} class="button button--{variant} button--size-{size} {className}"
+		><slot /></a
+	>
 {:else}
-	<button {...$$restProps} class="button button--{variant} button--size-{size} {className}" type="button" on:click>
+	<button
+		{...$$restProps}
+		class="button button--{variant} button--size-{size} {className}"
+		type="button"
+		on:click
+	>
 		<slot />
 	</button>
 {/if}
 
 <style lang="scss">
 	.button {
-		@apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-foreground;
+		@apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium text-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
 
 		&--default {
 			@apply bg-primary text-primary-foreground hover:bg-primary/90;
@@ -47,7 +54,7 @@
 		}
 
 		&--link {
-			@apply text-primary underline-offset-4 hover:underline;
+			@apply underline underline-offset-4 hover:text-neutral-500;
 		}
 
 		&--icon {

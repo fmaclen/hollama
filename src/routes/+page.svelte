@@ -9,6 +9,7 @@
 	import Badge from '$lib/components/ui/badge/badge.svelte';
 	import Separator from '$lib/components/Separator.svelte';
 	import type { OllamaTagResponse } from '$lib/ollama';
+	import Button from '$lib/components/Button.svelte';
 
 	export let ollamaURL: URL | null = null;
 	let ollamaTagResponse: OllamaTagResponse | null = null;
@@ -37,7 +38,7 @@
 	async function getModelsList(): Promise<void> {
 		try {
 			const response = await fetch(`${ollamaServer}/api/tags`);
-			const data = await response.json() as OllamaTagResponse;
+			const data = (await response.json()) as OllamaTagResponse;
 			ollamaTagResponse = data;
 			serverStatus = 'connected';
 		} catch {
@@ -55,46 +56,11 @@
 			);
 		}
 	});
-
-	// Styles
-	const _help = `
-		flex
-		flex-col
-		gap-y-3
-	`;
-
-	const _pHelp = `
-		text-sm
-		text-neutral-500
-	`;
-
-	const _code = `
-		text-neutral-800
-	`;
-
-	const _pAbout = `
-		text-sm
-		text-neutral-800
-	`;
-
-	const _container = `
-		flex
-		flex-col
-		gap-y-3
-		mt-6
-		mb-6
-	`;
-
-	const _a = `
-		underline
-		underline-offset-4
-		hover:text-neutral-600
-	`;
 </script>
 
 <div class="flex w-full flex-col bg-secondary">
 	<div class="justify-content-center m-auto max-w-[40ch] p-6">
-		<div class={_container}>
+		<div class="container">
 			<Label>
 				Server
 				<Badge
@@ -107,25 +73,25 @@
 			<input class="input" bind:value={ollamaServer} placeholder={DETAULT_OLLAMA_SERVER} />
 
 			{#if ollamaURL && serverStatus === 'disconnected'}
-				<div transition:slide class={_help}>
-					<p class={_pHelp}>
+				<div transition:slide class="help">
+					<p class="p">
 						Needs to allow connections from
-						<code class={_code}>{ollamaURL.origin}</code>
+						<code class="code">{ollamaURL.origin}</code>
 						in
-						<code class={_code}>OLLAMA_ORIGINS</code>,
-						<a
-							class={_a}
+						<code class="code">OLLAMA_ORIGINS</code>,
+						<Button
+							variant="link"
+							size="link"
 							href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
 							target="_blank"
 						>
 							see docs
-						</a>
-						. Also check no browser extensions are blocking the connection.
+						</Button>. Also check no browser extensions are blocking the connection.
 					</p>
 					{#if ollamaURL.protocol === 'https:'}
-						<p class={_pHelp}>
+						<p class="p">
 							If trying to connect to an Ollama server that is not available on
-							<code class={_code}>localhost</code> or <code class={_code}>127.0.0.1</code> you will
+							<code class="code">localhost</code> or <code class="code">127.0.0.1</code> you will
 							need to
 							<a
 								href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
@@ -146,7 +112,7 @@
 			{/if}
 		</div>
 
-		<div class={_container}>
+		<div class="container">
 			<Label>Model</Label>
 			<Select.Root
 				bind:selected={ollamaModel}
@@ -169,22 +135,53 @@
 
 		<Separator class="mb-8 mt-8" />
 
-		<div class={_container}>
+		<div class="container">
 			<Label>About</Label>
-			<p class={_pAbout}>
+			<p class="p">
 				<strong>Hollama</strong> is a minimalistic web interface for
-				<a class={_a} href="https://github.com/jmorganca/ollama/" target="_blank">Ollama</a>
+				<Button
+					variant="link"
+					size="link"
+					href="https://github.com/jmorganca/ollama/"
+					target="_blank">Ollama</Button
+				>
 				servers. Code is available on
-				<a class={_a} href="https://github.com/fmaclen/hollama" target="_blank">Github</a>
-				. Made by
-				<a class={_a} href="https://fernando.is" target="_blank">@fmaclen</a>
+				<Button variant="link" size="link" href="https://github.com/fmaclen/hollama" target="_blank"
+					>Github</Button
+				>.
+			</p>
+			<p class="p">
+				Made by
+				<Button variant="link" size="link" href="https://fernando.is" target="_blank"
+					>@fmaclen</Button
+				>
 			</p>
 		</div>
 	</div>
 </div>
 
 <style lang="scss">
+	.container {
+		@apply mb-6 mt-6 flex flex-col gap-y-3;
+	}
+
+	.help {
+		@apply flex flex-col gap-y-3;
+	}
+
+	.code {
+		@apply text-neutral-800;
+	}
+
 	.input {
 		@apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+	}
+
+	.p {
+		@apply text-sm text-neutral-600;
+
+		strong {
+			@apply text-primary;
+		}
 	}
 </style>

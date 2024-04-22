@@ -87,7 +87,7 @@
 	<slot />
 </div>
 
-<style>
+<style lang="scss">
 	.hollama-wordmark {
 		width: max-content;
 		height: 7ch;
