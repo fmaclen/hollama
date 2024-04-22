@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import Badge from '$lib/components/ui/badge/badge.svelte';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import Separator from '$lib/components/Separator.svelte';
 	import type { OllamaTagResponse } from '$lib/ollama';
 
 	export let ollamaURL: URL | null = null;

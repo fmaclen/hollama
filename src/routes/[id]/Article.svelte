@@ -6,7 +6,7 @@
 	import { Files } from 'lucide-svelte';
 
 	import { type Message } from '$lib/sessions';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import Separator from '$lib/components/Separator.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 
 	const md: MarkdownIt = new MarkdownIt({
@@ -57,8 +57,8 @@
 	</div>
 </article>
 
-<style lang="scss">
-	#markdown {
+<style lang="postcss">
+	/* #markdown {
 		:global(> *) {
 			@apply text-foreground;
 		}
@@ -110,5 +110,5 @@
 		:global(h5) {
 			@apply text-lg font-bold;
 		}
-	}
+	} */
 </style>

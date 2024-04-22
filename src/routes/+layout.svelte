@@ -6,7 +6,7 @@
 	import '../app.pcss';
 	import Settings from 'lucide-svelte/icons/settings';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import Separator from '$lib/components/Separator.svelte';
 
 	import { sessionsStore } from '$lib/store';
 
