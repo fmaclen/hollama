@@ -3,7 +3,7 @@
 A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) servers.
 
 > ![session](docs/session.png)
-> ![session](docs/settings.png)
+> ![settings](docs/settings.png)
 
 
 ### Features
