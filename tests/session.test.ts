@@ -181,9 +181,9 @@ test('all sessions can be deleted', async ({ page }) => {
 	// Click the delete button
 	page.on('dialog', dialog => dialog.accept("Are you sure you want to delete all sessions?"));
 	await page.getByText('Delete all sessions').click();
-	expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe(null);
 	await expect(page.getByText('No sessions in history')).toBeVisible();
 	await expect(page.getByTestId('session-item')).toHaveCount(0);
+	expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe('null');
 });
 
 
