@@ -37,6 +37,20 @@
 		}
 	}
 
+	function deleteSessions(): void {
+		if (confirm('Are you sure you want to delete all sessions?')) {
+			localStorage.removeItem('hollama-sessions');
+			location.reload();
+		}
+	}
+
+	function deleteSettings(): void {
+		if (confirm('Are you sure you want to delete server settings?')) {
+			localStorage.removeItem('hollama-settings');
+			location.reload();
+		}
+	}
+
 	onMount(async () => {
 		// Get the current URL
 		ollamaURL = new URL(window.location.href);
@@ -52,9 +66,9 @@
 
 <div class="flex w-full flex-col bg-secondary">
 	<div class="justify-content-center m-auto max-w-[40ch] p-6">
-		<div class="container">
+		<div class="fieldset">
 			<Field name="server">
-				<span slot="title">
+				<span slot="title" class="flex w-full items-center justify-between">
 					Server
 					<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
 						{serverStatus}
@@ -109,13 +123,23 @@
 			{/if}
 		</div>
 
-		<div class="container">
+		<div class="fieldset">
 			<FieldModels models={ollamaTagResponse?.models || []} bind:value={ollamaModel.value} />
 		</div>
 
 		<Separator class="mb-8 mt-8" />
 
-		<div class="container">
+		<div class="fieldset">
+			<Field name="danger-zone">
+				<span slot="title">Danger zone</span>
+				<Button variant="outline" on:click={deleteSessions}>Delete all sessions</Button>
+				<Button variant="outline" on:click={deleteSettings}>Delete server settings</Button>
+			</Field>
+		</div>
+
+		<Separator class="mb-8 mt-8" />
+
+		<div class="fieldset">
 			<p class="p"><strong>About</strong></p>
 			<p class="p">
 				<strong>Hollama</strong> is a minimalistic web interface for
@@ -126,22 +150,27 @@
 					target="_blank">Ollama</Button
 				>
 				servers. Code is available on
-				<Button variant="link" size="link" href="https://github.com/fmaclen/hollama" target="_blank"
-					>Github</Button
-				>.
+				<Button
+					variant="link"
+					size="link"
+					href="https://github.com/fmaclen/hollama"
+					target="_blank"
+				>
+					Github
+				</Button>.
 			</p>
 			<p class="p">
 				Made by
-				<Button variant="link" size="link" href="https://fernando.is" target="_blank"
-					>@fmaclen</Button
-				>
+				<Button variant="link" size="link" href="https://fernando.is" target="_blank">
+					@fmaclen
+				</Button>
 			</p>
 		</div>
 	</div>
 </div>
 
 <style lang="scss">
-	.container {
+	.fieldset {
 		@apply mb-6 mt-6 flex flex-col gap-y-3;
 	}
 
@@ -158,10 +187,10 @@
 	}
 
 	.p {
-		@apply text-sm text-neutral-600;
+		@apply text-sm text-neutral-500;
 
 		strong {
-			@apply font-medium leading-none;
+			@apply font-medium leading-none text-primary;
 		}
 	}
 </style>
