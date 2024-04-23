@@ -37,16 +37,15 @@
 		}
 	}
 
-	function deleteSessions(isConfirmed: boolean = false): void {
-		if (isConfirmed || confirm('Are you sure you want to delete all sessions?')) {
+	function deleteSessions(): void {
+		if (confirm('Are you sure you want to delete all sessions?')) {
 			localStorage.removeItem('hollama-sessions');
 			location.reload();
 		}
 	}
 
 	function deleteSettings(): void {
-		if (confirm('Are you sure you want to delete all settings?')) {
-			deleteSessions(true);
+		if (confirm('Are you sure you want to delete server settings?')) {
 			localStorage.removeItem('hollama-settings');
 			location.reload();
 		}
@@ -133,8 +132,8 @@
 		<div class="fieldset">
 			<Field name="danger-zone">
 				<span slot="title">Danger zone</span>
-				<Button variant="outline" on:click={() => deleteSessions()}>Detele all sessions</Button>
-				<Button variant="outline" on:click={deleteSettings}>Detele all settings</Button>
+				<Button variant="outline" on:click={deleteSessions}>Delete all sessions</Button>
+				<Button variant="outline" on:click={deleteSettings}>Delete server settings</Button>
 			</Field>
 		</div>
 
