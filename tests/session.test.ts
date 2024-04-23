@@ -142,6 +142,51 @@ test('deletes a session from the sidebar', async ({ page }) => {
 	expect(await page.getByTestId('session-item').count()).toBe(0);
 });
 
+test('all sessions can be deleted', async ({ page }) => {
+	await page.goto('/');
+	await expect(page.getByText('No sessions in history')).toBeVisible();
+	await expect(page.getByTestId('session-item')).toHaveCount(0);
+
+	// Stage 2 sessions
+	await page.evaluate(() => window.localStorage.setItem(
+		'hollama-sessions',
+		JSON.stringify(
+			[
+				{
+					id: "qbhc0q",
+					model: "gemma:7b",
+					messages: [
+						{ role: "user", content: "Hello world!" },
+						{ role: "ai", content: "Hello world! 👋 🌎\n\nIt's great to hear from you. What would you like to do today?" }
+					],
+					context: [],
+				},
+				{
+					id: "m2jjac",
+					model: "openhermes2.5-mistral:latest",
+					messages: [
+						{ role: "user", content: "Hello world, again!" },
+						{ role: "ai", content: "Hello! It's always a pleasure to see you back. How can I assist you today?" }
+					],
+					context: [],
+				}
+			]
+		)
+	));
+
+	await page.reload();
+	await expect(page.getByText('No sessions in history')).not.toBeVisible();
+	await expect(page.getByTestId('session-item')).toHaveCount(2);
+
+	// Click the delete button
+	page.on('dialog', dialog => dialog.accept("Are you sure you want to delete all sessions?"));
+	await page.getByText('Delete all sessions').click();
+	expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe(null);
+	await expect(page.getByText('No sessions in history')).toBeVisible();
+	await expect(page.getByTestId('session-item')).toHaveCount(0);
+});
+
+
 test('copies the raw text of a message to clipboard', async ({ page }) => {
 	await page.goto('/');
 	await chooseModelFromSettings(page, 'gemma:7b');
