@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
@@ -181,9 +181,9 @@ test('all sessions can be deleted', async ({ page }) => {
 	// Click the delete button
 	page.on('dialog', dialog => dialog.accept("Are you sure you want to delete all sessions?"));
 	await page.getByText('Delete all sessions').click();
-	expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe(null);
 	await expect(page.getByText('No sessions in history')).toBeVisible();
 	await expect(page.getByTestId('session-item')).toHaveCount(0);
+	expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe('null');
 });
 
 
