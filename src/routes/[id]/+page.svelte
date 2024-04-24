@@ -73,7 +73,6 @@
 		const message: Message = { role: 'user', content: prompt };
 		prompt = '';
 		completion = '';
-		session = loadSession(data.id);
 		session.messages = [...session.messages, message];
 
 		try {
