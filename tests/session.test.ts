@@ -65,7 +65,7 @@ test('generates a random session id', async ({ page }) => {
 	await page.goto('/');
 
 	const sessionIds = [];
-	const newSessionButton = page.getByText('New session', { exact: true });
+	const newSessionButton = page.getByTestId('new-session');
 
 	// Check it generates a new session id 3 times in a row
 	for (let i = 0; i < 3; i++) {
