@@ -133,7 +133,7 @@
 		<Pane defaultSize={40} minSize={30}>
 			<div class="flex h-full flex-col p-6">
 				{#if isNewSession}
-					<div transition:slide class="mb-6">
+					<div out:slide class="mb-6">
 						<FieldModels />
 					</div>
 				{/if}

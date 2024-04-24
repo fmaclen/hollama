@@ -12,6 +12,7 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	
 	await page.getByText('New session').click();
 	await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
+
 	await page.screenshot({ path: 'docs/session-new.png', fullPage: true });
 
 	// Stage 2 sessions
@@ -57,6 +58,7 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 
 	await page.getByText('Write a Python function').click();
 	await expect(page.getByText("Here's a basic function")).toBeVisible();
+	await expect(page.getByLabel("Model")).not.toBeVisible();
 
 	await page.screenshot({ path: 'docs/session.png', fullPage: true });
 });
