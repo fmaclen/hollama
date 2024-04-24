@@ -61,8 +61,6 @@
 	}
 
 	async function handleCompletionDone(completion: string, context: number[]) {
-		if (!session) throw new Error('Session not found');
-
 		const message: Message = { role: 'ai', content: completion };
 		session.messages = [...session.messages, message];
 		completion = '';
