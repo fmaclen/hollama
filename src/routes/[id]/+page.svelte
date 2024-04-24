@@ -140,6 +140,7 @@
 				<Field class="mb-6 flex h-full" name="prompt">
 					<span slot="title">Prompt</span>
 					<textarea
+						id="prompt"
 						placeholder={$settingsStore?.ollamaModel ? '' : 'No model selected'}
 						disabled={!$settingsStore?.ollamaModel}
 						class="textarea"

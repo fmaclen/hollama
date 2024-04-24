@@ -9,13 +9,12 @@ test('creates new session and chats', async ({ page }) => {
 	const sessionIdLocator = page.getByTestId('session-id');
 	const modelNameLocator = page.getByTestId('model-name');
 	const newSessionButton = page.getByTestId('new-session');
-	const promptTextarea = page.getByPlaceholder('Prompt');
+	const promptTextarea = page.getByLabel('Prompt');
 	const sendButton = page.getByText('Send');
 	const articleLocator = page.locator('article');
 	const newPromptHelp = page.getByText('Write a prompt to start a new session');
 
 	await page.goto('/');
-	await chooseModelFromSettings(page, 'gemma:7b');
 	await expect(sessionIdLocator).not.toBeVisible();
 	await expect(modelNameLocator).not.toBeVisible();
 	await expect(newPromptHelp).not.toBeVisible();
@@ -23,13 +22,16 @@ test('creates new session and chats', async ({ page }) => {
 	await newSessionButton.click();
 	await expect(sessionIdLocator).toBeVisible();
 	await expect(sessionIdLocator).toHaveText(/Session #[a-z0-9]{2,8}/);
-	await expect(modelNameLocator).toBeVisible();
-	await expect(modelNameLocator).toHaveText('gemma:7b');
-	await expect(promptTextarea).toBeVisible();
+	await expect(modelNameLocator).toHaveText('New session');
 	await expect(promptTextarea).toHaveValue('');
+	await expect(promptTextarea).toBeDisabled();
+	await expect(promptTextarea).toHaveAttribute('placeholder', 'No model selected');
 	await expect(sendButton).toBeVisible();
 	await expect(sendButton).toBeDisabled();
 	await expect(newPromptHelp).toBeVisible();
+
+	await page.getByLabel('Model').selectOption('gemma:7b');
+	await expect(promptTextarea).not.toBeDisabled();
 
 	await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 	await expect(sendButton).toBeEnabled();
@@ -84,7 +86,7 @@ test('can navigate older sessions from sidebar', async ({ page }) => {
 
 	await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 	await page.getByText('New session').click();
-	await page.getByPlaceholder('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+	await page.getByLabel('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 	await page.getByText('Send').click();
 	await page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.").isVisible();
 	await expect(page.getByText('No sessions in history')).not.toBeVisible();
@@ -105,7 +107,7 @@ test('can navigate older sessions from sidebar', async ({ page }) => {
 	await mockCompletionResponse(page, MOCK_SESSION_2_RESPONSE_1);
 	await chooseModelFromSettings(page, 'openhermes2.5-mistral:latest');
 	await page.getByText('New session').click();
-	await page.getByPlaceholder('Prompt').fill('What does the fox say?');
+	await page.getByLabel('Prompt').fill('What does the fox say?');
 	await page.getByText('Send').click();
 	await expect(page.getByText('The fox says various things, such as "ring-a-ding-ding," "bada bing-bing" and "higglety-pigglety pop')).toBeVisible();
 	expect(await page.getByTestId('session-item').count()).toBe(2);
@@ -130,7 +132,7 @@ test('deletes a session from the sidebar', async ({ page }) => {
 
 	await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 	await page.getByText('New session').click();
-	await page.getByPlaceholder('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+	await page.getByLabel('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 	await page.getByText('Send').click();
 	await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
 	await expect(page.getByText('No sessions in history')).not.toBeVisible();
@@ -192,7 +194,7 @@ test('copies the raw text of a message to clipboard', async ({ page }) => {
 	await chooseModelFromSettings(page, 'gemma:7b');
 	await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 	await page.getByText('New session').click();
-	await page.getByPlaceholder('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+	await page.getByLabel('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 	await page.getByText('Send').click();
 	await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
 	expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("");

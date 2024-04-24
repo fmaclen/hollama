@@ -27,14 +27,10 @@ export const loadSession = (id: string): Session => {
 
 	if (!session) {
 		// Get the current model
-		const model = get(settingsStore)?.ollamaModel;
+		const model = get(settingsStore)?.ollamaModel || "";
 
-		// Create a new session with the default model
-		if (model) {
-			session = { id, model, messages: [], context: [] };
-		} else {
-			session = { id, model: "Not set", messages: [{ role: 'system', content: 'No model selected, choose one in the settings.' }], context: [] };
-		}
+		// Create a new session
+		session = { id, model, messages: [], context: [] };
 	}
 
 	return session;
