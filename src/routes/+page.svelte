@@ -11,16 +11,18 @@
 	import { settingsStore } from '$lib/store';
 
 	export let ollamaURL: URL | null = null;
-	let ollamaTagResponse: OllamaTagResponse | null = null;
-
+	
 	const DETAULT_OLLAMA_SERVER = 'http://localhost:11434';
-	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
-	let ollamaModel = { value: $settingsStore?.ollamaModel || '' };
 	let serverStatus: 'connected' | 'disconnected' = 'connected';
+
+	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
+	let ollamaModel = $settingsStore?.ollamaModel || '';
+	let ollamaTagResponse: OllamaTagResponse | null = null;
 
 	$: settingsStore.set({
 		ollamaServer,
-		ollamaModel: ollamaModel.value
+		ollamaModels: ollamaTagResponse?.models || [],
+		ollamaModel
 	});
 
 	async function getModelsList(): Promise<void> {
@@ -124,7 +126,7 @@
 		</div>
 
 		<div class="fieldset">
-			<FieldModels models={ollamaTagResponse?.models || []} bind:value={ollamaModel.value} />
+			<FieldModels />
 		</div>
 
 		<Separator class="mb-8 mt-8" />

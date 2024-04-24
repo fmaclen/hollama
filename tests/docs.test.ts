@@ -10,6 +10,12 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.getByLabel('Model').selectOption('openhermes2.5-mistral:latest');
 	await page.screenshot({ path: 'docs/settings.png', fullPage: true });
 
+	await page.getByTestId('new-session').click();
+
+	await page.goto('/ulxz6l'); // Visiting a fake session id so it doesn't change from test to test
+	await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
+	await page.screenshot({ path: 'docs/session-new.png', fullPage: true });
+
 	// Stage 2 sessions
 	await page.evaluate(() => window.localStorage.setItem(
 		'hollama-sessions',
@@ -53,6 +59,7 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 
 	await page.getByText('Write a Python function').click();
 	await expect(page.getByText("Here's a basic function")).toBeVisible();
+	await expect(page.getByLabel("Model")).not.toBeVisible();
 
 	await page.screenshot({ path: 'docs/session.png', fullPage: true });
 });

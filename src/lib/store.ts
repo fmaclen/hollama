@@ -1,6 +1,7 @@
 import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 import type { Session } from '$lib/sessions';
+import type { OllamaModel } from './ollama';
 
 function createLocalStorageStore<T>(key: string, initialValue: T | null = null) {
 	const localStorageValue: string | null = browser ? window.localStorage.getItem(key) : null;
@@ -28,6 +29,7 @@ const LOCAL_STORAGE_PREFIX = 'hollama';
 export interface Settings {
 	ollamaServer: string | null;
 	ollamaModel: string | null;
+	ollamaModels: OllamaModel[];
 }
 
 export const settingsStore = createLocalStorageStore<Settings>(`${LOCAL_STORAGE_PREFIX}-settings`);
