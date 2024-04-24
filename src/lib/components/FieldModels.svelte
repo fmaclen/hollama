@@ -1,22 +1,21 @@
 <script lang="ts">
-	import type { OllamaModel } from "$lib/ollama";
-	import Field from "./Field.svelte";
+	import { settingsStore } from '$lib/store';
+	import Field from './Field.svelte';
 
-	export let models: OllamaModel[];
-  export let value: string;
+	export let disabled: boolean = false;
+
+	let value: string = $settingsStore?.ollamaModel || '';
+	$: if ($settingsStore) $settingsStore.ollamaModel = value;
 </script>
 
 <Field name="model">
 	<span slot="title">Model</span>
-	<select
-		id="model"
-		class="select"
-		disabled={!models.length}
-		bind:value
-	>
-		{#each models as model}
-			<option value={model.name}>{model.name}</option>
-		{/each}
+	<select id="model" class="select" disabled={disabled || !$settingsStore?.ollamaModels.length} bind:value>
+		{#if $settingsStore}
+			{#each $settingsStore.ollamaModels as model}
+				<option value={model.name}>{model.name}</option>
+			{/each}
+		{/if}
 	</select>
 </Field>
 

@@ -2,7 +2,6 @@
 	import MarkdownIt from 'markdown-it';
 	import hljs from 'highlight.js';
 	import 'highlight.js/styles/github.css';
-	import { slide } from 'svelte/transition';
 	import { Files } from 'lucide-svelte';
 
 	import { type Message } from '$lib/sessions';
@@ -31,8 +30,7 @@
 </script>
 
 <article
-	class="mx-auto flex w-full max-w-[70ch] flex-col gap-y-3"
-	in:slide={{ duration: isUserRole ? 400 : 0 }}
+	class="mx-auto flex w-full max-w-[70ch] flex-col gap-y-3 mb-3 last:mb-0"
 >
 	<nav class="grid grid-cols-[max-content_auto_max-content] items-center">
 		<p

@@ -1,17 +1,20 @@
 <script lang="ts">
+	import { tick } from 'svelte';
+	import { slide } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { Trash2 } from 'lucide-svelte';
 
-	import { PaneGroup, Pane, PaneResizer } from "paneforge";
+	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	import Button from '$lib/components/Button.svelte';
 	import Separator from '$lib/components/Separator.svelte';
 	import Article from './Article.svelte';
 
-	import { sessionsStore } from '$lib/store';
+	import { settingsStore, sessionsStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
 	import type { PageData } from './$types';
-	import { slide } from 'svelte/transition';
+	import FieldModels from '$lib/components/FieldModels.svelte';
+	import Field from '$lib/components/Field.svelte';
 
 	export let data: PageData;
 
@@ -21,9 +24,13 @@
 	let prompt: string;
 
 	$: session = loadSession(data.id);
-	$: isLastMessageFromUser = session.messages[session.messages.length - 1]?.role === 'user';
+	$: isNewSession = !session?.messages.length;
+	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
+	$: session && scrollToBottom();
 
-	function scrollToBottom() {
+	async function scrollToBottom() {
+		if (!messageWindow) return;
+		await tick();
 		messageWindow.scrollTop = messageWindow.scrollHeight;
 	}
 
@@ -54,6 +61,8 @@
 	}
 
 	async function handleCompletionDone(completion: string, context: number[]) {
+		if (!session) throw new Error('Session not found');
+
 		const message: Message = { role: 'ai', content: completion };
 		session.messages = [...session.messages, message];
 		completion = '';
@@ -66,8 +75,8 @@
 		const message: Message = { role: 'user', content: prompt };
 		prompt = '';
 		completion = '';
+		session = loadSession(data.id);
 		session.messages = [...session.messages, message];
-		scrollToBottom();
 
 		try {
 			const ollama = await ollamaGenerate(session);
@@ -85,8 +94,6 @@
 						break;
 					}
 
-					scrollToBottom(); // Auto-scroll
-
 					if (!value) continue;
 
 					const jsonLines = value.split('\n').filter((line) => line);
@@ -103,21 +110,17 @@
 			handleError(error);
 		}
 	}
-
-	const _a = `
-		underline
-		underline-offset-4
-		hover:text-neutral-500
-	`;
 </script>
 
 <div class="flex h-screen w-full flex-col">
 	<div class="flex items-center justify-between px-6 py-4">
 		<div class="space-y-1">
 			<p data-testid="session-id" class="text-sm font-bold leading-none text-foreground">
-				Session <a class={_a} href={`/${session.id}`}>#{session.id}</a><br />
+				Session <Button size="link" variant="link" href={`/${session.id}`}>#{session.id}</Button>
 			</p>
-			<p data-testid="model-name" class="text-sm text-muted-foreground">{session.model}</p>
+			<p data-testid="model-name" class="text-sm text-muted-foreground">
+				{isNewSession ? 'New session' : session.model}
+			</p>
 		</div>
 		<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
 			<Trash2 class="h-4 w-4" />
@@ -127,12 +130,36 @@
 	<Separator />
 
 	<PaneGroup direction="horizontal" class="bg-accent">
+		<Pane defaultSize={40} minSize={30}>
+			<div class="flex h-full flex-col p-6">
+				{#if isNewSession}
+					<div transition:slide class="mb-6">
+						<FieldModels />
+					</div>
+				{/if}
+				<Field class="mb-6 flex h-full" name="prompt">
+					<span slot="title">Prompt</span>
+					<textarea
+						placeholder={$settingsStore?.ollamaModel ? '' : 'No model selected'}
+						disabled={!$settingsStore?.ollamaModel}
+						class="textarea"
+						bind:value={prompt}
+						on:keydown={handleKeyDown}
+					/>
+				</Field>
+				<Button on:click={handleSubmit} disabled={!prompt}>Send</Button>
+			</div>
+		</Pane>
+		<PaneResizer class="flex gap-x-1 px-2">
+			<Separator orientation="vertical" />
+			<Separator orientation="vertical" />
+		</PaneResizer>
 		<Pane defaultSize={60} minSize={30}>
 			<div
-				class="flex h-full flex-col gap-y-4 overflow-y-auto pt-6 pb-12 px-6 text-current"
+				class="flex h-full flex-col overflow-y-auto px-6 pb-12 pt-6 text-current"
 				bind:this={messageWindow}
 			>
-				{#if session.messages.length === 0}
+				{#if isNewSession}
 					<div
 						class="align-center flex h-full w-full items-center justify-center text-muted-foreground"
 						transition:slide
@@ -141,7 +168,7 @@
 					</div>
 				{/if}
 
-				{#each session.messages as message, i}
+				{#each session.messages as message}
 					<Article {message} />
 				{/each}
 
@@ -150,26 +177,11 @@
 				{/if}
 			</div>
 		</Pane>
-		<PaneResizer class="flex gap-x-1 px-2">
-			<Separator orientation="vertical" />
-			<Separator orientation="vertical" />
-		</PaneResizer>
-		<Pane defaultSize={40} minSize={30}>
-			<div class="flex h-full flex-col gap-y-6 p-6">
-				<textarea
-					placeholder="Prompt"
-					class="textarea"
-					bind:value={prompt}
-					on:keydown={handleKeyDown}
-				/>
-				<Button on:click={handleSubmit} disabled={!prompt}>Send</Button>
-			</div>
-		</Pane>
 	</PaneGroup>
 </div>
 
 <style lang="scss">
 	.textarea {
-		@apply h-full resize-none flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+		@apply flex h-full min-h-[10em] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
 	}
 </style>
