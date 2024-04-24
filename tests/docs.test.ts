@@ -1,8 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { mockTagsResponse } from './utils';
 
-const delay = (ms = 250) => new Promise((resolve) => setTimeout(resolve, ms));
-
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
 });
@@ -13,9 +11,9 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.screenshot({ path: 'docs/settings.png', fullPage: true });
 
 	await page.getByTestId('new-session').click();
-	await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
 
-	await delay(100); // HACK: Wait for animations to be over
+	await page.goto('/ulxz6l'); // Visiting a fake session id so it doesn't change from test to test
+	await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
 	await page.screenshot({ path: 'docs/session-new.png', fullPage: true });
 
 	// Stage 2 sessions
