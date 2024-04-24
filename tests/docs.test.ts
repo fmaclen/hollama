@@ -9,6 +9,10 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.goto('/');
 	await page.getByLabel('Model').selectOption('openhermes2.5-mistral:latest');
 	await page.screenshot({ path: 'docs/settings.png', fullPage: true });
+	
+	await page.getByText('New session').click();
+	await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
+	await page.screenshot({ path: 'docs/session-new.png', fullPage: true });
 
 	// Stage 2 sessions
 	await page.evaluate(() => window.localStorage.setItem(
