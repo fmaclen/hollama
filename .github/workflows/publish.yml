@@ -26,6 +26,4 @@ jobs:
         with:
           push: true
           tags: fmaclen/hollama:latest
-          platforms:
-            - linux/arm64
-            - linux/amd64
+          platforms: linux/arm64, linux/amd64
