@@ -1,9 +1,10 @@
-name: Build & publish Docker image
+name: Publish Docker image to container registry
 on:
   push:
 
 jobs:
   docker:
+    name: Build & publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,5 +26,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: fmaclen/hollama:latest
+          tags: ghcr.io/${{ github.actor }}/hollama:latest
           platforms: linux/arm64, linux/amd64
