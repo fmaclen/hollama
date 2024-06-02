@@ -3,15 +3,29 @@ on:
   push:
 
 jobs:
-  build_and_publish:
+  docker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Login to container registry
-        run: docker login --username fmaclen --password ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }} ghcr.io
 
-      - name: Build image
-        run: docker build . --tag ghcr.io/fmaclen/hollama:latest
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-      - name: Push image
-        run: docker push ghcr.io/fmaclen/hollama:latest
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+
+      - name: Push the Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: fmaclen/hollama:latest
+          platforms: 
+             - linux/arm64
+             - linux/amd64
