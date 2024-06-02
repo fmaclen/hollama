@@ -1,6 +1,8 @@
 name: Publish Docker image to container registry
 on:
   push:
+    branches:
+      - main
 
 jobs:
   docker:
