@@ -7,6 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Login to container registry
+        run: docker login --username fmaclen --password ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }} ghcr.io
 
       - name: Build image
-        run: docker build -t hollama .
+        run: docker build . --tag ghcr.io/fmaclen/hollama:latest
+
+      - name: Push image
+        run: docker push ghcr.io/fmaclen/hollama:latest
