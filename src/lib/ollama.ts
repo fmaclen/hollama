@@ -42,7 +42,7 @@ export type OllamaTagResponse = {
   models: OllamaModel[];
 };
 
-export async function ollamaGenerate(session: Session) {
+export async function ollamaGenerate(session: Session, abortSignal: AbortSignal) {
 	const settings = get(settingsStore);
 	if (!settings) throw new Error('No Ollama server specified');
 
@@ -55,6 +55,7 @@ export async function ollamaGenerate(session: Session) {
 	return await fetch(`${settings.ollamaServer}/api/generate`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'text/event-stream' },
-		body: JSON.stringify(payload)
+		body: JSON.stringify(payload),
+		signal: abortSignal
 	});
 }
