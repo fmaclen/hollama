@@ -2,7 +2,7 @@
 	import { tick } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { goto } from '$app/navigation';
-	import { Trash2 } from 'lucide-svelte';
+	import { StopCircle, Trash2 } from 'lucide-svelte';
 
 	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	import Button from '$lib/components/Button.svelte';
@@ -22,6 +22,8 @@
 	let session: Session;
 	let completion: string;
 	let prompt: string;
+	let promptCached: string;
+	let abortController: AbortController;
 
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
@@ -64,6 +66,7 @@
 		const message: Message = { role: 'ai', content: completion };
 		session.messages = [...session.messages, message];
 		completion = '';
+		promptCached = '';
 		saveSession({ ...session, context });
 	}
 
@@ -71,12 +74,14 @@
 		if (!prompt) return;
 
 		const message: Message = { role: 'user', content: prompt };
+		promptCached = prompt;
 		prompt = '';
 		completion = '';
 		session.messages = [...session.messages, message];
+		abortController = new AbortController();
 
 		try {
-			const ollama = await ollamaGenerate(session);
+			const ollama = await ollamaGenerate(session, abortController.signal);
 
 			if (ollama && ollama.body) {
 				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
@@ -103,9 +108,19 @@
 			} else {
 				throw new Error("Couldn't connect to Ollama");
 			}
-		} catch (error) {
+		} catch (error: any) {
+			if (error.name === 'AbortError') return; // User aborted the request
 			handleError(error);
 		}
+	}
+
+	function handleAbort() {
+		abortController.abort();
+		// Reset the prompt to the last sent message
+		prompt = promptCached;
+		promptCached = '';
+		// Remove the "incomplete" AI response
+		session.messages = session.messages.slice(0, -1);
 	}
 </script>
 
@@ -145,13 +160,24 @@
 						on:keydown={handleKeyDown}
 					/>
 				</Field>
-				<Button on:click={handleSubmit} disabled={!prompt}>Send</Button>
+				<div class="flex w-full">
+					<Button class="w-full" on:click={handleSubmit} disabled={!prompt}>Send</Button>
+					{#if isLastMessageFromUser}
+						<div transition:slide={{ axis: 'x' }} class="ml-2">
+							<Button title="Stop response" variant="outline" size="icon" on:click={handleAbort}>
+								<StopCircle class="h-4 w-4" />
+							</Button>
+						</div>
+					{/if}
+				</div>
 			</div>
 		</Pane>
+
 		<PaneResizer class="flex gap-x-1 px-2">
 			<Separator orientation="vertical" />
 			<Separator orientation="vertical" />
 		</PaneResizer>
+
 		<Pane defaultSize={60} minSize={30}>
 			<div
 				class="flex h-full flex-col overflow-y-auto px-6 pb-12 pt-6 text-current"

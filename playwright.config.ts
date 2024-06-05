@@ -11,7 +11,7 @@ const config: PlaywrightTestConfig = {
 	use: {
 		trace: 'on-first-retry',
 		contextOptions: {
-			permissions: ['clipboard-read']
+			permissions: ['clipboard-write', 'clipboard-read']
 		}
 	}
 };
