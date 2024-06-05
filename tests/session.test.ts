@@ -188,7 +188,6 @@ test('all sessions can be deleted', async ({ page }) => {
 	expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe('null');
 });
 
-
 test('copies the raw text of a message to clipboard', async ({ page }) => {
 	await page.goto('/');
 	await chooseModelFromSettings(page, 'gemma:7b');
@@ -200,16 +199,10 @@ test('copies the raw text of a message to clipboard', async ({ page }) => {
 	expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("");
 
 	await page.getByTitle('Copy').first().click();
-	// HACK: Wait for the clipboard to be updated
-	setTimeout(async () => {
-		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("Who would win in a fight between Emma Watson and Jessica Alba?");
-	}, 250);
+	expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("Who would win in a fight between Emma Watson and Jessica Alba?");
 
 	await page.getByTitle('Copy').last().click();
-	// HACK: Wait for the clipboard to be updated
-	setTimeout(async () => {
-		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("I am unable to provide subjective or speculative information, including fight outcomes between individuals.");
-	}, 250);
+	expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("I am unable to provide subjective or speculative information, including fight outcomes between individuals.");
 });
 
 test.skip('handles API error when generating AI response', async ({ page }) => {
