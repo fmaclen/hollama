@@ -22,6 +22,7 @@
 	let session: Session;
 	let completion: string;
 	let prompt: string;
+	let promptCached: string;
 	let abortController: AbortController;
 
 	$: session = loadSession(data.id);
@@ -65,6 +66,7 @@
 		const message: Message = { role: 'ai', content: completion };
 		session.messages = [...session.messages, message];
 		completion = '';
+		promptCached = '';
 		saveSession({ ...session, context });
 	}
 
@@ -72,6 +74,7 @@
 		if (!prompt) return;
 
 		const message: Message = { role: 'user', content: prompt };
+		promptCached = prompt;
 		prompt = '';
 		completion = '';
 		session.messages = [...session.messages, message];
@@ -106,19 +109,18 @@
 				throw new Error("Couldn't connect to Ollama");
 			}
 		} catch (error: any) {
-			if (error.name === 'AbortError') {
-				// When the user aborts the request reset the prompt to the last message
-				// and remove it from the session.
-				prompt = message.content;
-				session.messages = session.messages.slice(0, -1);
-			} else {
-				handleError(error);
-			}
+			if (error.name === 'AbortError') return; // User aborted the request
+			handleError(error);
 		}
 	}
 
 	function handleAbort() {
 		abortController.abort();
+		// Reset the prompt to the last sent message
+		prompt = promptCached;
+		promptCached = '';
+		// Remove the "incomplete" AI response
+		session.messages = session.messages.slice(0, -1);
 	}
 </script>
 
@@ -162,7 +164,7 @@
 					<Button class="w-full" on:click={handleSubmit} disabled={!prompt}>Send</Button>
 					{#if isLastMessageFromUser}
 						<div transition:slide={{ axis: 'x' }} class="ml-2">
-							<Button title="Stop completion" variant="outline" size="icon" on:click={handleAbort}>
+							<Button title="Stop response" variant="outline" size="icon" on:click={handleAbort}>
 								<StopCircle class="h-4 w-4" />
 							</Button>
 						</div>

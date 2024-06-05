@@ -205,6 +205,41 @@ test('copies the raw text of a message to clipboard', async ({ page }) => {
 	expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("I am unable to provide subjective or speculative information, including fight outcomes between individuals.");
 });
 
+test('can stop a completion in progress', async ({ page }) => {
+	const promptTextarea = page.getByLabel('Prompt');
+	const sendButton = page.getByText('Send');
+	const stopButton = page.getByTitle('Stop response');
+	const userMessage = page.locator('article', { hasText: "You" })
+	const aiMessage = page.locator('article', { hasText: "AI" })
+
+	await page.goto('/');
+	await chooseModelFromSettings(page, 'gemma:7b');
+	await page.getByText("New session").click();
+	await expect(userMessage).not.toBeVisible();
+	await expect(aiMessage).not.toBeVisible();
+
+	// Mock a response that takes a while to generate
+	await page.route('**/generate', () => {});
+	await promptTextarea.fill('Hello world!');
+	await sendButton.click();
+
+	await expect(userMessage).toBeVisible();
+	await expect(userMessage).toContainText('Hello world!')
+	await expect(aiMessage).toBeVisible();
+	await expect(aiMessage).toContainText('...');
+	await expect(promptTextarea).toHaveValue('');
+	await expect(sendButton).toBeDisabled();
+	await expect(stopButton).toBeVisible();
+	await expect(page.getByText("Write a prompt to start a new session")).not.toBeVisible();
+
+	await stopButton.click();
+	await expect(page.getByText("Write a prompt to start a new session")).toBeVisible();
+	await expect(promptTextarea).toHaveValue('Hello world!');
+	await expect(userMessage).not.toBeVisible();
+	await expect(aiMessage).not.toBeVisible();
+	await expect(stopButton).not.toBeVisible();
+});
+
 test.skip('handles API error when generating AI response', async ({ page }) => {
 	// TODO: Implement the test
 });
