@@ -29,6 +29,7 @@
 	$: isNewSession = !session?.messages.length;
 	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
 	$: session && scrollToBottom();
+	$: if ($settingsStore?.ollamaModel) { session.model = $settingsStore.ollamaModel };
 
 	async function scrollToBottom() {
 		if (!messageWindow) return;
