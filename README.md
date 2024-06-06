@@ -27,7 +27,7 @@ No sign up is required and data is _100% stored locally on your browser_.
 Run the command below, then visit [http://localhost:4173](http://localhost:4173).
 
 ```shell
-docker run --rm -d -p 4173:4173 ghcr.io/fmaclen/hollama:latest 
+docker run --rm -d -p 4173:4173 ghcr.io/fmaclen/hollama/hollama:latest 
 ```
 
 ### Connecting to an Ollama server

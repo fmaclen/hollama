@@ -1,8 +1,8 @@
 name: Publish Docker image to container registry
 on:
   push:
-    branches:
-      - main
+    # branches:
+    #   - main
 
 jobs:
   docker:
@@ -28,5 +28,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/${{ github.actor }}/hollama:latest
-          platforms: linux/arm64, linux/amd64
+          tags: ghcr.io/${{ github.actor }}/hollama/hollama:latest
+          platforms: linux/arm64,linux/amd64
