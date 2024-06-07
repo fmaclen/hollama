@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import MarkdownIt from 'markdown-it';
 	import hljs from 'highlight.js';
 	import 'highlight.js/styles/github.css';
@@ -6,7 +7,6 @@
 	import { type Message } from '$lib/sessions';
 	import Separator from '$lib/components/Separator.svelte';
 	import CopyButton from './CopyButton.svelte';
-	import { onMount } from 'svelte';
 
 	export let message: Message;
 	let articleElement: HTMLElement;

@@ -215,7 +215,6 @@ test('can copy the raw text of a message or code snippets to clipboard', async (
 	await expect(page.getByTitle('Copy')).toHaveCount(5);
 	
 	await page.locator("pre").hover();
-
 	await page.getByTitle('Copy').last().click();
 	expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("def calculate_odds(emma_age, emma_height, emma_weight, emma_experience, jessica_age, jessica_height, jessica_weight, jessica_experience):\n    emma_stats = {'age': emma_age, 'height': emma_height, 'weight': emma_weight, 'experience': emma_experience}\n    jessica_stats = {'age': jessica_age, 'height': jessica_height, 'weight': jessica_weight, 'experience': jessica_experience}\n    \n    # Calculate the differences between their stats\n    age_difference = abs(emma_stats['age'] - jessica_stats['age'])\n    height_difference = abs(emma_stats['height'] - jessica_stats['height'])\n    weight_difference = abs(emma_stats['weight'] - jessica_stats['weight'])\n    \n    # Return the differences as a tuple\n    return (age_difference, height_difference, weight_difference)\n");
 });
