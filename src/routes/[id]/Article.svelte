@@ -1,36 +1,51 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import MarkdownIt from 'markdown-it';
 	import hljs from 'highlight.js';
 	import 'highlight.js/styles/github.css';
-	import { Files } from 'lucide-svelte';
 
 	import { type Message } from '$lib/sessions';
 	import Separator from '$lib/components/Separator.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import CopyButton from './CopyButton.svelte';
+
+	export let message: Message;
+	let articleElement: HTMLElement;
+
+	const CODE_SNIPPET_ID = 'code-snippet';
+	const isUserRole = message.role === 'user';
+
+	function renderCodeSnippet(code: string) {
+		return `<pre id="${CODE_SNIPPET_ID}"><code class="hljs">${code}</code></pre>`;
+	}
 
 	const md: MarkdownIt = new MarkdownIt({
 		highlight: function (str, lang) {
 			if (lang && hljs.getLanguage(lang)) {
 				try {
-					return `<pre><code class="hljs">${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`;
-				} catch (__) {}
+					return renderCodeSnippet(
+						hljs.highlight(str, { language: lang, ignoreIllegals: true }).value
+					);
+				} catch (_) {}
 			}
 
-			return `<pre><code class="hljs">${md.utils.escapeHtml(str)}</code></pre>
-		`;
+			return renderCodeSnippet(md.utils.escapeHtml(str));
 		}
 	});
 
-	export let message: Message;
-	const isUserRole = message.role === 'user';
+	onMount(() => {
+		const preElements = articleElement.querySelectorAll(`pre#${CODE_SNIPPET_ID}`);
 
-	function copyMessage() {
-		navigator.clipboard.writeText(message.content);
-	}
+		preElements.forEach((preElement) => {
+			const codeElement = preElement.querySelector('code');
+			if (codeElement)
+				new CopyButton({ target: preElement, props: { content: codeElement.innerText } });
+		});
+	});
 </script>
 
 <article
-	class="mx-auto flex w-full max-w-[70ch] flex-col gap-y-3 mb-3 last:mb-0"
+	class="mx-auto mb-3 flex w-full max-w-[70ch] flex-col gap-y-3 last:mb-0"
+	bind:this={articleElement}
 >
 	<nav class="grid grid-cols-[max-content_auto_max-content] items-center">
 		<p
@@ -40,9 +55,7 @@
 			{isUserRole ? 'You' : message.role}
 		</p>
 		<Separator />
-		<Button title="Copy message" variant="icon" size="icon" on:click={copyMessage}>
-			<Files class="h-4 w-4" />
-		</Button>
+		<CopyButton content={message.content} />
 	</nav>
 
 	<div id="markdown" class="text-md mx-auto w-full overflow-x-auto px-[4ch]">
@@ -66,8 +79,20 @@
 			@apply mb-4;
 		}
 
+		:global(pre) {
+			@apply relative;
+		}
+
+		:global(pre:hover > button) {
+			@apply opacity-100;
+		}
+
+		:global(pre > button) {
+			@apply opacity-0 absolute top-1 right-0 bg-white;
+		}
+
 		:global(pre > code) {
-			@apply rounded-md p-4 text-sm;
+			@apply rounded-md p-4 text-sm pr-12;
 		}
 
 		:global(li > code),

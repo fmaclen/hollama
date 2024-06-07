@@ -66,8 +66,8 @@
 			@apply underline underline-offset-4 hover:text-neutral-500;
 		}
 
-		&--icon {
-			@apply opacity-25 hover:opacity-100;
+		&--icon :global(svg) {
+			@apply opacity-25 hover:opacity-50 active:opacity-100;
 		}
 
 		&--size {
