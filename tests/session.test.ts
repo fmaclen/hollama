@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse } from './utils';
+import { MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
@@ -188,7 +188,7 @@ test('all sessions can be deleted', async ({ page }) => {
 	expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe('null');
 });
 
-test('copies the raw text of a message to clipboard', async ({ page }) => {
+test('can copy the raw text of a message or code snippets to clipboard', async ({ page }) => {
 	await page.goto('/');
 	await chooseModelFromSettings(page, 'gemma:7b');
 	await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
@@ -196,6 +196,7 @@ test('copies the raw text of a message to clipboard', async ({ page }) => {
 	await page.getByLabel('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 	await page.getByText('Send').click();
 	await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
+	await expect(page.getByTitle('Copy')).toHaveCount(2);
 	expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("");
 
 	await page.getByTitle('Copy').first().click();
@@ -203,6 +204,20 @@ test('copies the raw text of a message to clipboard', async ({ page }) => {
 
 	await page.getByTitle('Copy').last().click();
 	expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("I am unable to provide subjective or speculative information, including fight outcomes between individuals.");
+	await expect(page.locator("pre")).not.toBeVisible();
+	await expect(page.locator("code")).not.toBeVisible();
+	
+	await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_3);
+	await page.getByLabel('Prompt').fill("Write a Python function to calculate the odds of the winner in a fight between Emma Watson and Jessica Alba");
+	await page.getByText('Send').click();
+	await expect(page.locator("pre")).toBeVisible();
+	await expect(page.locator("code")).toBeVisible();
+	await expect(page.getByTitle('Copy')).toHaveCount(5);
+	
+	await page.locator("pre").hover();
+
+	await page.getByTitle('Copy').last().click();
+	expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("def calculate_odds(emma_age, emma_height, emma_weight, emma_experience, jessica_age, jessica_height, jessica_weight, jessica_experience):\n    emma_stats = {'age': emma_age, 'height': emma_height, 'weight': emma_weight, 'experience': emma_experience}\n    jessica_stats = {'age': jessica_age, 'height': jessica_height, 'weight': jessica_weight, 'experience': jessica_experience}\n    \n    # Calculate the differences between their stats\n    age_difference = abs(emma_stats['age'] - jessica_stats['age'])\n    height_difference = abs(emma_stats['height'] - jessica_stats['height'])\n    weight_difference = abs(emma_stats['weight'] - jessica_stats['weight'])\n    \n    # Return the differences as a tuple\n    return (age_difference, height_difference, weight_difference)\n");
 });
 
 test('can start a new session, choose a model and stop a completion in progress', async ({ page }) => {
