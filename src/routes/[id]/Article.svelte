@@ -79,8 +79,20 @@
 			@apply mb-4;
 		}
 
+		:global(pre) {
+			@apply relative;
+		}
+
+		:global(pre:hover > button) {
+			@apply opacity-100;
+		}
+
+		:global(pre > button) {
+			@apply opacity-0 absolute top-1 right-0 bg-white;
+		}
+
 		:global(pre > code) {
-			@apply rounded-md p-4 text-sm;
+			@apply rounded-md p-4 text-sm pr-12;
 		}
 
 		:global(li > code),
