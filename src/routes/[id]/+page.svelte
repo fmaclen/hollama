@@ -193,7 +193,7 @@
 					</div>
 				{/if}
 
-				{#each session.messages as message}
+				{#each session.messages as message, i (session.id + i)}
 					<Article {message} />
 				{/each}
 
