@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { env } from '$env/dynamic/public';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { page } from '$app/stores';
@@ -18,6 +19,18 @@
 
 	onMount(createNewSession);
 </script>
+
+<svelte:head>
+	{#if env.PUBLIC_PLAUSIBLE_DOMAIN}
+		<script
+			defer
+			data-domain={env.PUBLIC_PLAUSIBLE_DOMAIN}
+			src="https://plausible.io/js/script.js"
+		></script>
+	{/if}
+
+	<title>Hollama</title>
+</svelte:head>
 
 <div
 	class="grid h-screen w-screen grid-cols-[max-content,max-content,280px,max-content,1fr] text-current bg-body"
