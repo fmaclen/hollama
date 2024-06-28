@@ -10,14 +10,15 @@
 	import Separator from '$lib/components/Separator.svelte';
 
 	import { sessionsStore } from '$lib/store';
+	import { generateStorageId } from '$lib/utils';
 
 	let newSessionId: string;
 
-	function createNewSession() {
-		newSessionId = Math.random().toString(36).substring(2, 8); // E.g. `z7avx9`
+	function setSessionId() {
+		newSessionId = generateStorageId();
 	}
 
-	onMount(createNewSession);
+	onMount(setSessionId);
 </script>
 
 <svelte:head>
@@ -33,7 +34,7 @@
 </svelte:head>
 
 <div
-	class="grid h-screen w-screen grid-cols-[max-content,max-content,280px,max-content,1fr] text-current bg-body"
+	class="grid h-screen w-screen grid-cols-[max-content,max-content,280px,max-content,1fr] bg-body text-current"
 >
 	<a href="/" class="flex flex-col items-center justify-between py-6 hover:bg-accent">
 		<img src="/favicon.png" alt="Hollama logo" width="48" height="48" />
@@ -52,7 +53,7 @@
 				class="w-full"
 				variant="outline"
 				href={`/${newSessionId}`}
-				on:click={createNewSession}
+				on:click={setSessionId}
 			>
 				New session
 			</Button>
@@ -88,7 +89,10 @@
 					</a>
 				{/each}
 			{:else}
-				<p transition:slide class="flex h-full w-full items-center justify-center text-sm text-muted-foreground">
+				<p
+					transition:slide
+					class="flex h-full w-full items-center justify-center text-sm text-muted-foreground"
+				>
 					No sessions in history
 				</p>
 			{/if}
