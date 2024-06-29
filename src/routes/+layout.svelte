@@ -21,10 +21,21 @@
 <div
 	class="grid h-screen w-screen grid-cols-[max-content,max-content,280px,max-content,1fr] bg-body text-current"
 >
-	<a href="/" class="flex flex-col items-center justify-between py-6 hover:bg-accent">
-		<img src="/favicon.png" alt="Hollama logo" width="48" height="48" />
-		<h1 class="hollama-wordmark text-2xl font-medium">Hollama</h1>
-	</a>
+	<aside class="flex flex-col justify-between px-6">
+		<a href="/" class="flex flex-col items-center justify-between py-6 hover:bg-accent">
+			<img src="/favicon.png" alt="Hollama logo" width="48" height="48" />
+		</a>
+
+		<nav class="flex w-max flex-col gap-y-6 text-sm font-semibold">
+			<a href="/sessions">Sessions</a>
+			<a href="/knowledge">Knowdlege</a>
+			<a href="/motd">MOTD</a>
+		</nav>
+
+		<a href="/" class="flex flex-col items-center justify-between py-6 hover:bg-accent">
+			<h1 class="hollama-wordmark text-2xl font-medium">Hollama</h1>
+		</a>
+	</aside>
 
 	<Separator orientation="vertical" />
 
