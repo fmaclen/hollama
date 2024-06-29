@@ -2,7 +2,7 @@ import { browser } from '$app/environment';
 import { writable } from 'svelte/store';
 import type { Session } from '$lib/sessions';
 import type { OllamaModel } from './ollama';
-import type { SystemTemplate } from './systemTemplates';
+import type { Knowledge } from './knowledge';
 
 function createLocalStorageStore<T>(key: string, initialValue: T | null = null) {
 	const localStorageValue: string | null = browser ? window.localStorage.getItem(key) : null;
@@ -35,4 +35,4 @@ export interface Settings {
 
 export const settingsStore = createLocalStorageStore<Settings>(`${LOCAL_STORAGE_PREFIX}-settings`);
 export const sessionsStore = createLocalStorageStore<Session[]>(`${LOCAL_STORAGE_PREFIX}-sessions`);
-export const systemTemplatesStore = createLocalStorageStore<SystemTemplate[]>(`${LOCAL_STORAGE_PREFIX}-system-templates`);
+export const knowledgeStore = createLocalStorageStore<Knowledge[]>(`${LOCAL_STORAGE_PREFIX}-knowledge`);

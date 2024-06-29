@@ -29,7 +29,7 @@
 		<nav class="flex w-max flex-col gap-y-6 text-sm font-semibold">
 			<a href="/sessions">Sessions</a>
 			<a href="/knowledge">Knowdlege</a>
-			<a href="/motd">MOTD</a>
+			<!-- <a href="/motd">MOTD</a> -->
 		</nav>
 
 		<a href="/" class="flex flex-col items-center justify-between py-6 hover:bg-accent">

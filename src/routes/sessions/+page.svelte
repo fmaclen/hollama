@@ -66,8 +66,6 @@
 	});
 </script>
 
-
-
 <div class="flex w-full flex-col bg-secondary">
 	<div class="justify-content-center m-auto max-w-[40ch] p-6">
 		<div class="fieldset">
