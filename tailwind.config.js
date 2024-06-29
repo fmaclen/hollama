@@ -1,4 +1,5 @@
 import { fontFamily } from "tailwindcss/defaultTheme";
+// const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 const config = {
@@ -68,3 +69,4 @@ const config = {
 };
 
 export default config;
+// module.exports = config;
