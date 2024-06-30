@@ -35,10 +35,10 @@
 
 	<main class="grid grid-rows-[max-content,max-content,auto]">
 		<nav class="flex w-max gap-1 px-6 py-3 text-sm font-semibold">
-			<Button variant={pathname === '/sessions' ? 'secondary' : 'outline'} href="/sessions">
+			<Button variant={pathname.includes('/sessions') ? 'secondary' : 'outline'} href="/sessions">
 				Sessions
 			</Button>
-			<Button variant={pathname === '/knowledge' ? 'secondary' : 'outline'} href="/knowledge">
+			<Button variant={pathname.includes('/knowledge') ? 'secondary' : 'outline'} href="/knowledge">
 				Knowledge
 			</Button>
 			<Button variant={pathname === '/' ? 'secondary' : 'outline'} href="/">Settings</Button>
