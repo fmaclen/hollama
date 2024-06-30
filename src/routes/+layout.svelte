@@ -32,7 +32,7 @@
 	<main class="grid grid-rows-[max-content,max-content,auto]">
 		<nav class="flex w-max gap-6 p-6 text-sm font-semibold">
 			<a href="/sessions">Sessions</a>
-			<a href="/knowledge">Knowdlege</a>
+			<a href="/knowledge">Knowledge</a>
 			<a href="/">Settings</a>
 		</nav>
 
