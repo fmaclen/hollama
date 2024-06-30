@@ -18,7 +18,7 @@
 	import Field from '$lib/components/Field.svelte';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import FieldSelect from '$lib/components/FieldSelect.svelte';
-	import { createNewUrl } from '$lib/components/ButtonNew';
+	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sections } from '$lib/section';
 
 	export let data: PageData;
@@ -178,7 +178,7 @@
 								title="New knowledge"
 								variant="outline"
 								size="icon"
-								href={createNewUrl(Sections.Knowledge)}
+								href={generateNewUrl(Sections.Knowledge)}
 							>
 								<CopyPlus class="h-4 w-4" />
 							</Button>
