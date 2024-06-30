@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PageData } from '../$types';
+	import type { PageData } from './$types';
 
 	import { loadKnowledge, saveKnowledge } from '$lib/knowledge';
 	import Button from '$lib/components/Button.svelte';
