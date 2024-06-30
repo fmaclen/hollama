@@ -20,5 +20,7 @@
 
 	<Separator orientation="vertical" />
 
-	<slot />
+	<div class="h-full bg-elevation-100">
+		<slot />
+	</div>
 </section>

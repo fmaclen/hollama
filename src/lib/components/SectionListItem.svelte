@@ -23,7 +23,7 @@
 
 <style lang="scss">
 	.section-list__a {
-		@apply flex flex-col px-6 py-3;
+		@apply flex flex-col px-6 py-3 max-w-96;
 	}
 
 	.section-list__title {
