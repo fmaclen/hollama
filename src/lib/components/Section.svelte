@@ -8,7 +8,7 @@
 </script>
 
 <section class="grid grid-cols-[max-content,max-content,auto]">
-	<aside class="flex h-screen min-w-80 flex-col">
+	<aside class="flex h-full min-w-80 flex-col">
 		<ButtonNew {section}></ButtonNew>
 
 		<Separator />
