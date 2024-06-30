@@ -19,9 +19,9 @@
 </svelte:head>
 
 <div
-	class="grid h-screen w-screen grid-cols-[max-content,max-content,280px,max-content,1fr] bg-body text-current"
+	class="grid h-screen w-screen grid-cols-[max-content,max-content,auto] bg-body text-current"
 >
-	<aside class="flex flex-col justify-between px-6">
+	<aside class="flex flex-col justify-between px-8">
 		<a href="/" class="flex flex-col items-center justify-between py-6 hover:bg-accent">
 			<img src="/favicon.png" alt="Hollama logo" width="48" height="48" />
 		</a>
@@ -29,6 +29,7 @@
 		<nav class="flex w-max flex-col gap-y-6 text-sm font-semibold">
 			<a href="/sessions">Sessions</a>
 			<a href="/knowledge">Knowdlege</a>
+			<a href="/">Settings</a>
 			<!-- <a href="/motd">MOTD</a> -->
 		</nav>
 

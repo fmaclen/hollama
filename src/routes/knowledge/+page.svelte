@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 
 	import { knowledgeStore } from '$lib/store';
 	import { generateStorageId } from '$lib/utils';
 	import Button from '$lib/components/Button.svelte';
+	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 
 	function deleteTemplate(id: string) {
 		const confirmed = confirm('Are you sure you want to delete this template?');
@@ -30,16 +32,27 @@
 
 	{#if $knowledgeStore}
 		<ul>
-			{#each $knowledgeStore as template}
+			{#each $knowledgeStore as knowledge}
 				<li>
-					<strong><a href="/knowledge/{template.id}">{template.name}</a></strong>
+					<strong><a href="/knowledge/{knowledge.id}">{knowledge.name}</a></strong>
 				</li>
-				<li>Lupdated on: {template.updated_at}</li>
+				<li>Lupdated on: {knowledge.updated_at}</li>
 				<li>
-					<Button variant="secondary" on:click={() => deleteTemplate(template.id)}>Delete</Button>
+					<Button variant="secondary" on:click={() => deleteTemplate(knowledge.id)}>Delete</Button>
 				</li>
 			{/each}
 		</ul>
+	{:else}
+		<EmptyMessage>Create a new knowlege or choose one from the list</EmptyMessage>
+	{/if}
+
+	{#if $knowledgeStore}
+		{#each $knowledgeStore as knowledge}
+			{#if knowledge.id === $page.params.id}
+				<p>{knowledge.name}</p>
+				<p>{knowledge.content}</p>
+			{/if}
+		{/each}
 	{/if}
 
 </div>

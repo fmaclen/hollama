@@ -15,6 +15,7 @@
 	import type { PageData } from './$types';
 	import FieldModels from '$lib/components/FieldModels.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 
 	export let data: PageData;
 
@@ -29,7 +30,9 @@
 	$: isNewSession = !session?.messages.length;
 	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
 	$: session && scrollToBottom();
-	$: if ($settingsStore?.ollamaModel) { session.model = $settingsStore.ollamaModel };
+	$: if ($settingsStore?.ollamaModel) {
+		session.model = $settingsStore.ollamaModel;
+	}
 
 	async function scrollToBottom() {
 		if (!messageWindow) return;
@@ -164,7 +167,7 @@
 				<div class="flex w-full">
 					<Button class="w-full" on:click={handleSubmit} disabled={!prompt}>Send</Button>
 					{#if isLastMessageFromUser}
-						<div transition:slide={{ axis: 'x' }} class="ml-2">
+						<div class="ml-2">
 							<Button title="Stop response" variant="outline" size="icon" on:click={handleAbort}>
 								<StopCircle class="h-4 w-4" />
 							</Button>
@@ -185,12 +188,7 @@
 				bind:this={messageWindow}
 			>
 				{#if isNewSession}
-					<div
-						class="align-center flex h-full w-full items-center justify-center text-muted-foreground"
-						transition:slide
-					>
-						Write a prompt to start a new session
-					</div>
+					<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
 				{/if}
 
 				{#each session.messages as message, i (session.id + i)}
