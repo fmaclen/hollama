@@ -7,7 +7,7 @@
 	export let section: Sections;
 </script>
 
-<section class="grid grid-cols-[max-content,max-content,auto]">
+<section class="grid grid-cols-[1fr,max-content,4fr]">
 	<aside class="flex h-full min-w-80 flex-col">
 		<ButtonNew {section}></ButtonNew>
 

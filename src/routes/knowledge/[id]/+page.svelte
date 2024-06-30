@@ -9,6 +9,7 @@
 	import { type Knowledge, loadKnowledge, saveKnowledge } from '$lib/knowledge';
 	import { getUpdatedAtDate } from '$lib/utils';
 	import { knowledgeStore } from '$lib/store';
+	import Header from '$lib/components/Header.svelte';
 
 	export let data: PageData;
 
@@ -35,15 +36,15 @@
 	}
 
 	afterNavigate(() => {
-		knowledge = loadKnowledge(data.id)
+		knowledge = loadKnowledge(data.id);
 		name = knowledge.name;
 		content = knowledge.content;
 	});
 </script>
 
 <div class="flex h-full w-full flex-col">
-	<header class="flex items-center justify-between px-6 py-4">
-		<div class="space-y-1">
+	<Header>
+		<div class="space-y-4">
 			<p data-testid="knowledge-id" class="text-sm font-bold leading-none text-foreground">
 				Knowledge
 				<Button size="link" variant="link" href={`/knowledge/${knowledge.id}`}>
@@ -59,11 +60,11 @@
 				<Trash2 class="h-4 w-4" />
 			</Button>
 		{/if}
-	</header>
+	</Header>
 
 	<Separator />
 
-	<div class="flex h-full flex-col p-6 bg-elevation-100">
+	<div class="flex h-full flex-col bg-elevation-100 p-6">
 		<Field class="mb-6 flex" name="name">
 			<span slot="title">Name</span>
 			<input class="input" bind:value={name} />
@@ -78,7 +79,7 @@
 
 <style lang="scss">
 	.input {
-		@apply flex min-h-[2em] w-full resize-none rounded-md border border-input bg-elevation-50 focus:bg-elevation-0 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+		@apply flex min-h-[2em] w-full resize-none rounded-md border border-input bg-elevation-0 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
 
 		&--textarea {
 			@apply h-full min-h-[10em];
