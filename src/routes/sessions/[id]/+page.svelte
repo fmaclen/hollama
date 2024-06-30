@@ -69,7 +69,7 @@
 			const updatedSessions = $sessionsStore.filter((s) => s.id !== session.id);
 			$sessionsStore = updatedSessions;
 		}
-		goto('/');
+		goto('/sessions');
 	}
 
 	async function handleCompletionDone(completion: string, context: number[]) {
@@ -94,7 +94,6 @@
 		session.messages = systemMessage
 			? [systemMessage, ...session.messages, message]
 			: [...session.messages, message];
-		debugger;
 
 		try {
 			const ollama = await ollamaGenerate(session, abortController.signal);
