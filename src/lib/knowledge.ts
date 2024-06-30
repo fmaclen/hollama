@@ -1,10 +1,10 @@
 import { get } from "svelte/store";
-import { settingsStore, knowledgeStore } from "$lib/store";
+import { knowledgeStore } from "$lib/store";
 
 export interface Knowledge {
 	id: string;
 	name: string;
-	content: string[];
+	content: string;
   updatedAt: string;
 }
 
@@ -22,7 +22,7 @@ export const loadKnowledge = (id: string): Knowledge => {
 
 	if (!knowledge) {
 		// Create a new knowledge
-		knowledge = { id, name: "", content: [], updatedAt: new Date().toISOString() };
+		knowledge = { id, name: '', content: '', updatedAt: new Date().toISOString() };
 	}
 
 	return knowledge;
