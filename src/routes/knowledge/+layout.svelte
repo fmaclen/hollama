@@ -14,7 +14,7 @@
 					section={Sections.Knowledge}
 					id={knowledge.id}
 					title={knowledge.name}
-					subtitle={knowledge.updated_at}
+					subtitle={knowledge.updatedAt}
 				/>
 			{/each}
 		{:else}

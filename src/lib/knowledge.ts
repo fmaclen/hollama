@@ -5,7 +5,7 @@ export interface Knowledge {
 	id: string;
 	name: string;
 	content: string[];
-  updated_at: string;
+  updatedAt: string;
 }
 
 export const loadKnowledge = (id: string): Knowledge => {
@@ -22,7 +22,7 @@ export const loadKnowledge = (id: string): Knowledge => {
 
 	if (!knowledge) {
 		// Create a new knowledge
-		knowledge = { id, name: "", content: [], updated_at: new Date().toISOString() };
+		knowledge = { id, name: "", content: [], updatedAt: new Date().toISOString() };
 	}
 
 	return knowledge;

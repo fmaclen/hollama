@@ -128,8 +128,8 @@
 	}
 </script>
 
-<div class="flex h-screen w-full flex-col">
-	<div class="flex items-center justify-between px-6 py-4">
+<div class="flex h-full w-full flex-col">
+	<header class="flex items-center justify-between px-6 py-4">
 		<div class="space-y-1">
 			<p data-testid="session-id" class="text-sm font-bold leading-none text-foreground">
 				Session <Button size="link" variant="link" href={`/${session.id}`}>#{session.id}</Button>
@@ -141,7 +141,7 @@
 		<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
 			<Trash2 class="h-4 w-4" />
 		</Button>
-	</div>
+	</header>
 
 	<Separator />
 
