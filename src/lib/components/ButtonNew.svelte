@@ -2,8 +2,9 @@
 	import { onMount } from "svelte";
 	import { generateStorageId } from "$lib/utils";
 	import Button from "./Button.svelte";
+	import { Sections } from "$lib/section";
 
-	export let section: "session" | "knowledge";
+	export let section: Sections;
 	let newId: string;
 
 	function setId() {
