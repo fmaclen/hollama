@@ -3,6 +3,7 @@
 	import { generateStorageId } from "$lib/utils";
 	import Button from "./Button.svelte";
 	import { Sections } from "$lib/section";
+	import { createNewUrl } from "./ButtonNew";
 
 	export let section: Sections;
 	let newId: string;
@@ -19,7 +20,7 @@
 		data-testid="new-session"
 		class="w-full"
 		variant="outline"
-		href={`/${section}/${newId}`}
+		href={createNewUrl(section, newId)}
 		on:click={setId}
 	>
 		New {section}

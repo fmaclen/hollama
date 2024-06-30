@@ -2,20 +2,24 @@
 	import { tick } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { goto } from '$app/navigation';
-	import { StopCircle, Trash2 } from 'lucide-svelte';
+	import { CopyPlus, FilePlus, FilePlus2, StopCircle, Trash2 } from 'lucide-svelte';
 
 	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	import Button from '$lib/components/Button.svelte';
 	import Separator from '$lib/components/Separator.svelte';
 	import Article from './Article.svelte';
 
-	import { settingsStore, sessionsStore } from '$lib/store';
+	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
+	import { settingsStore, sessionsStore, knowledgeStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
 	import type { PageData } from './$types';
 	import FieldModels from '$lib/components/FieldModels.svelte';
 	import Field from '$lib/components/Field.svelte';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
+	import FieldSelect from '$lib/components/FieldSelect.svelte';
+	import { createNewUrl } from '$lib/components/ButtonNew';
+	import { Sections } from '$lib/section';
 
 	export let data: PageData;
 
@@ -26,13 +30,15 @@
 	let promptCached: string;
 	let abortController: AbortController;
 
+	let knowledgeId: string;
+	let knowledge: Knowledge | null;
+
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
 	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
 	$: session && scrollToBottom();
-	$: if ($settingsStore?.ollamaModel) {
-		session.model = $settingsStore.ollamaModel;
-	}
+	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
+	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 
 	async function scrollToBottom() {
 		if (!messageWindow) return;
@@ -77,12 +83,18 @@
 	async function handleSubmit() {
 		if (!prompt) return;
 
+		let systemMessage: Message | null = null;
+		if (knowledge) systemMessage = { role: 'system', content: knowledge.content };
+
 		const message: Message = { role: 'user', content: prompt };
+		abortController = new AbortController();
 		promptCached = prompt;
 		prompt = '';
 		completion = '';
-		session.messages = [...session.messages, message];
-		abortController = new AbortController();
+		session.messages = systemMessage
+			? [systemMessage, ...session.messages, message]
+			: [...session.messages, message];
+		debugger;
 
 		try {
 			const ollama = await ollamaGenerate(session, abortController.signal);
@@ -152,7 +164,28 @@
 					<div out:slide class="mb-6">
 						<FieldModels />
 					</div>
+					<div out:slide class="mb-6 grid grid-cols-[auto,max-content] items-end gap-x-2">
+						<FieldSelect
+							label="Knowledge"
+							name="knowledge"
+							disabled={!knowledge}
+							options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
+							bind:value={knowledgeId}
+						/>
+
+						{#if !knowledge}
+							<Button
+								title="New knowledge"
+								variant="outline"
+								size="icon"
+								href={createNewUrl(Sections.Knowledge)}
+							>
+								<CopyPlus class="h-4 w-4" />
+							</Button>
+						{/if}
+					</div>
 				{/if}
+
 				<Field class="mb-6 flex h-full" name="prompt">
 					<span slot="title">Prompt</span>
 					<textarea
@@ -164,6 +197,7 @@
 						on:keydown={handleKeyDown}
 					/>
 				</Field>
+
 				<div class="flex w-full">
 					<Button class="w-full" on:click={handleSubmit} disabled={!prompt}>Send</Button>
 					{#if isLastMessageFromUser}
@@ -205,6 +239,6 @@
 
 <style lang="scss">
 	.textarea {
-		@apply flex h-full min-h-[10em] w-full resize-none rounded-md border border-input bg-elevation-50 focus:bg-elevation-0 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50;
+		@apply flex h-full min-h-[10em] w-full resize-none rounded-md border border-input bg-elevation-0 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground  focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50;
 	}
 </style>
