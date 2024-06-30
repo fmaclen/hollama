@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 	import type { PageData } from './$types';
 	import { Trash2 } from 'lucide-svelte';
 
@@ -9,19 +9,18 @@
 	import { type Knowledge, loadKnowledge, saveKnowledge } from '$lib/knowledge';
 	import { getUpdatedAtDate } from '$lib/utils';
 	import { knowledgeStore } from '$lib/store';
-	import { afterUpdate } from 'svelte';
 
 	export let data: PageData;
 
-	let knowledge: Knowledge;
+	let knowledge: Knowledge = loadKnowledge(data.id);
 	let name: string;
 	let content: string;
 
-	$: knowledge = loadKnowledge(data.id);
 	$: isNewKnowledge = !name || !content;
 
 	function handleSubmit() {
 		saveKnowledge({ id: data.id, name, content, updatedAt: getUpdatedAtDate() });
+		knowledge = loadKnowledge(data.id);
 	}
 
 	function deleteKnowledge() {
@@ -35,11 +34,10 @@
 		goto('/knowledge');
 	}
 
-	afterUpdate(() => {
-		if (knowledge) {
-			name = knowledge.name;
-			content = knowledge.content;
-		}
+	afterNavigate(() => {
+		knowledge = loadKnowledge(data.id)
+		name = knowledge.name;
+		content = knowledge.content;
 	});
 </script>
 
