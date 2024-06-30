@@ -11,20 +11,17 @@ export interface Knowledge {
 export const loadKnowledge = (id: string): Knowledge => {
 	let knowledge: Knowledge | null = null;
 
-	// Retrieve the current sessions
+	// Retrieve the current knowledges
 	const currentKnowledges = get(knowledgeStore);
 
-	// Find the session with the given id
+	// Find the knowledge with the given id
 	if (currentKnowledges) {
 		const existingKnowledge = currentKnowledges.find(s => s.id === id);
 		existingKnowledge && (knowledge = existingKnowledge);
 	}
 
 	if (!knowledge) {
-		// Get the current model
-		const model = get(settingsStore)?.ollamaModel || "";
-
-		// Create a new session
+		// Create a new knowledge
 		knowledge = { id, name: "", content: [], updated_at: new Date().toISOString() };
 	}
 
@@ -32,17 +29,17 @@ export const loadKnowledge = (id: string): Knowledge => {
 };
 
 export const saveKnowledge = (Knowledge: Knowledge): void => {
-	// Retrieve the current sessions
+	// Retrieve the current knowledges
 	const currentKnowledges = get(knowledgeStore) || [];
 
-	// Find the index of the session with the same id, if it exists
+	// Find the index of the knowledge with the same id, if it exists
 	const existingKnowledge = currentKnowledges.findIndex(s => s.id === Knowledge.id);
 
 	if (existingKnowledge !== -1) {
-		// Update the existing session
+		// Update the existing knowledge
 		currentKnowledges[existingKnowledge] = Knowledge;
 	} else {
-		// Add the new session if it doesn't exist
+		// Add the new knowledge if it doesn't exist
 		currentKnowledges.push(Knowledge);
 	}
 
