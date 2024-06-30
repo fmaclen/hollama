@@ -20,7 +20,7 @@
 
 <div class="grid h-screen w-screen grid-cols-[max-content,max-content,auto] bg-body text-current">
 	<aside class="flex flex-col justify-between">
-		<a href="/" class="flex flex-col h-full items-center justify-between py-6 hover:bg-accent">
+		<a href="/" class="flex flex-col h-screen items-center justify-between py-6 hover:bg-accent">
 			<img src="/favicon.png" alt="Hollama logo" width="48" height="48" />
 
 			<h1 class="hollama-wordmark text-2xl font-medium">Hollama</h1>

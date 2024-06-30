@@ -140,7 +140,7 @@
 	}
 </script>
 
-<div class="flex h-full w-full flex-col">
+<div class="flex w-full flex-col">
 	<Header>
 		<div class="space-y-4">
 			<p data-testid="session-id" class="text-sm font-bold leading-none text-foreground">
@@ -157,7 +157,7 @@
 
 	<Separator />
 
-	<PaneGroup direction="horizontal" class="bg-accent">
+	<PaneGroup direction="horizontal">
 		<Pane defaultSize={40} minSize={30}>
 			<div class="flex h-full flex-col p-6">
 				{#if isNewSession}

@@ -7,8 +7,8 @@
 	export let section: Sections;
 </script>
 
-<section class="grid grid-cols-[1fr,max-content,4fr]">
-	<aside class="flex h-full min-w-80 flex-col">
+<section class="grid grid-cols-[1fr,max-content,4fr] bg-elevation-100">
+	<aside class="flex h-full min-w-80 flex-col bg-elevation-0">
 		<ButtonNew {section}></ButtonNew>
 
 		<Separator />
@@ -20,7 +20,5 @@
 
 	<Separator orientation="vertical" />
 
-	<div class="h-full bg-elevation-100">
-		<slot />
-	</div>
+	<slot />
 </section>
