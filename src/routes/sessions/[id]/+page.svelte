@@ -168,12 +168,12 @@
 						<FieldSelect
 							label="Knowledge"
 							name="knowledge"
-							disabled={!knowledge}
+							disabled={!$knowledgeStore}
 							options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
 							bind:value={knowledgeId}
 						/>
 
-						{#if !knowledge}
+						{#if !$knowledgeStore}
 							<Button
 								title="New knowledge"
 								variant="outline"
