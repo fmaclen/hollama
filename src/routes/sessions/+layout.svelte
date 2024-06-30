@@ -2,12 +2,11 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 
-	import Button from '$lib/components/Button.svelte';
 	import Separator from '$lib/components/Separator.svelte';
 	import { sessionsStore } from '$lib/store';
-	import { Settings } from 'lucide-svelte';
 	import { generateStorageId } from '$lib/utils';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
+	import ButtonNew from '$lib/components/ButtonNew.svelte';
 
 	let newSessionId: string;
 
@@ -20,20 +19,7 @@
 
 <div class="grid grid-cols-[max-content,max-content,auto]">
 	<aside class="flex h-screen min-w-80 flex-col">
-		<div class="flex gap-x-2 p-6">
-			<Button title="Settings" variant="outline" size="icon" href="/">
-				<Settings class="h-4 w-4" />
-			</Button>
-			<Button
-				data-testid="new-session"
-				class="w-full"
-				variant="outline"
-				href={`/sessions/${newSessionId}`}
-				on:click={setSessionId}
-			>
-				New session
-			</Button>
-		</div>
+		<ButtonNew section="session"></ButtonNew>
 
 		<Separator />
 
@@ -64,9 +50,7 @@
 					</a>
 				{/each}
 			{:else}
-				<EmptyMessage>
-					No sessions
-				</EmptyMessage>
+				<EmptyMessage>No sessions</EmptyMessage>
 			{/if}
 		</div>
 	</aside>
