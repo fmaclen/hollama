@@ -63,7 +63,7 @@
 
 	<Separator />
 
-	<div class="flex h-full flex-col p-6">
+	<div class="flex h-full flex-col p-6 bg-elevation-100">
 		<Field class="mb-6 flex" name="name">
 			<span slot="title">Name</span>
 			<input class="input" bind:value={name} />
@@ -78,7 +78,7 @@
 
 <style lang="scss">
 	.input {
-		@apply flex min-h-[2em] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+		@apply flex min-h-[2em] w-full resize-none rounded-md border border-input bg-elevation-50 focus:bg-elevation-0 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
 
 		&--textarea {
 			@apply h-full min-h-[10em];

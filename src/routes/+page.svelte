@@ -65,7 +65,7 @@
 	});
 </script>
 
-<div class="flex w-full flex-col bg-secondary">
+<div class="flex w-full flex-col bg-elevation-100">
 	<div class="justify-content-center m-auto max-w-[40ch] p-6">
 		<div class="fieldset">
 			<Field name="server">
