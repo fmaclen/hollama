@@ -20,6 +20,7 @@ jobs:
         with:
           dry_run: true
           branches: main
+          tag_format: ${version}
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
