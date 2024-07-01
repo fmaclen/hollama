@@ -23,6 +23,7 @@
 		href={generateNewUrl(section, newId)}
 		on:click={setId}
 	>
-		New {section}
+		<!-- TODO: use i18n -->
+		{section === 'sessions' ? 'New session' : 'New knowledge'}
 	</Button>
 </div>
