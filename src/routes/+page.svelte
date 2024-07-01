@@ -4,7 +4,7 @@
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Separator from '$lib/components/Separator.svelte';
-	import FieldModels from '$lib/components/FieldModels.svelte';
+	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Field from '$lib/components/Field.svelte';
 	import type { OllamaTagResponse } from '$lib/ollama';
 	import { settingsStore } from '$lib/store';
@@ -125,7 +125,7 @@
 		</div>
 
 		<div class="fieldset">
-			<FieldModels />
+			<FieldSelectModel />
 		</div>
 
 		<Separator class="mb-8 mt-8" />

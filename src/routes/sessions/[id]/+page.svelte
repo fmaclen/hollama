@@ -14,7 +14,7 @@
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
 	import type { PageData } from './$types';
-	import FieldModels from '$lib/components/FieldModels.svelte';
+	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Field from '$lib/components/Field.svelte';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import FieldSelect from '$lib/components/FieldSelect.svelte';
@@ -162,7 +162,7 @@
 			<div class="flex h-full flex-col p-6">
 				{#if isNewSession}
 					<div out:slide class="mb-6">
-						<FieldModels />
+						<FieldSelectModel />
 					</div>
 					<div out:slide class="mb-6 grid grid-cols-[auto,max-content] items-end gap-x-2">
 						<FieldSelect
