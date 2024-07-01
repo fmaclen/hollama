@@ -11,19 +11,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    outputs:
-      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
-      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
 
   docker:
-    needs: release
-    if: ${{ needs.release.outputs.new_release_published }}
-
     name: Build & publish
     runs-on: ubuntu-latest
     steps:
@@ -47,5 +42,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/${{ github.actor }}/hollama:latest, ghcr.io/${{ github.actor }}/hollama:${{ needs.release.outputs.new_release_version }}
+          tags: ghcr.io/${{ github.actor }}/hollama:latest, ghcr.io/${{ github.actor }}/hollama:${{ needs.release.semantic.new_release_version }}
           platforms: linux/arm64, linux/amd64
