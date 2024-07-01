@@ -51,8 +51,8 @@ test('creates new session and chats', async ({ page }) => {
 	await page.keyboard.press('Enter');
 	await expect(page.locator('article', { hasText: "I understand, it's okay" })).toBeVisible();
 	await expect(page.locator('article', { hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask' })).toBeVisible();
-	await expect(page.getByText('AI')).toHaveCount(2);
-	expect(await page.getByText('You').count()).toBeGreaterThan(1);
+	await expect(page.locator('article nav', { hasText: 'AI' })).toHaveCount(2);
+	await expect(page.locator('article nav', { hasText: 'You' })).toHaveCount(2);
 
 	// Check the session is saved to localStorage
 	await newSessionButton.click();
