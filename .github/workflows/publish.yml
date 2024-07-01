@@ -1,8 +1,8 @@
 name: Publish Docker image to container registry
+
 on:
   push:
-    branches:
-      - semantic-versioning
+    branches: 'semantic-versioning'
 
 jobs:
   release:
@@ -15,6 +15,7 @@ jobs:
         uses: cycjimmy/semantic-release-action@v4
         with:
           dry_run: true
+          branches: 'semantic-versioning'
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
