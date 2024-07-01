@@ -1,6 +1,6 @@
 {
 	"name": "hollama",
-	"version": "0.0.1",
+	"version": "0.0.0-development",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev --host",
