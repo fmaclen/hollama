@@ -93,7 +93,7 @@ export const MOCK_SESSION_2_RESPONSE_1: OllamaCompletionResponse = {
 }
 
 export async function chooseModelFromSettings(page: Page, modelName: string) {
-	await page.getByTitle('Settings').click();
+	await page.getByText('Settings', { exact: true }).click();
 	await page.getByLabel('Model').selectOption(modelName);
 }
 

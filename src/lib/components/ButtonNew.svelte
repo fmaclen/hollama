@@ -17,7 +17,7 @@
 
 <div class="flex gap-x-2 p-6">
 	<Button
-		data-testid="new-session"
+		data-testid={section === 'sessions' ? 'new-session' : 'new-knowledge'}
 		class="w-full"
 		variant="outline"
 		href={generateNewUrl(section, newId)}
