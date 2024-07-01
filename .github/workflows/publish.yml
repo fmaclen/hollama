@@ -12,9 +12,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        # with:
-        #   persist-credentials: false
-        #   fetch-depth: 0
+        with:
+          persist-credentials: false
+          fetch-depth: 0
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v4
         with:
