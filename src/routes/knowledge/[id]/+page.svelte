@@ -66,11 +66,11 @@
 	<Separator />
 
 	<Fieldset isFullscreen={true}>
-		<Field class="mb-6 flex" name="name">
+		<Field name="name">
 			<span slot="title">Name</span>
 			<input class="input" bind:value={name} />
 		</Field>
-		<Field class="mb-6 flex h-full" name="content">
+		<Field name="content" class="h-full">
 			<span slot="title">Content</span>
 			<textarea class="input input--textarea" bind:value={content}></textarea>
 		</Field>
@@ -85,9 +85,5 @@
 		&--textarea {
 			@apply h-full min-h-[10em];
 		}
-	}
-	.fieldset {
-		@apply container mx-auto my-3 flex max-w-prose flex-col gap-y-3;
-
 	}
 </style>

@@ -71,7 +71,7 @@
 	}
 
 	.layout__main {
-		@apply grid grid-rows-[max-content,max-content,auto];
+		@apply grid grid-rows-[max-content,max-content,auto] h-screen;
 	}
 
 	.layout__nav {

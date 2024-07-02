@@ -141,7 +141,7 @@
 	}
 </script>
 
-<div class="flex w-full flex-col">
+<div class="session">
 	<Header>
 		<div class="space-y-4">
 			<p data-testid="session-id" class="text-sm font-bold leading-none text-foreground">
@@ -160,12 +160,10 @@
 
 	<PaneGroup direction="horizontal">
 		<Pane defaultSize={40} minSize={30}>
-			<div class="flex h-full flex-col p-6">
+			<div class="flex h-full flex-col gap-y-6 p-6">
 				{#if isNewSession}
-					<div out:slide class="mb-6">
-						<FieldSelectModel />
-					</div>
-					<div out:slide class="mb-6 grid grid-cols-[auto,max-content] items-end gap-x-2">
+					<FieldSelectModel />
+					<div class="grid grid-cols-[auto,max-content] items-end gap-x-2">
 						<FieldSelect
 							label="Knowledge"
 							name="knowledge"
@@ -187,7 +185,7 @@
 					</div>
 				{/if}
 
-				<Field class="mb-6 flex h-full" name="prompt">
+				<Field class="h-full" name="prompt">
 					<span slot="title">Prompt</span>
 					<textarea
 						id="prompt"
@@ -218,10 +216,7 @@
 		</PaneResizer>
 
 		<Pane defaultSize={60} minSize={30}>
-			<div
-				class="flex h-full flex-col overflow-y-auto px-6 pb-12 pt-6 text-current"
-				bind:this={messageWindow}
-			>
+			<div class="article-list" bind:this={messageWindow}>
 				{#if isNewSession}
 					<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
 				{/if}
@@ -239,7 +234,15 @@
 </div>
 
 <style lang="scss">
+	.session {
+		@apply flex h-full w-full flex-col overflow-y-auto;
+	}
+
 	.textarea {
 		@apply flex h-full min-h-[10em] w-full resize-none rounded-md border border-input bg-elevation-0 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground  focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50;
+	}
+
+	.article-list {
+		@apply flex h-full flex-col overflow-y-auto px-6 pb-12 pt-6 text-current outline outline-green-500;
 	}
 </style>

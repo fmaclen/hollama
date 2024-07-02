@@ -122,9 +122,7 @@
 				{/if}
 			</div>
 		{/if}
-	</Fieldset>
 
-	<Fieldset>
 		<FieldSelectModel />
 	</Fieldset>
 
@@ -140,7 +138,7 @@
 
 	<Separator class="mb-8 mt-8" />
 
-	<Fieldset>
+	<div class="container mx-auto max-w-full xl:max-w-[70%] flex flex-col gap-y-2">
 		<p class="p"><strong>About</strong></p>
 		<p class="p">
 			<strong>Hollama</strong> is a minimalistic web interface for
@@ -158,7 +156,7 @@
 				@fmaclen
 			</Button>
 		</p>
-	</Fieldset>
+	</div>
 </div>
 
 <style lang="scss">
