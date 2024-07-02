@@ -7,8 +7,8 @@
 	export let section: Sections;
 </script>
 
-<section class="grid grid-cols-[1fr,max-content,4fr] bg-elevation-100">
-	<aside class="flex h-full min-w-80 flex-col bg-elevation-0">
+<section class="entity">
+	<aside class="entity__aside">
 		<ButtonNew {section}></ButtonNew>
 
 		<Separator />
@@ -22,3 +22,13 @@
 
 	<slot />
 </section>
+
+<style lang="scss">
+	.entity {
+		@apply grid grid-cols-[1fr,max-content,4fr] bg-elevation-100;
+
+		&__aside {
+			@apply flex h-full min-w-80 flex-col bg-elevation-0;
+		}
+	}
+</style>
