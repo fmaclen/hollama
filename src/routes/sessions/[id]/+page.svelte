@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { slide } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	import { CopyPlus, StopCircle, Trash2 } from 'lucide-svelte';
@@ -85,16 +84,21 @@
 	async function handleSubmit() {
 		if (!prompt) return;
 
-		let systemMessage: Message | null = null;
-		if (knowledge) systemMessage = { role: 'system', content: knowledge.content };
+		let knowledgeContext: Message | null = null;
+		if (knowledge)
+			knowledgeContext = {
+				role: 'knowledge',
+				name: knowledge.name,
+				content: knowledge.content
+			};
 
 		const message: Message = { role: 'user', content: prompt };
 		abortController = new AbortController();
 		promptCached = prompt;
 		prompt = '';
 		completion = '';
-		session.messages = systemMessage
-			? [systemMessage, ...session.messages, message]
+		session.messages = knowledgeContext
+			? [knowledgeContext, ...session.messages, message]
 			: [...session.messages, message];
 
 		try {

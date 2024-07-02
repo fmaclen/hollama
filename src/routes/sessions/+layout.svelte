@@ -11,11 +11,13 @@
 		{#if $sessionsStore && $sessionsStore.length > 0}
 			<!-- Using slice() to reverse $sessionsStore without affecting the original array -->
 			{#each $sessionsStore.slice().reverse() as session (session.id)}
+				{@const hasKnowledge = session.messages[0].role === "knowledge"}
+				{@const knowledgeName = hasKnowledge && session.messages[0].name}
 				<SectionListItem
 					sitemap={Sitemap.SESSIONS}
 					id={session.id}
-					title={session.messages[0].content}
-					subtitle={session.model}
+					title={hasKnowledge ? session.messages[1].content : session.messages[0].content}
+					subtitle={knowledgeName ? `${session.model} — ${knowledgeName}` : session.model}
 				/>
 			{/each}
 		{:else}

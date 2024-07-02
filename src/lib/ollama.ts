@@ -53,10 +53,9 @@ export async function ollamaGenerate(session: Session, abortSignal: AbortSignal)
 	};
 
 	const firstMessage = session.messages[0]
-	if (firstMessage.role === 'system') {
+	if (firstMessage.role === 'knowledge') {
 		payload.prompt = `
-
-			<CONTEXT>
+			<CONTEXT name="${firstMessage.name}">
 				${firstMessage.content}
 			</CONTEXT>
 
