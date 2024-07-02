@@ -22,9 +22,9 @@
 	<title>Hollama</title>
 </svelte:head>
 
-<div class="grid h-screen w-screen grid-cols-[max-content,max-content,auto] bg-body text-current">
-	<aside class="flex flex-col justify-between">
-		<a href="/" class="flex h-screen flex-col items-center justify-between py-6 hover:bg-accent">
+<div class="layout">
+	<aside class="layout__aside">
+		<a href="/" class="layout__aside-a">
 			<img src="/favicon.png" alt="Hollama logo" width="48" height="48" />
 
 			<h1 class="hollama-wordmark text-2xl font-medium">Hollama</h1>
@@ -33,8 +33,8 @@
 
 	<Separator orientation="vertical" />
 
-	<main class="grid grid-rows-[max-content,max-content,auto]">
-		<nav class="flex w-max gap-1 px-6 py-3 text-sm font-semibold">
+	<main class="layout__main">
+		<nav class="layout__nav">
 			<Button variant={pathname.includes('/sessions') ? 'secondary' : 'outline'} href="/sessions">
 				Sessions
 			</Button>
@@ -56,5 +56,25 @@
 		height: 7ch;
 		line-height: 7ch;
 		transform: rotate(270deg);
+	}
+
+	.layout {
+		@apply grid h-screen w-screen grid-cols-[max-content,max-content,auto] bg-body text-current;
+	}
+
+	.layout__aside {
+		@apply flex flex-col justify-between;
+	}
+
+	.layout__aside-a {
+		@apply flex h-screen flex-col items-center justify-between py-6 hover:bg-accent;
+	}
+
+	.layout__main {
+		@apply grid grid-rows-[max-content,max-content,auto];
+	}
+
+	.layout__nav {
+		@apply flex w-max gap-1 px-6 py-3 text-sm font-semibold;
 	}
 </style>
