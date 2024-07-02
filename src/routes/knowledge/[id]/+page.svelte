@@ -10,6 +10,7 @@
 	import { getUpdatedAtDate } from '$lib/utils';
 	import { knowledgeStore } from '$lib/store';
 	import Header from '$lib/components/Header.svelte';
+	import Fieldset from '$lib/components/Fieldset.svelte';
 
 	export let data: PageData;
 
@@ -64,7 +65,7 @@
 
 	<Separator />
 
-	<div class="flex h-full flex-col bg-elevation-100 p-6">
+	<Fieldset isFullscreen={true}>
 		<Field class="mb-6 flex" name="name">
 			<span slot="title">Name</span>
 			<input class="input" bind:value={name} />
@@ -74,7 +75,7 @@
 			<textarea class="input input--textarea" bind:value={content}></textarea>
 		</Field>
 		<Button class="w-full" on:click={handleSubmit} disabled={!name || !content}>Save</Button>
-	</div>
+	</Fieldset>
 </div>
 
 <style lang="scss">
@@ -84,5 +85,9 @@
 		&--textarea {
 			@apply h-full min-h-[10em];
 		}
+	}
+	.fieldset {
+		@apply container mx-auto my-3 flex max-w-prose flex-col gap-y-3;
+
 	}
 </style>

@@ -8,6 +8,7 @@
 	import Field from '$lib/components/Field.svelte';
 	import type { OllamaTagResponse } from '$lib/ollama';
 	import { settingsStore } from '$lib/store';
+	import Fieldset from '$lib/components/Fieldset.svelte';
 
 	export let ollamaURL: URL | null = null;
 
@@ -66,7 +67,7 @@
 </script>
 
 <div class="settings">
-	<div class="fieldset">
+	<Fieldset>
 		<Field name="server">
 			<span slot="title" class="flex w-full items-center justify-between">
 				Server
@@ -121,25 +122,25 @@
 				{/if}
 			</div>
 		{/if}
-	</div>
+	</Fieldset>
 
-	<div class="fieldset">
+	<Fieldset>
 		<FieldSelectModel />
-	</div>
+	</Fieldset>
 
 	<Separator class="mb-8 mt-8" />
 
-	<div class="fieldset">
+	<Fieldset>
 		<Field name="danger-zone">
 			<span slot="title">Danger zone</span>
 			<Button variant="outline" on:click={deleteSessions}>Delete all sessions</Button>
 			<Button variant="outline" on:click={deleteSettings}>Delete server settings</Button>
 		</Field>
-	</div>
+	</Fieldset>
 
 	<Separator class="mb-8 mt-8" />
 
-	<div class="fieldset">
+	<Fieldset>
 		<p class="p"><strong>About</strong></p>
 		<p class="p">
 			<strong>Hollama</strong> is a minimalistic web interface for
@@ -157,7 +158,7 @@
 				@fmaclen
 			</Button>
 		</p>
-	</div>
+	</Fieldset>
 </div>
 
 <style lang="scss">
