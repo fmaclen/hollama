@@ -7,12 +7,16 @@
 	import { type Message } from '$lib/sessions';
 	import Separator from '$lib/components/Separator.svelte';
 	import CopyButton from './CopyButton.svelte';
+	import { generateNewUrl } from '$lib/components/ButtonNew';
+	import { Sitemap } from '$lib/sitemap';
+	import Button from '$lib/components/Button.svelte';
 
 	export let message: Message;
 	let articleElement: HTMLElement;
 
 	const CODE_SNIPPET_ID = 'code-snippet';
 	const isUserRole = message.role === 'user';
+	const isKnowledgeRole = message.role === 'system' && message.knowledge;
 
 	function renderCodeSnippet(code: string) {
 		return `<pre id="${CODE_SNIPPET_ID}"><code class="hljs">${code}</code></pre>`;
@@ -46,15 +50,27 @@
 <article class="article" bind:this={articleElement}>
 	<nav class="article__nav">
 		<p data-testid="session-role" class="article__role">
-			{isUserRole ? 'You' : message.role}
+			{#if isKnowledgeRole}
+				Knowledge
+			{:else if isUserRole}
+				You
+			{:else}
+				{message.role}
+			{/if}
 		</p>
 		<Separator />
 		<CopyButton content={message.content} />
 	</nav>
 
 	<div class="markdown">
-		{#if message.role === "knowledge"}
-			<p class="markdown__context">{message.name}</p>
+		{#if message.knowledge}
+			<Button
+				variant="outline"
+				href={generateNewUrl(Sitemap.KNOWLEDGE, message.knowledge.id)}
+				aria-label="Go to knowledge"
+			>
+				{message.knowledge.name}
+			</Button>
 		{:else if message.content}
 			{@html md.render(message.content)}
 		{/if}
@@ -76,10 +92,6 @@
 
 	.markdown {
 		@apply mx-auto my-3 w-full overflow-x-auto px-[4ch];
-
-		&__context {
-			@apply font-semibold text-sm p-3 border;
-		}
 
 		:global(> *) {
 			@apply text-foreground;

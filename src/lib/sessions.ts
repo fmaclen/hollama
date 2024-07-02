@@ -3,9 +3,9 @@ import { settingsStore, sessionsStore } from "$lib/store";
 import type { Knowledge } from "./knowledge";
 
 export interface Message {
-	role: 'user' | 'ai' | 'system' | 'knowledge';
+	role: 'user' | 'ai' | 'system';
 	content: string;
-	name?: string;
+	knowledge?: Knowledge;
 }
 
 export interface Session {

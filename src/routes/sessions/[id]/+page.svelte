@@ -87,9 +87,9 @@
 		let knowledgeContext: Message | null = null;
 		if (knowledge)
 			knowledgeContext = {
-				role: 'knowledge',
-				name: knowledge.name,
-				content: knowledge.content
+				role: 'system',
+				knowledge,
+				content: ''
 			};
 
 		const message: Message = { role: 'user', content: prompt };
