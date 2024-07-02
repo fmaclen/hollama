@@ -1,9 +1,11 @@
 import { get } from "svelte/store";
 import { settingsStore, sessionsStore } from "$lib/store";
+import type { Knowledge } from "./knowledge";
 
 export interface Message {
 	role: 'user' | 'ai' | 'system';
 	content: string;
+	knowledge?: Knowledge;
 }
 
 export interface Session {
@@ -11,6 +13,7 @@ export interface Session {
 	model: string;
 	messages: Message[];
 	context: number[];
+	knowledge?: Knowledge;
 }
 
 export const loadSession = (id: string): Session => {

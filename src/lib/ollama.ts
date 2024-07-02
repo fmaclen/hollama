@@ -23,34 +23,49 @@ export type OllamaCompletionResponse = {
 }
 
 export type OllamaModel = {
-  name: string;
-  model: string;
-  modified_at: string;
-  size: number;
-  digest: string;
-  details: {
-    parent_model: string;
-    format: string;
-    family: string;
-    families: string[] | null;
-    parameter_size: string;
-    quantization_level: string;
-  };
+	name: string;
+	model: string;
+	modified_at: string;
+	size: number;
+	digest: string;
+	details: {
+		parent_model: string;
+		format: string;
+		family: string;
+		families: string[] | null;
+		parameter_size: string;
+		quantization_level: string;
+	};
 };
 
 export type OllamaTagResponse = {
-  models: OllamaModel[];
+	models: OllamaModel[];
 };
 
 export async function ollamaGenerate(session: Session, abortSignal: AbortSignal) {
 	const settings = get(settingsStore);
 	if (!settings) throw new Error('No Ollama server specified');
 
-	const payload: OllamaCompletionRequest = {
+	let payload: OllamaCompletionRequest = {
 		model: session.model,
 		context: session.context,
 		prompt: session.messages[session.messages.length - 1].content
 	};
+
+	const firstMessage = session.messages[0]
+	if (firstMessage.knowledge) {
+		payload.prompt = `
+			<CONTEXT
+				name="${firstMessage.knowledge.name}"
+				id="${firstMessage.knowledge.id}"
+				updatedAt="${firstMessage.knowledge.updatedAt}"
+			>
+				${firstMessage.knowledge.content}
+			</CONTEXT>
+
+			${payload.prompt}
+		`;
+	}
 
 	return await fetch(`${settings.ollamaServer}/api/generate`, {
 		method: 'POST',

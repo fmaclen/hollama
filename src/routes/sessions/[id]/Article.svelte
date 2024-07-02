@@ -7,12 +7,16 @@
 	import { type Message } from '$lib/sessions';
 	import Separator from '$lib/components/Separator.svelte';
 	import CopyButton from './CopyButton.svelte';
+	import { generateNewUrl } from '$lib/components/ButtonNew';
+	import { Sitemap } from '$lib/sitemap';
+	import Button from '$lib/components/Button.svelte';
 
 	export let message: Message;
 	let articleElement: HTMLElement;
 
 	const CODE_SNIPPET_ID = 'code-snippet';
 	const isUserRole = message.role === 'user';
+	const isKnowledgeRole = message.role === 'system' && message.knowledge;
 
 	function renderCodeSnippet(code: string) {
 		return `<pre id="${CODE_SNIPPET_ID}"><code class="hljs">${code}</code></pre>`;
@@ -43,30 +47,52 @@
 	});
 </script>
 
-<article
-	class="mx-auto mb-3 flex w-full max-w-[70ch] flex-col gap-y-3 last:mb-0"
-	bind:this={articleElement}
->
-	<nav class="grid grid-cols-[max-content_auto_max-content] items-center">
-		<p
-			data-testid="session-role"
-			class="mr-3 text-center text-xs font-bold uppercase leading-7 text-muted-foreground"
-		>
-			{isUserRole ? 'You' : message.role}
+<article class="article" bind:this={articleElement}>
+	<nav class="article__nav">
+		<p data-testid="session-role" class="article__role">
+			{#if isKnowledgeRole}
+				Knowledge
+			{:else if isUserRole}
+				You
+			{:else}
+				{message.role}
+			{/if}
 		</p>
 		<Separator />
 		<CopyButton content={message.content} />
 	</nav>
 
-	<div id="markdown" class="text-md mx-auto w-full overflow-x-auto px-[4ch]">
-		{#if message.content}
+	<div class="markdown">
+		{#if message.knowledge}
+			<Button
+				variant="outline"
+				href={generateNewUrl(Sitemap.KNOWLEDGE, message.knowledge.id)}
+				aria-label="Go to knowledge"
+			>
+				{message.knowledge.name}
+			</Button>
+		{:else if message.content}
 			{@html md.render(message.content)}
 		{/if}
 	</div>
 </article>
 
 <style lang="scss">
-	#markdown {
+	.article {
+		@apply mx-auto flex w-full max-w-[70ch] flex-col last:mb-0;
+
+		&__nav {
+			@apply grid grid-cols-[max-content_auto_max-content] items-center;
+		}
+
+		&__role {
+			@apply mr-3 text-center text-xs font-bold uppercase leading-7 text-muted-foreground;
+		}
+	}
+
+	.markdown {
+		@apply mx-auto my-3 w-full overflow-x-auto px-[4ch];
+
 		:global(> *) {
 			@apply text-foreground;
 		}
@@ -88,11 +114,11 @@
 		}
 
 		:global(pre > button) {
-			@apply opacity-0 absolute top-1 right-0 bg-white;
+			@apply absolute right-0 top-1 bg-white opacity-0;
 		}
 
 		:global(pre > code) {
-			@apply rounded-md p-4 text-sm pr-12;
+			@apply rounded-md p-4 pr-12 text-sm;
 		}
 
 		:global(li > code),

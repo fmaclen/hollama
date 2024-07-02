@@ -10,9 +10,8 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.getByLabel('Model').selectOption('openhermes2.5-mistral:latest');
 	await page.screenshot({ path: 'docs/settings.png', fullPage: true });
 
-	await page.getByTestId('new-session').click();
-
-	await page.goto('/ulxz6l'); // Visiting a fake session id so it doesn't change from test to test
+	await page.goto('/sessions/ulxz6l'); // Visiting a fake session id so it doesn't change from test to test
+	await expect(page.getByText('No sessions')).toBeVisible();
 	await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
 	await page.screenshot({ path: 'docs/session-new.png', fullPage: true });
 
@@ -54,12 +53,41 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	));
 
 	await page.reload();
-	await expect(page.getByText('No sessions in history')).not.toBeVisible();
+	await expect(page.getByText('No sessions')).not.toBeVisible();
 	await expect(page.getByTestId('session-item')).toHaveCount(2);
 
 	await page.getByText('Write a Python function').click();
 	await expect(page.getByText("Here's a basic function")).toBeVisible();
 	await expect(page.getByLabel("Model")).not.toBeVisible();
-
+	await expect(page.getByText('No knowledge')).not.toBeVisible();
 	await page.screenshot({ path: 'docs/session.png', fullPage: true });
+
+	await page.getByText("Knowledge").click();
+	await expect(page.getByText('No knowledge')).toBeVisible();
+	await expect(page.getByText('Create new knowlege or choose one from the list')).toBeVisible();
+
+	// State 2 knowledge
+	await page.evaluate(() => window.localStorage.setItem(
+		'hollama-knowledge',
+		JSON.stringify([
+			{
+				id: "f9y6cb",
+				name: "Alba & Watson combat sheet",
+				content: "Watson:\n- Phase Punches, Electric Fist Charge\n- High-altitude cardio, electric resistance training\n- Stormfront Strike: Electrified punch/kick combo.\n- Shockwave Palm Slap: Ripple strike to disorient.\n\nAlba:\n- Defeated Lightning Line in Electric Arena using shockwaves.\n- Meditation during thunderstroms for mental focus on electric energies.\n- Omega-3 diet, lightning-charged seafood.\n- Gloves: Electrical impact microcapsules; boots with insulating footpads.",
+				updatedAt: "2024-07-01T17:14:11.832Z"
+			},
+			{
+				id: "uv96i4",
+				name: "fmaclen/hollama: Directory tree",
+				content: "```\n.\n├── Dockerfile\n├── LICENSE\n├── README.md\n├── build\n├── docs\n├── node_modules\n├── package-lock.json\n├── package.json\n├── playwright.config.ts\n├── postcss.config.cjs\n├── src\n├── static\n├── svelte.config.js\n├── tailwind.config.js\n├── test-results\n├── tests\n├── tsconfig.json\n└── vite.config.ts\n```",
+				updatedAt: "2024-07-01T17:17:40.789Z"
+			}
+		])
+	));
+
+	await page.reload();
+	await expect(page.getByText('No knowledge')).not.toBeVisible();
+
+	await page.getByText('Directory tree').click();
+	await page.screenshot({ path: 'docs/knowledge.png', fullPage: true });
 });

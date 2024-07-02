@@ -55,7 +55,7 @@
 		}
 
 		&--secondary {
-			@apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+			@apply bg-secondary border text-secondary-foreground hover:bg-secondary/80;
 		}
 
 		&--ghost {

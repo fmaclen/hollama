@@ -1,19 +1,19 @@
 <script lang="ts">
 	let className: string | undefined = undefined;
-	export { className as class};
+	export { className as class };
 	export let name: string;
 </script>
 
 <label class="label {className}" for={name}>
 	<p class="title">
-		<slot name="title"></slot>
+		<slot name="title" />
 	</p>
-	<slot></slot>
+	<slot />
 </label>
 
 <style lang="scss">
 	.label {
-		@apply flex flex-col gap-y-3;
+		@apply flex w-full flex-col gap-y-3;
 	}
 
 	.title {

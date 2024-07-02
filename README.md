@@ -2,11 +2,6 @@
 
 A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) servers.
 
-> ![session](docs/session.png)
-> ![session-new](docs/session-new.png)
-> ![settings](docs/settings.png)
-
-
 ### Features
 
 - Large prompt fields
@@ -14,6 +9,12 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 - Copy completions as raw text
 - Markdown parsing w/syntax highlighting
 - Saves sessions/context in your browser's `localStorage`
+- Add _Knowledge_ (a.k.a. "system prompts") to be used in every new session 
+
+> ![session](docs/session.png)
+> ![session-new](docs/session-new.png)
+> ![settings](docs/settings.png)
+> ![knowledge](docs/knowledge.png)
 
 ## How to use?
 
