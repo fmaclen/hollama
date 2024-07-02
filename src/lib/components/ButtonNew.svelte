@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { generateStorageId } from "$lib/utils";
-	import Button from "./Button.svelte";
-	import { Sections } from "$lib/section";
+	import { Sitemap } from "$lib/sitemap";
 	import { generateNewUrl } from "./ButtonNew";
+	import Button from "./Button.svelte";
 
-	export let section: Sections;
+	export let sitemap: Sitemap;
 	let newId: string;
 
 	function setId() {
@@ -17,13 +17,13 @@
 
 <div class="flex gap-x-2 p-6">
 	<Button
-		data-testid={section === 'sessions' ? 'new-session' : 'new-knowledge'}
+		data-testid={sitemap === Sitemap.SESSIONS ? 'new-session' : 'new-knowledge'}
 		class="w-full"
 		variant="outline"
-		href={generateNewUrl(section, newId)}
+		href={generateNewUrl(sitemap, newId)}
 		on:click={setId}
 	>
 		<!-- TODO: use i18n -->
-		{section === 'sessions' ? 'New session' : 'New knowledge'}
+		{sitemap === 'sessions' ? 'New session' : 'New knowledge'}
 	</Button>
 </div>

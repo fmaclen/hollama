@@ -2,14 +2,14 @@
 	import ButtonNew from './ButtonNew.svelte';
 	import SectionList from './SectionList.svelte';
 	import Separator from './Separator.svelte';
-	import type { Sections } from '$lib/section';
+	import type { Sitemap } from '$lib/sitemap';
 
-	export let section: Sections;
+	export let sitemap: Sitemap;
 </script>
 
 <section class="entity">
 	<aside class="entity__aside">
-		<ButtonNew {section}></ButtonNew>
+		<ButtonNew sitemap={sitemap}></ButtonNew>
 
 		<Separator />
 

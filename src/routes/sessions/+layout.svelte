@@ -5,24 +5,16 @@
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
-	import { Sections } from '$lib/section';
-
-	let newSessionId: string;
-
-	function setSessionId() {
-		newSessionId = generateStorageId();
-	}
-
-	onMount(setSessionId);
+	import { Sitemap } from '$lib/sitemap';
 </script>
 
-<Section section={Sections.Sessions}>
+<Section sitemap={Sitemap.SESSIONS}>
 	<svelte:fragment slot="list-items">
 		{#if $sessionsStore && $sessionsStore.length > 0}
 			<!-- Using slice() to reverse $sessionsStore without affecting the original array -->
 			{#each $sessionsStore.slice().reverse() as session (session.id)}
 				<SectionListItem
-					section={Sections.Sessions}
+					sitemap={Sitemap.SESSIONS}
 					id={session.id}
 					title={session.messages[0].content}
 					subtitle={session.model}

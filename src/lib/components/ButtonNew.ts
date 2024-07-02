@@ -1,6 +1,6 @@
 import { generateStorageId } from "$lib/utils";
-import { type Sections} from "$lib/section";
+import { type Sitemap } from "$lib/sitemap";
 
-export function generateNewUrl(section: Sections, id?: string): string {
-	return `/${section}/${id ? id : generateStorageId()}`;
+export function generateNewUrl(sitemap: Sitemap, id?: string): string {
+	return `/${sitemap}/${id ? id : generateStorageId()}`;
 }

@@ -3,15 +3,15 @@
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
 	import { knowledgeStore } from '$lib/store';
-	import { Sections } from '$lib/section';
+	import { Sitemap } from '$lib/sitemap';
 </script>
 
-<Section section={Sections.Knowledge}>
+<Section sitemap={Sitemap.KNOWLEDGE}>
 	<svelte:fragment slot="list-items">
 		{#if $knowledgeStore && $knowledgeStore.length > 0}
 			{#each $knowledgeStore as knowledge}
 				<SectionListItem
-					section={Sections.Knowledge}
+					sitemap={Sitemap.KNOWLEDGE}
 					id={knowledge.id}
 					title={knowledge.name}
 					subtitle={knowledge.updatedAt}

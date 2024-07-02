@@ -2,25 +2,26 @@
 	import { tick } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { goto } from '$app/navigation';
-	import { CopyPlus, FilePlus, FilePlus2, StopCircle, Trash2 } from 'lucide-svelte';
-
 	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
+	import { CopyPlus, StopCircle, Trash2 } from 'lucide-svelte';
+
 	import Button from '$lib/components/Button.svelte';
 	import Separator from '$lib/components/Separator.svelte';
 	import Article from './Article.svelte';
+	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
+	import Field from '$lib/components/Field.svelte';
+	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
+	import FieldSelect from '$lib/components/FieldSelect.svelte';
+	import Header from '$lib/components/Header.svelte';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, sessionsStore, knowledgeStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
-	import type { PageData } from './$types';
-	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
-	import Field from '$lib/components/Field.svelte';
-	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
-	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
-	import { Sections } from '$lib/section';
-	import Header from '$lib/components/Header.svelte';
+	import { Sitemap } from '$lib/sitemap';
+
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 
@@ -178,7 +179,7 @@
 								title="New knowledge"
 								variant="outline"
 								size="icon"
-								href={generateNewUrl(Sections.Knowledge)}
+								href={generateNewUrl(Sitemap.KNOWLEDGE)}
 							>
 								<CopyPlus class="h-4 w-4" />
 							</Button>

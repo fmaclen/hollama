@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import type { Sections } from '$lib/section';
+	import { Sitemap } from '$lib/sitemap';
 
-	export let section: Sections;
+	export let sitemap: Sitemap;
 	export let id: string;
 	export let title: string;
 	export let subtitle: string;
 </script>
 
 <a
-	data-testid={section === 'sessions' ? 'session-item' : 'knowledge-item'}
-	aria-label={`Session ${id}`}
-	href={`/${section}/${id}`}
 	class="section-list__a {$page.url.pathname.includes(id) ? 'bg-accent' : 'hover:bg-accent'}"
+	data-testid={sitemap === Sitemap.SESSIONS ? 'session-item' : 'knowledge-item'}
+	aria-label={`Session ${id}`}
+	href={`/${sitemap}/${id}`}
 >
 	<p class="section-list__title">
 		{title}
