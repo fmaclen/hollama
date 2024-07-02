@@ -65,114 +65,108 @@
 	});
 </script>
 
-<div class="flex w-full flex-col bg-elevation-100">
-	<div class="justify-content-center m-auto max-w-[40ch] p-6">
-		<div class="fieldset">
-			<Field name="server">
-				<span slot="title" class="flex w-full items-center justify-between">
-					Server
-					<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
-						{serverStatus}
-					</Badge>
-				</span>
-				<input
-					placeholder={DETAULT_OLLAMA_SERVER}
-					class="input"
-					id="server"
-					bind:value={ollamaServer}
-					on:keyup={getModelsList}
-				/>
-			</Field>
+<div class="settings">
+	<div class="fieldset">
+		<Field name="server">
+			<span slot="title" class="flex w-full items-center justify-between">
+				Server
+				<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
+					{serverStatus}
+				</Badge>
+			</span>
+			<input
+				placeholder={DETAULT_OLLAMA_SERVER}
+				class="input"
+				id="server"
+				bind:value={ollamaServer}
+				on:keyup={getModelsList}
+			/>
+		</Field>
 
-			{#if ollamaURL && serverStatus === 'disconnected'}
-				<div class="help">
+		{#if ollamaURL && serverStatus === 'disconnected'}
+			<div class="help">
+				<p class="p">
+					Needs to allow connections from
+					<code class="code">{ollamaURL.origin}</code>
+					in
+					<code class="code">OLLAMA_ORIGINS</code>,
+					<Button
+						variant="link"
+						size="link"
+						href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
+						target="_blank"
+					>
+						see docs
+					</Button>. Also check no browser extensions are blocking the connection.
+				</p>
+				{#if ollamaURL.protocol === 'https:'}
 					<p class="p">
-						Needs to allow connections from
-						<code class="code">{ollamaURL.origin}</code>
-						in
-						<code class="code">OLLAMA_ORIGINS</code>,
-						<Button
-							variant="link"
-							size="link"
-							href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
+						If trying to connect to an Ollama server that is not available on
+						<code class="code">localhost</code> or <code class="code">127.0.0.1</code> you will need
+						to
+						<a
+							href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
 							target="_blank"
 						>
-							see docs
-						</Button>. Also check no browser extensions are blocking the connection.
+							create a tunnel
+						</a>
+						to your server or
+						<a
+							href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
+							target="_blank"
+						>
+							allow mixed content
+						</a> in this browser's site settings.
 					</p>
-					{#if ollamaURL.protocol === 'https:'}
-						<p class="p">
-							If trying to connect to an Ollama server that is not available on
-							<code class="code">localhost</code> or <code class="code">127.0.0.1</code> you will
-							need to
-							<a
-								href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
-								target="_blank"
-							>
-								create a tunnel
-							</a>
-							to your server or
-							<a
-								href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
-								target="_blank"
-							>
-								allow mixed content
-							</a> in this browser's site settings.
-						</p>
-					{/if}
-				</div>
-			{/if}
-		</div>
+				{/if}
+			</div>
+		{/if}
+	</div>
 
-		<div class="fieldset">
-			<FieldSelectModel />
-		</div>
+	<div class="fieldset">
+		<FieldSelectModel />
+	</div>
 
-		<Separator class="mb-8 mt-8" />
+	<Separator class="mb-8 mt-8" />
 
-		<div class="fieldset">
-			<Field name="danger-zone">
-				<span slot="title">Danger zone</span>
-				<Button variant="outline" on:click={deleteSessions}>Delete all sessions</Button>
-				<Button variant="outline" on:click={deleteSettings}>Delete server settings</Button>
-			</Field>
-		</div>
+	<div class="fieldset">
+		<Field name="danger-zone">
+			<span slot="title">Danger zone</span>
+			<Button variant="outline" on:click={deleteSessions}>Delete all sessions</Button>
+			<Button variant="outline" on:click={deleteSettings}>Delete server settings</Button>
+		</Field>
+	</div>
 
-		<Separator class="mb-8 mt-8" />
+	<Separator class="mb-8 mt-8" />
 
-		<div class="fieldset">
-			<p class="p"><strong>About</strong></p>
-			<p class="p">
-				<strong>Hollama</strong> is a minimalistic web interface for
-				<Button
-					variant="link"
-					size="link"
-					href="https://github.com/jmorganca/ollama/"
-					target="_blank">Ollama</Button
-				>
-				servers. Code is available on
-				<Button
-					variant="link"
-					size="link"
-					href="https://github.com/fmaclen/hollama"
-					target="_blank"
-				>
-					Github
-				</Button>.
-			</p>
-			<p class="p">
-				Made by
-				<Button variant="link" size="link" href="https://fernando.is" target="_blank">
-					@fmaclen
-				</Button>
-			</p>
-		</div>
+	<div class="fieldset">
+		<p class="p"><strong>About</strong></p>
+		<p class="p">
+			<strong>Hollama</strong> is a minimalistic web interface for
+			<Button variant="link" size="link" href="https://github.com/jmorganca/ollama/" target="_blank"
+				>Ollama</Button
+			>
+			servers. Code is available on
+			<Button variant="link" size="link" href="https://github.com/fmaclen/hollama" target="_blank">
+				Github
+			</Button>.
+		</p>
+		<p class="p">
+			Made by
+			<Button variant="link" size="link" href="https://fernando.is" target="_blank">
+				@fmaclen
+			</Button>
+		</p>
 	</div>
 </div>
 
 <style lang="scss">
+	.settings {
+		@apply flex h-full w-full flex-col justify-center bg-elevation-100;
+	}
+
 	.fieldset {
-		@apply mb-6 mt-6 flex flex-col gap-y-3;
+		@apply container mx-auto my-3 flex max-w-prose flex-col gap-y-3;
 	}
 
 	.help {
