@@ -7,8 +7,8 @@
 	export let sitemap: Sitemap;
 </script>
 
-<section class="entity">
-	<aside class="entity__aside">
+<section class="section">
+	<aside class="section__aside">
 		<ButtonNew sitemap={sitemap}></ButtonNew>
 
 		<Separator />
@@ -24,7 +24,7 @@
 </section>
 
 <style lang="scss">
-	.entity {
+	.section {
 		@apply grid grid-cols-[1fr,max-content,4fr] bg-elevation-100 h-full overflow-y-auto;
 
 		&__aside {
