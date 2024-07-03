@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { mockTagsResponse } from './utils';
+import { MOCK_KNOWLEDGE, mockTagsResponse, seedKnowledgeAndReload } from './mocks';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
@@ -10,9 +10,8 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.getByLabel('Model').selectOption('openhermes2.5-mistral:latest');
 	await page.screenshot({ path: 'docs/settings.png', fullPage: true });
 
-	await page.getByTestId('new-session').click();
-
-	await page.goto('/ulxz6l'); // Visiting a fake session id so it doesn't change from test to test
+	await page.goto('/sessions/ulxz6l'); // Visiting a fake session id so it doesn't change from test to test
+	await expect(page.getByText('No sessions')).toBeVisible();
 	await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
 	await page.screenshot({ path: 'docs/session-new.png', fullPage: true });
 
@@ -54,12 +53,24 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	));
 
 	await page.reload();
-	await expect(page.getByText('No sessions in history')).not.toBeVisible();
+	await expect(page.getByText('No sessions')).not.toBeVisible();
 	await expect(page.getByTestId('session-item')).toHaveCount(2);
 
 	await page.getByText('Write a Python function').click();
 	await expect(page.getByText("Here's a basic function")).toBeVisible();
 	await expect(page.getByLabel("Model")).not.toBeVisible();
-
+	await expect(page.getByText('No knowledge')).not.toBeVisible();
 	await page.screenshot({ path: 'docs/session.png', fullPage: true });
+
+	await page.getByText("Knowledge").click();
+	await expect(page.getByText('No knowledge')).toBeVisible();
+
+	await seedKnowledgeAndReload(page);
+	await expect(page.getByText('No knowledge')).not.toBeVisible();
+	await expect(page.getByTestId('knowledge-timestamp')).not.toBeVisible();
+
+	await page.getByText(MOCK_KNOWLEDGE[0].name).click();
+	await expect(page.getByTestId('knowledge-timestamp')).not.toContainText('New session');
+
+	await page.screenshot({ path: 'docs/knowledge.png', fullPage: true });
 });

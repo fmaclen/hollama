@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse } from './utils';
+import { MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse } from './mocks';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
@@ -15,6 +15,7 @@ test('creates new session and chats', async ({ page }) => {
 	const newPromptHelp = page.getByText('Write a prompt to start a new session');
 
 	await page.goto('/');
+	await page.getByText('Sessions', { exact: true }).click();
 	await expect(sessionIdLocator).not.toBeVisible();
 	await expect(modelNameLocator).not.toBeVisible();
 	await expect(newPromptHelp).not.toBeVisible();
@@ -50,8 +51,8 @@ test('creates new session and chats', async ({ page }) => {
 	await page.keyboard.press('Enter');
 	await expect(page.locator('article', { hasText: "I understand, it's okay" })).toBeVisible();
 	await expect(page.locator('article', { hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask' })).toBeVisible();
-	await expect(page.getByText('AI')).toHaveCount(2);
-	expect(await page.getByText('You').count()).toBeGreaterThan(1);
+	await expect(page.locator('article nav', { hasText: 'AI' })).toHaveCount(2);
+	await expect(page.locator('article nav', { hasText: 'You' })).toHaveCount(2);
 
 	// Check the session is saved to localStorage
 	await newSessionButton.click();
@@ -62,7 +63,7 @@ test('creates new session and chats', async ({ page }) => {
 });
 
 test('generates a random session id', async ({ page }) => {
-	await page.goto('/');
+	await page.goto('/sessions');
 
 	const sessionIds = [];
 	const newSessionButton = page.getByTestId('new-session');
@@ -81,7 +82,8 @@ test('generates a random session id', async ({ page }) => {
 test('can navigate older sessions from sidebar', async ({ page }) => {
 	await page.goto('/');
 	await chooseModelFromSettings(page, 'gemma:7b');
-	await expect(page.getByText('No sessions in history')).toBeVisible();
+	await page.getByText('Sessions', { exact: true }).click();
+	await expect(page.getByText('No sessions')).toBeVisible();
 	await expect(page.locator('aside', { hasText: 'Who would win in a fight between Emma Watson and Jessica Alba?' })).not.toBeVisible();
 
 	await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
@@ -89,13 +91,13 @@ test('can navigate older sessions from sidebar', async ({ page }) => {
 	await page.getByLabel('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 	await page.getByText('Send').click();
 	await page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.").isVisible();
-	await expect(page.getByText('No sessions in history')).not.toBeVisible();
+	await expect(page.getByText('No sessions')).not.toBeVisible();
 	expect(await page.getByTestId('session-item').textContent()).toContain("Who would win in a fight between Emma Watson and Jessica Alba?");
 	expect(await page.getByTestId('session-item').textContent()).toContain("gemma:7b");
 	expect(await page.getByTestId('session-item').count()).toBe(1);
 
-	// Leave the conversation by visiting the settings page
-	await page.getByTitle('Settings').click();
+	// Leave the conversation by visiting the sessions index
+	await page.getByText('Sessions').click();
 	await expect(page.getByText('Who would win in a fight between Emma Watson and Jessica Alba?')).toBeVisible();
 	await expect(page.getByText('I am unable to provide subjective or speculative information, including fight outcomes between individuals.')).not.toBeVisible();
 
@@ -106,6 +108,7 @@ test('can navigate older sessions from sidebar', async ({ page }) => {
 	// Create a new session
 	await mockCompletionResponse(page, MOCK_SESSION_2_RESPONSE_1);
 	await chooseModelFromSettings(page, 'openhermes2.5-mistral:latest');
+	await page.getByText('Sessions', { exact: true }).click();
 	await page.getByTestId('new-session').click();
 	await page.getByLabel('Prompt').fill('What does the fox say?');
 	await page.getByText('Send').click();
@@ -128,25 +131,26 @@ test('can navigate older sessions from sidebar', async ({ page }) => {
 test('deletes a session from the sidebar', async ({ page }) => {
 	await page.goto('/');
 	await chooseModelFromSettings(page, 'gemma:7b');
-	await expect(page.getByText('No sessions in history')).toBeVisible();
+	await page.getByText('Sessions', { exact: true }).click();
+	await expect(page.getByText('No sessions')).toBeVisible();
 
 	await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 	await page.getByTestId('new-session').click();
 	await page.getByLabel('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 	await page.getByText('Send').click();
 	await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
-	await expect(page.getByText('No sessions in history')).not.toBeVisible();
+	await expect(page.getByText('No sessions')).not.toBeVisible();
 	expect(await page.getByTestId('session-item').count()).toBe(1);
 
 	page.on('dialog', dialog => dialog.accept("Are you sure you want to delete this session?"));
 	await page.getByTitle('Delete session').click();
-	await expect(page.getByText('No sessions in history')).toBeVisible();
+	await expect(page.getByText('No sessions')).toBeVisible();
 	expect(await page.getByTestId('session-item').count()).toBe(0);
 });
 
 test('all sessions can be deleted', async ({ page }) => {
-	await page.goto('/');
-	await expect(page.getByText('No sessions in history')).toBeVisible();
+	await page.goto('/sessions');
+	await expect(page.getByText('No sessions')).toBeVisible();
 	await expect(page.getByTestId('session-item')).toHaveCount(0);
 
 	// Stage 2 sessions
@@ -177,13 +181,15 @@ test('all sessions can be deleted', async ({ page }) => {
 	));
 
 	await page.reload();
-	await expect(page.getByText('No sessions in history')).not.toBeVisible();
+	await expect(page.getByText('No sessions')).not.toBeVisible();
 	await expect(page.getByTestId('session-item')).toHaveCount(2);
 
+	await page.getByText('Settings').click();
 	// Click the delete button
 	page.on('dialog', dialog => dialog.accept("Are you sure you want to delete all sessions?"));
 	await page.getByText('Delete all sessions').click();
-	await expect(page.getByText('No sessions in history')).toBeVisible();
+	await page.getByText('Sessions', { exact: true }).click();
+	await expect(page.getByText('No sessions')).toBeVisible();
 	await expect(page.getByTestId('session-item')).toHaveCount(0);
 	expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe('null');
 });
@@ -191,6 +197,7 @@ test('all sessions can be deleted', async ({ page }) => {
 test('can copy the raw text of a message or code snippets to clipboard', async ({ page }) => {
 	await page.goto('/');
 	await chooseModelFromSettings(page, 'gemma:7b');
+	await page.getByText('Sessions', { exact: true }).click();
 	await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 	await page.getByTestId('new-session').click();
 	await page.getByLabel('Prompt').fill('Who would win in a fight between Emma Watson and Jessica Alba?');
@@ -206,14 +213,14 @@ test('can copy the raw text of a message or code snippets to clipboard', async (
 	expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("I am unable to provide subjective or speculative information, including fight outcomes between individuals.");
 	await expect(page.locator("pre")).not.toBeVisible();
 	await expect(page.locator("code")).not.toBeVisible();
-	
+
 	await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_3);
 	await page.getByLabel('Prompt').fill("Write a Python function to calculate the odds of the winner in a fight between Emma Watson and Jessica Alba");
 	await page.getByText('Send').click();
 	await expect(page.locator("pre")).toBeVisible();
 	await expect(page.locator("code")).toBeVisible();
 	await expect(page.getByTitle('Copy')).toHaveCount(5);
-	
+
 	await page.locator("pre").hover();
 	await page.getByTitle('Copy').last().click();
 	expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("def calculate_odds(emma_age, emma_height, emma_weight, emma_experience, jessica_age, jessica_height, jessica_weight, jessica_experience):\n    emma_stats = {'age': emma_age, 'height': emma_height, 'weight': emma_weight, 'experience': emma_experience}\n    jessica_stats = {'age': jessica_age, 'height': jessica_height, 'weight': jessica_weight, 'experience': jessica_experience}\n    \n    # Calculate the differences between their stats\n    age_difference = abs(emma_stats['age'] - jessica_stats['age'])\n    height_difference = abs(emma_stats['height'] - jessica_stats['height'])\n    weight_difference = abs(emma_stats['weight'] - jessica_stats['weight'])\n    \n    # Return the differences as a tuple\n    return (age_difference, height_difference, weight_difference)\n");
@@ -228,14 +235,15 @@ test('can start a new session, choose a model and stop a completion in progress'
 	const modelName = page.getByTestId('model-name');
 
 	await page.goto('/');
-	await page.getByText("New session").click();
+	await page.getByText('Sessions', { exact: true }).click();
+	await page.getByText("New session", { exact: true }).click();
 	await expect(userMessage).not.toBeVisible();
 	await expect(aiMessage).not.toBeVisible();
 	await expect(modelName).toHaveText('New session');
-	
+
 	// Mock a response that takes a while to generate
 	await page.getByLabel('Model').selectOption('gemma:7b');
-	await page.route('**/generate', () => {});
+	await page.route('**/generate', () => { });
 	await promptTextarea.fill('Hello world!');
 	await sendButton.click();
 	await expect(userMessage).toBeVisible();

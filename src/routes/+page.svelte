@@ -1,17 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { slide } from 'svelte/transition';
 
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Separator from '$lib/components/Separator.svelte';
-	import FieldModels from '$lib/components/FieldModels.svelte';
+	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Field from '$lib/components/Field.svelte';
 	import type { OllamaTagResponse } from '$lib/ollama';
 	import { settingsStore } from '$lib/store';
+	import Fieldset from '$lib/components/Fieldset.svelte';
 
 	export let ollamaURL: URL | null = null;
-	
+
 	const DETAULT_OLLAMA_SERVER = 'http://localhost:11434';
 	let serverStatus: 'connected' | 'disconnected' = 'connected';
 
@@ -66,114 +66,102 @@
 	});
 </script>
 
-<div class="flex w-full flex-col bg-secondary">
-	<div class="justify-content-center m-auto max-w-[40ch] p-6">
-		<div class="fieldset">
-			<Field name="server">
-				<span slot="title" class="flex w-full items-center justify-between">
-					Server
-					<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
-						{serverStatus}
-					</Badge>
-				</span>
-				<input
-					placeholder={DETAULT_OLLAMA_SERVER}
-					class="input"
-					id="server"
-					bind:value={ollamaServer}
-					on:keyup={getModelsList}
-				/>
-			</Field>
+<div class="settings">
+	<Fieldset>
+		<Field name="server">
+			<span class="flex w-full items-center justify-between" slot="label">
+				Server
+				<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
+					{serverStatus}
+				</Badge>
+			</span>
+			<input
+				placeholder={DETAULT_OLLAMA_SERVER}
+				class="input"
+				id="server"
+				bind:value={ollamaServer}
+				on:keyup={getModelsList}
+			/>
+		</Field>
 
-			{#if ollamaURL && serverStatus === 'disconnected'}
-				<div transition:slide class="help">
+		{#if ollamaURL && serverStatus === 'disconnected'}
+			<div class="help">
+				<p class="p">
+					Needs to allow connections from
+					<code class="code">{ollamaURL.origin}</code>
+					in
+					<code class="code">OLLAMA_ORIGINS</code>,
+					<Button
+						variant="link"
+						size="link"
+						href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
+						target="_blank"
+					>
+						see docs
+					</Button>. Also check no browser extensions are blocking the connection.
+				</p>
+				{#if ollamaURL.protocol === 'https:'}
 					<p class="p">
-						Needs to allow connections from
-						<code class="code">{ollamaURL.origin}</code>
-						in
-						<code class="code">OLLAMA_ORIGINS</code>,
-						<Button
-							variant="link"
-							size="link"
-							href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
+						If trying to connect to an Ollama server that is not available on
+						<code class="code">localhost</code> or <code class="code">127.0.0.1</code> you will need
+						to
+						<a
+							href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
 							target="_blank"
 						>
-							see docs
-						</Button>. Also check no browser extensions are blocking the connection.
+							create a tunnel
+						</a>
+						to your server or
+						<a
+							href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
+							target="_blank"
+						>
+							allow mixed content
+						</a> in this browser's site settings.
 					</p>
-					{#if ollamaURL.protocol === 'https:'}
-						<p class="p">
-							If trying to connect to an Ollama server that is not available on
-							<code class="code">localhost</code> or <code class="code">127.0.0.1</code> you will
-							need to
-							<a
-								href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
-								target="_blank"
-							>
-								create a tunnel
-							</a>
-							to your server or
-							<a
-								href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
-								target="_blank"
-							>
-								allow mixed content
-							</a> in this browser's site settings.
-						</p>
-					{/if}
-				</div>
-			{/if}
-		</div>
+				{/if}
+			</div>
+		{/if}
 
-		<div class="fieldset">
-			<FieldModels />
-		</div>
+		<FieldSelectModel />
+	</Fieldset>
 
-		<Separator class="mb-8 mt-8" />
+	<Separator class="mb-8 mt-8" />
 
-		<div class="fieldset">
-			<Field name="danger-zone">
-				<span slot="title">Danger zone</span>
-				<Button variant="outline" on:click={deleteSessions}>Delete all sessions</Button>
-				<Button variant="outline" on:click={deleteSettings}>Delete server settings</Button>
-			</Field>
-		</div>
+	<Fieldset>
+		<Field name="danger-zone">
+			<svelte:fragment slot="label">Danger zone</svelte:fragment>
+			<Button variant="outline" on:click={deleteSessions}>Delete all sessions</Button>
+			<Button variant="outline" on:click={deleteSettings}>Delete server settings</Button>
+		</Field>
+	</Fieldset>
 
-		<Separator class="mb-8 mt-8" />
+	<Separator class="mb-8 mt-8" />
 
-		<div class="fieldset">
-			<p class="p"><strong>About</strong></p>
-			<p class="p">
-				<strong>Hollama</strong> is a minimalistic web interface for
-				<Button
-					variant="link"
-					size="link"
-					href="https://github.com/jmorganca/ollama/"
-					target="_blank">Ollama</Button
-				>
-				servers. Code is available on
-				<Button
-					variant="link"
-					size="link"
-					href="https://github.com/fmaclen/hollama"
-					target="_blank"
-				>
-					Github
-				</Button>.
-			</p>
-			<p class="p">
-				Made by
-				<Button variant="link" size="link" href="https://fernando.is" target="_blank">
-					@fmaclen
-				</Button>
-			</p>
-		</div>
+	<div class="container mx-auto max-w-full xl:max-w-[70%] flex flex-col gap-y-2">
+		<p class="p"><strong>About</strong></p>
+		<p class="p">
+			<strong>Hollama</strong> is a minimalistic web interface for
+			<Button variant="link" size="link" href="https://github.com/jmorganca/ollama/" target="_blank"
+				>Ollama</Button
+			>
+			servers. Code is available on
+			<Button variant="link" size="link" href="https://github.com/fmaclen/hollama" target="_blank">
+				Github
+			</Button>.
+		</p>
+		<p class="p">
+			Made by
+			<Button variant="link" size="link" href="https://fernando.is" target="_blank">
+				@fmaclen
+			</Button>
+		</p>
 	</div>
 </div>
 
 <style lang="scss">
-	.fieldset {
-		@apply mb-6 mt-6 flex flex-col gap-y-3;
+	.settings {
+		@apply flex h-full w-full flex-col justify-center bg-elevation-100;
 	}
 
 	.help {
