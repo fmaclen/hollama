@@ -1,3 +1,4 @@
+import type { Knowledge } from "$lib/knowledge";
 import type { OllamaCompletionResponse, OllamaTagResponse } from "$lib/ollama";
 import type { Page, Route } from "@playwright/test";
 
@@ -91,6 +92,28 @@ export const MOCK_SESSION_2_RESPONSE_1: OllamaCompletionResponse = {
 	eval_count: 142,
 	eval_duration: 2181595000
 }
+
+export const MOCK_KNOWLEDGE: Knowledge[] = [
+	{
+		id: "f9y6cb",
+		name: "Alba & Watson combat sheet",
+		content: "**Watson:**\n- Phase Punches, Electric Fist Charge\n- High-altitude cardio, electric resistance training\n- Stormfront Strike: Electrified punch/kick combo.\n- Shockwave Palm Slap: Ripple strike to disorient.\n\n**Alba:**\n- Defeated Lightning Line in Electric Arena using shockwaves.\n- Meditation during thunderstroms for mental focus on electric energies.\n- Omega-3 diet, lightning-charged seafood.\n- Gloves: Electrical impact microcapsules; boots with insulating footpads.",
+		updatedAt: "2024-07-01T17:14:11.832Z"
+	},
+	{
+		id: "uv96i4",
+		name: "fmaclen/hollama: Directory tree",
+		content: "```\n.\n├── Dockerfile\n├── LICENSE\n├── README.md\n├── build\n├── docs\n├── node_modules\n├── package-lock.json\n├── package.json\n├── playwright.config.ts\n├── postcss.config.cjs\n├── src\n├── static\n├── svelte.config.js\n├── tailwind.config.js\n├── test-results\n├── tests\n├── tsconfig.json\n└── vite.config.ts\n```",
+		updatedAt: "2024-07-01T17:17:40.789Z"
+	},
+	{
+		id: "aaz70i",
+		name: "Slack transcript",
+		content: "9:31am - wally: I got approval to work from home\n9:32am - wally: my chatbot will answer all of my emails and text messages\n9:32am - dilbert: chatbot answers would be useless\n9:33am - wally: I hope so, otherwise it won't sound like me",
+		updatedAt: "2024-07-01T17:19:40.789Z"
+	}
+]
+
 
 export async function chooseModelFromSettings(page: Page, modelName: string) {
 	await page.getByText('Settings', { exact: true }).click();
