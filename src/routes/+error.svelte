@@ -1,14 +1,10 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/stores';
+	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 </script>
 
-<h1>{$page.status}: {$page.error.message}</h1>
-
 {#if $page.status === 404}
-	<p>The page you are looking for does not exist.</p>
+	<EmptyMessage><strong>Error {$page.status}</strong> — The page you are looking for does not exist.</EmptyMessage>
+{:else if $page.status !== 200}
+	<EmptyMessage><strong>Error {$page.status}</strong> — There was an internal server error. Please try again later.</EmptyMessage>
 {/if}
-{#if $page.status === 500}
-	<p>There was an internal server error. Please try again later.</p>
-{/if}
-
-<a href="/">Go to Home</a>
