@@ -9,7 +9,7 @@
 </script>
 
 <Field {name}>
-	<span slot="title">{label}</span>
+	<svelte:fragment slot="label">{label}</svelte:fragment>
 	<select id={name} class="select" {disabled} bind:value>
 		<option></option>
 		{#each options as { value, option }}

@@ -69,7 +69,7 @@
 <div class="settings">
 	<Fieldset>
 		<Field name="server">
-			<span slot="title" class="flex w-full items-center justify-between">
+			<span class="flex w-full items-center justify-between" slot="label">
 				Server
 				<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
 					{serverStatus}
@@ -130,7 +130,7 @@
 
 	<Fieldset>
 		<Field name="danger-zone">
-			<span slot="title">Danger zone</span>
+			<svelte:fragment slot="label">Danger zone</svelte:fragment>
 			<Button variant="outline" on:click={deleteSessions}>Delete all sessions</Button>
 			<Button variant="outline" on:click={deleteSettings}>Delete server settings</Button>
 		</Field>

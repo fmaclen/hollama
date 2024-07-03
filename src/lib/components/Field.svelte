@@ -4,19 +4,20 @@
 	export let name: string;
 </script>
 
-<label class="label {className}" for={name}>
-	<p class="title">
-		<slot name="title" />
-	</p>
+<div class="field {className ?? ''}">
+	<label class="field__label" for={name}>
+		<slot name="label" />
+	</label>
+
 	<slot />
-</label>
+</div>
 
 <style lang="scss">
-	.label {
+	.field {
 		@apply flex w-full flex-col gap-y-3;
 	}
 
-	.title {
+	.field__label {
 		@apply flex items-center gap-x-2 text-sm font-medium leading-none;
 	}
 </style>

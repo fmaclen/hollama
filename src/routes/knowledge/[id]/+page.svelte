@@ -67,12 +67,12 @@
 
 	<Fieldset isFullscreen={true}>
 		<Field name="name">
-			<span slot="title">Name</span>
-			<input class="input" bind:value={name} />
+			<svelte:fragment slot="label">Name</svelte:fragment>
+			<input id={name} class="input" bind:value={name} />
 		</Field>
 		<Field name="content" class="h-full">
-			<span slot="title">Content</span>
-			<textarea class="input input--textarea" bind:value={content}></textarea>
+			<svelte:fragment slot="label">Content</svelte:fragment>
+			<textarea  id={name} class="input input--textarea" bind:value={content}></textarea>
 		</Field>
 		<Button class="w-full" on:click={handleSubmit} disabled={!name || !content}>Save</Button>
 	</Fieldset>

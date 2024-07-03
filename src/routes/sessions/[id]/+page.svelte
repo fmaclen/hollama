@@ -195,7 +195,7 @@
 				{/if}
 
 				<Field class="h-full" name="prompt">
-					<span slot="title">Prompt</span>
+					<svelte:fragment slot="label">Prompt</svelte:fragment>
 					<textarea
 						id="prompt"
 						placeholder={$settingsStore?.ollamaModel ? '' : 'No model selected'}
