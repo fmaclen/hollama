@@ -6,32 +6,34 @@
 	export let id: string;
 	export let title: string;
 	export let subtitle: string;
+
+	const isSession = sitemap === Sitemap.SESSIONS;
 </script>
 
 <a
-	class="section-list__a {$page.url.pathname.includes(id) ? 'bg-accent' : 'hover:bg-accent'}"
-	data-testid={sitemap === Sitemap.SESSIONS ? 'session-item' : 'knowledge-item'}
-	aria-label={`Session ${id}`}
+	class="section-list-item {$page.url.pathname.includes(id) ? 'bg-accent' : 'hover:bg-accent'}"
+	data-testid={isSession ? 'session-item' : 'knowledge-item'}
+	aria-label={isSession ? `Session: ${id}` : `Knowledge: ${id}`}
 	href={`/${sitemap}/${id}`}
 >
-	<p class="section-list__title">
+	<p class="section-list-item__title">
 		{title}
 	</p>
-	<p class="section-list__subtitle">
+	<p class="section-list-item__subtitle">
 		{subtitle}
 	</p>
 </a>
 
 <style lang="scss">
-	.section-list__a {
+	.section-list-item {
 		@apply flex flex-col px-6 py-3;
 	}
 
-	.section-list__title {
+	.section-list-item__title {
 		@apply max-w-full truncate whitespace-nowrap text-sm font-bold text-foreground;
 	}
 
-	.section-list__subtitle {
+	.section-list-item__subtitle {
 		@apply flex max-w-full gap-x-2 truncate whitespace-nowrap text-sm text-muted-foreground;
 	}
 </style>
