@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, seedKnowledgeAndReload } from './mocks';
+import { MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, seedKnowledgeAndReload } from './mocks';
 
 test('creates and edits knowledge', async ({ page }) => {
 	const timestamp = page.getByTestId('knowledge-timestamp')
@@ -90,7 +90,8 @@ test('deletes knowledge', async ({ page }) => {
 test('can use knowledge in the session', async ({ page }) => {
 	const sessionArticle = page.locator('.article-list .article');
 	const knowledgeId = page.getByTestId('knowledge-id');
-
+	
+	await mockTagsResponse(page);
 	await page.goto('/');
 	await chooseModelFromSettings(page, 'gemma:7b');
 	await seedKnowledgeAndReload(page);
