@@ -172,7 +172,7 @@
 			<div class="flex h-full flex-col gap-y-6 p-6">
 				{#if isNewSession}
 					<FieldSelectModel />
-					<div class="grid grid-cols-[auto,max-content] items-end gap-x-2">
+					<div class={!$knowledgeStore ? 'grid grid-cols-[auto,max-content] items-end gap-x-2' : ''}>
 						<FieldSelect
 							label="Knowledge"
 							name="knowledge"
