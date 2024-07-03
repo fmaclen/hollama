@@ -52,8 +52,12 @@
 					#{knowledge.id}
 				</Button>
 			</p>
-			<p data-testid="knowledge-name" class="text-sm text-muted-foreground">
-				{isNewKnowledge ? 'New knowledge' : knowledge.updatedAt}
+			<p data-testid="knowledge-timestamp" class="text-sm text-muted-foreground">
+				{#if isNewKnowledge}
+					New knowledge
+				{:else}
+					{knowledge.updatedAt}
+				{/if}
 			</p>
 		</div>
 		{#if !isNewKnowledge}

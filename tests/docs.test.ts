@@ -65,15 +65,17 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.getByText("Knowledge").click();
 	await expect(page.getByText('No knowledge')).toBeVisible();
 
-	// State 2 knowledge
-	await page.evaluate(() => window.localStorage.setItem(
-		'hollama-knowledge',
-		JSON.stringify(MOCK_KNOWLEDGE)
-	));
+	// To generate the knowledge we need to pass the mocked data to the browser context
+	await page.evaluate((data) => window.localStorage.setItem(
+		'hollama-knowledge', JSON.stringify(data)
+	), MOCK_KNOWLEDGE);
 
 	await page.reload();
 	await expect(page.getByText('No knowledge')).not.toBeVisible();
+	await expect(page.getByTestId('knowledge-timestamp')).not.toBeVisible();
 
-	await page.getByText('Directory tree').click();
+	await page.getByText(MOCK_KNOWLEDGE[0].name).click();
+	await expect(page.getByTestId('knowledge-timestamp')).not.toContainText('New session');
+
 	await page.screenshot({ path: 'docs/knowledge.png', fullPage: true });
 });
