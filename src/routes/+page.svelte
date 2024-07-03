@@ -164,10 +164,6 @@
 		@apply flex h-full w-full flex-col justify-center bg-elevation-100;
 	}
 
-	.fieldset {
-		@apply container mx-auto my-3 flex max-w-prose flex-col gap-y-3;
-	}
-
 	.help {
 		@apply flex flex-col gap-y-3;
 	}
