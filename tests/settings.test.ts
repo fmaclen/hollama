@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { mockTagsResponse } from './utils';
+import { mockTagsResponse } from './mocks';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);

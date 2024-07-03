@@ -26,12 +26,12 @@
 	}
 
 	function deleteKnowledge() {
-		const confirmed = confirm('Are you sure you want to delete this session?');
+		const confirmed = confirm('Are you sure you want to delete this knowledge?');
 		if (!confirmed) return;
 
 		if ($knowledgeStore) {
-			const updatedSessions = $knowledgeStore.filter((s) => s.id !== knowledge.id);
-			$knowledgeStore = updatedSessions;
+			const updatedKnowledge = $knowledgeStore.filter((s) => s.id !== knowledge.id);
+			$knowledgeStore = updatedKnowledge;
 		}
 		goto('/knowledge');
 	}
@@ -72,11 +72,11 @@
 	<Fieldset isFullscreen={true}>
 		<Field name="name">
 			<svelte:fragment slot="label">Name</svelte:fragment>
-			<input id={name} class="input" bind:value={name} />
+			<input id="name" class="input" bind:value={name} />
 		</Field>
 		<Field name="content" class="h-full">
 			<svelte:fragment slot="label">Content</svelte:fragment>
-			<textarea  id={name} class="input input--textarea" bind:value={content}></textarea>
+			<textarea id="content" class="input input--textarea" bind:value={content}></textarea>
 		</Field>
 		<Button class="w-full" on:click={handleSubmit} disabled={!name || !content}>Save</Button>
 	</Fieldset>

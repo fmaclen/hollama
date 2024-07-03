@@ -2,7 +2,7 @@
 	import { tick } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
-	import { CopyPlus, StopCircle, Trash2 } from 'lucide-svelte';
+	import { FilePlus, StopCircle, Trash2 } from 'lucide-svelte';
 
 	import Button from '$lib/components/Button.svelte';
 	import Separator from '$lib/components/Separator.svelte';
@@ -94,7 +94,7 @@
 
 			// Now that we used the knowledge, we no longer need an `id`
 			// This will prevent `knowledge` from being used again
-			knowledgeId = "";
+			knowledgeId = '';
 		}
 
 		const message: Message = { role: 'user', content: prompt };
@@ -172,7 +172,7 @@
 			<div class="flex h-full flex-col gap-y-6 p-6">
 				{#if isNewSession}
 					<FieldSelectModel />
-					<div class={!$knowledgeStore ? 'grid grid-cols-[auto,max-content] items-end gap-x-2' : ''}>
+					<div class="grid grid-cols-[auto,max-content] items-end gap-x-2">
 						<FieldSelect
 							label="Knowledge"
 							name="knowledge"
@@ -181,16 +181,14 @@
 							bind:value={knowledgeId}
 						/>
 
-						{#if !$knowledgeStore}
-							<Button
-								title="New knowledge"
-								variant="outline"
-								size="icon"
-								href={generateNewUrl(Sitemap.KNOWLEDGE)}
-							>
-								<CopyPlus class="h-4 w-4" />
-							</Button>
-						{/if}
+						<Button
+							aria-label="New knowledge"
+							variant="outline"
+							size="icon"
+							href={generateNewUrl(Sitemap.KNOWLEDGE)}
+						>
+							<FilePlus class="h-4 w-4" />
+						</Button>
 					</div>
 				{/if}
 

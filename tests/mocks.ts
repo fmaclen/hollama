@@ -93,22 +93,6 @@ export const MOCK_SESSION_2_RESPONSE_1: OllamaCompletionResponse = {
 	eval_duration: 2181595000
 }
 
-export const MOCK_KNOWLEDGE: Knowledge[] = [
-	{
-		id: "aaz70i",
-		name: "Slack transcript",
-		content: "9:31am - wally: I got approval to work from home\n9:32am - wally: my chatbot will answer all of my emails and text messages\n9:32am - dilbert: chatbot answers would be useless\n9:33am - wally: I hope so, otherwise it won't sound like me",
-		updatedAt: "2024-07-01T17:19:40.789Z"
-	},
-	{
-		id: "uv96i4",
-		name: "Hollama: Directory tree",
-		content: "```\n.\n├── Dockerfile\n├── LICENSE\n├── README.md\n├── build\n├── docs\n├── node_modules\n├── package-lock.json\n├── package.json\n├── playwright.config.ts\n├── postcss.config.cjs\n├── src\n├── static\n├── svelte.config.js\n├── tailwind.config.js\n├── test-results\n├── tests\n├── tsconfig.json\n└── vite.config.ts\n```",
-		updatedAt: "2024-07-01T17:17:40.789Z"
-	},
-]
-
-
 export async function chooseModelFromSettings(page: Page, modelName: string) {
 	await page.getByText('Settings', { exact: true }).click();
 	await page.getByLabel('Model').selectOption(modelName);
@@ -132,4 +116,43 @@ export async function mockCompletionResponse(page: Page, response: OllamaComplet
 			body: JSON.stringify(response)
 		});
 	});
+}
+
+export const MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1: OllamaCompletionResponse = {
+	model: "gemma:7b",
+	created_at: "2024-04-11T12:50:18.826017Z",
+	response: 'Wally has been approved to work from home and plans to have a chatbot answer his emails and text messages. However, Dilbert expresses concern that the automated responses may not sound like him, rendering them useless.',
+	done: true,
+	context: [123, 4567, 890],
+	total_duration: 8048965583,
+	load_duration: 5793693500,
+	prompt_eval_count: 22,
+	prompt_eval_duration: 73410000,
+	eval_count: 142,
+	eval_duration: 2181595000
+}
+
+export const MOCK_KNOWLEDGE: Knowledge[] = [
+	{
+		id: "aaz70i",
+		name: "Slack transcript",
+		content: "9:31am - wally: I got approval to work from home\n9:32am - wally: my chatbot will answer all of my emails and text messages\n9:32am - dilbert: chatbot answers would be useless\n9:33am - wally: I hope so, otherwise it won't sound like me",
+		updatedAt: "2024-07-01T17:19:40.789Z"
+	},
+	{
+		id: "uv96i4",
+		name: "Hollama: Directory tree",
+		content: "```\n.\n├── Dockerfile\n├── LICENSE\n├── README.md\n├── build\n├── docs\n├── node_modules\n├── package-lock.json\n├── package.json\n├── playwright.config.ts\n├── postcss.config.cjs\n├── src\n├── static\n├── svelte.config.js\n├── tailwind.config.js\n├── test-results\n├── tests\n├── tsconfig.json\n└── vite.config.ts\n```",
+		updatedAt: "2024-07-01T17:17:40.789Z"
+	},
+]
+
+export async function seedKnowledgeAndReload(page: Page) {
+	// To generate the knowledge we need to pass the mocked data to the browser context
+	await page.evaluate((data) => window.localStorage.setItem(
+		'hollama-knowledge', JSON.stringify(data)
+	), MOCK_KNOWLEDGE);
+
+	// Reload the page for changes to take effect
+	await page.reload();
 }

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_KNOWLEDGE, mockTagsResponse } from './utils';
+import { MOCK_KNOWLEDGE, mockTagsResponse, seedKnowledgeAndReload } from './mocks';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
@@ -65,12 +65,7 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.getByText("Knowledge").click();
 	await expect(page.getByText('No knowledge')).toBeVisible();
 
-	// To generate the knowledge we need to pass the mocked data to the browser context
-	await page.evaluate((data) => window.localStorage.setItem(
-		'hollama-knowledge', JSON.stringify(data)
-	), MOCK_KNOWLEDGE);
-
-	await page.reload();
+	await seedKnowledgeAndReload(page);
 	await expect(page.getByText('No knowledge')).not.toBeVisible();
 	await expect(page.getByTestId('knowledge-timestamp')).not.toBeVisible();
 
