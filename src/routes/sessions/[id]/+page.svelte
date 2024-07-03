@@ -85,12 +85,17 @@
 		if (!prompt) return;
 
 		let knowledgeContext: Message | null = null;
-		if (knowledge)
+		if (knowledge) {
 			knowledgeContext = {
 				role: 'system',
 				knowledge,
 				content: ''
 			};
+
+			// Now that we used the knowledge, we no longer need an `id`
+			// This will prevent `knowledge` from being used again
+			knowledgeId = "";
+		}
 
 		const message: Message = { role: 'user', content: prompt };
 		abortController = new AbortController();
