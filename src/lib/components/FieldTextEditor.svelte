@@ -16,7 +16,7 @@
 
 		view = new EditorView({
 			doc: editorValue,
-			extensions: [basicSetup, updateValue],
+			extensions: [basicSetup, updateValue, EditorView.lineWrapping],
 			parent: container
 		});
 	});
@@ -33,5 +33,9 @@
 <style lang="scss">
 	.text-editor {
 		@apply h-full overflow-hidden rounded-md border border-input bg-neutral-50;
+
+		:global(.cm-editor) {
+			@apply h-full;
+		}
 	}
 </style>

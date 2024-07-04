@@ -195,7 +195,7 @@
 
 				<Field class="h-full" name="prompt">
 					<svelte:fragment slot="label">Prompt</svelte:fragment>
-					{#key prompt}
+					{#key session}
 						<FieldTextEditor bind:value={prompt} />
 					{/key}
 				</Field>
