@@ -239,10 +239,6 @@
 		@apply flex h-full w-full flex-col overflow-y-auto;
 	}
 
-	.textarea {
-		@apply flex h-full min-h-[10em] w-full resize-none rounded-md border border-input bg-elevation-0 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground  focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50;
-	}
-
 	.article-list {
 		@apply flex h-full flex-col overflow-y-auto px-6 pb-12 pt-6 text-current outline outline-green-500;
 	}

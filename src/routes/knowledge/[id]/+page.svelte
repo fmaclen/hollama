@@ -89,9 +89,5 @@
 <style lang="scss">
 	.input {
 		@apply flex min-h-[2em] w-full resize-none rounded-md border border-input bg-elevation-0 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
-
-		&--textarea {
-			@apply h-full min-h-[10em];
-		}
 	}
 </style>
