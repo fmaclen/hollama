@@ -12,9 +12,9 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 - Streams completions
 
 > ![session](docs/session.png)
-> ![session-new](docs/session-new.png)
-> ![settings](docs/settings.png)
 > ![knowledge](docs/knowledge.png)
+> ![settings](docs/settings.png)
+> ![session-new](docs/session-new.png)
 
 ## How to use?
 
