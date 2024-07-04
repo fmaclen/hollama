@@ -11,19 +11,18 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 - Saves all changes on your browser's `localStorage`
 - Streams completions
 
-> ![session](docs/session.png)
-> ![knowledge](docs/knowledge.png)
-> ![session-new](docs/session-new.png)
-> ![settings](docs/settings.png)
-
-## How to use?
-
 ### Live demo
 
 > [!TIP]
 > The latest version of **Hollama** is available at: [https://hollama.fernando.is](https://hollama.fernando.is)
 
 No sign up is required and data is _100% stored locally on your browser_.
+
+> ![session](docs/session.png)
+> ![knowledge](docs/knowledge.png)
+> ![session-new](docs/session-new.png)
+> ![settings](docs/settings.png)
+
 
 ### Self-host (Docker)
 
@@ -35,7 +34,7 @@ docker run --rm -d -p 4173:4173 ghcr.io/fmaclen/hollama:latest
 
 Then visit [http://localhost:4173](http://localhost:4173).
 
-### Connecting to an Ollama server
+#### Connecting to an Ollama server
 
 If you are using the publicly hosted version or your Docker server is on a separate device than the Ollama server you'll have to set the domain in `OLLAMA_ORIGINS`. [Learn more in Ollama's docs](https://github.com/ollama/ollama/blob/main/docs/faq.md#how-do-i-configure-ollama-server).
 
