@@ -4,13 +4,12 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 
 ### Features
 
-- Large prompt fields
-- Streams completions
-- Copy completions as raw text
+- Large prompt fields with code editor features
 - Markdown parsing w/syntax highlighting
-- Prompt text-boxes with code editor features
+- Easily copy markdown as raw text
 - _"Knowledge"_ lets you add context to sessions
 - Saves all changes on your browser's `localStorage`
+- Streams completions
 
 > ![session](docs/session.png)
 > ![session-new](docs/session-new.png)
@@ -21,18 +20,20 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 
 ### Live demo
 
-[!TIP]
-The latest version of **Hollama** is available at [https://hollama.fernando.is](https://hollama.fernando.is).
+> [!TIP]
+> The latest version of **Hollama** is available at: [https://hollama.fernando.is](https://hollama.fernando.is)
 
 No sign up is required and data is _100% stored locally on your browser_.
 
-### Docker image
+### Self-host (Docker)
 
-Run the command below, then visit [http://localhost:4173](http://localhost:4173).
+To host your own Hollama server, [install Docker](https://www.docker.com/products/docker-desktop/) and run the command below in your favorite terminal:
 
 ```shell
 docker run --rm -d -p 4173:4173 ghcr.io/fmaclen/hollama:latest 
 ```
+
+Then visit [http://localhost:4173](http://localhost:4173).
 
 ### Connecting to an Ollama server
 
