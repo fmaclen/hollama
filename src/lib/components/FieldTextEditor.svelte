@@ -36,7 +36,7 @@
 		@apply h-full overflow-hidden rounded-md border border-input bg-neutral-50;
 
 		:global(.cm-editor) {
-			@apply h-full;
+			@apply h-full text-sm;
 		}
 	}
 </style>
