@@ -14,7 +14,7 @@ test.describe('Session', () => {
 		const sessionIdLocator = page.getByTestId('session-id');
 		const modelNameLocator = page.getByTestId('model-name');
 		const newSessionButton = page.getByTestId('new-session');
-		const sendButton = page.getByText('Send');
+		const sendButton = page.getByText('Run');
 		const articleLocator = page.locator('article');
 		const newPromptHelp = page.getByText('Write a prompt to start a new session');
 	
@@ -89,7 +89,7 @@ test.describe('Session', () => {
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
-		await page.getByText('Send').click();
+		await page.getByText('Run').click();
 		await page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.").isVisible();
 		await expect(page.getByText('No sessions')).not.toBeVisible();
 		expect(await page.getByTestId('session-item').textContent()).toContain("Who would win in a fight between Emma Watson and Jessica Alba?");
@@ -111,7 +111,7 @@ test.describe('Session', () => {
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
 		await promptTextarea.fill('What does the fox say?');
-		await page.getByText('Send').click();
+		await page.getByText('Run').click();
 		await expect(page.getByText('The fox says various things, such as "ring-a-ding-ding," "bada bing-bing" and "higglety-pigglety pop')).toBeVisible();
 		expect(await page.getByTestId('session-item').count()).toBe(2);
 	
@@ -137,7 +137,7 @@ test.describe('Session', () => {
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
-		await page.getByText('Send').click();
+		await page.getByText('Run').click();
 		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
 		await expect(page.getByText('No sessions')).not.toBeVisible();
 		expect(await page.getByTestId('session-item').count()).toBe(1);
@@ -201,7 +201,7 @@ test.describe('Session', () => {
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
-		await page.getByText('Send').click();
+		await page.getByText('Run').click();
 		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
 		await expect(page.getByTitle('Copy')).toHaveCount(2);
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("");
@@ -216,7 +216,7 @@ test.describe('Session', () => {
 	
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_3);
 		await promptTextarea.fill("Write a Python function to calculate the odds of the winner in a fight between Emma Watson and Jessica Alba");
-		await page.getByText('Send').click();
+		await page.getByText('Run').click();
 		await expect(page.locator("pre")).toBeVisible();
 		await expect(page.locator("code")).toBeVisible();
 		await expect(page.getByTitle('Copy')).toHaveCount(5);
@@ -227,7 +227,7 @@ test.describe('Session', () => {
 	});
 	
 	test('can start a new session, choose a model and stop a completion in progress', async ({ page }) => {
-		const sendButton = page.getByText('Send');
+		const sendButton = page.getByText('Run');
 		const stopButton = page.getByTitle('Stop response');
 		const userMessage = page.locator('article', { hasText: "You" })
 		const aiMessage = page.locator('article', { hasText: "AI" })

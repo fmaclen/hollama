@@ -107,7 +107,7 @@ test('can use knowledge in the session', async ({ page }) => {
 	// Create a new session with knowledge
 	await page.getByLabel('Knowledge', { exact: true }).selectOption(MOCK_KNOWLEDGE[0].name);
 	await textEditorLocator(page, 'Prompt').fill('What is this about?');
-	await page.getByText('Send').click();
+	await page.getByText('Run').click();
 	expect(await sessionArticle.count()).toBe(3);
 	expect(await sessionArticle.first().textContent()).toContain(MOCK_KNOWLEDGE[0].name);
 	expect(await sessionArticle.nth(1).textContent()).toContain('What is this about?');

@@ -12,6 +12,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
+	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 
 	export let data: PageData;
 
@@ -78,10 +79,11 @@
 		<Field name="content" class="h-full">
 			<svelte:fragment slot="label">Content</svelte:fragment>
 			{#key knowledge}
-				<FieldTextEditor bind:value={content} />
+				<FieldTextEditor {handleSubmit} bind:value={content} />
 			{/key}
 		</Field>
-		<Button class="w-full" on:click={handleSubmit} disabled={!name || !content}>Save</Button>
+
+		<ButtonSubmit {handleSubmit} disabled={!name || !content} >Save</ButtonSubmit>
 	</Fieldset>
 </div>
 

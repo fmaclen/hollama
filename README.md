@@ -13,8 +13,8 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 
 > ![session](docs/session.png)
 > ![knowledge](docs/knowledge.png)
-> ![settings](docs/settings.png)
 > ![session-new](docs/session-new.png)
+> ![settings](docs/settings.png)
 
 ## How to use?
 

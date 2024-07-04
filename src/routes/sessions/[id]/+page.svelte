@@ -22,6 +22,7 @@
 
 	import type { PageData } from './$types';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
+	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 
 	export let data: PageData;
 
@@ -54,6 +55,13 @@
 			content: typeof error === 'string' ? error : 'Sorry, something went wrong.'
 		};
 		session.messages = [...session.messages, message];
+	}
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+			event.preventDefault();
+			handleSubmit();
+		}
 	}
 
 	function deleteSession() {
@@ -189,12 +197,12 @@
 				<Field class="h-full" name="prompt">
 					<svelte:fragment slot="label">Prompt</svelte:fragment>
 					{#key session}
-						<FieldTextEditor bind:value={prompt} />
+						<FieldTextEditor {handleSubmit} bind:value={prompt} />
 					{/key}
 				</Field>
 
 				<div class="flex w-full">
-					<Button class="w-full" on:click={handleSubmit} disabled={!prompt}>Send</Button>
+					<ButtonSubmit {handleSubmit} disabled={!prompt} >Run</ButtonSubmit>
 					{#if isLastMessageFromUser}
 						<div class="ml-2">
 							<Button title="Stop response" variant="outline" size="icon" on:click={handleAbort}>

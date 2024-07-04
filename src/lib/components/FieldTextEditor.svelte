@@ -3,10 +3,20 @@
 	import { EditorView, basicSetup } from 'codemirror';
 
 	export let value: string;
+	export let handleSubmit: Function;
 
 	let view: EditorView;
 	let container: HTMLDivElement | null;
 	let editorValue: string;
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if (!handleSubmit) return;
+
+		if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+			event.preventDefault();
+			handleSubmit();
+		}
+	}
 
 	onMount(() => {
 		// We only want to update the `editorValue` when the component mounts, then
@@ -21,7 +31,13 @@
 			parent: container
 		});
 
-		return () => view.destroy();
+		// Listen for keydown events to handle submitting with the keyboard shortcut
+		view.dom.addEventListener('keydown', handleKeyDown);
+
+		return () => {
+			view.destroy();
+			view.dom.removeEventListener('keydown', handleKeyDown);
+		};
 	});
 
 	const updateValue = EditorView.updateListener.of((view) => {
