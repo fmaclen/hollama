@@ -1,6 +1,6 @@
 import type { Knowledge } from "$lib/knowledge";
 import type { OllamaCompletionResponse, OllamaTagResponse } from "$lib/ollama";
-import type { Page, Route } from "@playwright/test";
+import type { Locator, Page, Route } from "@playwright/test";
 
 export const MOCK_API_TAGS_RESPONSE: OllamaTagResponse = {
 	models: [
@@ -155,4 +155,8 @@ export async function seedKnowledgeAndReload(page: Page) {
 
 	// Reload the page for changes to take effect
 	await page.reload();
+}
+
+export function textEditorLocator(page: Page, label: string | RegExp | undefined): Locator {
+	return page.locator('.field').filter({ hasText: label }).getByRole('textbox');
 }

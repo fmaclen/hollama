@@ -1,5 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
-import { MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse } from './mocks';
+import { MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, textEditorLocator } from './utils';
 
 
 test.describe('Session', () => {
@@ -7,7 +7,7 @@ test.describe('Session', () => {
 
 	test.beforeEach(async ({ page }) => {
 		await mockTagsResponse(page);
-		promptTextarea = page.locator('.field').filter({ hasText: "Prompt" }).getByRole('textbox');
+		promptTextarea = textEditorLocator(page, 'Prompt');
 	});
 
 	test('creates new session and chats', async ({ page }) => {
