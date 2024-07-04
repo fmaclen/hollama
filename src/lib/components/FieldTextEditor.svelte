@@ -3,9 +3,10 @@
 	import { EditorView, basicSetup } from 'codemirror';
 
 	export let value: string;
-	let editorValue: string;
-	let container: HTMLDivElement | null;
+
 	let view: EditorView;
+	let container: HTMLDivElement | null;
+	let editorValue: string;
 
 	onMount(() => {
 		// We only want to update the `editorValue` when the component mounts, then
@@ -19,12 +20,12 @@
 			extensions: [basicSetup, updateValue, EditorView.lineWrapping],
 			parent: container
 		});
+
+		return () => view.destroy();
 	});
 
 	const updateValue = EditorView.updateListener.of((view) => {
-		if (view.docChanged) {
-			value = view.state.doc.toString();
-		}
+		if (view.docChanged) value = view.state.doc.toString();
 	});
 </script>
 

@@ -56,13 +56,6 @@
 		session.messages = [...session.messages, message];
 	}
 
-	function handleKeyDown(event: KeyboardEvent) {
-		if (event.key === 'Enter' && !event.shiftKey) {
-			event.preventDefault();
-			handleSubmit();
-		}
-	}
-
 	function deleteSession() {
 		const confirmed = confirm('Are you sure you want to delete this session?');
 		if (!confirmed) return;
