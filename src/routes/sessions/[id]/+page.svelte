@@ -195,7 +195,9 @@
 
 				<Field class="h-full" name="prompt">
 					<svelte:fragment slot="label">Prompt</svelte:fragment>
-					<FieldTextEditor bind:value={prompt} />
+					{#key prompt}
+						<FieldTextEditor bind:value={prompt} />
+					{/key}
 				</Field>
 
 				<div class="flex w-full">

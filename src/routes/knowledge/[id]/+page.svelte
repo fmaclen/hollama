@@ -77,7 +77,7 @@
 		</Field>
 		<Field name="content" class="h-full">
 			<svelte:fragment slot="label">Content</svelte:fragment>
-			{#key content}
+			{#key knowledge}
 				<!-- Need to set a key to force re-mounting the component -->
 				<FieldTextEditor bind:value={content} />
 			{/key}
