@@ -6,7 +6,7 @@
 
 	export let value: string;
 	let container: HTMLDivElement | null;
-  let editor: monaco.editor.IStandaloneCodeEditor;
+	let editor: monaco.editor.IStandaloneCodeEditor;
 
 	onMount(() => {
 		if (!container) throw new Error('TextEditor container not found');
@@ -23,14 +23,14 @@
 			fontSize: 14
 		});
 
-		editor.onDidChangeModelContent((event) => {
+		editor.onDidChangeModelContent(() => {
 			value = editor.getValue();
 		});
 	});
 
-  onDestroy(() => {
-    editor?.dispose();
-  });
+	onDestroy(() => {
+		editor?.dispose();
+	});
 </script>
 
 <div class="text-editor" bind:this={container}></div>
