@@ -21,6 +21,7 @@
 	import { Sitemap } from '$lib/sitemap';
 
 	import type { PageData } from './$types';
+	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 
 	export let data: PageData;
 
@@ -194,14 +195,7 @@
 
 				<Field class="h-full" name="prompt">
 					<svelte:fragment slot="label">Prompt</svelte:fragment>
-					<textarea
-						id="prompt"
-						placeholder={$settingsStore?.ollamaModel ? '' : 'No model selected'}
-						disabled={!$settingsStore?.ollamaModel}
-						class="textarea"
-						bind:value={prompt}
-						on:keydown={handleKeyDown}
-					/>
+					<FieldTextEditor bind:value={prompt} />
 				</Field>
 
 				<div class="flex w-full">

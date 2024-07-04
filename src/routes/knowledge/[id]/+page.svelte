@@ -11,6 +11,7 @@
 	import { knowledgeStore } from '$lib/store';
 	import Header from '$lib/components/Header.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
+	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 
 	export let data: PageData;
 
@@ -76,7 +77,10 @@
 		</Field>
 		<Field name="content" class="h-full">
 			<svelte:fragment slot="label">Content</svelte:fragment>
-			<textarea id="content" class="input input--textarea" bind:value={content}></textarea>
+			{#key content}
+				<!-- Need to set a key to force re-mounting the component -->
+				<FieldTextEditor bind:value={content} />
+			{/key}
 		</Field>
 		<Button class="w-full" on:click={handleSubmit} disabled={!name || !content}>Save</Button>
 	</Fieldset>
