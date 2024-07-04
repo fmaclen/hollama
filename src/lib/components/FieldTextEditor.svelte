@@ -1,35 +1,19 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-	import * as monaco from 'monaco-editor';
-	import './FieldTextEdtor';
+	import { EditorView, basicSetup } from 'codemirror';
 
 	export let value: string;
 	let container: HTMLDivElement | null;
-	let editor: monaco.editor.IStandaloneCodeEditor;
 
 	onMount(() => {
-		if (!container) throw new Error('TextEditor container not found');
+		if (!container) throw new Error('Text editor container not found');
 
-		editor = monaco.editor.create(container, {
-			value,
-			language: 'plaintext',
-			minimap: { enabled: false },
-			scrollBeyondLastLine: false,
-			quickSuggestions: false,
-			selectionHighlight: false,
-			wordWrap: 'on',
-			codeLens: false,
-			fontSize: 14
+		new EditorView({
+			doc: value,
+			extensions: basicSetup,
+			parent: container
 		});
-
-		editor.onDidChangeModelContent(() => {
-			value = editor.getValue();
-		});
-	});
-
-	onDestroy(() => {
-		editor?.dispose();
 	});
 </script>
 
@@ -39,20 +23,20 @@
 	.text-editor {
 		@apply h-full overflow-hidden rounded-md border border-input bg-neutral-50;
 
-		:global(.monaco-editor) {
-			@apply h-full rounded-md p-0 outline-none;
-		}
+		// :global(.monaco-editor) {
+		// 	@apply h-full rounded-md p-0 outline-none;
+		// }
 
-		:global(.line-numbers) {
-			@apply text-neutral-200;
-		}
+		// :global(.line-numbers) {
+		// 	@apply text-neutral-200;
+		// }
 
-		:global(.active-line-number) {
-			@apply text-neutral-400;
-		}
+		// :global(.active-line-number) {
+		// 	@apply text-neutral-400;
+		// }
 
-		:global(.mtk1) {
-			@apply text-neutral-800;
-		}
+		// :global(.mtk1) {
+		// 	@apply text-neutral-800;
+		// }
 	}
 </style>
