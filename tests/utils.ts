@@ -160,3 +160,8 @@ export async function seedKnowledgeAndReload(page: Page) {
 export function textEditorLocator(page: Page, label: string | RegExp | undefined): Locator {
 	return page.locator('.field').filter({ hasText: label }).getByRole('textbox');
 }
+
+export async function submitWithKeyboardShortcut(page: Page) {
+	const modKey = process.platform === 'darwin' ? 'Meta' : 'Control';
+	await page.keyboard.press(`${modKey}+Enter`);
+}

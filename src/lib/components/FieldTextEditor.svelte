@@ -15,13 +15,12 @@
 		if (view.docChanged) value = view.state.doc.toString();
 	});
 
-	// Disable default keymap for `Meta+Enter` to allow form submission
+	// Disable default keymap for `Mod+Enter` to allow form submission
 	// and prevent `insertNewline` in text editor.
-	const overrideMetaEnterKeymap = keymap.of([
+	const overrideModEnterKeymap = keymap.of([
 		{
 			key: 'Mod-Enter',
 			run: () => {
-				console.warn('Meta+Enter key pressed');
 				handleSubmit();
 				return true;
 			}
@@ -39,7 +38,7 @@
 				basicSetup,
 				updateValue,
 				EditorView.lineWrapping,
-				Prec.highest(overrideMetaEnterKeymap)
+				Prec.highest(overrideModEnterKeymap)
 			],
 			parent: container
 		});

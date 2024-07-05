@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, seedKnowledgeAndReload, textEditorLocator } from './utils';
+import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, seedKnowledgeAndReload, submitWithKeyboardShortcut, textEditorLocator } from './utils';
 
 test('creates and edits knowledge', async ({ page }) => {
 	const timestamp = page.getByTestId('knowledge-timestamp')
@@ -27,16 +27,16 @@ test('creates and edits knowledge', async ({ page }) => {
 	await expect(buttonSave).toBeDisabled();
 
 	// Check the form can't be submitted without a name
-	// `Meta+Enter` is the shortcut to submit the form and is bounded to the `fieldContent`
+	// `Mod+Enter` is the shortcut to submit the form and is bounded to the `fieldContent`
 	await fieldContent.focus();
-	await page.keyboard.press('Meta+Enter');
+	await submitWithKeyboardShortcut(page);
 	await expect(mockedKnowledgeInSidebar).not.toBeVisible();
 
 	await fieldName.fill(MOCK_KNOWLEDGE[0].name);
 	await expect(buttonSave).toBeDisabled();
 
 	// Check the form can't be submitted without content
-	await page.keyboard.press('Meta+Enter');
+	await submitWithKeyboardShortcut(page);
 	await expect(mockedKnowledgeInSidebar).not.toBeVisible();
 
 	await fieldContent.fill(MOCK_KNOWLEDGE[0].content);
@@ -45,7 +45,7 @@ test('creates and edits knowledge', async ({ page }) => {
 	await expect(mockedKnowledgeInSidebar).not.toBeVisible();
 
 	await fieldContent.focus();
-	await page.keyboard.press('Meta+Enter');
+	await submitWithKeyboardShortcut(page);
 	await expect(mockedKnowledgeInSidebar).toBeVisible();
 	await expect(noKnowledgeMessage).not.toBeVisible();
 
