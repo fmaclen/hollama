@@ -45,6 +45,7 @@ test('creates and edits knowledge', async ({ page }) => {
 	await expect(noKnowledgeMessage).toBeVisible();
 	await expect(mockedKnowledgeInSidebar).not.toBeVisible();
 
+	await fieldContent.focus();
 	await page.keyboard.press('Meta+Enter');
 	await expect(mockedKnowledgeInSidebar).toBeVisible();
 	await expect(noKnowledgeMessage).not.toBeVisible();

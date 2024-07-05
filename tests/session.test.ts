@@ -39,6 +39,7 @@ test.describe('Session', () => {
 		await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).not.toBeVisible();
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await promptTextarea.focus();
 		await page.keyboard.press('Meta+Enter'); // Submit form with keyboard shortcut (Cmd/Ctrl + Enter)
 		await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).toBeVisible();
 		await expect(newPromptHelp).not.toBeVisible();
