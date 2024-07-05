@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, seedKnowledgeAndReload, textEditorLocator } from './utils';
+import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, seedKnowledgeAndReload, textEditorLocator } from './utils';
 
 test('creates and edits knowledge', async ({ page }) => {
 	const timestamp = page.getByTestId('knowledge-timestamp')
@@ -94,7 +94,7 @@ test('can use knowledge in the session', async ({ page }) => {
 	
 	await mockTagsResponse(page);
 	await page.goto('/');
-	await chooseModelFromSettings(page, 'gemma:7b');
+	await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 	await seedKnowledgeAndReload(page);
 	await page.getByText('Knowledge').click();
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(MOCK_KNOWLEDGE.length);

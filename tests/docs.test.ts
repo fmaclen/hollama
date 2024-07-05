@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_KNOWLEDGE, mockTagsResponse, seedKnowledgeAndReload } from './utils';
+import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, mockTagsResponse, seedKnowledgeAndReload } from './utils';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 
 test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.goto('/');
-	await page.getByLabel('Model').selectOption('openhermes2.5-mistral:latest');
+	await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[1].name);
 	await page.screenshot({ path: 'docs/settings.png', fullPage: true });
 
 	await page.goto('/sessions/ulxz6l'); // Visiting a fake session id so it doesn't change from test to test
@@ -16,12 +16,12 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.screenshot({ path: 'docs/session-new.png', fullPage: true });
 
 	// Stage 2 sessions
-	await page.evaluate(() => window.localStorage.setItem(
+	await page.evaluate(({ modelA, modelB }) => window.localStorage.setItem(
 		'hollama-sessions',
 		JSON.stringify([
 			{
 				id: 'u4pozr',
-				model: 'openhermes2.5-mistral:latest',
+				model: modelA,
 				messages: [
 					{
 						role: 'user',
@@ -36,7 +36,7 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 			},
 			{
 				id: 'bbpz8o',
-				model: 'gemma:7b',
+				model: modelB,
 				messages: [
 					{
 						role: 'user',
@@ -50,7 +50,7 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 				context: []
 			}
 		])
-	));
+	), { modelA: MOCK_API_TAGS_RESPONSE.models[0].name, modelB: MOCK_API_TAGS_RESPONSE.models[1].name });
 
 	await page.reload();
 	await expect(page.getByText('No sessions')).not.toBeVisible();

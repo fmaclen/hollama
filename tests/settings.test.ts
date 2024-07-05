@@ -1,25 +1,24 @@
 import { expect, test } from '@playwright/test';
-import { mockTagsResponse } from './utils';
+import { MOCK_API_TAGS_RESPONSE, mockTagsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
 });
 
 test('displays model list and updates settings store', async ({ page }) => {
+	const modelSelect = page.getByLabel('Model');
+	
 	await page.goto('/');
 
 	// Check if the model list contains the expected models
-	const modelNames = await page.$$eval('select#model option', options =>
-		options.map(option => option.textContent?.trim())
-	);
-	expect(modelNames).toContain('gemma:7b');
-	expect(modelNames).toContain('openhermes2.5-mistral:latest');
+	await expect(modelSelect).toContainText(MOCK_API_TAGS_RESPONSE.models[0].name);
+	await expect(modelSelect).toContainText(MOCK_API_TAGS_RESPONSE.models[1].name);
 
-	await page.getByLabel('Model').selectOption('openhermes2.5-mistral:latest');
+	await modelSelect.selectOption(MOCK_API_TAGS_RESPONSE.models[1].name);
 
 	// Check if the settings store is updated with the selected model
 	const localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
-	expect(localStorageValue).toContain('"ollamaModel":"openhermes2.5-mistral:latest"');
+	expect(localStorageValue).toContain(`"ollamaModel":"${MOCK_API_TAGS_RESPONSE.models[1].name}"`);
 });
 
 test('handles server status updates correctly', async ({ page }) => {
@@ -46,25 +45,27 @@ test('handles server status updates correctly', async ({ page }) => {
 });
 
 test('settings and sessions can be deleted', async ({ page }) => {
+	const modelSelect = page.getByLabel('Model');
+
 	await page.goto('/');
-	await expect(page.getByLabel('Model')).toHaveValue('');
+	await expect(modelSelect).toHaveValue('');
 
 	// Stage the settings store with a model
-	await page.evaluate(() => window.localStorage.setItem(
+	await page.evaluate((modelName: string) => window.localStorage.setItem(
 		'hollama-settings',
 		JSON.stringify({
 			ollamaServer: 'http://localhost:3000',
-			ollamaModel: 'openhermes2.5-mistral:latest'
-		})));
+			ollamaModel: modelName
+		})), MOCK_API_TAGS_RESPONSE.models[1].name);
 
 	await page.reload();
 	await expect(page.getByLabel('Server')).toHaveValue('http://localhost:3000');
-	await expect(page.getByLabel('Model')).toHaveValue('openhermes2.5-mistral:latest');
+	await expect(modelSelect).toHaveValue(MOCK_API_TAGS_RESPONSE.models[1].name);
 
 	// Check if the settings store is updated with the selected model
 	let localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(localStorageValue).toContain('"ollamaServer":"http://localhost:3000"');
-	expect(localStorageValue).toContain('"ollamaModel":"openhermes2.5-mistral:latest"');
+	expect(localStorageValue).toContain(`"ollamaModel":"${MOCK_API_TAGS_RESPONSE.models[1].name}"`);
 
 	// Click the delete button
 	page.on('dialog', dialog => dialog.accept("Are you sure you want to delete server settings?"));

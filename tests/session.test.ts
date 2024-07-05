@@ -1,5 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
-import { MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, textEditorLocator } from './utils';
+import { MOCK_API_TAGS_RESPONSE, MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, textEditorLocator } from './utils';
 
 
 test.describe('Session', () => {
@@ -33,7 +33,7 @@ test.describe('Session', () => {
 		await expect(runButton).toBeDisabled();
 		await expect(newPromptHelp).toBeVisible();
 
-		await page.getByLabel('Model').selectOption('gemma:7b');
+		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(runButton).toBeEnabled();
 		await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).not.toBeVisible();
@@ -59,7 +59,7 @@ test.describe('Session', () => {
 
 		await newSessionButton.click();
 		await expect(articleLocator).toHaveCount(0);
-	
+
 		await page.goBack();
 		await expect(articleLocator).toHaveCount(4);
 	});
@@ -83,7 +83,7 @@ test.describe('Session', () => {
 
 	test('can navigate older sessions from sidebar', async ({ page }) => {
 		await page.goto('/');
-		await chooseModelFromSettings(page, 'gemma:7b');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
 		await expect(page.getByText('No sessions')).toBeVisible();
 		await expect(page.locator('aside', { hasText: 'Who would win in a fight between Emma Watson and Jessica Alba?' })).not.toBeVisible();
@@ -95,7 +95,7 @@ test.describe('Session', () => {
 		await page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.").isVisible();
 		await expect(page.getByText('No sessions')).not.toBeVisible();
 		expect(await page.getByTestId('session-item').textContent()).toContain("Who would win in a fight between Emma Watson and Jessica Alba?");
-		expect(await page.getByTestId('session-item').textContent()).toContain("gemma:7b");
+		expect(await page.getByTestId('session-item').textContent()).toContain(MOCK_API_TAGS_RESPONSE.models[0].name);
 		expect(await page.getByTestId('session-item').count()).toBe(1);
 
 		// Leave the conversation by visiting the sessions index
@@ -109,7 +109,7 @@ test.describe('Session', () => {
 
 		// Create a new session
 		await mockCompletionResponse(page, MOCK_SESSION_2_RESPONSE_1);
-		await chooseModelFromSettings(page, 'openhermes2.5-mistral:latest');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[1].name);
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
 		await promptTextarea.fill('What does the fox say?');
@@ -121,7 +121,7 @@ test.describe('Session', () => {
 		expect(await page.getByTestId('session-item').first().textContent()).toContain("What does the fox say?");
 		expect(await page.getByTestId('session-item').first().textContent()).toContain("openhermes2.5-mistral:latest");
 		expect(await page.getByTestId('session-item').last().textContent()).toContain("Who would win in a fight between Emma Watson and Jessica Alba?");
-		expect(await page.getByTestId('session-item').last().textContent()).toContain("gemma:7b");
+		expect(await page.getByTestId('session-item').last().textContent()).toContain(MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		// Check the current session is highlighted in the sidebar
 		await expect(page.getByTestId('session-item').first()).not.toHaveClass(/hover:bg-accent/);
@@ -132,7 +132,7 @@ test.describe('Session', () => {
 
 	test('deletes a session from the sidebar', async ({ page }) => {
 		await page.goto('/');
-		await chooseModelFromSettings(page, 'gemma:7b');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
 		await expect(page.getByText('No sessions')).toBeVisible();
 
@@ -156,13 +156,13 @@ test.describe('Session', () => {
 		await expect(page.getByTestId('session-item')).toHaveCount(0);
 
 		// Stage 2 sessions
-		await page.evaluate(() => window.localStorage.setItem(
+		await page.evaluate(({ modelA, modelB }) => window.localStorage.setItem(
 			'hollama-sessions',
 			JSON.stringify(
 				[
 					{
 						id: "qbhc0q",
-						model: "gemma:7b",
+						model: modelA,
 						messages: [
 							{ role: "user", content: "Hello world!" },
 							{ role: "ai", content: "Hello world! 👋 🌎\n\nIt's great to hear from you. What would you like to do today?" }
@@ -171,7 +171,7 @@ test.describe('Session', () => {
 					},
 					{
 						id: "m2jjac",
-						model: "openhermes2.5-mistral:latest",
+						model: modelB,
 						messages: [
 							{ role: "user", content: "Hello world, again!" },
 							{ role: "ai", content: "Hello! It's always a pleasure to see you back. How can I assist you today?" }
@@ -180,7 +180,7 @@ test.describe('Session', () => {
 					}
 				]
 			)
-		));
+		), { modelA: MOCK_API_TAGS_RESPONSE.models[0].name, modelB: MOCK_API_TAGS_RESPONSE.models[1].name });
 
 		await page.reload();
 		await expect(page.getByText('No sessions')).not.toBeVisible();
@@ -198,7 +198,7 @@ test.describe('Session', () => {
 
 	test('can copy the raw text of a message or code snippets to clipboard', async ({ page }) => {
 		await page.goto('/');
-		await chooseModelFromSettings(page, 'gemma:7b');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
@@ -243,7 +243,7 @@ test.describe('Session', () => {
 		await expect(modelName).toHaveText('New session');
 
 		// Mock a response that takes a while to generate
-		await page.getByLabel('Model').selectOption('gemma:7b');
+		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.route('**/generate', () => { });
 		await promptTextarea.fill('Hello world!');
 		await sendButton.click();
@@ -255,7 +255,7 @@ test.describe('Session', () => {
 		await expect(sendButton).toBeDisabled();
 		await expect(stopButton).toBeVisible();
 		await expect(page.getByText("Write a prompt to start a new session")).not.toBeVisible();
-		await expect(modelName).toHaveText('gemma:7b');
+		await expect(modelName).toHaveText(MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		await stopButton.click();
 		await expect(page.getByText("Write a prompt to start a new session")).toBeVisible();
