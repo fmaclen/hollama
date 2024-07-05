@@ -77,7 +77,6 @@
 	}
 
 	async function handleSubmit() {
-		console.warn("handleSubmit", prompt)
 		if (!prompt) return;
 
 		let knowledgeContext: Message | null = null;

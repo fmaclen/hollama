@@ -10,7 +10,7 @@
 
 	{#if !disabled}
 		<span class="tag">
-			{navigator.userAgent.indexOf('Mac') > 0 ? '⌘' : 'Ctrl'} ↵
+			{navigator.userAgent.indexOf('Mac') !== -1 ? '⌘' : 'Ctrl'} ↵
 		</span>
 	{/if}
 </Button>
