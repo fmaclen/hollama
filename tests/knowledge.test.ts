@@ -26,15 +26,26 @@ test('creates and edits knowledge', async ({ page }) => {
 	await expect(fieldContent).toBeVisible();
 	await expect(buttonSave).toBeDisabled();
 
+	// Check the form can't be submitted without a name
+	// `Meta+Enter` is the shortcut to submit the form and is bounded to the `fieldContent`
+	await fieldContent.focus();
+	await page.keyboard.press('Meta+Enter');
+	await expect(mockedKnowledgeInSidebar).not.toBeVisible();
+
 	await fieldName.fill(MOCK_KNOWLEDGE[0].name);
 	await expect(buttonSave).toBeDisabled();
+
+	// Check the form can't be submitted without content
+	await fieldContent.focus();
+	await page.keyboard.press('Meta+Enter');
+	await expect(mockedKnowledgeInSidebar).not.toBeVisible();
 
 	await fieldContent.fill(MOCK_KNOWLEDGE[0].content);
 	await expect(buttonSave).not.toBeDisabled();
 	await expect(noKnowledgeMessage).toBeVisible();
 	await expect(mockedKnowledgeInSidebar).not.toBeVisible();
 
-	await buttonSave.click();
+	await page.keyboard.press('Meta+Enter');
 	await expect(mockedKnowledgeInSidebar).toBeVisible();
 	await expect(noKnowledgeMessage).not.toBeVisible();
 
