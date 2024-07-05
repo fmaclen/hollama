@@ -23,6 +23,7 @@
 	$: isNewKnowledge = !name || !content;
 
 	function handleSubmit() {
+		if (!name || !content) return;
 		saveKnowledge({ id: data.id, name, content, updatedAt: getUpdatedAtDate() });
 		knowledge = loadKnowledge(data.id);
 	}

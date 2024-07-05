@@ -57,13 +57,6 @@
 		session.messages = [...session.messages, message];
 	}
 
-	function handleKeyDown(event: KeyboardEvent) {
-		if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-			event.preventDefault();
-			handleSubmit();
-		}
-	}
-
 	function deleteSession() {
 		const confirmed = confirm('Are you sure you want to delete this session?');
 		if (!confirmed) return;
@@ -202,7 +195,7 @@
 				</Field>
 
 				<div class="flex w-full">
-					<ButtonSubmit {handleSubmit} disabled={!prompt} >Run</ButtonSubmit>
+					<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
 					{#if isLastMessageFromUser}
 						<div class="ml-2">
 							<Button title="Stop response" variant="outline" size="icon" on:click={handleAbort}>
