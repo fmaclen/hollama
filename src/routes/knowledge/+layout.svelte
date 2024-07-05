@@ -4,7 +4,10 @@
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
 	import { knowledgeStore } from '$lib/store';
 	import { Sitemap } from '$lib/sitemap';
+	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 </script>
+
+<RobotsNoIndex />
 
 <Section sitemap={Sitemap.KNOWLEDGE}>
 	<svelte:fragment slot="list-items">

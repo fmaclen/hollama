@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { sessionsStore } from '$lib/store';
+	import { Sitemap } from '$lib/sitemap';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
-	import { Sitemap } from '$lib/sitemap';
+	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 </script>
+
+<RobotsNoIndex />
 
 <Section sitemap={Sitemap.SESSIONS}>
 	<svelte:fragment slot="list-items">
