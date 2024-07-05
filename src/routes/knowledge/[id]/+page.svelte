@@ -11,6 +11,8 @@
 	import { knowledgeStore } from '$lib/store';
 	import Header from '$lib/components/Header.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
+	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
+	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 
 	export let data: PageData;
 
@@ -76,18 +78,17 @@
 		</Field>
 		<Field name="content" class="h-full">
 			<svelte:fragment slot="label">Content</svelte:fragment>
-			<textarea id="content" class="input input--textarea" bind:value={content}></textarea>
+			{#key knowledge}
+				<FieldTextEditor {handleSubmit} bind:value={content} />
+			{/key}
 		</Field>
-		<Button class="w-full" on:click={handleSubmit} disabled={!name || !content}>Save</Button>
+
+		<ButtonSubmit {handleSubmit} disabled={!name || !content} >Save</ButtonSubmit>
 	</Fieldset>
 </div>
 
 <style lang="scss">
 	.input {
 		@apply flex min-h-[2em] w-full resize-none rounded-md border border-input bg-elevation-0 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
-
-		&--textarea {
-			@apply h-full min-h-[10em];
-		}
 	}
 </style>

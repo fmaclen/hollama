@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, seedKnowledgeAndReload } from './mocks';
+import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, seedKnowledgeAndReload, textEditorLocator } from './utils';
 
 test('creates and edits knowledge', async ({ page }) => {
 	const timestamp = page.getByTestId('knowledge-timestamp')
 	const fieldName = page.getByLabel('Name');
-	const fieldContent = page.getByLabel('Content');
+	const fieldContent = textEditorLocator(page, 'Content');
 	const buttonSave = page.getByText('Save');
 	const noKnowledgeMessage = page.getByText('No knowledge');
 	const mockedKnowledgeInSidebar = page.locator('.section-list', { hasText: MOCK_KNOWLEDGE[0].name });
@@ -93,7 +93,7 @@ test('can use knowledge in the session', async ({ page }) => {
 	
 	await mockTagsResponse(page);
 	await page.goto('/');
-	await chooseModelFromSettings(page, 'gemma:7b');
+	await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 	await seedKnowledgeAndReload(page);
 	await page.getByText('Knowledge').click();
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(MOCK_KNOWLEDGE.length);
@@ -105,8 +105,8 @@ test('can use knowledge in the session', async ({ page }) => {
 
 	// Create a new session with knowledge
 	await page.getByLabel('Knowledge', { exact: true }).selectOption(MOCK_KNOWLEDGE[0].name);
-	await page.getByLabel('Prompt').fill('What is this about?');
-	await page.getByText('Send').click();
+	await textEditorLocator(page, 'Prompt').fill('What is this about?');
+	await page.getByText('Run').click();
 	expect(await sessionArticle.count()).toBe(3);
 	expect(await sessionArticle.first().textContent()).toContain(MOCK_KNOWLEDGE[0].name);
 	expect(await sessionArticle.nth(1).textContent()).toContain('What is this about?');

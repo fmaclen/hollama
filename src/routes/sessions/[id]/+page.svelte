@@ -21,6 +21,8 @@
 	import { Sitemap } from '$lib/sitemap';
 
 	import type { PageData } from './$types';
+	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
+	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 
 	export let data: PageData;
 
@@ -56,7 +58,7 @@
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
-		if (event.key === 'Enter' && !event.shiftKey) {
+		if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
 			event.preventDefault();
 			handleSubmit();
 		}
@@ -194,18 +196,13 @@
 
 				<Field class="h-full" name="prompt">
 					<svelte:fragment slot="label">Prompt</svelte:fragment>
-					<textarea
-						id="prompt"
-						placeholder={$settingsStore?.ollamaModel ? '' : 'No model selected'}
-						disabled={!$settingsStore?.ollamaModel}
-						class="textarea"
-						bind:value={prompt}
-						on:keydown={handleKeyDown}
-					/>
+					{#key session}
+						<FieldTextEditor {handleSubmit} bind:value={prompt} />
+					{/key}
 				</Field>
 
 				<div class="flex w-full">
-					<Button class="w-full" on:click={handleSubmit} disabled={!prompt}>Send</Button>
+					<ButtonSubmit {handleSubmit} disabled={!prompt} >Run</ButtonSubmit>
 					{#if isLastMessageFromUser}
 						<div class="ml-2">
 							<Button title="Stop response" variant="outline" size="icon" on:click={handleAbort}>
@@ -243,10 +240,6 @@
 <style lang="scss">
 	.session {
 		@apply flex h-full w-full flex-col overflow-y-auto;
-	}
-
-	.textarea {
-		@apply flex h-full min-h-[10em] w-full resize-none rounded-md border border-input bg-elevation-0 px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground  focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50;
 	}
 
 	.article-list {
