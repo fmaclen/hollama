@@ -4,7 +4,6 @@ import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RES
 test('creates and edits knowledge', async ({ page }) => {
 	const timestamp = page.getByTestId('knowledge-timestamp')
 	const fieldName = page.getByLabel('Name');
-	// const fieldContent = page.getByLabel('Content');
 	const fieldContent = textEditorLocator(page, 'Content');
 	const buttonSave = page.getByText('Save');
 	const noKnowledgeMessage = page.getByText('No knowledge');
