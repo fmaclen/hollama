@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { EditorView, basicSetup } from 'codemirror';
+	import { basicSetup } from 'codemirror';
+	import { EditorView, keymap } from '@codemirror/view';
+	import { Prec } from '@codemirror/state';
 
 	export let value: string;
 	export let handleSubmit: Function;
@@ -9,39 +11,41 @@
 	let container: HTMLDivElement | null;
 	let editorValue: string;
 
-	function handleKeyDown(event: KeyboardEvent) {
-		if (!handleSubmit) return;
+	const updateValue = EditorView.updateListener.of((view) => {
+		if (view.docChanged) value = view.state.doc.toString();
+	});
 
-		if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-			event.preventDefault();
-			handleSubmit();
+	// Disable default keymap for `Meta+Enter` to allow form submission
+	// and prevent `insertNewline` in text editor.
+	const overrideMetaEnterKeymap = keymap.of([
+		{
+			key: 'Mod-Enter',
+			run: () => {
+				handleSubmit();
+				return true;
+			}
 		}
-	}
+	]);
 
 	onMount(() => {
-		// We only want to update the `editorValue` when the component mounts, then
-		// the editor updates the bounded `value` back to the parent component.
 		if (value !== editorValue) editorValue = value;
 
 		if (!container) throw new Error('Text editor container not found');
 
 		view = new EditorView({
 			doc: editorValue,
-			extensions: [basicSetup, updateValue, EditorView.lineWrapping],
+			extensions: [
+				basicSetup,
+				updateValue,
+				EditorView.lineWrapping,
+				Prec.highest(overrideMetaEnterKeymap)
+			],
 			parent: container
 		});
 
-		// Listen for keydown events to handle submitting with the keyboard shortcut
-		view.dom.addEventListener('keydown', handleKeyDown);
-
 		return () => {
 			view.destroy();
-			view.dom.removeEventListener('keydown', handleKeyDown);
 		};
-	});
-
-	const updateValue = EditorView.updateListener.of((view) => {
-		if (view.docChanged) value = view.state.doc.toString();
 	});
 </script>
 
