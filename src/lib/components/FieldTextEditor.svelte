@@ -21,6 +21,7 @@
 		{
 			key: 'Mod-Enter',
 			run: () => {
+				console.warn('Meta+Enter key pressed');
 				handleSubmit();
 				return true;
 			}

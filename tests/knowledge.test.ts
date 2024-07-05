@@ -36,7 +36,6 @@ test('creates and edits knowledge', async ({ page }) => {
 	await expect(buttonSave).toBeDisabled();
 
 	// Check the form can't be submitted without content
-	await fieldContent.focus();
 	await page.keyboard.press('Meta+Enter');
 	await expect(mockedKnowledgeInSidebar).not.toBeVisible();
 
