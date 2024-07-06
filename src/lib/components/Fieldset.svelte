@@ -11,7 +11,7 @@
 		@apply container mx-auto flex max-w-full xl:max-w-[96ch] flex-col gap-y-6;
 
 		&--fullscreen {
-			@apply h-full py-6 overflow-hidden xl:max-w-[96ch];
+			@apply h-full py-6 overflow-hidden;
 		}
 	}
 </style>
