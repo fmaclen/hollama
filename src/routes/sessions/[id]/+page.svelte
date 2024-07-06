@@ -23,6 +23,7 @@
 	import type { PageData } from './$types';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
+	import Fieldset from '$lib/components/Fieldset.svelte';
 
 	export let data: PageData;
 
@@ -164,7 +165,7 @@
 
 	<PaneGroup direction="horizontal">
 		<Pane defaultSize={40} minSize={30}>
-			<div class="flex h-full flex-col gap-y-6 p-6">
+			<Fieldset isFullscreen={true}>
 				{#if isNewSession}
 					<FieldSelectModel />
 					<div class="grid grid-cols-[auto,max-content] items-end gap-x-2">
@@ -187,12 +188,9 @@
 					</div>
 				{/if}
 
-				<Field class="h-full" name="prompt">
-					<svelte:fragment slot="label">Prompt</svelte:fragment>
-					{#key session}
-						<FieldTextEditor {handleSubmit} bind:value={prompt} />
-					{/key}
-				</Field>
+				{#key session}
+					<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
+				{/key}
 
 				<div class="flex w-full">
 					<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
@@ -204,7 +202,7 @@
 						</div>
 					{/if}
 				</div>
-			</div>
+			</Fieldset>
 		</Pane>
 
 		<PaneResizer class="flex gap-x-1 px-2">

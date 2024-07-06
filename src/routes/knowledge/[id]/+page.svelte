@@ -46,7 +46,7 @@
 	});
 </script>
 
-<div class="flex h-full w-full flex-col">
+<div class="flex h-full w-full flex-col overflow-hidden">
 	<Header>
 		<div class="space-y-4">
 			<p data-testid="knowledge-id" class="text-sm font-bold leading-none text-foreground">
@@ -77,14 +77,12 @@
 			<svelte:fragment slot="label">Name</svelte:fragment>
 			<input id="name" class="input" bind:value={name} />
 		</Field>
-		<Field name="content" class="h-full">
-			<svelte:fragment slot="label">Content</svelte:fragment>
-			{#key knowledge}
-				<FieldTextEditor {handleSubmit} bind:value={content} />
-			{/key}
-		</Field>
 
-		<ButtonSubmit {handleSubmit} disabled={!name || !content} >Save</ButtonSubmit>
+		{#key knowledge}
+			<FieldTextEditor label="Content" {handleSubmit} bind:value={content} />
+		{/key}
+
+		<ButtonSubmit {handleSubmit} disabled={!name || !content}>Save</ButtonSubmit>
 	</Fieldset>
 </div>
 
