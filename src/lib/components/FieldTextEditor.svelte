@@ -51,7 +51,7 @@
 	});
 </script>
 
-<Field name="content" class="h-full overflow-y-auto">
+<Field name={label.toLocaleLowerCase()} class="h-full overflow-y-auto">
 	<svelte:fragment slot="label">{label}</svelte:fragment>
 	<div class="text-editor" bind:this={container}></div>
 </Field>
