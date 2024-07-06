@@ -79,7 +79,7 @@
 
 <style lang="scss">
 	.article {
-		@apply mx-auto flex w-full max-w-[70ch] flex-col last:mb-0;
+		@apply mx-auto flex w-full max-w-[96ch] flex-col last:mb-0;
 
 		&__nav {
 			@apply grid grid-cols-[max-content_auto_max-content] items-center;

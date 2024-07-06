@@ -138,7 +138,7 @@
 
 	<Separator class="mb-8 mt-8" />
 
-	<div class="container mx-auto max-w-full xl:max-w-[70%] flex flex-col gap-y-2">
+	<div class="container mx-auto max-w-full xl:max-w-[96ch] flex flex-col gap-y-2">
 		<p class="p"><strong>About</strong></p>
 		<p class="p">
 			<strong>Hollama</strong> is a minimalistic web interface for
