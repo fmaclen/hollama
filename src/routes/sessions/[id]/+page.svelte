@@ -187,12 +187,9 @@
 					</div>
 				{/if}
 
-				<Field class="h-full" name="prompt">
-					<svelte:fragment slot="label">Prompt</svelte:fragment>
-					{#key session}
-						<FieldTextEditor {handleSubmit} bind:value={prompt} />
-					{/key}
-				</Field>
+				{#key session}
+					<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
+				{/key}
 
 				<div class="flex w-full">
 					<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
