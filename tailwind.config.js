@@ -17,13 +17,19 @@ const config = {
 		extend: {
 			colors: {
 				elevation: {
-					0: 'hsl(0, 0, 100%)',
-					50: 'hsl(0, 0, 98%)',
-					100: 'hsl(0, 0, 96%)',
-					// 200: 'hsl(0, 0, 94%)',
-					// 300: 'hsl(0, 0, 92%)',
-					// 400: 'hsl(0, 0, 90%)',
+					0: "#FFFFFF",
+					50: "#FAFAFA",
+					100: "#F4F4F4",
 				},
+
+				// elevation: {
+				// 	0: 'hsl(0, 0, 100%)',
+				// 	50: 'hsl(0, 0, 98%)',
+				// 	100: 'hsl(0, 0, 96%)',
+				// 	// 200: 'hsl(0, 0, 94%)',
+				// 	// 300: 'hsl(0, 0, 92%)',
+				// 	// 400: 'hsl(0, 0, 90%)',
+				// },
 				border: "hsl(var(--border) / <alpha-value>)",
 				input: "hsl(var(--input) / <alpha-value>)",
 				ring: "hsl(var(--ring) / <alpha-value>)",
