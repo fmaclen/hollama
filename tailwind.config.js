@@ -3,7 +3,7 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 
 /** @type {import('tailwindcss').Config} */
 const config = {
-	darkMode: ["class"],
+	darkMode: ['selector', '[data-color-theme="dark"]'],
 	content: ["./src/**/*.{html,js,svelte,ts}"],
 	safelist: ["dark"],
 	theme: {
@@ -17,9 +17,14 @@ const config = {
 		extend: {
 			colors: {
 				elevation: {
-					0: "#FFFFFF",
-					50: "#FAFAFA",
-					100: "#F4F4F4",
+					// Light elevations
+					0: 'hsl(0, 0%, 100%)',
+					50: 'hsl(0, 0%, 96%)',
+					100: 'hsl(0, 0%, 92%)',
+					// Dark elevations
+					700: "hsl(0, 0%, 10%)",
+					800: "hsl(0, 0%, 5%)",
+					900: "hsl(0, 0%, 0%)",
 				},
 
 				// elevation: {

@@ -1,19 +1,31 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { env } from '$env/dynamic/public';
 	import { page } from '$app/stores';
-	import { Brain, MessageSquareText, Settings2 } from 'lucide-svelte';
+	import { Brain, MessageSquareText, Settings2, Sun, Moon } from 'lucide-svelte';
 
 	import '../app.pcss';
 
-	import Separator from '$lib/components/Separator.svelte';
-
 	$: pathname = $page.url.pathname;
-
 	const SITEMAP = [
 		['/sessions', 'Sessions'],
 		['/knowledge', 'Knowledge'],
 		['/', 'Settings']
 	];
+
+	let theme = 'light';
+
+	function toggleTheme() {
+		theme = theme === 'light' ? 'dark' : 'light';
+		document.documentElement.setAttribute('data-color-theme', theme);
+	}
+
+	onMount(() => {
+		// Set initial theme based on user's browser preference
+		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+		theme = prefersDark ? 'dark' : 'light';
+		document.documentElement.setAttribute('data-color-theme', theme);
+	});
 </script>
 
 <svelte:head>
@@ -31,12 +43,12 @@
 <div class="layout">
 	<aside class="layout__aside">
 		<a href="/" class="layout__homepage">
-			<img src="/favicon.png" alt="Hollama logo" width="32" height="32" />
+			<img class="layout__logo" src="/favicon.png" alt="Hollama logo" width="32" height="32" />
 		</a>
 
 		<nav class="layout__nav">
 			{#each SITEMAP as [href, text]}
-				<a class={`layout__a ${pathname === href ? 'layout__a--active' : ''}`} href={href}>
+				<a class={`layout__a ${pathname === href ? 'layout__a--active' : ''}`} {href}>
 					{#if href === '/knowledge'}
 						<Brain class="h-4 w-4" />
 					{:else if href === '/sessions'}
@@ -49,27 +61,27 @@
 				</a>
 			{/each}
 		</nav>
+		<nav class="layout__nav layout__nav--bottom">
+			<button class="layout__button" on:click={toggleTheme}>
+				{#if theme === 'light'}
+					<Moon class="h-4 w-4" />
+					Dark
+				{:else}
+					<Sun class="h-4 w-4" />
+					Light
+				{/if}
+			</button>
+		</nav>
 	</aside>
 
-	<Separator orientation="vertical" />
-
 	<main class="layout__main">
-		<Separator />
-
 		<!-- <slot /> -->
 	</main>
 </div>
 
 <style lang="scss">
-	// .hollama-wordmark {
-	// 	width: max-content;
-	// 	height: 7ch;
-	// 	line-height: 7ch;
-	// 	transform: rotate(270deg);
-	// }
-
 	:global(body) {
-		@apply bg-elevation-100;
+		@apply bg-elevation-100 transition-colors duration-500 dark:bg-elevation-700;
 		font-family: 'Inter', sans-serif;
 	}
 
@@ -77,12 +89,8 @@
 		@apply flex h-screen max-h-screen w-screen gap-4 text-current;
 	}
 
-	// .layout {
-	// 	@apply grid h-screen w-screen grid-cols-[max-content,max-content,auto] bg-body text-current;
-	// }
-
 	.layout__aside {
-		@apply flex flex-col min-w-32 py-4 px-6;
+		@apply flex min-w-32 flex-col px-6 py-4;
 	}
 
 	.layout__homepage {
@@ -90,32 +98,24 @@
 	}
 
 	.layout__nav {
-		@apply overflow-y-auto max-h-full h-full flex flex-col;
-		// height: 2500px;
-	}
+		@apply flex h-full max-h-full flex-col overflow-y-auto;
 
-	.layout__a {
-		@apply flex items-center py-3 px-2 gap-4 text-neutral-800/50 font-medium text-sm;
-
-		&:hover,
-		&--active {
-			@apply text-neutral-800;
+		&--bottom {
+			@apply mt-auto h-max;
 		}
 	}
 
-	// .layout__aside {
-	// 	@apply flex flex-col justify-between;
-	// }
+	.layout__button,
+	.layout__a {
+		@apply flex items-center gap-4 px-2 py-3 text-sm font-medium text-neutral-800 opacity-50 transition-opacity duration-200 dark:text-neutral-200;
 
-	// .layout__aside-a {
-	// 	@apply flex h-screen flex-col items-center justify-between py-6 hover:bg-accent;
-	// }
+		&:hover,
+		&--active {
+			@apply opacity-100;
+		}
+	}
 
-	// .layout__main {
-	// 	@apply grid grid-rows-[max-content,max-content,auto] h-screen;
-	// }
-
-	// .layout__nav {
-	// 	@apply flex w-max gap-1 px-6 py-3 text-sm font-semibold;
-	// }
+	.layout__main {
+		@apply flex h-full border border-l-0 border-neutral-900/10 dark:border-neutral-50/10;
+	}
 </style>
