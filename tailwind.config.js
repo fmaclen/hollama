@@ -15,6 +15,10 @@ const config = {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', ...fontFamily.sans],
+				mono: ['"Decima Mono Pro"', ...fontFamily.mono],
+			},
 			colors: {
 				elevation: {
 					// Light elevations
