@@ -56,7 +56,6 @@
 					{:else if href === '/'}
 						<Settings2 class="h-4 w-4" />
 					{/if}
-
 					{text}
 				</a>
 			{/each}
@@ -75,22 +74,21 @@
 	</aside>
 
 	<main class="layout__main">
-		<!-- <slot /> -->
+		<slot />
 	</main>
 </div>
 
 <style lang="scss">
 	:global(body) {
-		@apply bg-elevation-100 transition-colors duration-500 dark:bg-elevation-700;
-		font-family: 'Inter', sans-serif;
+		@apply text-h-body bg-h-elevation-3;
 	}
 
 	.layout {
-		@apply flex h-screen max-h-screen w-screen gap-4 text-current;
+		@apply flex h-screen max-h-screen w-screen gap-4 p-4;
 	}
 
 	.layout__aside {
-		@apply flex min-w-32 flex-col px-6 py-4;
+		@apply flex flex-col px-4;
 	}
 
 	.layout__homepage {
@@ -107,15 +105,15 @@
 
 	.layout__button,
 	.layout__a {
-		@apply flex items-center gap-4 px-2 py-3 text-sm font-medium text-neutral-800 opacity-50 transition-opacity duration-200 dark:text-neutral-200;
+		@apply flex items-center gap-4 px-2 py-3 text-sm font-medium text-h-body-muted transition-opacity duration-200;
 
 		&:hover,
 		&--active {
-			@apply opacity-100;
+			@apply text-h-body;
 		}
 	}
 
 	.layout__main {
-		@apply flex h-full border border-l-0 border-neutral-900/10 dark:border-neutral-50/10;
+		@apply flex h-full w-full;
 	}
 </style>

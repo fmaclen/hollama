@@ -8,10 +8,10 @@
 
 <style lang="scss">
 	.fieldset {
-		@apply container mx-auto flex max-w-full xl:max-w-[96ch] flex-col gap-y-6;
+		@apply container flex mx-auto max-w-prose flex-col gap-y-8;
 
 		&--fullscreen {
-			@apply h-full py-6 overflow-hidden;
+			// @apply h-full py-6 overflow-hidden;
 		}
 	}
 </style>

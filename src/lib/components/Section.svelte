@@ -25,10 +25,10 @@
 
 <style lang="scss">
 	.section {
-		@apply grid grid-cols-[1fr,max-content,4fr] bg-elevation-100 h-full overflow-y-auto;
+		@apply grid grid-cols-[1fr,max-content,4fr] h-full overflow-y-auto;
 
 		&__aside {
-			@apply flex h-full overflow-y-auto min-w-80 flex-col bg-elevation-0;
+			@apply flex h-full overflow-y-auto min-w-80 flex-col;
 		}
 	}
 </style>

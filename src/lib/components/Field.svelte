@@ -14,7 +14,7 @@
 
 <style lang="scss">
 	.field {
-		@apply flex w-full flex-col gap-y-3;
+		@apply flex w-full flex-col gap-y-2;
 	}
 
 	.field__label {

@@ -5,40 +5,45 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 const config = {
 	darkMode: ['selector', '[data-color-theme="dark"]'],
 	content: ["./src/**/*.{html,js,svelte,ts}"],
-	safelist: ["dark"],
 	theme: {
-		container: {
-			center: true,
-			padding: "2rem",
-			screens: {
-				"2xl": "1400px"
-			}
-		},
 		extend: {
 			fontFamily: {
 				sans: ['Inter', ...fontFamily.sans],
 				mono: ['"Decima Mono Pro"', ...fontFamily.mono],
 			},
 			colors: {
-				elevation: {
-					// Light elevations
-					0: 'hsl(0, 0%, 100%)',
-					50: 'hsl(0, 0%, 96%)',
-					100: 'hsl(0, 0%, 92%)',
-					// Dark elevations
-					700: "hsl(0, 0%, 10%)",
-					800: "hsl(0, 0%, 5%)",
-					900: "hsl(0, 0%, 0%)",
+				h: { // is for "Hollama"
+					primary: 'hsl(var(--color-primary))',
+					elevation: {
+						1: 'hsl(var(--color-bg-elevation-1))',
+						2: 'hsl(var(--color-bg-elevation-2))',
+						3: 'hsl(var(--color-bg-elevation-3))',
+						4: 'hsl(var(--color-bg-elevation-4))',
+						5: 'hsl(var(--color-bg-elevation-5))',
+					},
+					border: {
+						DEFAULT: 'hsl(var(--color-border-default))',
+						muted: 'hsl(var(--color-border-muted))',
+						input: 'hsl(var(--color-border-input))',
+					},
+					body: {
+						DEFAULT: 'hsl(var(--color-text-default))',
+						muted: 'hsl(var(--color-text-muted))',
+					},
+					negative: {
+						fg: 'hsl(var(--color-negative-fg))',
+						bg: 'hsl(var(--color-negative-bg))',
+					},
+					warning: {
+						fg: 'hsl(var(--color-warning-fg))',
+						bg: 'hsl(var(--color-warning-bg))',
+					},
+					positive: {
+						fg: 'hsl(var(--color-positive-fg))',
+						bg: 'hsl(var(--color-positive-bg))',
+					},
 				},
 
-				// elevation: {
-				// 	0: 'hsl(0, 0, 100%)',
-				// 	50: 'hsl(0, 0, 98%)',
-				// 	100: 'hsl(0, 0, 96%)',
-				// 	// 200: 'hsl(0, 0, 94%)',
-				// 	// 300: 'hsl(0, 0, 92%)',
-				// 	// 400: 'hsl(0, 0, 90%)',
-				// },
 				border: "hsl(var(--border) / <alpha-value>)",
 				input: "hsl(var(--input) / <alpha-value>)",
 				ring: "hsl(var(--ring) / <alpha-value>)",
@@ -80,14 +85,6 @@ const config = {
 				},
 			}
 		},
-		borderRadius: {
-			lg: "var(--radius)",
-			md: "calc(var(--radius) - 2px)",
-			sm: "calc(var(--radius) - 4px)"
-		},
-		fontFamily: {
-			sans: [...fontFamily.sans]
-		}
 	}
 };
 

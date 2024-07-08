@@ -3,10 +3,7 @@
 	export { className as class };
 	export let variant:
 		| 'default'
-		| 'destructive'
 		| 'outline'
-		| 'secondary'
-		| 'ghost'
 		| 'link'
 		| 'icon'
 		| undefined = 'default';
@@ -40,30 +37,24 @@
 
 <style lang="scss">
 	.button {
-		@apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium text-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-15;
+		@apply inline-flex items-center justify-center whitespace-nowrap rounded-md;
+		// @apply inline-flex items-center justify-cent¿er whitespace-nowrap rounded-md text-sm font-medium text-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-15;
 
-		&--default {
-			@apply bg-primary text-primary-foreground hover:bg-primary/90;
+		&--default,
+		&--outline {
+			@apply text-sm font-medium border border-transparent;
 		}
 
-		&--destructive {
-			@apply bg-destructive text-destructive-foreground hover:bg-destructive/90;
+		&--default {
+			// @apply;
 		}
 
 		&--outline {
-			@apply border border-input bg-background hover:bg-accent hover:text-accent-foreground;
-		}
-
-		&--secondary {
-			@apply bg-secondary border text-secondary-foreground hover:bg-secondary/80;
-		}
-
-		&--ghost {
-			@apply hover:bg-accent hover:text-accent-foreground;
+			@apply border-h-border-input;
 		}
 
 		&--link {
-			@apply underline underline-offset-4 hover:text-neutral-500;
+			@apply underline underline-offset-4 hover:text-h-body-muted border-b-h-body-muted rounded-none;
 		}
 
 		&--icon :global(svg) {
