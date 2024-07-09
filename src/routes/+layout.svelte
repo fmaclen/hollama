@@ -10,7 +10,7 @@
 	const SITEMAP = [
 		['/sessions', 'Sessions'],
 		['/knowledge', 'Knowledge'],
-		['/', 'Settings']
+		['/settings', 'Settings']
 	];
 
 	let theme = 'light';
@@ -48,12 +48,12 @@
 
 		<nav class="layout__nav">
 			{#each SITEMAP as [href, text]}
-				<a class={`layout__a ${pathname === href ? 'layout__a--active' : ''}`} {href}>
+				<a class={`layout__a ${pathname.includes(href) ? 'layout__a--active' : ''}`} {href}>
 					{#if href === '/knowledge'}
 						<Brain class="h-4 w-4" />
 					{:else if href === '/sessions'}
 						<MessageSquareText class="h-4 w-4" />
-					{:else if href === '/'}
+					{:else if href === '/settings'}
 						<Settings2 class="h-4 w-4" />
 					{/if}
 					{text}
@@ -112,6 +112,10 @@
 		@apply flex flex-col items-start gap-x-2 gap-y-0.5 px-2 py-3 text-sm font-medium text-muted transition-colors duration-150;
 		@apply lg:flex-row lg:items-center lg:gap-4;
 		@apply hover:text-active;
+	}
+
+	.layout__a--active {
+		@apply text-active;	
 	}
 
 	.layout__button {
