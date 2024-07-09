@@ -43,7 +43,7 @@
 <div class="layout">
 	<aside class="layout__aside">
 		<a href="/" class="layout__homepage">
-			<img class="layout__logo" src="/favicon.png" alt="Hollama logo" width="32" height="32" />
+			<img class="layout__logo" src="/favicon.png" alt="Hollama logo" />
 		</a>
 
 		<nav class="layout__nav">
@@ -59,8 +59,7 @@
 					{text}
 				</a>
 			{/each}
-		</nav>
-		<nav class="layout__nav layout__nav--bottom">
+
 			<button class="layout__button" on:click={toggleTheme}>
 				{#if theme === 'light'}
 					<Moon class="h-4 w-4" />
@@ -84,33 +83,39 @@
 	}
 
 	.layout {
-		@apply flex h-screen max-h-screen w-screen gap-4 p-4;
+		@apply flex h-screen max-h-screen w-screen flex-col gap-4 p-4;
+		@apply lg:flex-row;
 	}
 
 	.layout__aside {
-		@apply flex flex-col px-4;
+		@apply flex flex-row items-center gap-4;
+		@apply lg:flex-col lg:items-start lg:px-4;
+	}
+
+	.layout__logo {
+		height: max-content;
+		max-height: 32px;
+		min-width: 32px;
 	}
 
 	.layout__homepage {
-		@apply py-4;
+		@apply lg:pt-4;
 	}
 
 	.layout__nav {
-		@apply flex h-full max-h-full flex-col overflow-y-auto;
-
-		&--bottom {
-			@apply mt-auto h-max;
-		}
+		@apply flex h-full max-h-full flex-row gap-x-2;
+		@apply lg:flex-col;
 	}
 
 	.layout__button,
 	.layout__a {
-		@apply flex items-center gap-4 px-2 py-3 text-sm font-medium text-muted transition-colors duration-150;
+		@apply flex flex-col items-start gap-x-2 gap-y-0.5 px-2 py-3 text-sm font-medium text-muted transition-colors duration-150;
+		@apply lg:flex-row lg:items-center lg:gap-4;
+		@apply hover:text-active;
+	}
 
-		&:hover,
-		&--active {
-			@apply text-active;
-		}
+	.layout__button {
+		@apply lg:mt-auto;
 	}
 
 	.layout__main {
