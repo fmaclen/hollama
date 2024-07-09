@@ -5,10 +5,11 @@
 	import Button from '$lib/components/Button.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import Fieldset from '$lib/components/Fieldset.svelte';
+	import FieldInput from '$lib/components/FieldInput.svelte';
+
 	import type { OllamaTagResponse } from '$lib/ollama';
 	import { settingsStore } from '$lib/store';
-	import Fieldset from '$lib/components/Fieldset.svelte';
-	import H2 from '$lib/components/H2.svelte';
 
 	export let ollamaURL: URL | null = null;
 
@@ -68,26 +69,21 @@
 
 <section class="settings">
 	<Fieldset>
-		<H2>Settings</H2>
-	</Fieldset>
-
-	<Fieldset>
-		<Field name="server">
-			<span class="flex w-full items-center justify-between" slot="label">
-				Server
+		<FieldInput
+			name="server"
+			label="Server"
+			placeholder={DETAULT_OLLAMA_SERVER}
+			bind:value={ollamaServer}
+			on:keyup={getModelsList}
+		>
+			<svelte:fragment slot="status">
 				<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
 					{serverStatus}
 				</Badge>
-			</span>
-			<input
-				placeholder={DETAULT_OLLAMA_SERVER}
-				class="input"
-				id="server"
-				bind:value={ollamaServer}
-				on:keyup={getModelsList}
-			/>
-			{#if ollamaURL && serverStatus === 'disconnected'}
-				<div class="help">
+			</svelte:fragment>
+
+			<svelte:fragment slot="help">
+				{#if ollamaURL && serverStatus === 'disconnected'}
 					<p class="p">
 						Needs to allow connections from
 						<code class="code">{ollamaURL.origin}</code>
@@ -122,9 +118,9 @@
 							</a> in this browser's site settings.
 						</p>
 					{/if}
-				</div>
-			{/if}
-		</Field>
+				{/if}
+			</svelte:fragment>
+		</FieldInput>
 		<FieldSelectModel />
 	</Fieldset>
 
@@ -171,19 +167,11 @@
 	}
 
 	.about {
-		@apply container mx-auto flex max-w-prose flex-col gap-y-2;
-	}
-
-	.help {
-		@apply flex flex-col gap-y-3 text-sm text-muted;
+		@apply container mx-auto flex max-w-[80ch] flex-col gap-y-2;
 	}
 
 	.code {
-		@apply rounded-md p-1;
-	}
-
-	.input {
-		@include base-input;
+		@apply rounded-md p-1 text-active;
 	}
 
 	.p {

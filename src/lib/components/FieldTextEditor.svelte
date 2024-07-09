@@ -57,11 +57,14 @@
 </Field>
 
 <style lang="scss">
+	@import '$lib/mixins.scss';
+
 	.text-editor {
-		@apply h-full max-h-full overflow-y-auto rounded-md border;
+		@include base-input;
+		@apply h-full max-h-full overflow-y-auto p-0;
 
 		:global(.cm-editor) {
-			@apply h-full text-sm;
+			@apply w-full h-full text-sm;
 		}
 	}
 </style>

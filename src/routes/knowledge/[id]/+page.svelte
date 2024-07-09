@@ -3,7 +3,6 @@
 	import type { PageData } from './$types';
 	import { Trash2 } from 'lucide-svelte';
 
-	import Field from '$lib/components/Field.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { type Knowledge, loadKnowledge, saveKnowledge } from '$lib/knowledge';
 	import { getUpdatedAtDate } from '$lib/utils';
@@ -12,6 +11,7 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
+	import FieldInput from '$lib/components/FieldInput.svelte';
 
 	export let data: PageData;
 
@@ -71,10 +71,7 @@
 	</Header>
 
 	<Fieldset isFullscreen={true}>
-		<Field name="name">
-			<svelte:fragment slot="label">Name</svelte:fragment>
-			<input id="name" class="input" bind:value={name} />
-		</Field>
+		<FieldInput name="name" label="Name" bind:value={name} />
 
 		{#key knowledge}
 			<FieldTextEditor label="Content" {handleSubmit} bind:value={content} />
@@ -83,9 +80,3 @@
 		<ButtonSubmit {handleSubmit} disabled={!name || !content}>Save</ButtonSubmit>
 	</Fieldset>
 </div>
-
-<style lang="scss">
-	.input {
-		// @apply flex min-h-[2em] w-full resize-none rounded-md border border-input px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
-	}
-</style>

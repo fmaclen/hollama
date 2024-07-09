@@ -3,11 +3,9 @@
 		<slot />
 	</div>
 
-	{#if $$slots.nav}
-		<nav>
-			<slot name="nav" />
-		</nav>
-	{/if}
+	<nav>
+		<slot name="nav" />
+	</nav>
 </header>
 
 <style>

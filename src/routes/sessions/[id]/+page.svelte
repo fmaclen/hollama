@@ -2,12 +2,11 @@
 	import { tick } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
-	import { FilePlus, StopCircle, Trash2 } from 'lucide-svelte';
+	import { Brain, StopCircle, Trash2 } from 'lucide-svelte';
 
 	import Button from '$lib/components/Button.svelte';
 	import Article from './Article.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
-	import Field from '$lib/components/Field.svelte';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import Header from '$lib/components/Header.svelte';
@@ -163,28 +162,48 @@
 		</svelte:fragment>
 	</Header>
 
-	<PaneGroup direction="horizontal">
-		<Pane defaultSize={50} minSize={30}>
+	<PaneGroup direction="vertical">
+		<Pane defaultSize={80} minSize={20}>
+			<div class="article-list" bind:this={messageWindow}>
+				{#if isNewSession}
+					<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
+				{/if}
+
+				{#each session.messages as message, i (session.id + i)}
+					<Article {message} />
+				{/each}
+
+				{#if isLastMessageFromUser}
+					<Article message={{ role: 'ai', content: completion || '...' }} />
+				{/if}
+			</div>
+		</Pane>
+
+		<PaneResizer class="border-t py-2"></PaneResizer>
+
+		<Pane defaultSize={20} minSize={20}>
 			<Fieldset isFullscreen={true}>
 				{#if isNewSession}
-					<FieldSelectModel />
-					<div class="grid grid-cols-[auto,max-content] items-end gap-x-2">
-						<FieldSelect
-							label="Knowledge"
-							name="knowledge"
-							disabled={!$knowledgeStore}
-							options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
-							bind:value={knowledgeId}
-						/>
+					<div class="grid grid-cols-[1fr,1fr] items-end gap-x-6">
+						<FieldSelectModel />
+						<div class="grid grid-cols-[auto,max-content] items-end gap-x-2">
+							<FieldSelect
+								label="Knowledge"
+								name="knowledge"
+								disabled={!$knowledgeStore}
+								options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
+								bind:value={knowledgeId}
+							/>
 
-						<Button
-							aria-label="New knowledge"
-							variant="outline"
-							size="icon"
-							href={generateNewUrl(Sitemap.KNOWLEDGE)}
-						>
-							<FilePlus class="h-4 w-4" />
-						</Button>
+							<Button
+								aria-label="New knowledge"
+								variant="outline"
+								size="icon"
+								href={generateNewUrl(Sitemap.KNOWLEDGE)}
+							>
+								<Brain class="h-4 w-4" />
+							</Button>
+						</div>
 					</div>
 				{/if}
 
@@ -203,24 +222,6 @@
 					{/if}
 				</div>
 			</Fieldset>
-		</Pane>
-
-		<PaneResizer class="border-l px-2"></PaneResizer>
-
-		<Pane defaultSize={50} minSize={30}>
-			<div class="article-list" bind:this={messageWindow}>
-				{#if isNewSession}
-					<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
-				{/if}
-
-				{#each session.messages as message, i (session.id + i)}
-					<Article {message} />
-				{/each}
-
-				{#if isLastMessageFromUser}
-					<Article message={{ role: 'ai', content: completion || '...' }} />
-				{/if}
-			</div>
 		</Pane>
 	</PaneGroup>
 </div>

@@ -1,5 +1,5 @@
 @mixin base-input {
-	@apply flex h-10 w-full rounded-md border px-3 py-2 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50;
+	@apply flex h-10 w-full rounded-md border px-3 py-2 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-shade-1;
 }
 
 @mixin base-section {
