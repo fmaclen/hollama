@@ -5,7 +5,6 @@
 	import 'highlight.js/styles/github.css';
 
 	import { type Message } from '$lib/sessions';
-	import Separator from '$lib/components/Separator.svelte';
 	import CopyButton from './CopyButton.svelte';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
@@ -58,7 +57,6 @@
 				{message.role}
 			{/if}
 		</p>
-		<Separator />
 		<CopyButton content={message.content} />
 	</nav>
 
@@ -86,7 +84,7 @@
 		}
 
 		&__role {
-			@apply mr-3 text-center text-xs font-bold uppercase leading-7 text-muted-foreground;
+			@apply mr-3 text-center text-xs font-bold uppercase leading-7;
 		}
 	}
 
@@ -94,7 +92,7 @@
 		@apply mx-auto my-3 w-full overflow-x-auto px-[4ch];
 
 		:global(> *) {
-			@apply text-foreground;
+			// @apply text-foreground;
 		}
 
 		:global(> *:not(:first-child)) {
@@ -114,7 +112,7 @@
 		}
 
 		:global(pre > button) {
-			@apply absolute right-0 top-1 bg-white opacity-0;
+			@apply absolute right-0 top-1 opacity-0;
 		}
 
 		:global(pre > code) {
@@ -123,7 +121,7 @@
 
 		:global(li > code),
 		:global(p > code) {
-			@apply rounded-md bg-code p-1 text-sm opacity-75;
+			@apply rounded-md p-1 text-sm opacity-75;
 		}
 
 		:global(ol),

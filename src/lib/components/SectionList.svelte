@@ -4,6 +4,6 @@
 
 <style lang="scss">
 	.section-list {
-		// @apply flex h-full flex-col overflow-y-auto;
+		@apply flex h-full flex-col overflow-y-auto;
 	}
 </style>

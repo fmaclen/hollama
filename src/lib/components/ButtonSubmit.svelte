@@ -17,6 +17,6 @@
 
 <style lang="scss">
 	.tag {
-		@apply ml-2.5 inline-flex items-center rounded-md border border-neutral-500 px-2.5 py-0.5 text-xs font-semibold text-neutral-400 transition-colors;
+		@apply ml-2.5 inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors;
 	}
 </style>

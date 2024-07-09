@@ -1,12 +1,7 @@
 <script lang="ts">
 	let className: string | undefined = undefined;
 	export { className as class };
-	export let variant:
-		| 'default'
-		| 'outline'
-		| 'link'
-		| 'icon'
-		| undefined = 'default';
+	export let variant: 'default' | 'outline' | 'link' | 'icon' | undefined = 'default';
 	export let size: 'default' | 'icon' | 'link' | undefined = 'default';
 	export let href: string | undefined = undefined;
 </script>
@@ -38,11 +33,10 @@
 <style lang="scss">
 	.button {
 		@apply inline-flex items-center justify-center whitespace-nowrap rounded-md;
-		// @apply inline-flex items-center justify-cent¿er whitespace-nowrap rounded-md text-sm font-medium text-foreground ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-15;
 
 		&--default,
 		&--outline {
-			@apply text-sm font-medium border border-transparent;
+			@apply border text-sm font-medium;
 		}
 
 		&--default {
@@ -50,15 +44,15 @@
 		}
 
 		&--outline {
-			@apply border-h-border-input;
+			// @apply border-shade-3 hover:border-shade-6;
 		}
 
 		&--link {
-			@apply underline underline-offset-4 hover:text-h-body-muted border-b-h-body-muted rounded-none;
+			@apply rounded-none underline underline-offset-4 hover:text-active;
 		}
 
 		&--icon :global(svg) {
-			@apply opacity-25 hover:opacity-50 active:opacity-100;
+			// @apply opacity-25 hover:opacity-50 active:opacity-100;
 		}
 
 		&--size {

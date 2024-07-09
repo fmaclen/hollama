@@ -5,28 +5,24 @@
 	export { className as class };
 </script>
 
-<svelte:element
-	this={href ? 'a' : 'span'}
-	class="badge badge--{variant} {className}"
-	{href}
->
+<svelte:element this={href ? 'a' : 'span'} class="badge badge--{variant} {className}" {href}>
 	<slot />
 </svelte:element>
 
 <style lang="scss">
 	.badge {
-		@apply inline-flex select-none items-center rounded-md border border-transparent px-2.5 py-0.5 text-xs capitalize bg-h-elevation-4 font-mono;
+		@apply inline-flex select-none items-center rounded-md px-2.5 py-0.5 font-mono text-xs capitalize;
 
 		&--positive {
-			@apply bg-h-positive-bg text-h-positive-fg;
+			@apply bg-positive-muted text-positive;
 		}
 
 		&--warning {
-			@apply bg-h-warning-bg text-h-warning-fg;
+			@apply bg-warning-muted text-warning;
 		}
 
 		&--negative {
-			@apply bg-h-negative-bg text-h-negative-fg;
+			@apply bg-negative-muted text-negative;
 		}
 	}
 </style>

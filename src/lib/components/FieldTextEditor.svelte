@@ -58,10 +58,10 @@
 
 <style lang="scss">
 	.text-editor {
-		// @apply h-full max-h-full overflow-y-auto rounded-md border border-input bg-neutral-50;
+		@apply h-full max-h-full overflow-y-auto rounded-md border;
 
 		:global(.cm-editor) {
-			// @apply h-full text-sm;
+			@apply h-full text-sm;
 		}
 	}
 </style>

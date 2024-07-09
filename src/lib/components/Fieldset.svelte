@@ -11,7 +11,7 @@
 		@apply container flex mx-auto max-w-prose flex-col gap-y-8;
 
 		&--fullscreen {
-			// @apply h-full py-6 overflow-hidden;
+			@apply h-full py-6 overflow-hidden;
 		}
 	}
 </style>

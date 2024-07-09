@@ -80,7 +80,7 @@
 
 <style lang="scss">
 	:global(body) {
-		@apply text-h-body bg-h-elevation-3;
+		@apply bg-base text-base;
 	}
 
 	.layout {
@@ -105,11 +105,11 @@
 
 	.layout__button,
 	.layout__a {
-		@apply flex items-center gap-4 px-2 py-3 text-sm font-medium text-h-body-muted transition-opacity duration-200;
+		@apply flex items-center gap-4 px-2 py-3 text-sm font-medium text-muted transition-colors duration-150;
 
 		&:hover,
 		&--active {
-			@apply text-h-body;
+			@apply text-active;
 		}
 	}
 

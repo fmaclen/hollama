@@ -5,7 +5,6 @@
 	import { FilePlus, StopCircle, Trash2 } from 'lucide-svelte';
 
 	import Button from '$lib/components/Button.svelte';
-	import Separator from '$lib/components/Separator.svelte';
 	import Article from './Article.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Field from '$lib/components/Field.svelte';
@@ -148,23 +147,24 @@
 
 <div class="session">
 	<Header>
-		<div class="space-y-4">
-			<p data-testid="session-id" class="text-sm font-bold leading-none text-foreground">
-				Session <Button size="link" variant="link" href={`/${session.id}`}>#{session.id}</Button>
-			</p>
-			<p data-testid="model-name" class="text-sm text-muted-foreground">
-				{isNewSession ? 'New session' : session.model}
-			</p>
-		</div>
-		<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
-			<Trash2 class="h-4 w-4" />
-		</Button>
+		<p data-testid="session-id" class="text-sm font-bold leading-none">
+			Session <Button size="link" variant="link" href={`/${session.id}`}>#{session.id}</Button>
+		</p>
+		<p data-testid="model-name" class="text-sm">
+			{isNewSession ? 'New session' : session.model}
+		</p>
+
+		<svelte:fragment slot="nav">
+			{#if !isNewSession}
+				<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
+					<Trash2 class="h-4 w-4" />
+				</Button>
+			{/if}
+		</svelte:fragment>
 	</Header>
 
-	<Separator />
-
 	<PaneGroup direction="horizontal">
-		<Pane defaultSize={40} minSize={30}>
+		<Pane defaultSize={50} minSize={30}>
 			<Fieldset isFullscreen={true}>
 				{#if isNewSession}
 					<FieldSelectModel />
@@ -205,12 +205,9 @@
 			</Fieldset>
 		</Pane>
 
-		<PaneResizer class="flex gap-x-1 px-2">
-			<Separator orientation="vertical" />
-			<Separator orientation="vertical" />
-		</PaneResizer>
+		<PaneResizer class="border-l px-2"></PaneResizer>
 
-		<Pane defaultSize={60} minSize={30}>
+		<Pane defaultSize={50} minSize={30}>
 			<div class="article-list" bind:this={messageWindow}>
 				{#if isNewSession}
 					<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
@@ -234,6 +231,6 @@
 	}
 
 	.article-list {
-		@apply flex h-full flex-col overflow-y-auto px-6 pb-12 pt-6 text-current outline outline-green-500;
+		@apply flex h-full flex-col overflow-y-auto px-6 pb-12 pt-6;
 	}
 </style>

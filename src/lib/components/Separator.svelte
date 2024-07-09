@@ -6,7 +6,7 @@
 
 <style lang="scss">
 	.hr {
-		@apply shrink-0 bg-border m-0;
+		@apply shrink-0 m-0;
 
 		&--horizontal {
 			@apply w-full h-[1px];

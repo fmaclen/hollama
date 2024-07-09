@@ -8,6 +8,7 @@
 	import type { OllamaTagResponse } from '$lib/ollama';
 	import { settingsStore } from '$lib/store';
 	import Fieldset from '$lib/components/Fieldset.svelte';
+	import H2 from '$lib/components/H2.svelte';
 
 	export let ollamaURL: URL | null = null;
 
@@ -67,7 +68,7 @@
 
 <section class="settings">
 	<Fieldset>
-		<h1>Settings</h1>
+		<H2>Settings</H2>
 	</Fieldset>
 
 	<Fieldset>
@@ -150,7 +151,7 @@
 			servers. Code is available on
 			<Button variant="link" size="link" href="https://github.com/fmaclen/hollama" target="_blank">
 				Github
-			</Button>.
+			</Button>
 		</p>
 		<p class="p">
 			Made by
@@ -165,31 +166,29 @@
 	@import '$lib/mixins.scss';
 
 	.settings {
-		@apply flex h-full w-full border-spacing-1 flex-col gap-y-16 rounded-xl border border-h-border bg-h-elevation-2 p-10;
+		@include base-section;
+		@apply flex border-spacing-1 flex-col gap-y-16 p-10;
 	}
 
 	.about {
-		@apply  flex max-w-full flex-col gap-y-2 container mx-auto max-w-prose;
+		@apply container mx-auto flex max-w-prose flex-col gap-y-2;
 	}
 
 	.help {
-		@apply flex flex-col gap-y-3 text-h-body-muted;
+		@apply flex flex-col gap-y-3 text-sm text-muted;
 	}
 
 	.code {
-		@apply rounded-md bg-h-elevation-4 p-1 text-h-body;
+		@apply rounded-md p-1;
 	}
 
 	.input {
 		@include base-input;
-		// @apply flex h-10 w-full rounded-md border border-h-border px-3 py-2 text-sm outline-1 outline-h-body-muted disabled:cursor-not-allowed disabled:opacity-50;
 	}
 
 	.p {
-		@apply text-sm;
-
 		strong {
-			@apply font-medium leading-none;
+			@apply font-medium leading-none text-active;
 		}
 	}
 </style>

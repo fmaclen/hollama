@@ -1,7 +1,6 @@
 <script lang="ts">
 	import ButtonNew from './ButtonNew.svelte';
 	import SectionList from './SectionList.svelte';
-	import Separator from './Separator.svelte';
 	import type { Sitemap } from '$lib/sitemap';
 
 	export let sitemap: Sitemap;
@@ -9,26 +8,25 @@
 
 <section class="section">
 	<aside class="section__aside">
-		<ButtonNew sitemap={sitemap}></ButtonNew>
-
-		<Separator />
+		<ButtonNew {sitemap}></ButtonNew>
 
 		<SectionList>
 			<slot name="list-items" />
 		</SectionList>
 	</aside>
 
-	<Separator orientation="vertical" />
-
 	<slot />
 </section>
 
 <style lang="scss">
+	@import '$lib/mixins.scss';
+
 	.section {
-		@apply grid grid-cols-[1fr,max-content,4fr] h-full overflow-y-auto;
+		@include base-section;
+		@apply grid grid-cols-[1fr,4fr];
 
 		&__aside {
-			@apply flex h-full overflow-y-auto min-w-80 flex-col;
+			@apply flex h-full min-w-80 flex-col overflow-y-auto border-r;
 		}
 	}
 </style>
