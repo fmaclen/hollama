@@ -77,7 +77,8 @@
 
 <style lang="scss">
 	.article {
-		@apply mx-auto mt-3 flex w-full max-w-[80ch] flex-col first:mt-0 last:mb-0;
+		@apply mx-auto mb-3 flex w-full max-w-[80ch] flex-col;
+		@apply last:mb-0;
 
 		&__nav {
 			@apply flex items-center justify-between border-b text-muted;
@@ -91,10 +92,6 @@
 	.markdown {
 		@apply mx-auto my-3 w-full overflow-x-auto px-3;
 		@apply lg:my-6;
-
-		:global(> *) {
-			// @apply text-foreground;
-		}
 
 		:global(> *:not(:first-child)) {
 			@apply mt-4;
@@ -126,7 +123,7 @@
 
 		:global(li > code),
 		:global(p > code) {
-			@apply p-1 text-muted bg-shade-0;
+			@apply bg-shade-0 p-1 text-muted;
 		}
 
 		:global(ol),

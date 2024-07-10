@@ -179,7 +179,7 @@
 				</div>
 			</Pane>
 
-			<PaneResizer class="border-t"></PaneResizer>
+			<PaneResizer class="border-t border-y-2"></PaneResizer>
 
 			<Pane defaultSize={isNewSession ? 50 : 25} minSize={25}>
 				<div class="grid grid-flow-col h-full w-full overflow-y-auto p-8">
