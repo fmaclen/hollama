@@ -149,7 +149,7 @@
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
 			Session <Button size="link" variant="link" href={`/${session.id}`}>#{session.id}</Button>
 		</p>
-		<p data-testid="model-name" class="text-sm">
+		<p data-testid="model-name" class="text-muted text-sm">
 			{isNewSession ? 'New session' : session.model}
 		</p>
 

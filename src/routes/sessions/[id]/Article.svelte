@@ -79,14 +79,14 @@
 	.article {
 		@apply mx-auto mb-3 flex w-full max-w-[80ch] flex-col;
 		@apply last:mb-0;
+	}
 
-		&__nav {
-			@apply flex items-center justify-between border-b text-muted;
-		}
+	.article__nav {
+		@apply flex items-center justify-between border-b text-muted;
+	}
 
-		&__role {
-			@apply ml-3 text-center text-xs font-bold uppercase leading-7;
-		}
+	.article__role {
+		@apply ml-3 text-center text-xs font-bold uppercase leading-7;
 	}
 
 	.markdown {
