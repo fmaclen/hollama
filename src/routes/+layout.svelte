@@ -123,6 +123,6 @@
 	}
 
 	.layout__main {
-		@apply flex h-full w-full;
+		@apply flex h-full w-full overflow-y-auto;
 	}
 </style>
