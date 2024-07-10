@@ -90,7 +90,7 @@
 	}
 
 	.markdown {
-		@apply mx-auto my-3 w-full overflow-x-auto px-3;
+		@apply mx-auto my-3 w-full px-3;
 		@apply lg:my-6;
 
 		:global(> *:not(:first-child)) {

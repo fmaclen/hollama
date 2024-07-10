@@ -61,10 +61,32 @@
 
 	.text-editor {
 		@include base-input;
-		@apply h-full max-h-full overflow-y-auto p-0 min-h-[88px];
+		@apply h-full max-h-full min-h-[88px] overflow-y-auto p-0;
 
 		:global(.cm-editor) {
-			@apply w-full h-full text-sm;
+			@apply h-full w-full text-sm;
+		}
+
+		:global(.cm-gutters) {
+			@apply border-shade-3 bg-shade-1;
+		}
+
+		:global(.cm-activeLineGutter) {
+			@apply bg-shade-2 text-accent;
+		}
+
+		// HACK: Need to use !important to override the default styles because
+		// CodeMirror's styles for text selection have higher specificity than ours.
+		:global(.cm-activeLine) {
+			background-color: hsl(var(--color-shade-6) / 10%) !important;
+		}
+
+		:global(.cm-activeLine.cm-line) {
+			caret-color: hsl(var(--color-shade-6)) !important;
+		}
+
+		:global(.cm-selectionBackground) {
+			background-color: hsl(var(--color-primary) / 50%) !important;
 		}
 	}
 </style>

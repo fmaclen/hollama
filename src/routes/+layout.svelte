@@ -79,7 +79,7 @@
 
 <style lang="scss">
 	:global(body) {
-		@apply bg-base text-base;
+		@apply bg-shade-2 text-base;
 	}
 
 	.layout {

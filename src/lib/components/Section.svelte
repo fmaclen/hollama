@@ -34,6 +34,10 @@
 		@apply flex h-full min-w-80 flex-col overflow-y-auto border-r;
 	}
 
+	.section__content {
+		@apply flex h-full flex-col overflow-y-auto;
+	}
+
 	.section--index {
 		.section__aside {
 			@apply flex;
