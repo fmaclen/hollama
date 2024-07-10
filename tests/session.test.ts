@@ -82,10 +82,17 @@ test.describe('Session', () => {
 	});
 
 	test('can navigate older sessions from sidebar', async ({ page }) => {
+		const sessionLink = page.locator('.layout__a', { hasText: 'Sessions' });
+		const settingsLink = page.locator('.layout__a', { hasText: 'Settings' });
+
 		await page.goto('/');
+		await expect(settingsLink).toHaveClass(/ layout__a--active/);
+		await expect(sessionLink).not.toHaveClass(/ layout__a--active/);
+		
 		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
-		await page.getByText('Sessions', { exact: true }).click();
-		await expect(page.getByText('No sessions')).toBeVisible();
+		await sessionLink.click();		await expect(page.getByText('No sessions')).toBeVisible();
+		await expect(settingsLink).not.toHaveClass(/ layout__a--active/);
+		await expect(sessionLink).toHaveClass(/ layout__a--active/);
 		await expect(page.locator('aside', { hasText: 'Who would win in a fight between Emma Watson and Jessica Alba?' })).not.toBeVisible();
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
@@ -99,7 +106,7 @@ test.describe('Session', () => {
 		expect(await page.getByTestId('session-item').count()).toBe(1);
 
 		// Leave the conversation by visiting the sessions index
-		await page.getByText('Sessions').click();
+		await sessionLink.click();
 		await expect(page.getByText('Who would win in a fight between Emma Watson and Jessica Alba?')).toBeVisible();
 		await expect(page.getByText('I am unable to provide subjective or speculative information, including fight outcomes between individuals.')).not.toBeVisible();
 
@@ -124,10 +131,8 @@ test.describe('Session', () => {
 		expect(await page.getByTestId('session-item').last().textContent()).toContain(MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		// Check the current session is highlighted in the sidebar
-		await expect(page.getByTestId('session-item').first()).not.toHaveClass(/hover:bg-accent/);
-		await expect(page.getByTestId('session-item').first()).toHaveClass(/ bg-accent/);
-		await expect(page.getByTestId('session-item').last()).not.toHaveClass(/ bg-accent/);
-		await expect(page.getByTestId('session-item').last()).toHaveClass(/hover:bg-accent/);
+		await expect(page.getByTestId('session-item').first()).toHaveClass(/ section-list-item--active/);
+		await expect(page.getByTestId('session-item').last()).not.toHaveClass(/ section-list-item--active/);
 	});
 
 	test('deletes a session from the sidebar', async ({ page }) => {

@@ -5,7 +5,6 @@
 	import 'highlight.js/styles/github.css';
 
 	import { type Message } from '$lib/sessions';
-	import Separator from '$lib/components/Separator.svelte';
 	import CopyButton from './CopyButton.svelte';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
@@ -58,7 +57,6 @@
 				{message.role}
 			{/if}
 		</p>
-		<Separator />
 		<CopyButton content={message.content} />
 	</nav>
 
@@ -79,23 +77,21 @@
 
 <style lang="scss">
 	.article {
-		@apply mx-auto flex w-full max-w-[96ch] flex-col last:mb-0;
+		@apply mx-auto mb-3 flex w-full max-w-[80ch] flex-col;
+		@apply last:mb-0;
+	}
 
-		&__nav {
-			@apply grid grid-cols-[max-content_auto_max-content] items-center;
-		}
+	.article__nav {
+		@apply flex items-center justify-between border-b text-muted;
+	}
 
-		&__role {
-			@apply mr-3 text-center text-xs font-bold uppercase leading-7 text-muted-foreground;
-		}
+	.article__role {
+		@apply ml-3 text-center text-xs font-bold uppercase leading-7;
 	}
 
 	.markdown {
-		@apply mx-auto my-3 w-full overflow-x-auto px-[4ch];
-
-		:global(> *) {
-			@apply text-foreground;
-		}
+		@apply mx-auto my-3 w-full px-3;
+		@apply lg:my-6;
 
 		:global(> *:not(:first-child)) {
 			@apply mt-4;
@@ -114,16 +110,20 @@
 		}
 
 		:global(pre > button) {
-			@apply absolute right-0 top-1 bg-white opacity-0;
+			@apply absolute right-0 top-1 opacity-0;
+		}
+
+		:global(code) {
+			@apply rounded-md text-sm;
 		}
 
 		:global(pre > code) {
-			@apply rounded-md p-4 pr-12 text-sm;
+			@apply p-4 pr-12 dark:invert;
 		}
 
 		:global(li > code),
 		:global(p > code) {
-			@apply rounded-md bg-code p-1 text-sm opacity-75;
+			@apply bg-shade-0 p-1 text-muted;
 		}
 
 		:global(ol),

@@ -9,6 +9,8 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 - Easily copy markdown as raw text
 - _"Knowledge"_ lets you add context to sessions
 - Saves all changes on your browser's `localStorage`
+- Responsive layout
+- Dark mode
 - Streams completions
 
 ### Live demo

@@ -1,80 +1,52 @@
 import { fontFamily } from "tailwindcss/defaultTheme";
-// const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 const config = {
-	darkMode: ["class"],
+	darkMode: ['selector', '[data-color-theme="dark"]'],
 	content: ["./src/**/*.{html,js,svelte,ts}"],
-	safelist: ["dark"],
 	theme: {
-		container: {
-			center: true,
-			padding: "2rem",
-			screens: {
-				"2xl": "1400px"
-			}
-		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', ...fontFamily.sans],
+				mono: ['"JetBrains Mono"', ...fontFamily.mono],
+			},
+			backgroundColor: {
+				DEFAULT: 'hsl(var(--color-shade-2))',
+			},
+			borderColor: {
+				DEFAULT: 'hsl(var(--color-shade-5))',
+			},
+			textColor: {
+				active: 'hsl(var(--color-text-shade-0))',
+				base: 'hsl(var(--color-text-shade-1))',
+				muted: 'hsl(var(--color-text-shade-2))',
+			},
 			colors: {
-				elevation: {
-					0: 'hsl(0, 0, 100%)',
-					50: 'hsl(0, 0, 98%)',
-					100: 'hsl(0, 0, 96%)',
-					// 200: 'hsl(0, 0, 94%)',
-					// 300: 'hsl(0, 0, 92%)',
-					// 400: 'hsl(0, 0, 90%)',
+				accent: 'hsl(var(--color-primary))',
+				shade: {
+					0: 'hsl(var(--color-shade-0))',
+					1: 'hsl(var(--color-shade-1))',
+					2: 'hsl(var(--color-shade-2))',
+					3: 'hsl(var(--color-shade-3))',
+					4: 'hsl(var(--color-shade-4))',
+					5: 'hsl(var(--color-shade-5))',
+					6: 'hsl(var(--color-shade-6))',
 				},
-				border: "hsl(var(--border) / <alpha-value>)",
-				input: "hsl(var(--input) / <alpha-value>)",
-				ring: "hsl(var(--ring) / <alpha-value>)",
-				background: "hsl(var(--background) / <alpha-value>)",
-				foreground: "hsl(var(--foreground) / <alpha-value>)",
-				primary: {
-					DEFAULT: "hsl(var(--primary) / <alpha-value>)",
-					foreground: "hsl(var(--primary-foreground) / <alpha-value>)"
+				positive: {
+					DEFAULT: 'hsl(var(--color-positive))',
+					muted: 'hsl(var(--color-positive-muted))',
 				},
-				secondary: {
-					DEFAULT: "hsl(var(--secondary) / <alpha-value>)",
-					foreground: "hsl(var(--secondary-foreground) / <alpha-value>)"
+				warning: {
+					DEFAULT: 'hsl(var(--color-warning))',
+					muted: 'hsl(var(--color-warning-muted))',
 				},
-				destructive: {
-					DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
-					foreground: "hsl(var(--destructive-foreground) / <alpha-value>)"
+				negative: {
+					DEFAULT: 'hsl(var(--color-negative))',
+					muted: 'hsl(var(--color-negative-muted-muted))',
 				},
-				muted: {
-					DEFAULT: "hsl(var(--muted) / <alpha-value>)",
-					foreground: "hsl(var(--muted-foreground) / <alpha-value>)"
-				},
-				accent: {
-					DEFAULT: "hsl(var(--accent) / <alpha-value>)",
-					foreground: "hsl(var(--accent-foreground) / <alpha-value>)"
-				},
-				popover: {
-					DEFAULT: "hsl(var(--popover) / <alpha-value>)",
-					foreground: "hsl(var(--popover-foreground) / <alpha-value>)"
-				},
-				card: {
-					DEFAULT: "hsl(var(--card) / <alpha-value>)",
-					foreground: "hsl(var(--card-foreground) / <alpha-value>)"
-				},
-				body: {
-					DEFAULT: "hsl(var(--background) / <alpha-value>)"
-				},
-				code: {
-					DEFAULT: "hsl(var(--code) / <alpha-value>)"
-				},
-			}
+			},
 		},
-		borderRadius: {
-			lg: "var(--radius)",
-			md: "calc(var(--radius) - 2px)",
-			sm: "calc(var(--radius) - 4px)"
-		},
-		fontFamily: {
-			sans: [...fontFamily.sans]
-		}
-	}
+	},
 };
 
 export default config;
-// module.exports = config;
