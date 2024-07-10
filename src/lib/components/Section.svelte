@@ -35,7 +35,7 @@
 	}
 
 	.section__content {
-		@apply flex h-full flex-col overflow-y-auto;
+		@apply flex h-full flex-col overflow-y-auto bg-shade-1;
 	}
 
 	.section--index {

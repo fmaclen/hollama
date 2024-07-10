@@ -10,7 +10,7 @@
 
 <style>
 	.header {
-		@apply flex items-center justify-between border-b p-4 bg-shade-1;
+		@apply flex items-center justify-between border-b p-4 bg-shade-0;
 		@apply lg:p-6;
 	}
 </style>

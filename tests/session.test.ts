@@ -124,10 +124,8 @@ test.describe('Session', () => {
 		expect(await page.getByTestId('session-item').last().textContent()).toContain(MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		// Check the current session is highlighted in the sidebar
-		await expect(page.getByTestId('session-item').first()).not.toHaveClass(/hover:bg-accent/);
-		await expect(page.getByTestId('session-item').first()).toHaveClass(/ bg-accent/);
-		await expect(page.getByTestId('session-item').last()).not.toHaveClass(/ bg-accent/);
-		await expect(page.getByTestId('session-item').last()).toHaveClass(/hover:bg-accent/);
+		await expect(page.getByTestId('session-item').first()).toHaveClass(/ section-list-item--active/);
+		await expect(page.getByTestId('session-item').last()).not.toHaveClass(/ section-list-item--active/);
 	});
 
 	test('deletes a session from the sidebar', async ({ page }) => {

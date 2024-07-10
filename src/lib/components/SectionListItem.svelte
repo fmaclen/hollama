@@ -11,7 +11,7 @@
 </script>
 
 <a
-	class="section-list-item {$page.url.pathname.includes(id) ? 'bg-shade-1' : 'hover:bg-shade-1'}"
+	class="section-list-item {$page.url.pathname.includes(id) ? 'section-list-item--active' : ''}"
 	data-testid={isSession ? 'session-item' : 'knowledge-item'}
 	aria-label={isSession ? `Session: ${id}` : `Knowledge: ${id}`}
 	href={`/${sitemap}/${id}`}
@@ -26,7 +26,11 @@
 
 <style lang="scss">
 	.section-list-item {
-		@apply flex flex-col px-6 py-3;
+		@apply flex flex-col px-6 py-3 hover:bg-shade-1 border-b last:border-b-0;
+	}
+
+	.section-list-item--active {
+		@apply bg-shade-1;
 	}
 
 	.section-list-item__title {

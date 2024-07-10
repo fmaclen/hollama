@@ -170,7 +170,7 @@
 
 	.settings {
 		@include base-section;
-		@apply flex border-spacing-1 flex-col p-8;
+		@apply flex border-spacing-1 flex-col p-8 bg-shade-1;
 	}
 
 	.settings__container {

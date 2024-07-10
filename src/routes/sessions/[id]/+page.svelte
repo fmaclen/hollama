@@ -182,7 +182,7 @@
 			<PaneResizer class="border-t border-y-2 border-shade-3"></PaneResizer>
 
 			<Pane defaultSize={isNewSession ? 50 : 25} minSize={10}>
-				<div class="grid grid-flow-col h-full w-full overflow-y-auto p-8 bg-shade-1">
+				<div class="grid grid-flow-col h-full w-full overflow-y-auto p-8">
 					<Fieldset>
 						{#if isNewSession}
 							<div class="grid grid-cols-[1fr,1fr] items-end gap-x-6">
@@ -236,11 +236,11 @@
 
 <style lang="scss">
 	.session {
-		@apply flex h-full w-full flex-col overflow-y-auto bg-shade-0;
+		@apply flex h-full w-full flex-col overflow-y-auto;
 	}
 
 	.article-list {
-		@apply flex h-full flex-col overflow-y-auto p-4 bg-shade-1;
+		@apply flex h-full flex-col overflow-y-auto p-4;
 		@apply lg:p-8;
 	}
 </style>
