@@ -37,14 +37,15 @@
 		&--default,
 		&--outline {
 			@apply border text-sm font-medium;
+			@apply disabled:text-muted disabled:bg-shade-2 disabled:border-shade-2 disabled:pointer-events-none;
 		}
 
 		&--default {
-			// @apply;
+			@apply bg-accent border-accent text-shade-0;
 		}
 
 		&--outline {
-			// @apply border-shade-3 hover:border-shade-6;
+			@apply border-shade-4 hover:border-shade-6;
 		}
 
 		&--link {

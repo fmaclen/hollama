@@ -8,10 +8,10 @@ const config = {
 		extend: {
 			fontFamily: {
 				sans: ['Inter', ...fontFamily.sans],
-				mono: ['"Decima Mono Pro"', ...fontFamily.mono],
+				mono: ['"JetBrains Mono"', ...fontFamily.mono],
 			},
 			backgroundColor: {
-				base: 'hsl(var(--color-shade-1))',
+				DEFAULT: 'hsl(var(--color-shade-2))',
 			},
 			borderColor: {
 				DEFAULT: 'hsl(var(--color-shade-5))',

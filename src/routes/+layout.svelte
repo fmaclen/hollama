@@ -79,11 +79,12 @@
 
 <style lang="scss">
 	:global(body) {
-		@apply bg-shade-2 text-base;
+		@apply bg-shade-0 text-base;
+		@apply lg:bg-shade-2 text-base;
 	}
 
 	.layout {
-		@apply flex h-screen max-h-screen w-screen flex-col overflow-auto;
+		@apply flex h-dvh max-h-dvh w-screen flex-col overflow-auto;
 		@apply lg:flex-row lg:p-4 lg:gap-4;
 	}
 
