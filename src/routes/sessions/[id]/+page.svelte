@@ -182,7 +182,7 @@
 			<PaneResizer class="border-t"></PaneResizer>
 
 			<Pane defaultSize={isNewSession ? 50 : 25} minSize={25}>
-				<div class="grid grid-flow-col h-full w-full overflow-y-auto py-6">
+				<div class="grid grid-flow-col h-full w-full overflow-y-auto p-8">
 					<Fieldset>
 						{#if isNewSession}
 							<div class="grid grid-cols-[1fr,1fr] items-end gap-x-6">
@@ -240,6 +240,6 @@
 	}
 
 	.article-list {
-		@apply flex h-full flex-col overflow-y-auto py-6  pt-6;
+		@apply flex h-full flex-col overflow-y-auto p-8;
 	}
 </style>

@@ -80,7 +80,7 @@
 		@apply mx-auto flex w-full max-w-[80ch] flex-col last:mb-0;
 
 		&__nav {
-			@apply grid grid-cols-[max-content_auto_max-content] items-center;
+			@apply grid grid-cols-[max-content,auto,max-content] items-center;
 		}
 
 		&__role {
