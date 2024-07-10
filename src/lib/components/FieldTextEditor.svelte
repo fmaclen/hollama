@@ -61,7 +61,7 @@
 
 	.text-editor {
 		@include base-input;
-		@apply h-full max-h-full overflow-y-auto p-0;
+		@apply h-full max-h-full overflow-y-auto p-0 min-h-[88px];
 
 		:global(.cm-editor) {
 			@apply w-full h-full text-sm;

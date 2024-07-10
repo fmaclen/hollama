@@ -161,69 +161,77 @@
 			{/if}
 		</svelte:fragment>
 	</Header>
+	{#key isNewSession}
+		<PaneGroup direction="vertical">
+			<Pane defaultSize={isNewSession ? 50 : 70} minSize={10}>
+				<div class="article-list" bind:this={messageWindow}>
+					{#if isNewSession}
+						<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
+					{/if}
 
-	<PaneGroup direction="vertical">
-		<Pane defaultSize={80} minSize={20}>
-			<div class="article-list" bind:this={messageWindow}>
-				{#if isNewSession}
-					<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
-				{/if}
+					{#each session.messages as message, i (session.id + i)}
+						<Article {message} />
+					{/each}
 
-				{#each session.messages as message, i (session.id + i)}
-					<Article {message} />
-				{/each}
-
-				{#if isLastMessageFromUser}
-					<Article message={{ role: 'ai', content: completion || '...' }} />
-				{/if}
-			</div>
-		</Pane>
-
-		<PaneResizer class="border-t py-2"></PaneResizer>
-
-		<Pane defaultSize={20} minSize={20}>
-			<Fieldset isFullscreen={true}>
-				{#if isNewSession}
-					<div class="grid grid-cols-[1fr,1fr] items-end gap-x-6">
-						<FieldSelectModel />
-						<div class="grid grid-cols-[auto,max-content] items-end gap-x-2">
-							<FieldSelect
-								label="Knowledge"
-								name="knowledge"
-								disabled={!$knowledgeStore}
-								options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
-								bind:value={knowledgeId}
-							/>
-
-							<Button
-								aria-label="New knowledge"
-								variant="outline"
-								size="icon"
-								href={generateNewUrl(Sitemap.KNOWLEDGE)}
-							>
-								<Brain class="h-4 w-4" />
-							</Button>
-						</div>
-					</div>
-				{/if}
-
-				{#key session}
-					<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
-				{/key}
-
-				<div class="flex w-full">
-					<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
 					{#if isLastMessageFromUser}
-						<div class="ml-2">
-							<Button title="Stop response" variant="outline" size="icon" on:click={handleAbort}>
-								<StopCircle class="h-4 w-4" />
-							</Button>
-						</div>
+						<Article message={{ role: 'ai', content: completion || '...' }} />
 					{/if}
 				</div>
-			</Fieldset>
-		</Pane>
-	</PaneGroup>
+			</Pane>
+
+			<PaneResizer class="border-t"></PaneResizer>
+
+			<Pane defaultSize={isNewSession ? 50 : 25} minSize={25}>
+				<div class="grid grid-flow-col h-full w-full overflow-y-auto py-6">
+					<Fieldset>
+						{#if isNewSession}
+							<div class="grid grid-cols-[1fr,1fr] items-end gap-x-6">
+								<FieldSelectModel />
+								<div class="grid grid-cols-[auto,max-content] items-end gap-x-2">
+									<FieldSelect
+										label="Knowledge"
+										name="knowledge"
+										disabled={!$knowledgeStore}
+										options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
+										bind:value={knowledgeId}
+									/>
+
+									<Button
+										aria-label="New knowledge"
+										variant="outline"
+										size="icon"
+										href={generateNewUrl(Sitemap.KNOWLEDGE)}
+									>
+										<Brain class="h-4 w-4" />
+									</Button>
+								</div>
+							</div>
+						{/if}
+
+						{#key session}
+							<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
+						{/key}
+
+						<div class="flex w-full">
+							<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
+							{#if isLastMessageFromUser}
+								<div class="ml-2">
+									<Button
+										title="Stop response"
+										variant="outline"
+										size="icon"
+										on:click={handleAbort}
+									>
+										<StopCircle class="h-4 w-4" />
+									</Button>
+								</div>
+							{/if}
+						</div>
+					</Fieldset>
+				</div>
+			</Pane>
+		</PaneGroup>
+	{/key}
 </div>
 
 <style lang="scss">
@@ -232,6 +240,6 @@
 	}
 
 	.article-list {
-		@apply flex h-full flex-col overflow-y-auto px-6 pb-12 pt-6;
+		@apply flex h-full flex-col overflow-y-auto py-6  pt-6;
 	}
 </style>
