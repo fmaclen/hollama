@@ -44,7 +44,7 @@ test('handles server status updates correctly', async ({ page }) => {
 	await expect(page.getByText('disconnected')).toHaveClass(/badge--warning/);
 });
 
-test('settings and sessions can be deleted', async ({ page }) => {
+test('settings can be deleted', async ({ page }) => {
 	const modelSelect = page.getByLabel('Model');
 
 	await page.goto('/');

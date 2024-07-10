@@ -46,6 +46,13 @@
 		}
 	}
 
+	function deleteKnowledge(): void {
+		if (confirm('Are you sure you want to delete all knowledge?')) {
+			localStorage.removeItem('hollama-knowledge');
+			location.reload();
+		}
+	}
+
 	function deleteSettings(): void {
 		if (confirm('Are you sure you want to delete server settings?')) {
 			localStorage.removeItem('hollama-settings');
@@ -132,6 +139,7 @@
 		<Field name="danger-zone">
 			<svelte:fragment slot="label">Danger zone</svelte:fragment>
 			<Button variant="outline" on:click={deleteSessions}>Delete all sessions</Button>
+			<Button variant="outline" on:click={deleteKnowledge}>Delete all knowledge</Button>
 			<Button variant="outline" on:click={deleteSettings}>Delete server settings</Button>
 		</Field>
 	</Fieldset>
