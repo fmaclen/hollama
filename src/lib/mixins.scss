@@ -3,5 +3,6 @@
 }
 
 @mixin base-section {
-	@apply h-full w-full rounded-xl border overflow-y-auto bg-shade-2;
+	@apply h-full w-full border-t overflow-y-auto bg-shade-2;
+	@apply lg:rounded-xl lg:border;
 }

@@ -240,6 +240,7 @@
 	}
 
 	.article-list {
-		@apply flex h-full flex-col overflow-y-auto p-8;
+		@apply flex h-full flex-col overflow-y-auto p-4;
+		@apply lg:p-8;
 	}
 </style>

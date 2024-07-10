@@ -83,13 +83,13 @@
 	}
 
 	.layout {
-		@apply flex h-screen max-h-screen w-screen flex-col gap-4 p-4;
-		@apply lg:flex-row;
+		@apply flex h-screen max-h-screen w-screen flex-col;
+		@apply lg:flex-row lg:p-4 lg:gap-4;
 	}
 
 	.layout__aside {
-		@apply flex flex-row items-center gap-4;
-		@apply lg:flex-col lg:items-start lg:px-4;
+		@apply flex flex-row items-center gap-4 px-4;
+		@apply lg:flex-col lg:items-start;
 	}
 
 	.layout__logo {

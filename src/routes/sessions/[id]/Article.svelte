@@ -77,19 +77,20 @@
 
 <style lang="scss">
 	.article {
-		@apply mx-auto flex w-full max-w-[80ch] flex-col last:mb-0;
+		@apply mx-auto flex w-full max-w-[80ch] flex-col last:mb-0 mt-3 first:mt-0;
 
 		&__nav {
-			@apply grid grid-cols-[max-content,auto,max-content] items-center;
+			@apply flex items-center justify-between border-b border-shade-4 text-muted;
 		}
 
 		&__role {
-			@apply mr-3 text-center text-xs font-bold uppercase leading-7;
+			@apply ml-3 text-center text-xs font-bold uppercase leading-7;
 		}
 	}
 
 	.markdown {
-		@apply mx-auto my-3 w-full overflow-x-auto px-[4ch];
+		@apply mx-auto my-3 w-full overflow-x-auto px-3;
+		@apply lg:my-6;
 
 		:global(> *) {
 			// @apply text-foreground;
