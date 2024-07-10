@@ -77,10 +77,10 @@
 
 <style lang="scss">
 	.article {
-		@apply mx-auto flex w-full max-w-[80ch] flex-col last:mb-0 mt-3 first:mt-0;
+		@apply mx-auto mt-3 flex w-full max-w-[80ch] flex-col first:mt-0 last:mb-0;
 
 		&__nav {
-			@apply flex items-center justify-between border-b border-shade-4 text-muted;
+			@apply flex items-center justify-between border-b text-muted;
 		}
 
 		&__role {
@@ -116,13 +116,17 @@
 			@apply absolute right-0 top-1 opacity-0;
 		}
 
+		:global(code) {
+			@apply rounded-md text-sm;
+		}
+
 		:global(pre > code) {
-			@apply rounded-md p-4 pr-12 text-sm;
+			@apply p-4 pr-12 dark:invert;
 		}
 
 		:global(li > code),
 		:global(p > code) {
-			@apply rounded-md p-1 text-sm opacity-75;
+			@apply p-1 text-muted bg-shade-0;
 		}
 
 		:global(ol),
