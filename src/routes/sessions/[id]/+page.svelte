@@ -185,9 +185,9 @@
 				<div class="grid grid-flow-col h-full w-full overflow-y-auto p-8">
 					<Fieldset>
 						{#if isNewSession}
-							<div class="grid grid-cols-[1fr,1fr] items-end gap-x-6">
+							<div class="grid grid-cols-[1fr,1fr] items-end gap-x-3 lg:gap-x-6">
 								<FieldSelectModel />
-								<div class="grid grid-cols-[auto,max-content] items-end gap-x-2">
+								<div class="grid grid-cols-[auto,max-content] items-end gap-x-1 lg:gap-x-2">
 									<FieldSelect
 										label="Knowledge"
 										name="knowledge"
