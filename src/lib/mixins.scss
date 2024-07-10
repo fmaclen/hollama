@@ -1,0 +1,8 @@
+@mixin base-input {
+	@apply flex h-10 w-full rounded-md border px-3 py-2 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-shade-0;
+}
+
+@mixin base-section {
+	@apply h-full w-full border-t overflow-y-auto bg-shade-2;
+	@apply lg:rounded-xl lg:border;
+}

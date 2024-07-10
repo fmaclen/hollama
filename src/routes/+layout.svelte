@@ -1,13 +1,31 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { env } from '$env/dynamic/public';
 	import { page } from '$app/stores';
+	import { Brain, MessageSquareText, Settings2, Sun, Moon } from 'lucide-svelte';
 
 	import '../app.pcss';
 
-	import Separator from '$lib/components/Separator.svelte';
-	import Button from '$lib/components/Button.svelte';
-
 	$: pathname = $page.url.pathname;
+	const SITEMAP = [
+		['/sessions', 'Sessions'],
+		['/knowledge', 'Knowledge'],
+		['/settings', 'Settings']
+	];
+
+	let theme = 'light';
+
+	function toggleTheme() {
+		theme = theme === 'light' ? 'dark' : 'light';
+		document.documentElement.setAttribute('data-color-theme', theme);
+	}
+
+	onMount(() => {
+		// Set initial theme based on user's browser preference
+		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+		theme = prefersDark ? 'dark' : 'light';
+		document.documentElement.setAttribute('data-color-theme', theme);
+	});
 </script>
 
 <svelte:head>
@@ -24,57 +42,88 @@
 
 <div class="layout">
 	<aside class="layout__aside">
-		<a href="/" class="layout__aside-a">
-			<img src="/favicon.png" alt="Hollama logo" width="48" height="48" />
-
-			<h1 class="hollama-wordmark text-2xl font-medium">Hollama</h1>
+		<a href="/" class="layout__homepage">
+			<img class="layout__logo" src="/favicon.png" alt="Hollama logo" />
 		</a>
+
+		<nav class="layout__nav">
+			{#each SITEMAP as [href, text]}
+				<a class={`layout__a ${pathname.includes(href) ? 'layout__a--active' : ''}`} {href}>
+					{#if href === '/knowledge'}
+						<Brain class="h-4 w-4" />
+					{:else if href === '/sessions'}
+						<MessageSquareText class="h-4 w-4" />
+					{:else if href === '/settings'}
+						<Settings2 class="h-4 w-4" />
+					{/if}
+					{text}
+				</a>
+			{/each}
+
+			<button class="layout__button" on:click={toggleTheme}>
+				{#if theme === 'light'}
+					<Moon class="h-4 w-4" />
+					Dark
+				{:else}
+					<Sun class="h-4 w-4" />
+					Light
+				{/if}
+			</button>
+		</nav>
 	</aside>
 
-	<Separator orientation="vertical" />
-
 	<main class="layout__main">
-		<nav class="layout__nav">
-			<Button variant={pathname.includes('/sessions') ? 'secondary' : 'outline'} href="/sessions">
-				Sessions
-			</Button>
-			<Button variant={pathname.includes('/knowledge') ? 'secondary' : 'outline'} href="/knowledge">
-				Knowledge
-			</Button>
-			<Button variant={pathname === '/' ? 'secondary' : 'outline'} href="/">Settings</Button>
-		</nav>
-
-		<Separator />
-
 		<slot />
 	</main>
 </div>
 
 <style lang="scss">
-	.hollama-wordmark {
-		width: max-content;
-		height: 7ch;
-		line-height: 7ch;
-		transform: rotate(270deg);
+	:global(body) {
+		@apply bg-shade-0 text-base;
+		@apply lg:bg-shade-2 text-base;
 	}
 
 	.layout {
-		@apply grid h-screen w-screen grid-cols-[max-content,max-content,auto] bg-body text-current;
+		@apply flex h-dvh max-h-dvh w-screen flex-col overflow-auto;
+		@apply lg:flex-row lg:p-4 lg:gap-4;
 	}
 
 	.layout__aside {
-		@apply flex flex-col justify-between;
+		@apply flex flex-row items-center gap-4 px-4;
+		@apply lg:flex-col lg:items-start;
 	}
 
-	.layout__aside-a {
-		@apply flex h-screen flex-col items-center justify-between py-6 hover:bg-accent;
+	.layout__logo {
+		height: max-content;
+		max-height: 32px;
+		min-width: 32px;
 	}
 
-	.layout__main {
-		@apply grid grid-rows-[max-content,max-content,auto] h-screen;
+	.layout__homepage {
+		@apply lg:pt-4;
 	}
 
 	.layout__nav {
-		@apply flex w-max gap-1 px-6 py-3 text-sm font-semibold;
+		@apply flex h-full max-h-full flex-row gap-x-2;
+		@apply lg:flex-col;
+	}
+
+	.layout__button,
+	.layout__a {
+		@apply flex flex-col items-start gap-x-2 gap-y-0.5 px-2 py-3 text-sm font-medium text-muted transition-colors duration-150;
+		@apply lg:flex-row lg:items-center lg:gap-4;
+		@apply hover:text-active;
+	}
+
+	.layout__a--active {
+		@apply text-active;	
+	}
+
+	.layout__button {
+		@apply lg:mt-auto;
+	}
+
+	.layout__main {
+		@apply flex h-full w-full overflow-auto;
 	}
 </style>
