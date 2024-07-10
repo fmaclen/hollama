@@ -100,42 +100,28 @@ test('deletes knowledge', async ({ page }) => {
 
 test('all knowledge can be deleted', async ({ page }) => {
 	await page.goto('/knowledge');
-		await expect(page.getByText('No knowledge')).toBeVisible();
-		await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
+	await expect(page.getByText('No knowledge')).toBeVisible();
+	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
 
-		// Stage 2 knowledge
-		await page.evaluate(() => window.localStorage.setItem(
-			'hollama-knowledge',
-			JSON.stringify(
-				[
-					{
-						id: "qbhc0q",
-						name: "Test",
-						content: "Hello World",
-						updatedAt: new Date().toISOString()
-					},
-					{
-						id: "m2jjac",
-						name: "Test 2",
-						content: "Hello World 2",
-						updatedAt: new Date().toISOString()
-					}
-				]
-			)
-		));
+	// Stage 2 knowledge
+	await page.evaluate(
+		({ mockKnowledge }) =>
+			window.localStorage.setItem('hollama-knowledge', JSON.stringify(mockKnowledge)),
+		{ mockKnowledge: MOCK_KNOWLEDGE }
+	);
 
-		await page.reload();
-		await expect(page.getByText('No knowledge')).not.toBeVisible();
-		await expect(page.getByTestId('knowledge-item')).toHaveCount(2);
+	await page.reload();
+	await expect(page.getByText('No knowledge')).not.toBeVisible();
+	await expect(page.getByTestId('knowledge-item')).toHaveCount(2);
 
-		await page.getByText('Settings').click();
-		// Click the delete button
-		page.on('dialog', dialog => dialog.accept("Are you sure you want to delete all knowledge?"));
-		await page.getByText('Delete all knowledge').click();
-		await page.getByText('Knowledge', { exact: true }).click();
-		await expect(page.getByText('No knowledge')).toBeVisible();
-		await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
-		expect(await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'))).toBe('null');
+	await page.getByText('Settings').click();
+	// Click the delete button
+	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all knowledge?'));
+	await page.getByText('Delete all knowledge').click();
+	await page.getByText('Knowledge', { exact: true }).click();
+	await expect(page.getByText('No knowledge')).toBeVisible();
+	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
+	expect(await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'))).toBe('null');
 })
 
 test('can use knowledge in the session', async ({ page }) => {
