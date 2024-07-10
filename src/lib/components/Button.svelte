@@ -52,10 +52,6 @@
 			@apply rounded-none underline underline-offset-4 hover:text-active;
 		}
 
-		&--icon :global(svg) {
-			// @apply opacity-25 hover:opacity-50 active:opacity-100;
-		}
-
 		&--size {
 			&-default {
 				@apply h-10 px-4 py-2;
