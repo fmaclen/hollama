@@ -83,7 +83,7 @@
 	}
 
 	.layout {
-		@apply flex h-screen max-h-screen w-screen flex-col;
+		@apply flex h-screen max-h-screen w-screen flex-col overflow-auto;
 		@apply lg:flex-row lg:p-4 lg:gap-4;
 	}
 
@@ -123,6 +123,6 @@
 	}
 
 	.layout__main {
-		@apply flex h-full w-full overflow-y-auto;
+		@apply flex h-full w-full overflow-auto;
 	}
 </style>

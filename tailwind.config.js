@@ -14,7 +14,7 @@ const config = {
 				base: 'hsl(var(--color-shade-1))',
 			},
 			borderColor: {
-				base: 'hsl(var(--color-shade-5))',
+				DEFAULT: 'hsl(var(--color-shade-5))',
 			},
 			textColor: {
 				active: 'hsl(var(--color-text-shade-0))',

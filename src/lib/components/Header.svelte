@@ -10,6 +10,7 @@
 
 <style>
 	.header {
-		@apply flex items-center justify-between border-b px-6 py-6;
+		@apply flex items-center justify-between border-b p-4;
+		@apply lg:p-6;
 	}
 </style>
