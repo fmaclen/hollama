@@ -12,7 +12,8 @@
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
-	import { format } from 'date-fns';
+	import Badge from '$lib/components/Badge.svelte';
+	import { formatDistanceToNow } from 'date-fns';
 
 	export let data: PageData;
 
@@ -58,7 +59,9 @@
 			{#if isNewKnowledge}
 				New knowledge
 			{:else}
-				Last updated at {format(new Date(knowledge.updatedAt), 'MMMM d, yyyy h:mm a')}
+				<Badge variant="warning" capitalize={false}>
+					{formatDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })}
+				</Badge>
 			{/if}
 		</p>
 

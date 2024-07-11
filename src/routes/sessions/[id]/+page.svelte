@@ -22,7 +22,8 @@
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
-	import { format } from 'date-fns';
+	import Badge from '$lib/components/Badge.svelte';
+	import { formatDistanceToNow } from 'date-fns';
 
 	export let data: PageData;
 
@@ -149,17 +150,22 @@
 <div class="session">
 	<Header>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
-			Session <Button size="link" variant="link" href={`/${session.id}`}>#{session.id}</Button>
+			Session <Button size="link" variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
 		</p>
-		<p data-testid="model-name" class="text-muted text-sm">
-			{isNewSession ? 'New session' : session.model}
-			{#if session.updatedAt}
-				<p data-testid="session-timestamp" class="text-muted text-sm">
-					Last updated at {format(new Date(session.updatedAt), 'MMMM d, yyyy h:mm a')}
-				</p>
-			{/if}
-		</p>
-
+		<div class="grid grid-cols-[auto,auto] gap-x-3">
+			<p data-testid="knowledge-timestamp" class="text-sm text-muted">
+				{#if isNewSession}
+					New session
+				{:else}
+					<Badge variant="warning" capitalize={false}>
+						{formatDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}
+					</Badge>
+				{/if}
+				<Badge variant="positive" capitalize={false}>
+					{session.model}
+				</Badge>
+			</p>
+		</div>
 		<svelte:fragment slot="nav">
 			{#if !isNewSession}
 				<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
