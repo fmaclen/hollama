@@ -152,14 +152,14 @@
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
 			Session <Button size="link" variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
 		</p>
-		<div class="grid grid-cols-[auto,auto] gap-x-3">
+		<div class="grid grid-cols-[auto,auto] gap-x-1">
 			{#if isNewSession}
 				<p data-testid="new-session-text" class="text-sm text-muted">New session</p>
 			{:else}
-				<Badge variant="warning" capitalize={false}>
+				<Badge variant="default" capitalize={false}>
 					{formatDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}
 				</Badge>
-				<Badge variant="positive" capitalize={false}>
+				<Badge variant="default" capitalize={false}>
 					<p data-testid="model-name">{session.model}</p>
 				</Badge>
 			{/if}

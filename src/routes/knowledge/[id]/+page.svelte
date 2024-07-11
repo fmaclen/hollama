@@ -59,7 +59,7 @@
 			{#if isNewKnowledge}
 				New knowledge
 			{:else}
-				<Badge variant="warning" capitalize={false}>
+				<Badge variant="default" capitalize={false}>
 					<p data-testid="knowledge-timestamp">
 						{formatDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })}
 					</p>
