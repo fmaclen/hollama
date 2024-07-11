@@ -9,7 +9,7 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 
 	import type { OllamaTagResponse } from '$lib/ollama';
-	import { settingsStore } from '$lib/store';
+	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
 
 	export let ollamaURL: URL | null = null;
 
@@ -40,16 +40,13 @@
 		}
 	}
 
-	function deleteSessions(): void {
-		if (confirm('Are you sure you want to delete all sessions?')) {
-			localStorage.removeItem('hollama-sessions');
-			location.reload();
-		}
-	}
-
-	function deleteSettings(): void {
-		if (confirm('Are you sure you want to delete server settings?')) {
-			localStorage.removeItem('hollama-settings');
+	function deleteStorage(item: StorageKey): void {
+		if (
+			confirm(
+				`Are you sure you want to delete all ${item.replace(`${LOCAL_STORAGE_PREFIX}-`, '')}?`
+			)
+		) {
+			localStorage.removeItem(item);
 			location.reload();
 		}
 	}
@@ -128,8 +125,15 @@
 		<Fieldset>
 			<Field name="danger-zone">
 				<svelte:fragment slot="label">Danger zone</svelte:fragment>
-				<Button variant="outline" on:click={deleteSessions}>Delete all sessions</Button>
-				<Button variant="outline" on:click={deleteSettings}>Delete server settings</Button>
+				<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSessions)}
+					>Delete all sessions</Button
+				>
+				<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaKnowledge)}
+					>Delete all knowledge</Button
+				>
+				<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSettings)}
+					>Delete server settings</Button
+				>
 			</Field>
 		</Fieldset>
 

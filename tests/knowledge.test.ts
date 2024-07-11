@@ -10,7 +10,7 @@ test('creates and edits knowledge', async ({ page }) => {
 	const mockedKnowledgeInSidebar = page.locator('.section-list', { hasText: MOCK_KNOWLEDGE[0].name });
 
 	await page.goto('/');
-	await page.getByText('Knowledge').click();
+	await page.getByText('Knowledge', { exact: true }).click();
 	await expect(noKnowledgeMessage).toBeVisible();
 	await expect(page.getByText('Create new knowlege or choose one from the list')).toBeVisible();
 	await expect(fieldName).not.toBeVisible();
@@ -64,7 +64,7 @@ test('deletes knowledge', async ({ page }) => {
 	const knowledgeSelect = page.getByLabel('Knowledge', { exact: true });
 
 	await page.goto('/');
-	await page.getByText('Knowledge').click();
+	await page.getByText('Knowledge', { exact: true }).click();
 	await expect(noKnowledgeMessage).toBeVisible();
 	await expect(noKnowledgeSelectedMessage).toBeVisible();
 	await expect(timestamp).not.toBeVisible();
@@ -98,6 +98,32 @@ test('deletes knowledge', async ({ page }) => {
 	await expect(knowledgeSelect).toContainText(MOCK_KNOWLEDGE[1].name);
 });
 
+test('all knowledge can be deleted', async ({ page }) => {
+	await page.goto('/knowledge');
+	await expect(page.getByText('No knowledge')).toBeVisible();
+	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
+
+	// Stage 2 knowledge
+	await page.evaluate(
+		({ mockKnowledge }) =>
+			window.localStorage.setItem('hollama-knowledge', JSON.stringify(mockKnowledge)),
+		{ mockKnowledge: MOCK_KNOWLEDGE }
+	);
+
+	await page.reload();
+	await expect(page.getByText('No knowledge')).not.toBeVisible();
+	await expect(page.getByTestId('knowledge-item')).toHaveCount(2);
+
+	await page.getByText('Settings').click();
+	// Click the delete button
+	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all knowledge?'));
+	await page.getByText('Delete all knowledge').click();
+	await page.getByText('Knowledge', { exact: true }).click();
+	await expect(page.getByText('No knowledge')).toBeVisible();
+	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
+	expect(await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'))).toBe('null');
+})
+
 test('can use knowledge in the session', async ({ page }) => {
 	const sessionArticle = page.locator('.article-list .article');
 	const knowledgeId = page.getByTestId('knowledge-id');
@@ -106,7 +132,7 @@ test('can use knowledge in the session', async ({ page }) => {
 	await page.goto('/');
 	await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 	await seedKnowledgeAndReload(page);
-	await page.getByText('Knowledge').click();
+	await page.getByText('Knowledge', { exact: true }).click();
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(MOCK_KNOWLEDGE.length);
 
 	await mockCompletionResponse(page, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1);

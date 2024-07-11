@@ -25,7 +25,7 @@ function createLocalStorageStore<T>(key: string, initialValue: T | null = null) 
 	return store;
 }
 
-const LOCAL_STORAGE_PREFIX = 'hollama';
+export const LOCAL_STORAGE_PREFIX = 'hollama';
 
 export interface Settings {
 	ollamaServer: string | null;
@@ -33,6 +33,12 @@ export interface Settings {
 	ollamaModels: OllamaModel[];
 }
 
-export const settingsStore = createLocalStorageStore<Settings>(`${LOCAL_STORAGE_PREFIX}-settings`);
-export const sessionsStore = createLocalStorageStore<Session[]>(`${LOCAL_STORAGE_PREFIX}-sessions`);
-export const knowledgeStore = createLocalStorageStore<Knowledge[]>(`${LOCAL_STORAGE_PREFIX}-knowledge`);
+export enum StorageKey {
+	HollamaSettings = `${LOCAL_STORAGE_PREFIX}-settings`,
+	HollamaSessions = `${LOCAL_STORAGE_PREFIX}-sessions`,
+	HollamaKnowledge = `${LOCAL_STORAGE_PREFIX}-knowledge`
+}
+
+export const settingsStore = createLocalStorageStore<Settings>(StorageKey.HollamaSettings);
+export const sessionsStore = createLocalStorageStore<Session[]>(StorageKey.HollamaSessions);
+export const knowledgeStore = createLocalStorageStore<Knowledge[]>(StorageKey.HollamaKnowledge);
