@@ -12,6 +12,7 @@
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
+	import { format } from 'date-fns';
 
 	export let data: PageData;
 
@@ -57,7 +58,7 @@
 			{#if isNewKnowledge}
 				New knowledge
 			{:else}
-				{knowledge.updatedAt}
+				Last updated at {format(new Date(knowledge.updatedAt), 'MMMM d, yyyy h:mm a')}
 			{/if}
 		</p>
 

@@ -13,6 +13,7 @@ export interface Session {
 	model: string;
 	messages: Message[];
 	context: number[];
+	updatedAt: string;
 	knowledge?: Knowledge;
 }
 
@@ -33,7 +34,7 @@ export const loadSession = (id: string): Session => {
 		const model = get(settingsStore)?.ollamaModel || "";
 
 		// Create a new session
-		session = { id, model, messages: [], context: [] };
+		session = { id, model, messages: [], context: [], updatedAt: new Date().toISOString() };
 	}
 
 	return session;

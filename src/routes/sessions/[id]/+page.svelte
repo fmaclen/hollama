@@ -22,6 +22,7 @@
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
+	import { format } from 'date-fns';
 
 	export let data: PageData;
 
@@ -70,6 +71,7 @@
 	async function handleCompletionDone(completion: string, context: number[]) {
 		const message: Message = { role: 'ai', content: completion };
 		session.messages = [...session.messages, message];
+		session.updatedAt = new Date().toISOString();
 		completion = '';
 		promptCached = '';
 		saveSession({ ...session, context });
@@ -151,6 +153,11 @@
 		</p>
 		<p data-testid="model-name" class="text-muted text-sm">
 			{isNewSession ? 'New session' : session.model}
+			{#if session.updatedAt}
+				<p data-testid="session-timestamp" class="text-muted text-sm">
+					Last updated at {format(new Date(session.updatedAt), 'MMMM d, yyyy h:mm a')}
+				</p>
+			{/if}
 		</p>
 
 		<svelte:fragment slot="nav">

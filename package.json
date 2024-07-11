@@ -48,5 +48,8 @@
 	"optionalDependencies": {
 		"@sveltejs/adapter-cloudflare": "^4.2.1"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"date-fns": "^3.6.0"
+	}
 }
