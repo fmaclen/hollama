@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, seedKnowledgeAndReload, submitWithKeyboardShortcut, textEditorLocator } from './utils';
 
 test('creates and edits knowledge', async ({ page }) => {
-	const timestamp = page.getByTestId('knowledge-timestamp')
+	const timestamp = page.getByTestId('knowledge-timestamp');
 	const fieldName = page.getByLabel('Name');
 	const fieldContent = textEditorLocator(page, 'Content');
 	const buttonSave = page.getByText('Save');
@@ -21,7 +21,7 @@ test('creates and edits knowledge', async ({ page }) => {
 	// Create knowledge
 	await page.getByText('New knowledge').click();
 	await expect(page.getByText('Create new knowlege or choose one from the list')).not.toBeVisible();
-	await expect(timestamp).toHaveText('New knowledge');
+	await expect(timestamp).not.toBeVisible();
 	await expect(fieldName).toBeVisible();
 	await expect(fieldContent).toBeVisible();
 	await expect(buttonSave).toBeDisabled();

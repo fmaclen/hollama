@@ -13,6 +13,7 @@ test.describe('Session', () => {
 	test('creates new session and chats', async ({ page }) => {
 		const sessionIdLocator = page.getByTestId('session-id');
 		const modelNameLocator = page.getByTestId('model-name');
+		const newSessionText = page.getByTestId('new-session-text');
 		const newSessionButton = page.getByTestId('new-session');
 		const runButton = page.getByText('Run');
 		const articleLocator = page.locator('article');
@@ -27,7 +28,8 @@ test.describe('Session', () => {
 		await newSessionButton.click();
 		await expect(sessionIdLocator).toBeVisible();
 		await expect(sessionIdLocator).toHaveText(/Session #[a-z0-9]{2,8}/);
-		await expect(modelNameLocator).toHaveText('New session');
+		await expect(modelNameLocator).not.toBeVisible();
+		await expect(newSessionText).toBeVisible();
 		await expect(promptTextarea).toHaveText('');
 		await expect(runButton).toBeVisible();
 		await expect(runButton).toBeDisabled();
@@ -173,6 +175,7 @@ test.describe('Session', () => {
 							{ role: "ai", content: "Hello world! 👋 🌎\n\nIt's great to hear from you. What would you like to do today?" }
 						],
 						context: [],
+						updatedAt: new Date().toISOString(),
 					},
 					{
 						id: "m2jjac",
@@ -182,6 +185,7 @@ test.describe('Session', () => {
 							{ role: "ai", content: "Hello! It's always a pleasure to see you back. How can I assist you today?" }
 						],
 						context: [],
+						updatedAt: new Date().toISOString(),
 					}
 				]
 			)
@@ -239,13 +243,14 @@ test.describe('Session', () => {
 		const userMessage = page.locator('article', { hasText: "You" })
 		const aiMessage = page.locator('article', { hasText: "AI" })
 		const modelName = page.getByTestId('model-name');
+		const newSessionText = page.getByTestId('new-session-text');
 
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByText("New session", { exact: true }).click();
 		await expect(userMessage).not.toBeVisible();
 		await expect(aiMessage).not.toBeVisible();
-		await expect(modelName).toHaveText('New session');
+		await expect(newSessionText).toBeVisible();
 
 		// Mock a response that takes a while to generate
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);

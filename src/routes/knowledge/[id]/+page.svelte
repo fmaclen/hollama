@@ -55,12 +55,14 @@
 				#{knowledge.id}
 			</Button>
 		</p>
-		<p data-testid="knowledge-timestamp" class="text-sm text-muted">
+		<p class="text-sm text-muted">
 			{#if isNewKnowledge}
 				New knowledge
 			{:else}
 				<Badge variant="warning" capitalize={false}>
-					{formatDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })}
+					<p data-testid="knowledge-timestamp">
+						{formatDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })}
+					</p>
 				</Badge>
 			{/if}
 		</p>
