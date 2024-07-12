@@ -161,8 +161,6 @@
 		</svelte:fragment>
 	</Header>
 	{#key isNewSession}
-		<!-- <PaneGroup direction="vertical">
-			<Pane defaultSize={isNewSession ? 50 : 70} minSize={10}> -->
 		<div class="article-list" bind:this={messageWindow}>
 			{#if isNewSession}
 				<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
@@ -176,12 +174,8 @@
 				<Article message={{ role: 'ai', content: completion || '...' }} />
 			{/if}
 		</div>
-		<!-- </Pane>
 
-			<PaneResizer class="border-t border-y-2 border-shade-3"></PaneResizer>
-
-			<Pane defaultSize={isNewSession ? 50 : 25} minSize={10}> -->
-		<div class="grid h-full w-full grid-flow-col overflow-y-auto p-8">
+		<div class="prompt-editor">
 			<Fieldset>
 				{#if isNewSession}
 					<div class="grid grid-cols-[1fr,1fr] items-end gap-x-3 lg:gap-x-6">
@@ -223,18 +217,21 @@
 				</div>
 			</Fieldset>
 		</div>
-		<!-- </Pane>
-		</PaneGroup> -->
 	{/key}
 </div>
 
 <style lang="scss">
 	.session {
-		@apply flex h-full w-full flex-col overflow-y-auto;
+		@apply relative flex h-full w-full flex-col overflow-y-auto;
 	}
 
 	.article-list {
 		@apply flex h-full flex-col overflow-y-auto p-4;
 		@apply lg:p-8;
+	}
+
+	.prompt-editor {
+		@apply absolute bottom-0 left-0 right-0 z-10 mt-auto grid  w-full grid-flow-col overflow-y-auto border-t bg-shade-1 p-4;
+		@apply 2xl:border-l 2xl:border-r 2xl:rounded-t-lg 2xl:left-1/2 2xl:-translate-x-1/2 2xl:max-w-[80ch] 2xl:p-8;
 	}
 </style>
