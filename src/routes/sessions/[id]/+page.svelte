@@ -21,6 +21,7 @@
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
+	import Field from '$lib/components/Field.svelte';
 
 	export let data: PageData;
 
@@ -162,87 +163,110 @@
 		</svelte:fragment>
 	</Header>
 	{#key isNewSession}
-		<div class="article-list" bind:this={messageWindow}>
-			{#if isNewSession}
-				<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
-			{/if}
+		<div class="session__history" bind:this={messageWindow}>
+			<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
+				{#if isNewSession}
+					<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
+				{/if}
 
-			{#each session.messages as message, i (session.id + i)}
-				<Article {message} />
-			{/each}
+				{#each session.messages as message, i (session.id + i)}
+					<Article {message} />
+				{/each}
 
-			{#if isLastMessageFromUser}
-				<Article message={{ role: 'ai', content: completion || '...' }} />
-			{/if}
-		</div>
+				{#if isLastMessageFromUser}
+					<Article message={{ role: 'ai', content: completion || '...' }} />
+				{/if}
+			</div>
 
-		<div class="prompt-editor {isPromptFullscreen ? 'prompt-editor--fullscreen' : ''}">
-			<button
-				class="prompt-editor__toggle"
-				on:click={() => (isPromptFullscreen = !isPromptFullscreen)}
-			>
-				<UnfoldVertical class="h-3 w-3 mx-auto my-2 opacity-50" />
-			</button>
+			<div class="prompt-editor {isPromptFullscreen ? 'prompt-editor--fullscreen' : ''}">
+				<button
+					class="prompt-editor__toggle"
+					on:click={() => (isPromptFullscreen = !isPromptFullscreen)}
+				>
+					<UnfoldVertical class="mx-auto my-2 h-3 w-3 opacity-50" />
+				</button>
 
-			<div class="prompt-editor__form">
-				<Fieldset isFullscreen={isPromptFullscreen}>
-					{#if isNewSession}
-						<div class="prompt-editor__tools">
-							<FieldSelectModel />
-							<div class="prompt-editor__knowledge">
-								<FieldSelect
-									label="Knowledge"
-									name="knowledge"
-									disabled={!$knowledgeStore}
-									options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
-									bind:value={knowledgeId}
-								/>
+				<div class="prompt-editor__form">
+					<Fieldset isFullscreen={isPromptFullscreen}>
+						{#if isNewSession}
+							<div class="prompt-editor__tools">
+								<FieldSelectModel />
+								<div class="prompt-editor__knowledge">
+									<FieldSelect
+										label="Knowledge"
+										name="knowledge"
+										disabled={!$knowledgeStore}
+										options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
+										bind:value={knowledgeId}
+									/>
 
-								<Button
-									aria-label="New knowledge"
-									variant="outline"
-									size="icon"
-									href={generateNewUrl(Sitemap.KNOWLEDGE)}
-								>
-									<Brain class="h-4 w-4" />
-								</Button>
-							</div>
-						</div>
-					{/if}
-
-					{#key session}
-						<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
-					{/key}
-
-					<div class="flex w-full">
-						<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
-						{#if isLastMessageFromUser}
-							<div class="ml-2">
-								<Button title="Stop response" variant="outline" size="icon" on:click={handleAbort}>
-									<StopCircle class="h-4 w-4" />
-								</Button>
+									<Button
+										aria-label="New knowledge"
+										variant="outline"
+										size="icon"
+										href={generateNewUrl(Sitemap.KNOWLEDGE)}
+									>
+										<Brain class="h-4 w-4" />
+									</Button>
+								</div>
 							</div>
 						{/if}
-					</div>
-				</Fieldset>
+
+						{#key session}
+							{#if isPromptFullscreen}
+								<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
+							{:else}
+								<Field name="prompt">
+									<svelte:fragment slot="label">Prompt</svelte:fragment>
+									<textarea name="prompt" class="prompt-editor__textarea" bind:value={prompt} />
+								</Field>
+							{/if}
+						{/key}
+
+						<div class="flex w-full">
+							<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
+							{#if isLastMessageFromUser}
+								<div class="ml-2">
+									<Button
+										title="Stop response"
+										variant="outline"
+										size="icon"
+										on:click={handleAbort}
+									>
+										<StopCircle class="h-4 w-4" />
+									</Button>
+								</div>
+							{/if}
+						</div>
+					</Fieldset>
+				</div>
 			</div>
 		</div>
 	{/key}
 </div>
 
 <style lang="scss">
+	@import '$lib/mixins.scss';
+
 	.session {
 		@apply relative flex h-full w-full flex-col overflow-y-auto;
 	}
 
-	.article-list {
-		@apply flex flex-grow flex-col overflow-y-auto p-4;
+	.session__history {
+		@apply flex h-full flex-grow flex-col overflow-y-auto;
+	}
+
+	.session__articles {
+		@apply h-full p-4;
 		@apply lg:p-8;
 	}
 
+	.session__articles--fullscreen {
+		@apply h-max flex-grow;
+	}
+
 	.prompt-editor__tools {
-		@apply grid grid-cols-[1fr,1fr] items-end gap-x-3;
-		@apply lg:gap-x-6;
+		@apply grid grid-cols-[1fr,1fr] items-end gap-x-4;
 	}
 
 	.prompt-editor__knowledge {
@@ -251,22 +275,26 @@
 	}
 
 	.prompt-editor {
-		@apply sticky bottom-0 left-0 right-0 z-10 mt-auto flex w-full flex-col border-t;
-		@apply 2xl:left-1/2 2xl:max-w-[80ch] 2xl:-translate-x-1/2 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
+		@apply sticky bottom-0 left-0 right-0 z-10 mx-auto mt-auto flex w-full flex-col border-t;
+		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
 	}
 
 	.prompt-editor--fullscreen {
-		@apply h-full max-h-[75%];
+		@apply min-h-[75%];
 	}
 
 	.prompt-editor__form {
-		@apply h-full overflow-y-auto p-4 bg-shade-0;
-		@apply 2xl:p-8;
+		@apply h-full overflow-y-auto bg-shade-0 p-4;
 	}
 
 	.prompt-editor__toggle {
-		@apply bg-shade-0 border-b;
+		@apply border-b bg-shade-0;
 		@apply hover:bg-shade-2 active:bg-shade-2;
-		@apply 2xl:rounded-t-lg
+		@apply 2xl:rounded-t-lg;
+	}
+
+	.prompt-editor__textarea {
+		@include base-input;
+		@apply min-h-24;
 	}
 </style>
