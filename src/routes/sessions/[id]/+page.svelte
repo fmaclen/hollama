@@ -181,7 +181,7 @@
 				class="prompt-editor__toggle"
 				on:click={() => (isPromptFullscreen = !isPromptFullscreen)}
 			>
-				<UnfoldVertical class="h-4 w-4 mx-auto my-2 opacity-50" />
+				<UnfoldVertical class="h-3 w-3 mx-auto my-2 opacity-50" />
 			</button>
 
 			<div class="prompt-editor__form">
@@ -260,12 +260,13 @@
 	}
 
 	.prompt-editor__form {
-		@apply h-full overflow-y-auto p-4 bg-shade-1;
+		@apply h-full overflow-y-auto p-4 bg-shade-0;
 		@apply 2xl:p-8;
 	}
 
 	.prompt-editor__toggle {
-		@apply bg-shade-1;
+		@apply bg-shade-0 border-b;
 		@apply hover:bg-shade-2 active:bg-shade-2;
+		@apply 2xl:rounded-t-lg
 	}
 </style>
