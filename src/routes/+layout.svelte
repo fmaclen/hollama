@@ -78,8 +78,8 @@
 </div>
 
 <style lang="scss">
-	:global(body) {
-		@apply bg-shade-0 text-base;
+	:global(html) {
+		@apply bg-shade-0 text-base fixed;
 		@apply lg:bg-shade-2 text-base;
 	}
 

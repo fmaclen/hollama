@@ -249,7 +249,7 @@
 	@import '$lib/mixins.scss';
 
 	.session {
-		@apply relative flex h-full w-full flex-col overflow-y-auto;
+		@apply flex h-full w-full flex-col overflow-y-auto;
 	}
 
 	.session__history {
@@ -257,7 +257,7 @@
 	}
 
 	.session__articles {
-		@apply h-full p-4;
+		@apply flex-grow p-4;
 		@apply lg:p-8;
 	}
 
@@ -275,7 +275,7 @@
 	}
 
 	.prompt-editor {
-		@apply sticky bottom-0 left-0 right-0 z-10 mx-auto mt-auto flex w-full flex-col border-t;
+		@apply sticky bottom-0 z-10 mx-auto flex w-full flex-col border-t;
 		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
 	}
 
@@ -295,6 +295,6 @@
 
 	.prompt-editor__textarea {
 		@include base-input;
-		@apply min-h-24;
+		@apply min-h-16;
 	}
 </style>
