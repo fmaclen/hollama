@@ -125,7 +125,7 @@ test('all knowledge can be deleted', async ({ page }) => {
 })
 
 test('can use knowledge in the session', async ({ page }) => {
-	const sessionArticle = page.locator('.article-list .article');
+	const sessionArticle = page.locator('.session__articles .article');
 	const knowledgeId = page.getByTestId('knowledge-id');
 	
 	await mockTagsResponse(page);
