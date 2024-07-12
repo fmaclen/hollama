@@ -3,6 +3,7 @@
 
 	export let handleSubmit;
 	export let disabled: boolean | undefined = false;
+	export let hasMetaKey: boolean = false;
 </script>
 
 <Button class="w-full text-left" on:click={handleSubmit} {disabled}>
@@ -10,7 +11,7 @@
 
 	{#if !disabled}
 		<span class="tag">
-			{navigator.userAgent.indexOf('Mac') !== -1 ? '⌘' : 'Ctrl'} ↵
+			{hasMetaKey ? (navigator.userAgent.indexOf('Mac') !== -1 ? '⌘' : 'Ctrl') : ''} ↵
 		</span>
 	{/if}
 </Button>

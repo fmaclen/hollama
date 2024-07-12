@@ -218,13 +218,14 @@
 							{:else}
 								<Field name="prompt">
 									<svelte:fragment slot="label">Prompt</svelte:fragment>
-									<textarea name="prompt" class="prompt-editor__textarea" bind:value={prompt} />
+									<textarea name="prompt" class="prompt-editor__textarea" bind:value={prompt} on:keydown={(e) => e.key === 'Enter' && handleSubmit()} />
 								</Field>
 							{/if}
 						{/key}
 
 						<div class="flex w-full">
-							<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
+							<ButtonSubmit {handleSubmit} hasMetaKey={isPromptFullscreen} disabled={!prompt}>Run</ButtonSubmit>
+
 							{#if isLastMessageFromUser}
 								<div class="ml-2">
 									<Button
