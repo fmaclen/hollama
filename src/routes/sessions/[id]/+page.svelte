@@ -280,11 +280,11 @@
 	}
 
 	.prompt-editor--fullscreen {
-		@apply min-h-[75%];
+		@apply min-h-[60dvh];
 	}
 
 	.prompt-editor__form {
-		@apply h-full overflow-y-auto bg-shade-0 p-4;
+		@apply h-full overflow-y-auto bg-shade-0;
 	}
 
 	.prompt-editor__toggle {
