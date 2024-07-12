@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	import { Brain, StopCircle, Trash2 } from 'lucide-svelte';
 
 	import Button from '$lib/components/Button.svelte';
@@ -149,7 +148,7 @@
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
 			Session <Button size="link" variant="link" href={`/${session.id}`}>#{session.id}</Button>
 		</p>
-		<p data-testid="model-name" class="text-muted text-sm">
+		<p data-testid="model-name" class="text-sm text-muted">
 			{isNewSession ? 'New session' : session.model}
 		</p>
 
@@ -162,75 +161,70 @@
 		</svelte:fragment>
 	</Header>
 	{#key isNewSession}
-		<PaneGroup direction="vertical">
-			<Pane defaultSize={isNewSession ? 50 : 70} minSize={10}>
-				<div class="article-list" bind:this={messageWindow}>
-					{#if isNewSession}
-						<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
-					{/if}
+		<!-- <PaneGroup direction="vertical">
+			<Pane defaultSize={isNewSession ? 50 : 70} minSize={10}> -->
+		<div class="article-list" bind:this={messageWindow}>
+			{#if isNewSession}
+				<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
+			{/if}
 
-					{#each session.messages as message, i (session.id + i)}
-						<Article {message} />
-					{/each}
+			{#each session.messages as message, i (session.id + i)}
+				<Article {message} />
+			{/each}
 
-					{#if isLastMessageFromUser}
-						<Article message={{ role: 'ai', content: completion || '...' }} />
-					{/if}
-				</div>
-			</Pane>
+			{#if isLastMessageFromUser}
+				<Article message={{ role: 'ai', content: completion || '...' }} />
+			{/if}
+		</div>
+		<!-- </Pane>
 
 			<PaneResizer class="border-t border-y-2 border-shade-3"></PaneResizer>
 
-			<Pane defaultSize={isNewSession ? 50 : 25} minSize={10}>
-				<div class="grid grid-flow-col h-full w-full overflow-y-auto p-8">
-					<Fieldset>
-						{#if isNewSession}
-							<div class="grid grid-cols-[1fr,1fr] items-end gap-x-3 lg:gap-x-6">
-								<FieldSelectModel />
-								<div class="grid grid-cols-[auto,max-content] items-end gap-x-1 lg:gap-x-2">
-									<FieldSelect
-										label="Knowledge"
-										name="knowledge"
-										disabled={!$knowledgeStore}
-										options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
-										bind:value={knowledgeId}
-									/>
+			<Pane defaultSize={isNewSession ? 50 : 25} minSize={10}> -->
+		<div class="grid h-full w-full grid-flow-col overflow-y-auto p-8">
+			<Fieldset>
+				{#if isNewSession}
+					<div class="grid grid-cols-[1fr,1fr] items-end gap-x-3 lg:gap-x-6">
+						<FieldSelectModel />
+						<div class="grid grid-cols-[auto,max-content] items-end gap-x-1 lg:gap-x-2">
+							<FieldSelect
+								label="Knowledge"
+								name="knowledge"
+								disabled={!$knowledgeStore}
+								options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
+								bind:value={knowledgeId}
+							/>
 
-									<Button
-										aria-label="New knowledge"
-										variant="outline"
-										size="icon"
-										href={generateNewUrl(Sitemap.KNOWLEDGE)}
-									>
-										<Brain class="h-4 w-4" />
-									</Button>
-								</div>
-							</div>
-						{/if}
-
-						{#key session}
-							<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
-						{/key}
-
-						<div class="flex w-full">
-							<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
-							{#if isLastMessageFromUser}
-								<div class="ml-2">
-									<Button
-										title="Stop response"
-										variant="outline"
-										size="icon"
-										on:click={handleAbort}
-									>
-										<StopCircle class="h-4 w-4" />
-									</Button>
-								</div>
-							{/if}
+							<Button
+								aria-label="New knowledge"
+								variant="outline"
+								size="icon"
+								href={generateNewUrl(Sitemap.KNOWLEDGE)}
+							>
+								<Brain class="h-4 w-4" />
+							</Button>
 						</div>
-					</Fieldset>
+					</div>
+				{/if}
+
+				{#key session}
+					<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
+				{/key}
+
+				<div class="flex w-full">
+					<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
+					{#if isLastMessageFromUser}
+						<div class="ml-2">
+							<Button title="Stop response" variant="outline" size="icon" on:click={handleAbort}>
+								<StopCircle class="h-4 w-4" />
+							</Button>
+						</div>
+					{/if}
 				</div>
-			</Pane>
-		</PaneGroup>
+			</Fieldset>
+		</div>
+		<!-- </Pane>
+		</PaneGroup> -->
 	{/key}
 </div>
 
