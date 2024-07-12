@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { Brain, StopCircle, Trash2 } from 'lucide-svelte';
+	import { Brain, StopCircle, Trash2, UnfoldVertical } from 'lucide-svelte';
 
 	import Button from '$lib/components/Button.svelte';
 	import Article from './Article.svelte';
@@ -30,6 +30,7 @@
 	let prompt: string;
 	let promptCached: string;
 	let abortController: AbortController;
+	let isPromptFullscreen = false;
 
 	let knowledgeId: string;
 	let knowledge: Knowledge | null;
@@ -175,47 +176,56 @@
 			{/if}
 		</div>
 
-		<div class="prompt-editor">
-			<Fieldset>
-				{#if isNewSession}
-					<div class="grid grid-cols-[1fr,1fr] items-end gap-x-3 lg:gap-x-6">
-						<FieldSelectModel />
-						<div class="grid grid-cols-[auto,max-content] items-end gap-x-1 lg:gap-x-2">
-							<FieldSelect
-								label="Knowledge"
-								name="knowledge"
-								disabled={!$knowledgeStore}
-								options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
-								bind:value={knowledgeId}
-							/>
+		<div class="prompt-editor {isPromptFullscreen ? 'prompt-editor--fullscreen' : ''}">
+			<button
+				class="prompt-editor__toggle"
+				on:click={() => (isPromptFullscreen = !isPromptFullscreen)}
+			>
+				<UnfoldVertical class="h-4 w-4 mx-auto my-2 opacity-50" />
+			</button>
 
-							<Button
-								aria-label="New knowledge"
-								variant="outline"
-								size="icon"
-								href={generateNewUrl(Sitemap.KNOWLEDGE)}
-							>
-								<Brain class="h-4 w-4" />
-							</Button>
-						</div>
-					</div>
-				{/if}
+			<div class="prompt-editor__form">
+				<Fieldset isFullscreen={isPromptFullscreen}>
+					{#if isNewSession}
+						<div class="prompt-editor__tools">
+							<FieldSelectModel />
+							<div class="prompt-editor__knowledge">
+								<FieldSelect
+									label="Knowledge"
+									name="knowledge"
+									disabled={!$knowledgeStore}
+									options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
+									bind:value={knowledgeId}
+								/>
 
-				{#key session}
-					<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
-				{/key}
-
-				<div class="flex w-full">
-					<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
-					{#if isLastMessageFromUser}
-						<div class="ml-2">
-							<Button title="Stop response" variant="outline" size="icon" on:click={handleAbort}>
-								<StopCircle class="h-4 w-4" />
-							</Button>
+								<Button
+									aria-label="New knowledge"
+									variant="outline"
+									size="icon"
+									href={generateNewUrl(Sitemap.KNOWLEDGE)}
+								>
+									<Brain class="h-4 w-4" />
+								</Button>
+							</div>
 						</div>
 					{/if}
-				</div>
-			</Fieldset>
+
+					{#key session}
+						<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
+					{/key}
+
+					<div class="flex w-full">
+						<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
+						{#if isLastMessageFromUser}
+							<div class="ml-2">
+								<Button title="Stop response" variant="outline" size="icon" on:click={handleAbort}>
+									<StopCircle class="h-4 w-4" />
+								</Button>
+							</div>
+						{/if}
+					</div>
+				</Fieldset>
+			</div>
 		</div>
 	{/key}
 </div>
@@ -226,12 +236,36 @@
 	}
 
 	.article-list {
-		@apply flex h-full flex-col overflow-y-auto p-4;
+		@apply flex flex-grow flex-col overflow-y-auto p-4;
 		@apply lg:p-8;
 	}
 
+	.prompt-editor__tools {
+		@apply grid grid-cols-[1fr,1fr] items-end gap-x-3;
+		@apply lg:gap-x-6;
+	}
+
+	.prompt-editor__knowledge {
+		@apply grid grid-cols-[auto,max-content] items-end gap-x-1;
+		@apply lg:gap-x-2;
+	}
+
 	.prompt-editor {
-		@apply absolute bottom-0 left-0 right-0 z-10 mt-auto grid  w-full grid-flow-col overflow-y-auto border-t bg-shade-1 p-4;
-		@apply 2xl:border-l 2xl:border-r 2xl:rounded-t-lg 2xl:left-1/2 2xl:-translate-x-1/2 2xl:max-w-[80ch] 2xl:p-8;
+		@apply sticky bottom-0 left-0 right-0 z-10 mt-auto flex w-full flex-col border-t;
+		@apply 2xl:left-1/2 2xl:max-w-[80ch] 2xl:-translate-x-1/2 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
+	}
+
+	.prompt-editor--fullscreen {
+		@apply h-full max-h-[75%];
+	}
+
+	.prompt-editor__form {
+		@apply h-full overflow-y-auto p-4 bg-shade-1;
+		@apply 2xl:p-8;
+	}
+
+	.prompt-editor__toggle {
+		@apply bg-shade-1;
+		@apply hover:bg-shade-2 active:bg-shade-2;
 	}
 </style>
