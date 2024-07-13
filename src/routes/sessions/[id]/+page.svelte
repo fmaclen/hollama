@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
-	import { Brain, StopCircle, Trash2 } from 'lucide-svelte';
+	import { Brain, StopCircle, Trash2, UnfoldVertical } from 'lucide-svelte';
 
 	import Button from '$lib/components/Button.svelte';
 	import Article from './Article.svelte';
@@ -22,6 +21,7 @@
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
+	import Field from '$lib/components/Field.svelte';
 
 	export let data: PageData;
 
@@ -31,6 +31,7 @@
 	let prompt: string;
 	let promptCached: string;
 	let abortController: AbortController;
+	let isPromptFullscreen = false;
 
 	let knowledgeId: string;
 	let knowledge: Knowledge | null;
@@ -149,7 +150,7 @@
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
 			Session <Button size="link" variant="link" href={`/${session.id}`}>#{session.id}</Button>
 		</p>
-		<p data-testid="model-name" class="text-muted text-sm">
+		<p data-testid="model-name" class="text-sm text-muted">
 			{isNewSession ? 'New session' : session.model}
 		</p>
 
@@ -162,32 +163,35 @@
 		</svelte:fragment>
 	</Header>
 	{#key isNewSession}
-		<PaneGroup direction="vertical">
-			<Pane defaultSize={isNewSession ? 50 : 70} minSize={10}>
-				<div class="article-list" bind:this={messageWindow}>
-					{#if isNewSession}
-						<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
-					{/if}
+		<div class="session__history" bind:this={messageWindow}>
+			<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
+				{#if isNewSession}
+					<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
+				{/if}
 
-					{#each session.messages as message, i (session.id + i)}
-						<Article {message} />
-					{/each}
+				{#each session.messages as message, i (session.id + i)}
+					<Article {message} />
+				{/each}
 
-					{#if isLastMessageFromUser}
-						<Article message={{ role: 'ai', content: completion || '...' }} />
-					{/if}
-				</div>
-			</Pane>
+				{#if isLastMessageFromUser}
+					<Article message={{ role: 'ai', content: completion || '...' }} />
+				{/if}
+			</div>
 
-			<PaneResizer class="border-t border-y-2 border-shade-3"></PaneResizer>
+			<div class="prompt-editor {isPromptFullscreen ? 'prompt-editor--fullscreen' : ''}">
+				<button
+					class="prompt-editor__toggle"
+					on:click={() => (isPromptFullscreen = !isPromptFullscreen)}
+				>
+					<UnfoldVertical class="mx-auto my-2 h-3 w-3 opacity-50" />
+				</button>
 
-			<Pane defaultSize={isNewSession ? 50 : 25} minSize={10}>
-				<div class="grid grid-flow-col h-full w-full overflow-y-auto p-8">
-					<Fieldset>
+				<div class="prompt-editor__form">
+					<Fieldset isFullscreen={isPromptFullscreen}>
 						{#if isNewSession}
-							<div class="grid grid-cols-[1fr,1fr] items-end gap-x-3 lg:gap-x-6">
+							<div class="prompt-editor__tools">
 								<FieldSelectModel />
-								<div class="grid grid-cols-[auto,max-content] items-end gap-x-1 lg:gap-x-2">
+								<div class="prompt-editor__knowledge">
 									<FieldSelect
 										label="Knowledge"
 										name="knowledge"
@@ -209,11 +213,19 @@
 						{/if}
 
 						{#key session}
-							<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
+							{#if isPromptFullscreen}
+								<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
+							{:else}
+								<Field name="prompt">
+									<svelte:fragment slot="label">Prompt</svelte:fragment>
+									<textarea name="prompt" class="prompt-editor__textarea" bind:value={prompt} on:keydown={(e) => e.key === 'Enter' && handleSubmit()} />
+								</Field>
+							{/if}
 						{/key}
 
 						<div class="flex w-full">
-							<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
+							<ButtonSubmit {handleSubmit} hasMetaKey={isPromptFullscreen} disabled={!prompt}>Run</ButtonSubmit>
+
 							{#if isLastMessageFromUser}
 								<div class="ml-2">
 									<Button
@@ -229,18 +241,61 @@
 						</div>
 					</Fieldset>
 				</div>
-			</Pane>
-		</PaneGroup>
+			</div>
+		</div>
 	{/key}
 </div>
 
 <style lang="scss">
+	@import '$lib/mixins.scss';
+
 	.session {
 		@apply flex h-full w-full flex-col overflow-y-auto;
 	}
 
-	.article-list {
-		@apply flex h-full flex-col overflow-y-auto p-4;
+	.session__history {
+		@apply flex h-full flex-grow flex-col overflow-y-auto;
+	}
+
+	.session__articles {
+		@apply flex-grow p-4;
 		@apply lg:p-8;
+	}
+
+	.session__articles--fullscreen {
+		@apply h-max flex-grow;
+	}
+
+	.prompt-editor__tools {
+		@apply grid grid-cols-[1fr,1fr] items-end gap-x-4;
+	}
+
+	.prompt-editor__knowledge {
+		@apply grid grid-cols-[auto,max-content] items-end gap-x-1;
+		@apply lg:gap-x-2;
+	}
+
+	.prompt-editor {
+		@apply sticky bottom-0 z-10 mx-auto flex w-full flex-col border-t;
+		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
+	}
+
+	.prompt-editor--fullscreen {
+		@apply min-h-[60dvh];
+	}
+
+	.prompt-editor__form {
+		@apply h-full overflow-y-auto bg-shade-0;
+	}
+
+	.prompt-editor__toggle {
+		@apply border-b bg-shade-0;
+		@apply hover:bg-shade-2 active:bg-shade-2;
+		@apply 2xl:rounded-t-lg;
+	}
+
+	.prompt-editor__textarea {
+		@include base-input;
+		@apply min-h-16;
 	}
 </style>

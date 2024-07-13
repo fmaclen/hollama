@@ -158,7 +158,7 @@ export async function seedKnowledgeAndReload(page: Page) {
 }
 
 export function textEditorLocator(page: Page, label: string | RegExp | undefined): Locator {
-	return page.locator('.field').filter({ hasText: label }).getByRole('textbox');
+	return page.locator('.field').filter({ hasText: label }).locator('.text-editor').getByRole('textbox');
 }
 
 export async function submitWithKeyboardShortcut(page: Page) {

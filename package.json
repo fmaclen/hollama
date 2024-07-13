@@ -31,7 +31,6 @@
 		"highlight.js": "^11.9.0",
 		"lucide-svelte": "^0.372.0",
 		"markdown-it": "^14.1.0",
-		"paneforge": "^0.0.4",
 		"postcss": "^8.4.32",
 		"postcss-load-config": "^5.0.2",
 		"prettier": "^3.1.1",
