@@ -77,8 +77,9 @@
 
 <style lang="scss">
 	:global(html) {
-		@apply fixed bg-shade-0 text-base tracking-normal antialiased;
+		@apply fixed bg-shade-0 font-mono text-base tracking-normal antialiased md:subpixel-antialiased;
 		@apply text-base lg:bg-shade-2;
+		// font-kerning: none;
 	}
 
 	.layout {
