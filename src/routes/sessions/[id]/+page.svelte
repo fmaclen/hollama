@@ -143,6 +143,13 @@
 		// Remove the "incomplete" AI response
 		session.messages = session.messages.slice(0, -1);
 	}
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if (event.shiftKey) return;
+		if (event.key !== 'Enter') return;
+		event.preventDefault();
+		handleSubmit();
+	}
 </script>
 
 <div class="session">
@@ -218,13 +225,20 @@
 							{:else}
 								<Field name="prompt">
 									<svelte:fragment slot="label">Prompt</svelte:fragment>
-									<textarea name="prompt" class="prompt-editor__textarea" bind:value={prompt} on:keydown={(e) => e.key === 'Enter' && handleSubmit()} />
+									<textarea
+										name="prompt"
+										class="prompt-editor__textarea"
+										bind:value={prompt}
+										on:keydown={handleKeyDown}
+									/>
 								</Field>
 							{/if}
 						{/key}
 
 						<div class="flex w-full">
-							<ButtonSubmit {handleSubmit} hasMetaKey={isPromptFullscreen} disabled={!prompt}>Run</ButtonSubmit>
+							<ButtonSubmit {handleSubmit} hasMetaKey={isPromptFullscreen} disabled={!prompt}
+								>Run</ButtonSubmit
+							>
 
 							{#if isLastMessageFromUser}
 								<div class="ml-2">
