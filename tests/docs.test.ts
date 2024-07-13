@@ -7,6 +7,11 @@ test.beforeEach(async ({ page }) => {
 
 test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.goto('/');
+
+	// Wait for fonts to load
+	expect(await page.evaluate(() => document.fonts.size)).toBe(10);
+	expect(await page.evaluate(() => document.fonts.ready)).toBeTruthy();
+
 	await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[1].name);
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'settings.png' });
 
