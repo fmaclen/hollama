@@ -9,6 +9,16 @@
 	}
 </script>
 
-<Button title="Copy" variant="icon" size="icon" on:click={copyContent}>
-	<Files class="h-4 w-4" />
-</Button>
+<span class="copy-button">
+	<Button title="Copy" variant="icon" size="icon" on:click={copyContent}>
+		<Files class="h-4 w-4" />
+	</Button>
+</span>
+
+<style lang="scss">
+	.copy-button {
+		@apply opacity-40;
+		@apply hover:opacity-60;
+		@apply active:opacity-100;
+	}
+</style>

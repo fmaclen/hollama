@@ -9,6 +9,7 @@
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
 	import Button from '$lib/components/Button.svelte';
+	import Badge from '$lib/components/Badge.svelte';
 
 	export let message: Message;
 	let articleElement: HTMLElement;
@@ -48,16 +49,20 @@
 
 <article class="article" bind:this={articleElement}>
 	<nav class="article__nav">
-		<p data-testid="session-role" class="article__role">
-			{#if isKnowledgeRole}
-				Knowledge
-			{:else if isUserRole}
-				You
-			{:else}
-				{message.role}
-			{/if}
-		</p>
-		<CopyButton content={message.content} />
+		<div data-testid="session-role" class="article__role">
+			<Badge variant="default">
+				{#if isKnowledgeRole}
+					Knowledge
+				{:else if isUserRole}
+					You
+				{:else}
+					{message.role}
+				{/if}
+			</Badge>
+		</div>
+		<div class="article__interactive">
+			<CopyButton content={message.content} />
+		</div>
 	</nav>
 
 	<div class="markdown">
@@ -77,21 +82,31 @@
 
 <style lang="scss">
 	.article {
-		@apply mx-auto mb-3 flex w-full max-w-[80ch] flex-col;
+		@apply mx-auto mb-3 flex w-full max-w-[80ch] flex-col rounded-md border border-shade-3;
+		@apply hover:border-shade-6;
 		@apply last:mb-0;
 	}
 
+	.article__interactive {
+		@apply opacity-0;
+	}
+	.article:hover .article__interactive {
+		@apply opacity-100;
+	}
+
 	.article__nav {
-		@apply flex items-center justify-between border-b text-muted;
+		@apply ml-2 flex items-center justify-between text-muted;
+		@apply md:mx-2 md:mt-3;
 	}
 
 	.article__role {
-		@apply ml-3 text-center text-xs font-bold uppercase leading-7;
+		@apply text-center text-xs font-bold uppercase leading-7;
+		@apply md:pl-3;
 	}
 
 	.markdown {
 		@apply mx-auto my-3 w-full px-3;
-		@apply lg:my-6;
+		@apply md:mb-6 md:px-6;
 
 		:global(> *:not(:first-child)) {
 			@apply mt-4;
@@ -105,12 +120,12 @@
 			@apply relative;
 		}
 
-		:global(pre:hover > button) {
-			@apply opacity-100;
+		:global(pre:hover > .copy-button) {
+			@apply bg-shade-0;
 		}
 
-		:global(pre > button) {
-			@apply absolute right-0 top-1 opacity-0;
+		:global(pre > .copy-button) {
+			@apply absolute right-0 top-1;
 		}
 
 		:global(code) {
