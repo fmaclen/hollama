@@ -31,6 +31,7 @@
 	let prompt: string;
 	let promptCached: string;
 	let abortController: AbortController;
+	let promptTextarea: HTMLTextAreaElement;
 	let isPromptFullscreen = false;
 
 	let knowledgeId: string;
@@ -78,6 +79,9 @@
 
 	async function handleSubmit() {
 		if (!prompt) return;
+
+		// Reset the prompt editor to its default state
+		isPromptFullscreen = false;
 
 		let knowledgeContext: Message | null = null;
 		if (knowledge) {
@@ -228,6 +232,7 @@
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
+										bind:this={promptTextarea}
 										bind:value={prompt}
 										on:keydown={handleKeyDown}
 									/>
