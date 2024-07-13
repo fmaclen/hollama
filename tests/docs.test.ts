@@ -7,13 +7,19 @@ test.beforeEach(async ({ page }) => {
 
 test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.goto('/');
+
+	// Wait for fonts to load
+	expect(await page.evaluate(() => document.fonts.size)).toBe(10);
+	expect(await page.evaluate(() => document.fonts.ready)).toBeTruthy();
+
 	await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[1].name);
-	await page.screenshot({ path: 'docs/settings.png', fullPage: true });
+	expect(await page.screenshot()).toMatchSnapshot({ name: 'settings.png' });
 
 	await page.goto('/sessions/ulxz6l'); // Visiting a fake session id so it doesn't change from test to test
+	await page.locator('.prompt-editor__toggle').click();
 	await expect(page.getByText('No sessions')).toBeVisible();
 	await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
-	await page.screenshot({ path: 'docs/session-new.png', fullPage: true });
+	expect(await page.screenshot()).toMatchSnapshot({ name: 'session-new.png' });
 
 	// Stage 2 sessions
 	await page.evaluate(({ modelA, modelB }) => window.localStorage.setItem(
@@ -60,7 +66,7 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await expect(page.getByText("Here's a basic function")).toBeVisible();
 	await expect(page.getByLabel("Model")).not.toBeVisible();
 	await expect(page.getByText('No knowledge', { exact: true })).not.toBeVisible();
-	await page.screenshot({ path: 'docs/session.png', fullPage: true });
+	expect(await page.screenshot()).toMatchSnapshot({ name: 'session.png' });
 
 	await page.getByText("Knowledge").click();
 	await expect(page.getByText('No knowledge')).toBeVisible();
@@ -71,6 +77,5 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 
 	await page.getByText(MOCK_KNOWLEDGE[0].name).click();
 	await expect(page.getByTestId('knowledge-timestamp')).not.toContainText('New session');
-
-	await page.screenshot({ path: 'docs/knowledge.png', fullPage: true });
+	expect(await page.screenshot()).toMatchSnapshot({ name: 'knowledge.png' });
 });

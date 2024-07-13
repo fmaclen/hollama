@@ -9,9 +9,16 @@ const config: PlaywrightTestConfig = {
 	testMatch: /(.+\.)?(test|spec)\.[jt]s/,
 	timeout: 5000,
 	use: {
-		trace: 'on-first-retry',
+		trace: 'retain-on-failure',
 		contextOptions: {
 			permissions: ['clipboard-write', 'clipboard-read']
+		},
+		viewport: { width: 1280, height: 800 },
+	},
+	snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
+	expect: {
+		toMatchSnapshot: {
+			maxDiffPixelRatio: 0.01
 		}
 	}
 };
