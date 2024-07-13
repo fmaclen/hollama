@@ -236,9 +236,9 @@
 						{/key}
 
 						<div class="flex w-full">
-							<ButtonSubmit {handleSubmit} hasMetaKey={isPromptFullscreen} disabled={!prompt}
-								>Run</ButtonSubmit
-							>
+							<ButtonSubmit {handleSubmit} hasMetaKey={isPromptFullscreen} disabled={!prompt}>
+								Run
+							</ButtonSubmit>
 
 							{#if isLastMessageFromUser}
 								<div class="ml-2">
