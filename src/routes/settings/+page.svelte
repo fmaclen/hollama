@@ -178,12 +178,12 @@
 	}
 
 	.settings__container {
-		@apply flex flex-col gap-y-8 my-auto;
-		@apply lg:gap-y-16;
+		@apply flex flex-col gap-y-4 my-auto;
 	}
 
 	.about {
-		@apply container mx-auto flex max-w-[80ch] flex-col gap-y-2;
+		@apply container mx-auto flex max-w-[80ch] flex-col gap-y-2 p-4;
+		@apply lg:p-6;
 	}
 
 	.code {
