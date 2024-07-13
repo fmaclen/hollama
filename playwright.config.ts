@@ -17,7 +17,7 @@ const config: PlaywrightTestConfig = {
   snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
 	expect: {
 		toMatchSnapshot: {
-			threshold: 0.2
+			maxDiffPixelRatio: 0.02
 		}
 	}
 };
