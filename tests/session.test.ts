@@ -7,7 +7,7 @@ test.describe('Session', () => {
 
 	test.beforeEach(async ({ page }) => {
 		await mockTagsResponse(page);
-		promptTextarea = textEditorLocator(page, 'Prompt');
+		promptTextarea = page.locator('.prompt-editor__textarea');
 	});
 
 	test('creates new session and chats', async ({ page }) => {
@@ -256,7 +256,7 @@ test.describe('Session', () => {
 		await expect(userMessage).toContainText('Hello world!')
 		await expect(aiMessage).toBeVisible();
 		await expect(aiMessage).toContainText('...');
-		await expect(promptTextarea).toHaveText('');
+		await expect(promptTextarea).toHaveValue('');
 		await expect(sendButton).toBeDisabled();
 		await expect(stopButton).toBeVisible();
 		await expect(page.getByText("Write a prompt to start a new session")).not.toBeVisible();
@@ -264,10 +264,10 @@ test.describe('Session', () => {
 
 		await stopButton.click();
 		await expect(page.getByText("Write a prompt to start a new session")).toBeVisible();
-		await expect(promptTextarea).toHaveText('Hello world!');
 		await expect(userMessage).not.toBeVisible();
 		await expect(aiMessage).not.toBeVisible();
 		await expect(stopButton).not.toBeVisible();
+		await expect(promptTextarea).toHaveValue('Hello world!');
 	});
 
 	test.skip('handles API error when generating AI response', async ({ page }) => {
