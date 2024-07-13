@@ -7,8 +7,8 @@ const config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ['InterVariable', ...fontFamily.sans],
-				mono: ['"JetBrains Mono"', ...fontFamily.mono],
+				sans: ['Inter', "JetBrains Mono", ...fontFamily.sans],
+				mono: ["JetBrains Mono", ...fontFamily.mono],
 			},
 			backgroundColor: {
 				DEFAULT: 'hsl(var(--color-shade-2))',
