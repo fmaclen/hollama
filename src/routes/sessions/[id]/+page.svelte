@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { tick } from 'svelte';
+	import { afterUpdate, tick } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { Brain, StopCircle, Trash2, UnfoldVertical } from 'lucide-svelte';
 
@@ -33,6 +33,16 @@
 	let abortController: AbortController;
 	let promptTextarea: HTMLTextAreaElement;
 	let isPromptFullscreen = false;
+	let shouldFocusTextarea = false;
+
+	afterUpdate(() => {
+    if (shouldFocusTextarea && promptTextarea) {
+      promptTextarea.focus();
+      shouldFocusTextarea = false;
+    }
+  });
+
+  $: shouldFocusTextarea = !isPromptFullscreen
 
 	let knowledgeId: string;
 	let knowledge: Knowledge | null;
@@ -74,6 +84,7 @@
 		session.messages = [...session.messages, message];
 		completion = '';
 		promptCached = '';
+		shouldFocusTextarea = true;
 		saveSession({ ...session, context });
 	}
 
@@ -81,7 +92,7 @@
 		if (!prompt) return;
 
 		// Reset the prompt editor to its default state
-		isPromptFullscreen = false;
+    isPromptFullscreen = false;
 
 		let knowledgeContext: Message | null = null;
 		if (knowledge) {
