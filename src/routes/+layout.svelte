@@ -77,7 +77,7 @@
 
 <style lang="scss">
 	:global(html) {
-		@apply fixed bg-shade-0 text-base tracking-normal;
+		@apply fixed bg-shade-0 text-base tracking-tighter;
 		@apply text-base lg:bg-shade-2;
 	}
 
@@ -87,7 +87,7 @@
 	}
 
 	.layout__aside {
-		@apply grid grid-cols-5 justify-between px-2 gap-x-2;
+		@apply grid grid-cols-5 justify-between gap-x-2 px-2;
 		@apply lg:flex lg:flex-col;
 	}
 
