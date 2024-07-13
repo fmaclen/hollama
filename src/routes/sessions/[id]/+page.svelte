@@ -295,6 +295,11 @@
 		@apply h-max flex-grow;
 	}
 
+	.prompt-editor {
+		@apply sticky bottom-0 z-10 mx-auto flex w-full flex-col border-t;
+		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
+	}
+
 	.prompt-editor__tools {
 		@apply grid grid-cols-[1fr,1fr] items-end gap-x-4;
 	}
@@ -304,21 +309,17 @@
 		@apply lg:gap-x-2;
 	}
 
-	.prompt-editor {
-		@apply sticky bottom-0 z-10 mx-auto flex w-full flex-col border-t;
-		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
-	}
 
 	.prompt-editor--fullscreen {
 		@apply min-h-[60dvh];
 	}
 
 	.prompt-editor__form {
-		@apply h-full overflow-y-auto bg-shade-0;
+		@apply h-full overflow-y-auto bg-shade-1;
 	}
 
 	.prompt-editor__toggle {
-		@apply border-b bg-shade-0;
+		@apply border-b bg-shade-1;
 		@apply hover:bg-shade-2 active:bg-shade-2;
 		@apply 2xl:rounded-t-lg;
 	}
