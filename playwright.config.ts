@@ -12,9 +12,11 @@ const config: PlaywrightTestConfig = {
 		trace: 'retain-on-failure',
 		contextOptions: {
 			permissions: ['clipboard-write', 'clipboard-read']
-		}
+		},
+		viewport: { width: 1280, height: 800 },
+		deviceScaleFactor: 2,
 	},
-  snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
+	snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
 	expect: {
 		toMatchSnapshot: {
 			maxDiffPixelRatio: 0.01
