@@ -13,6 +13,12 @@ const config: PlaywrightTestConfig = {
 		contextOptions: {
 			permissions: ['clipboard-write', 'clipboard-read']
 		}
+	},
+  snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
+	expect: {
+		toMatchSnapshot: {
+			threshold: 0.1
+		}
 	}
 };
 
