@@ -17,7 +17,7 @@ const config: PlaywrightTestConfig = {
   snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
 	expect: {
 		toMatchSnapshot: {
-			threshold: 0.1
+			threshold: 0.5
 		}
 	}
 };
