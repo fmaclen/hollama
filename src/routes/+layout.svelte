@@ -77,7 +77,7 @@
 
 <style lang="scss">
 	:global(html) {
-		@apply fixed bg-shade-0 text-base;
+		@apply fixed bg-shade-0 text-base tracking-normal;
 		@apply text-base lg:bg-shade-2;
 	}
 
