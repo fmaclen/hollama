@@ -1,5 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
-import { MOCK_API_TAGS_RESPONSE, MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, submitWithKeyboardShortcut, textEditorLocator } from './utils';
+import { MOCK_API_TAGS_RESPONSE, MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, textEditorLocator, submitWithKeyboardShortcut } from './utils';
 
 
 test.describe('Session', () => {
@@ -39,16 +39,23 @@ test.describe('Session', () => {
 		await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).not.toBeVisible();
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
-		await submitWithKeyboardShortcut(page); // Submit form with keyboard shortcut (Cmd/Ctrl + Enter)
+		await page.keyboard.press('Enter');
 		await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).toBeVisible();
 		await expect(newPromptHelp).not.toBeVisible();
 
-		await promptTextarea.fill("I understand, it's okay");
 		await expect(page.locator('article', { hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask' })).not.toBeVisible();
 		await expect(page.locator('article', { hasText: "I understand, it's okay" })).not.toBeVisible();
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_2);
-		await runButton.click();
+		await expect(textEditorLocator(page, 'Prompt')).not.toBeVisible();
+
+		await page.locator('.prompt-editor__toggle').click();
+		await expect(promptTextarea).not.toBeVisible();
+		await expect(textEditorLocator(page, 'Prompt')).toBeVisible();
+		
+		// Submit the form in fullscreen prompt editor with keyboard shortcut (Cmd/Ctrl + Enter)
+		await textEditorLocator(page, 'Prompt').fill("I understand, it's okay");
+		await submitWithKeyboardShortcut(page);
 		await expect(page.locator('article', { hasText: "I understand, it's okay" })).toBeVisible();
 		await expect(page.locator('article', { hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask' })).toBeVisible();
 		await expect(page.locator('article nav', { hasText: 'AI' })).toHaveCount(2);
@@ -88,9 +95,9 @@ test.describe('Session', () => {
 		await page.goto('/');
 		await expect(settingsLink).toHaveClass(/ layout__a--active/);
 		await expect(sessionLink).not.toHaveClass(/ layout__a--active/);
-		
+
 		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
-		await sessionLink.click();		await expect(page.getByText('No sessions')).toBeVisible();
+		await sessionLink.click(); await expect(page.getByText('No sessions')).toBeVisible();
 		await expect(settingsLink).not.toHaveClass(/ layout__a--active/);
 		await expect(sessionLink).toHaveClass(/ layout__a--active/);
 		await expect(page.locator('aside', { hasText: 'Who would win in a fight between Emma Watson and Jessica Alba?' })).not.toBeVisible();
@@ -268,6 +275,37 @@ test.describe('Session', () => {
 		await expect(aiMessage).not.toBeVisible();
 		await expect(stopButton).not.toBeVisible();
 		await expect(promptTextarea).toHaveValue('Hello world!');
+	});
+
+	test('can toggle the prompt editor fullscreen', async ({ page }) => {
+		const promptEditor = page.locator('.prompt-editor');
+		const promptEditorToggle = page.locator('.prompt-editor__toggle');
+
+		await page.goto('/');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await page.getByText('Sessions', { exact: true }).click();
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByTestId('new-session').click();
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await expect(textEditorLocator(page, 'Prompt')).not.toBeVisible();
+		await expect(promptEditor).not.toHaveClass(/ prompt-editor--fullscreen/);
+		await expect(promptTextarea).not.toHaveValue('Nevermind...');
+		await expect(promptTextarea).toBeVisible();
+
+		// Switch to fullscreen and enable text-editor
+		await promptEditorToggle.click();
+		await expect(promptTextarea).not.toBeVisible();
+		await expect(promptEditor).toHaveClass(/ prompt-editor--fullscreen/);
+		await expect(textEditorLocator(page, 'Prompt')).toBeVisible();
+		await expect(textEditorLocator(page, 'Prompt')).toHaveText('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await textEditorLocator(page, 'Prompt').fill('Nevermind...');
+
+		// Switch back to normal
+		await promptEditorToggle.click();
+		await expect(textEditorLocator(page, 'Prompt')).not.toBeVisible();
+		await expect(promptEditor).not.toHaveClass(/ prompt-editor--fullscreen/);
+		await expect(promptTextarea).toBeVisible();
+		await expect(promptTextarea).toHaveValue('Nevermind...');
 	});
 
 	test.skip('handles API error when generating AI response', async ({ page }) => {
