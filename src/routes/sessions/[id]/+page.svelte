@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { tick } from 'svelte';
+	import { afterUpdate, tick } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { Brain, StopCircle, Trash2, UnfoldVertical } from 'lucide-svelte';
 
@@ -31,7 +31,9 @@
 	let prompt: string;
 	let promptCached: string;
 	let abortController: AbortController;
+	let promptTextarea: HTMLTextAreaElement;
 	let isPromptFullscreen = false;
+	let shouldFocusTextarea = false;
 
 	let knowledgeId: string;
 	let knowledge: Knowledge | null;
@@ -42,6 +44,14 @@
 	$: session && scrollToBottom();
 	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
+	$: shouldFocusTextarea = !isPromptFullscreen;
+
+	afterUpdate(() => {
+		if (shouldFocusTextarea && promptTextarea) {
+			promptTextarea.focus();
+			shouldFocusTextarea = false;
+		}
+	});
 
 	async function scrollToBottom() {
 		if (!messageWindow) return;
@@ -73,11 +83,15 @@
 		session.messages = [...session.messages, message];
 		completion = '';
 		promptCached = '';
+		shouldFocusTextarea = true;
 		saveSession({ ...session, context });
 	}
 
 	async function handleSubmit() {
 		if (!prompt) return;
+
+		// Reset the prompt editor to its default state
+		isPromptFullscreen = false;
 
 		let knowledgeContext: Message | null = null;
 		if (knowledge) {
@@ -142,6 +156,13 @@
 		promptCached = '';
 		// Remove the "incomplete" AI response
 		session.messages = session.messages.slice(0, -1);
+	}
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if (event.shiftKey) return;
+		if (event.key !== 'Enter') return;
+		event.preventDefault();
+		handleSubmit();
 	}
 </script>
 
@@ -218,13 +239,21 @@
 							{:else}
 								<Field name="prompt">
 									<svelte:fragment slot="label">Prompt</svelte:fragment>
-									<textarea name="prompt" class="prompt-editor__textarea" bind:value={prompt} on:keydown={(e) => e.key === 'Enter' && handleSubmit()} />
+									<textarea
+										name="prompt"
+										class="prompt-editor__textarea"
+										bind:this={promptTextarea}
+										bind:value={prompt}
+										on:keydown={handleKeyDown}
+									/>
 								</Field>
 							{/if}
 						{/key}
 
 						<div class="flex w-full">
-							<ButtonSubmit {handleSubmit} hasMetaKey={isPromptFullscreen} disabled={!prompt}>Run</ButtonSubmit>
+							<ButtonSubmit {handleSubmit} hasMetaKey={isPromptFullscreen} disabled={!prompt}>
+								Run
+							</ButtonSubmit>
 
 							{#if isLastMessageFromUser}
 								<div class="ml-2">
@@ -266,6 +295,11 @@
 		@apply h-max flex-grow;
 	}
 
+	.prompt-editor {
+		@apply sticky bottom-0 z-10 mx-auto flex w-full flex-col border-t;
+		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
+	}
+
 	.prompt-editor__tools {
 		@apply grid grid-cols-[1fr,1fr] items-end gap-x-4;
 	}
@@ -275,21 +309,17 @@
 		@apply lg:gap-x-2;
 	}
 
-	.prompt-editor {
-		@apply sticky bottom-0 z-10 mx-auto flex w-full flex-col border-t;
-		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
-	}
 
 	.prompt-editor--fullscreen {
 		@apply min-h-[60dvh];
 	}
 
 	.prompt-editor__form {
-		@apply h-full overflow-y-auto bg-shade-0;
+		@apply h-full overflow-y-auto bg-shade-1;
 	}
 
 	.prompt-editor__toggle {
-		@apply border-b bg-shade-0;
+		@apply border-b bg-shade-1;
 		@apply hover:bg-shade-2 active:bg-shade-2;
 		@apply 2xl:rounded-t-lg;
 	}

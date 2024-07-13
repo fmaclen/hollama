@@ -39,9 +39,13 @@ test.describe('Session', () => {
 		await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).not.toBeVisible();
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.keyboard.press('Shift+Enter');
+		await expect(modelNameLocator).toHaveText('New session');
+
 		await page.keyboard.press('Enter');
 		await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).toBeVisible();
 		await expect(newPromptHelp).not.toBeVisible();
+		await expect(modelNameLocator).not.toHaveText('New session');
 
 		await expect(page.locator('article', { hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask' })).not.toBeVisible();
 		await expect(page.locator('article', { hasText: "I understand, it's okay" })).not.toBeVisible();
@@ -52,7 +56,7 @@ test.describe('Session', () => {
 		await page.locator('.prompt-editor__toggle').click();
 		await expect(promptTextarea).not.toBeVisible();
 		await expect(textEditorLocator(page, 'Prompt')).toBeVisible();
-		
+
 		// Submit the form in fullscreen prompt editor with keyboard shortcut (Cmd/Ctrl + Enter)
 		await textEditorLocator(page, 'Prompt').fill("I understand, it's okay");
 		await submitWithKeyboardShortcut(page);
@@ -284,7 +288,6 @@ test.describe('Session', () => {
 		await page.goto('/');
 		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
-		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(textEditorLocator(page, 'Prompt')).not.toBeVisible();
@@ -306,6 +309,16 @@ test.describe('Session', () => {
 		await expect(promptEditor).not.toHaveClass(/ prompt-editor--fullscreen/);
 		await expect(promptTextarea).toBeVisible();
 		await expect(promptTextarea).toHaveValue('Nevermind...');
+
+		// Switch to fullscreen again
+		await promptEditorToggle.click();
+		await expect(promptEditor).toHaveClass(/ prompt-editor--fullscreen/);
+		await expect(promptTextarea).not.toBeVisible();
+
+		// Submit the form and check the prompt is reset
+		await page.getByText('Run').click();
+		await expect(promptTextarea).toBeVisible();
+		await expect(promptEditor).not.toHaveClass(/ prompt-editor--fullscreen/);
 	});
 
 	test.skip('handles API error when generating AI response', async ({ page }) => {
