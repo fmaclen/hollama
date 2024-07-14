@@ -42,7 +42,8 @@ test.describe('Session', () => {
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.keyboard.press('Shift+Enter');
-		await expect(modelNameLocator).toHaveText('New session');
+		await expect(newSessionText).toHaveText('New session');
+		await expect(modelNameLocator).not.toBeVisible();
 
 		await page.keyboard.press('Enter');
 		await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).toBeVisible();
