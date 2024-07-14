@@ -22,8 +22,8 @@
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import Badge from '$lib/components/Badge.svelte';
-	import { formatDistanceToNow } from 'date-fns';
 	import Field from '$lib/components/Field.svelte';
+	import { formatShortDistanceToNow } from '$lib/utils';
 
 	export let data: PageData;
 
@@ -182,7 +182,7 @@
 			{:else}
 				{#if session.updatedAt}
 					<Badge variant="default" capitalize={false}>
-						{formatDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}
+						{formatShortDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}
 					</Badge>
 				{/if}
 				<Badge variant="default" capitalize={false}>

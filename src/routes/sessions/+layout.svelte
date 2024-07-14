@@ -5,7 +5,7 @@
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
-	import { formatDistanceToNow } from 'date-fns';
+	import { formatShortDistanceToNow } from '$lib/utils';
 </script>
 
 <RobotsNoIndex />
@@ -26,7 +26,7 @@
 					title={hasKnowledge ? session.messages[1].content : session.messages[0].content}
 					subtitle={(knowledgeName ? `${session.model} — ${knowledgeName}` : session.model) +
 						(session.updatedAt
-							? ` - ${formatDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}`
+							? ` - ${formatShortDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}`
 							: '')}
 				/>
 			{/each}
