@@ -14,7 +14,10 @@
 	<svelte:fragment slot="list-items">
 		{#if $sessionsStore && $sessionsStore.length > 0}
 			<!-- Using slice() to reverse $sessionsStore without affecting the original array -->
-			{#each $sessionsStore.slice().sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1)) as session}
+			{#each $sessionsStore.slice().sort((a, b) => {
+				if (!a.updatedAt || !b.updatedAt) return 0;
+				return a.updatedAt < b.updatedAt ? 1 : -1;
+			}) as session}
 				{@const hasKnowledge = session.messages[0].knowledge}
 				{@const knowledgeName = session.messages[0].knowledge?.name}
 				<SectionListItem
@@ -22,7 +25,9 @@
 					id={session.id}
 					title={hasKnowledge ? session.messages[1].content : session.messages[0].content}
 					subtitle={(knowledgeName ? `${session.model} — ${knowledgeName}` : session.model) +
-						` - ${formatDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}`}
+						(session.updatedAt
+							? ` - ${formatDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}`
+							: '')}
 				/>
 			{/each}
 		{:else}

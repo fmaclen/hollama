@@ -180,9 +180,11 @@
 			{#if isNewSession}
 				<p data-testid="new-session-text" class="text-sm text-muted">New session</p>
 			{:else}
-				<Badge variant="default" capitalize={false}>
-					{formatDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}
-				</Badge>
+				{#if session.updatedAt}
+					<Badge variant="default" capitalize={false}>
+						{formatDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}
+					</Badge>
+				{/if}
 				<Badge variant="default" capitalize={false}>
 					<p data-testid="model-name">{session.model}</p>
 				</Badge>

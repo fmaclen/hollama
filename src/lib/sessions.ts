@@ -1,6 +1,6 @@
-import { get } from "svelte/store";
-import { settingsStore, sessionsStore } from "$lib/store";
-import type { Knowledge } from "./knowledge";
+import { get } from 'svelte/store';
+import { settingsStore, sessionsStore } from '$lib/store';
+import type { Knowledge } from './knowledge';
 
 export interface Message {
 	role: 'user' | 'ai' | 'system';
@@ -13,7 +13,7 @@ export interface Session {
 	model: string;
 	messages: Message[];
 	context: number[];
-	updatedAt: string;
+	updatedAt?: string;
 	knowledge?: Knowledge;
 }
 
@@ -25,13 +25,13 @@ export const loadSession = (id: string): Session => {
 
 	// Find the session with the given id
 	if (currentSessions) {
-		const existingSession = currentSessions.find(s => s.id === id);
+		const existingSession = currentSessions.find((s) => s.id === id);
 		existingSession && (session = existingSession);
 	}
 
 	if (!session) {
 		// Get the current model
-		const model = get(settingsStore)?.ollamaModel || "";
+		const model = get(settingsStore)?.ollamaModel || '';
 
 		// Create a new session
 		session = { id, model, messages: [], context: [], updatedAt: new Date().toISOString() };
@@ -45,7 +45,7 @@ export const saveSession = (session: Session): void => {
 	const currentSessions = get(sessionsStore) || [];
 
 	// Find the index of the session with the same id, if it exists
-	const existingSessionIndex = currentSessions.findIndex(s => s.id === session.id);
+	const existingSessionIndex = currentSessions.findIndex((s) => s.id === session.id);
 
 	if (existingSessionIndex !== -1) {
 		// Update the existing session
