@@ -47,7 +47,7 @@
 	});
 </script>
 
-<article class="article" bind:this={articleElement}>
+<article class="article article--{message.role}" bind:this={articleElement}>
 	<nav class="article__nav">
 		<div data-testid="session-role" class="article__role">
 			<Badge variant="default">
@@ -82,9 +82,14 @@
 
 <style lang="scss">
 	.article {
-		@apply mx-auto mb-3 flex w-full max-w-[80ch] flex-col rounded-md border border-shade-3;
+		@apply mx-auto mb-2 flex w-full max-w-[80ch] flex-col rounded-md border border-shade-3;
 		@apply hover:border-shade-6;
 		@apply last:mb-0;
+		@apply lg:mb-6;
+	}
+
+	.article--ai {
+		@apply bg-shade-0;
 	}
 
 	.article__interactive {
