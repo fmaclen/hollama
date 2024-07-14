@@ -50,7 +50,7 @@
 <article class="article article--{message.role}" bind:this={articleElement}>
 	<nav class="article__nav">
 		<div data-testid="session-role" class="article__role">
-			<Badge variant="default">
+			<Badge>
 				{#if isKnowledgeRole}
 					Knowledge
 				{:else if isUserRole}
