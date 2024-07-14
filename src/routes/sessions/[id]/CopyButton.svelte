@@ -17,8 +17,12 @@
 
 <style lang="scss">
 	.copy-button {
-		@apply opacity-40;
-		@apply hover:opacity-60;
-		@apply active:opacity-100;
+		@apply opacity-0;
+
+		@media (hover: hover) {
+			@apply opacity-40;
+			@apply hover:opacity-60;
+			@apply active:opacity-100;
+		}
 	}
 </style>
