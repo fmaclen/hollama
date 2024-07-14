@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { tick } from 'svelte';
+	import { afterUpdate, tick } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
-	import { Brain, StopCircle, Trash2 } from 'lucide-svelte';
+	import { Brain, StopCircle, Trash2, UnfoldVertical } from 'lucide-svelte';
 
 	import Button from '$lib/components/Button.svelte';
 	import Article from './Article.svelte';
@@ -24,6 +23,7 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import { formatDistanceToNow } from 'date-fns';
+	import Field from '$lib/components/Field.svelte';
 
 	export let data: PageData;
 
@@ -33,6 +33,9 @@
 	let prompt: string;
 	let promptCached: string;
 	let abortController: AbortController;
+	let promptTextarea: HTMLTextAreaElement;
+	let isPromptFullscreen = false;
+	let shouldFocusTextarea = false;
 
 	let knowledgeId: string;
 	let knowledge: Knowledge | null;
@@ -43,6 +46,14 @@
 	$: session && scrollToBottom();
 	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
+	$: shouldFocusTextarea = !isPromptFullscreen;
+
+	afterUpdate(() => {
+		if (shouldFocusTextarea && promptTextarea) {
+			promptTextarea.focus();
+			shouldFocusTextarea = false;
+		}
+	});
 
 	async function scrollToBottom() {
 		if (!messageWindow) return;
@@ -75,11 +86,15 @@
 		session.updatedAt = new Date().toISOString();
 		completion = '';
 		promptCached = '';
+		shouldFocusTextarea = true;
 		saveSession({ ...session, context });
 	}
 
 	async function handleSubmit() {
 		if (!prompt) return;
+
+		// Reset the prompt editor to its default state
+		isPromptFullscreen = false;
 
 		let knowledgeContext: Message | null = null;
 		if (knowledge) {
@@ -145,12 +160,21 @@
 		// Remove the "incomplete" AI response
 		session.messages = session.messages.slice(0, -1);
 	}
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if (event.shiftKey) return;
+		if (event.key !== 'Enter') return;
+		event.preventDefault();
+		handleSubmit();
+	}
 </script>
 
 <div class="session">
 	<Header>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
-			Session <Button size="link" variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
+			Session <Button size="link" variant="link" href={`/sessions/${session.id}`}
+				>#{session.id}</Button
+			>
 		</p>
 		<div class="grid grid-cols-[auto,auto] gap-x-1">
 			{#if isNewSession}
@@ -173,32 +197,35 @@
 		</svelte:fragment>
 	</Header>
 	{#key isNewSession}
-		<PaneGroup direction="vertical">
-			<Pane defaultSize={isNewSession ? 50 : 70} minSize={10}>
-				<div class="article-list" bind:this={messageWindow}>
-					{#if isNewSession}
-						<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
-					{/if}
+		<div class="session__history" bind:this={messageWindow}>
+			<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
+				{#if isNewSession}
+					<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
+				{/if}
 
-					{#each session.messages as message, i (session.id + i)}
-						<Article {message} />
-					{/each}
+				{#each session.messages as message, i (session.id + i)}
+					<Article {message} />
+				{/each}
 
-					{#if isLastMessageFromUser}
-						<Article message={{ role: 'ai', content: completion || '...' }} />
-					{/if}
-				</div>
-			</Pane>
+				{#if isLastMessageFromUser}
+					<Article message={{ role: 'ai', content: completion || '...' }} />
+				{/if}
+			</div>
 
-			<PaneResizer class="border-t border-y-2 border-shade-3"></PaneResizer>
+			<div class="prompt-editor {isPromptFullscreen ? 'prompt-editor--fullscreen' : ''}">
+				<button
+					class="prompt-editor__toggle"
+					on:click={() => (isPromptFullscreen = !isPromptFullscreen)}
+				>
+					<UnfoldVertical class="mx-auto my-2 h-3 w-3 opacity-50" />
+				</button>
 
-			<Pane defaultSize={isNewSession ? 50 : 25} minSize={10}>
-				<div class="grid grid-flow-col h-full w-full overflow-y-auto p-8">
-					<Fieldset>
+				<div class="prompt-editor__form">
+					<Fieldset isFullscreen={isPromptFullscreen}>
 						{#if isNewSession}
-							<div class="grid grid-cols-[1fr,1fr] items-end gap-x-3 lg:gap-x-6">
+							<div class="prompt-editor__tools">
 								<FieldSelectModel />
-								<div class="grid grid-cols-[auto,max-content] items-end gap-x-1 lg:gap-x-2">
+								<div class="prompt-editor__knowledge">
 									<FieldSelect
 										label="Knowledge"
 										name="knowledge"
@@ -220,11 +247,27 @@
 						{/if}
 
 						{#key session}
-							<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
+							{#if isPromptFullscreen}
+								<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
+							{:else}
+								<Field name="prompt">
+									<svelte:fragment slot="label">Prompt</svelte:fragment>
+									<textarea
+										name="prompt"
+										class="prompt-editor__textarea"
+										bind:this={promptTextarea}
+										bind:value={prompt}
+										on:keydown={handleKeyDown}
+									/>
+								</Field>
+							{/if}
 						{/key}
 
 						<div class="flex w-full">
-							<ButtonSubmit {handleSubmit} disabled={!prompt}>Run</ButtonSubmit>
+							<ButtonSubmit {handleSubmit} hasMetaKey={isPromptFullscreen} disabled={!prompt}>
+								Run
+							</ButtonSubmit>
+
 							{#if isLastMessageFromUser}
 								<div class="ml-2">
 									<Button
@@ -240,18 +283,61 @@
 						</div>
 					</Fieldset>
 				</div>
-			</Pane>
-		</PaneGroup>
+			</div>
+		</div>
 	{/key}
 </div>
 
 <style lang="scss">
+	@import '$lib/mixins.scss';
+
 	.session {
 		@apply flex h-full w-full flex-col overflow-y-auto;
 	}
 
-	.article-list {
-		@apply flex h-full flex-col overflow-y-auto p-4;
+	.session__history {
+		@apply flex h-full flex-grow flex-col overflow-y-auto;
+	}
+
+	.session__articles {
+		@apply flex-grow p-4;
 		@apply lg:p-8;
+	}
+
+	.session__articles--fullscreen {
+		@apply h-max flex-grow;
+	}
+
+	.prompt-editor {
+		@apply sticky bottom-0 z-10 mx-auto flex w-full flex-col border-t;
+		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
+	}
+
+	.prompt-editor__tools {
+		@apply grid grid-cols-[1fr,1fr] items-end gap-x-4;
+	}
+
+	.prompt-editor__knowledge {
+		@apply grid grid-cols-[auto,max-content] items-end gap-x-1;
+		@apply lg:gap-x-2;
+	}
+
+	.prompt-editor--fullscreen {
+		@apply min-h-[60dvh];
+	}
+
+	.prompt-editor__form {
+		@apply bg-shade-1 h-full overflow-y-auto;
+	}
+
+	.prompt-editor__toggle {
+		@apply bg-shade-1 border-b;
+		@apply hover:bg-shade-2 active:bg-shade-2;
+		@apply 2xl:rounded-t-lg;
+	}
+
+	.prompt-editor__textarea {
+		@include base-input;
+		@apply min-h-16;
 	}
 </style>

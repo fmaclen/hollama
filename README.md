@@ -20,10 +20,10 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 
 No sign up is required and data is _100% stored locally on your browser_.
 
-> ![session](docs/session.png)
-> ![knowledge](docs/knowledge.png)
-> ![session-new](docs/session-new.png)
-> ![settings](docs/settings.png)
+> ![session](tests/docs.test.ts-snapshots/session.png)
+> ![knowledge](tests/docs.test.ts-snapshots/knowledge.png)
+> ![session-new](tests/docs.test.ts-snapshots/session-new.png)
+> ![settings](tests/docs.test.ts-snapshots/settings.png)
 
 
 ### Self-host (Docker)

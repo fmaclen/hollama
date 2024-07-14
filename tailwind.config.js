@@ -8,7 +8,7 @@ const config = {
 		extend: {
 			fontFamily: {
 				sans: ['Inter', ...fontFamily.sans],
-				mono: ['"JetBrains Mono"', ...fontFamily.mono],
+				mono: ["JetBrains Mono", ...fontFamily.mono],
 			},
 			backgroundColor: {
 				DEFAULT: 'hsl(var(--color-shade-2))',
@@ -24,7 +24,7 @@ const config = {
 			colors: {
 				accent: 'hsl(var(--color-primary))',
 				shade: {
-					0: 'hsl(var(--color-shade-0))',
+					0: 'hsl(var(--color-shade-0) / <alpha-value>)',
 					1: 'hsl(var(--color-shade-1))',
 					2: 'hsl(var(--color-shade-2))',
 					3: 'hsl(var(--color-shade-3))',
