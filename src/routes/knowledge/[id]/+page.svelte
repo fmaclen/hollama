@@ -3,10 +3,10 @@
 	import type { PageData } from './$types';
 	import { Trash2 } from 'lucide-svelte';
 
-	import Button from '$lib/components/Button.svelte';
 	import { type Knowledge, loadKnowledge, saveKnowledge } from '$lib/knowledge';
 	import { getUpdatedAtDate } from '$lib/utils';
 	import { knowledgeStore } from '$lib/store';
+	import Button from '$lib/components/Button.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
