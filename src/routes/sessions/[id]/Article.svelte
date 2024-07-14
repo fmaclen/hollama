@@ -143,7 +143,7 @@
 
 		:global(li > code),
 		:global(p > code) {
-			@apply bg-shade-0 p-1 text-muted;
+			@apply p-1 bg-orange-50 dark:bg-orange-950 text-orange-600;
 		}
 
 		:global(ol),
