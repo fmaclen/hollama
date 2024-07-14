@@ -22,6 +22,7 @@
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import CopyButton from './CopyButton.svelte';
 
 	export let data: PageData;
 
@@ -37,6 +38,7 @@
 
 	let knowledgeId: string;
 	let knowledge: Knowledge | null;
+	let sessionContent: string;
 
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
@@ -76,6 +78,15 @@
 			$sessionsStore = updatedSessions;
 		}
 		goto('/sessions');
+	}
+
+	function copySessionContent() {
+		sessionContent = session ? session.messages.map(message => (
+			message.content
+			? message.content
+			: message.knowledge?.content ?? ''
+		)).join('\n')
+		: '';
 	}
 
 	async function handleCompletionDone(completion: string, context: number[]) {
@@ -147,6 +158,8 @@
 			if (error.name === 'AbortError') return; // User aborted the request
 			handleError(error);
 		}
+
+		copySessionContent();
 	}
 
 	function handleAbort() {
@@ -177,6 +190,7 @@
 
 		<svelte:fragment slot="nav">
 			{#if !isNewSession}
+				<CopyButton content={sessionContent} />
 				<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
 					<Trash2 class="h-4 w-4" />
 				</Button>
