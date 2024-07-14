@@ -20,14 +20,18 @@
 			}) as session}
 				{@const hasKnowledge = session.messages[0].knowledge}
 				{@const knowledgeName = session.messages[0].knowledge?.name}
+				{@const subtitles = [
+					session.model,
+					...(knowledgeName ? [knowledgeName] : []),
+					...(session.updatedAt
+						? [formatShortDistanceToNow(new Date(session.updatedAt), { addSuffix: true })]
+						: [])
+				]}
 				<SectionListItem
 					sitemap={Sitemap.SESSIONS}
 					id={session.id}
 					title={hasKnowledge ? session.messages[1].content : session.messages[0].content}
-					subtitle={(knowledgeName ? `${session.model} — ${knowledgeName}` : session.model) +
-						(session.updatedAt
-							? ` - ${formatShortDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}`
-							: '')}
+					subtitle={subtitles.join(' • ')}
 				/>
 			{/each}
 		{:else}

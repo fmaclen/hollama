@@ -14,11 +14,14 @@
 	<svelte:fragment slot="list-items">
 		{#if $knowledgeStore && $knowledgeStore.length > 0}
 			{#each $knowledgeStore as knowledge}
+				{@const subtitles = [
+					formatShortDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })
+				]}
 				<SectionListItem
 					sitemap={Sitemap.KNOWLEDGE}
 					id={knowledge.id}
 					title={knowledge.name}
-					subtitle={formatShortDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })}
+					subtitle={subtitles.join(' • ')}
 				/>
 			{/each}
 		{:else}
