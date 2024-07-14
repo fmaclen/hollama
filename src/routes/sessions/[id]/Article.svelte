@@ -122,7 +122,7 @@
 		}
 
 		:global(pre) {
-			@apply relative;
+			@apply relative border border-transparent hover:border-shade-2 rounded-md;
 		}
 
 		:global(pre:hover > .copy-button) {
@@ -130,7 +130,7 @@
 		}
 
 		:global(pre > .copy-button) {
-			@apply absolute right-0 top-1;
+			@apply absolute right-0 top-0 rounded-tr-md rounded-bl-md;
 		}
 
 		:global(code) {
@@ -138,12 +138,12 @@
 		}
 
 		:global(pre > code) {
-			@apply p-4 pr-12 dark:invert;
+			@apply p-4 pr-12 dark:invert ;
 		}
 
 		:global(li > code),
 		:global(p > code) {
-			@apply p-1 bg-orange-50 dark:bg-orange-950 text-orange-600;
+			@apply bg-amber-50 p-1 text-orange-600 dark:text-orange-500 dark:bg-amber-950;
 		}
 
 		:global(ol),
