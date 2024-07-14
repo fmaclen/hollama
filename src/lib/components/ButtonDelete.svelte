@@ -2,11 +2,10 @@
 	import { Check, Trash2, X } from 'lucide-svelte';
 
 	export let deleteRecord;
-
-	let confirmDeletion: boolean = false;
+	export let confirmDeletion: boolean = false;
 </script>
 
-<div class="delete {confirmDeletion ? 'delete--confirm-deletion' : ''}">
+<div class="delete" class:delete--confirm-deletion={confirmDeletion}>
 	{#if confirmDeletion}
 		<button class="delete__confirm" on:click={deleteRecord}>
 			<Check class="h-4 w-4" />
@@ -24,11 +23,7 @@
 
 <style lang="scss">
 	.delete {
-		@apply flex h-full flex-row bg-gradient-to-r from-transparent to-shade-0 py-4 pl-8 pr-4 text-muted;
-	}
-
-	.delete--confirm-deletion {
-		@apply pl-32 to-red-50;
+		@apply flex h-full flex-row text-muted;
 	}
 
 	.delete__cancel,

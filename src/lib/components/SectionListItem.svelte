@@ -10,6 +10,7 @@
 	export let title: string;
 	export let subtitle: string;
 
+	let confirmDeletion: boolean = false;
 	const isSession = sitemap === Sitemap.SESSIONS;
 
 	function deleteKnowledge() {
@@ -21,14 +22,11 @@
 	}
 </script>
 
+<!-- Need to use `#key id` to re-render the delete nav after deletion -->
 {#key id}
 	<div
-		class="section-list-item {$page.url.pathname.includes(id) ? 'section-list-item--active' : ''}"
+		class="section-list-item {$page.url.pathname.includes(id) ? 'section-list-item--active' : ''} {confirmDeletion ? 'section-list-item--confirm-deletion' : ''}"
 	>
-		<nav class="section-list-item__delete">
-			<ButtonDelete deleteRecord={deleteKnowledge} />
-		</nav>
-
 		<a
 			class="section-list-item__a"
 			data-testid={isSession ? 'session-item' : 'knowledge-item'}
@@ -42,12 +40,19 @@
 				{subtitle}
 			</p>
 		</a>
+
+		<nav class="section-list-item__delete">
+			<ButtonDelete {confirmDeletion} deleteRecord={deleteKnowledge} />
+		</nav>
 	</div>
 {/key}
 
 <style lang="scss">
+	@import '$lib/mixins.scss';
+
 	.section-list-item {
-		@apply relative flex flex-col border-b last:border-b-0 hover:bg-shade-1;
+		@include delete-record-overlay;
+		@apply flex flex-row items-center justify-between border-b pr-3 last:border-b-0 hover:bg-shade-1;
 	}
 
 	.section-list-item:hover .section-list-item__delete {
@@ -55,7 +60,7 @@
 	}
 
 	.section-list-item__delete {
-		@apply absolute bottom-0 right-0 top-0 z-10 opacity-0;
+		@apply opacity-0;
 	}
 
 	.section-list-item--active {
@@ -63,7 +68,7 @@
 	}
 
 	.section-list-item__a {
-		@apply relative z-0 px-6 py-3;
+		@apply relative z-0 overflow-hidden text-ellipsis px-6 py-3;
 	}
 
 	.section-list-item__title {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { afterNavigate, goto } from '$app/navigation';
 	import type { PageData } from './$types';
-	import { Trash2 } from 'lucide-svelte';
+	import { MagnetIcon, Trash2 } from 'lucide-svelte';
 
 	import { type Knowledge, loadKnowledge, saveKnowledge } from '$lib/knowledge';
 	import { getUpdatedAtDate } from '$lib/utils';
@@ -12,6 +12,7 @@
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
+	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 
 	export let data: PageData;
 
@@ -28,9 +29,6 @@
 	}
 
 	function deleteKnowledge() {
-		const confirmed = confirm('Are you sure you want to delete this knowledge?');
-		if (!confirmed) return;
-
 		if ($knowledgeStore) {
 			const updatedKnowledge = $knowledgeStore.filter((s) => s.id !== knowledge.id);
 			$knowledgeStore = updatedKnowledge;
@@ -46,7 +44,7 @@
 </script>
 
 <div class="flex h-full w-full flex-col overflow-hidden">
-	<Header>
+	<Header confirmDeletion={true}>
 		<p data-testid="knowledge-id" class="text-sm font-bold leading-none">
 			Knowledge
 			<Button size="link" variant="link" href={`/knowledge/${knowledge.id}`}>
@@ -62,10 +60,12 @@
 		</p>
 
 		<svelte:fragment slot="nav">
+			<MagnetIcon class="h-4 w-4" />
 			{#if !isNewKnowledge}
-				<Button title="Delete knowledge" variant="outline" size="icon" on:click={deleteKnowledge}>
+				<ButtonDelete deleteRecord={deleteKnowledge} />
+				<!-- <Button title="Delete knowledge" variant="outline" size="icon" on:click={deleteKnowledge}>
 					<Trash2 class="h-4 w-4" />
-				</Button>
+				</Button> -->
 			{/if}
 		</svelte:fragment>
 	</Header>

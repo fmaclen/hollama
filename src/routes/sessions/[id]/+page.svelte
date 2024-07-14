@@ -22,6 +22,7 @@
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 
 	export let data: PageData;
 
@@ -167,7 +168,7 @@
 </script>
 
 <div class="session">
-	<Header>
+	<Header confirmDeletion={false}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
 			Session <Button size="link" variant="link" href={`/${session.id}`}>#{session.id}</Button>
 		</p>
@@ -177,9 +178,7 @@
 
 		<svelte:fragment slot="nav">
 			{#if !isNewSession}
-				<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
-					<Trash2 class="h-4 w-4" />
-				</Button>
+				<ButtonDelete deleteRecord={deleteSession} />
 			{/if}
 		</svelte:fragment>
 	</Header>
@@ -308,7 +307,6 @@
 		@apply grid grid-cols-[auto,max-content] items-end gap-x-1;
 		@apply lg:gap-x-2;
 	}
-
 
 	.prompt-editor--fullscreen {
 		@apply min-h-[60dvh];
