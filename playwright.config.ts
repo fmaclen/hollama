@@ -13,7 +13,7 @@ const config: PlaywrightTestConfig = {
 		contextOptions: {
 			permissions: ['clipboard-write', 'clipboard-read']
 		},
-		viewport: { width: 1280, height: 800 },
+		viewport: { width: 1280, height: 1024 }
 	},
 	snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
 	expect: {
