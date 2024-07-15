@@ -4,8 +4,8 @@
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
-	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
-	import { formatShortDistanceToNow } from '$lib/utils';
+	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';	
+	import { formatDistanceToNow } from 'date-fns';
 </script>
 
 <RobotsNoIndex />
@@ -24,7 +24,7 @@
 					session.model,
 					...(knowledgeName ? [knowledgeName] : []),
 					...(session.updatedAt
-						? [formatShortDistanceToNow(new Date(session.updatedAt), { addSuffix: true })]
+						? [formatDistanceToNow(new Date(session.updatedAt), { addSuffix: true })]
 						: [])
 				]}
 				<SectionListItem

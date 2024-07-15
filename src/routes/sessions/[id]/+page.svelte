@@ -21,9 +21,7 @@
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
-	import Badge from '$lib/components/Badge.svelte';
 	import Field from '$lib/components/Field.svelte';
-	import { formatShortDistanceToNow } from '$lib/utils';
 
 	export let data: PageData;
 
@@ -177,7 +175,7 @@
 			>
 		</p>
 		<div class="grid grid-cols-[auto,auto] gap-x-1">
-			{#if isNewSession}
+			<!-- {#if isNewSession}
 				<p data-testid="new-session-text" class="text-sm text-muted">New session</p>
 			{:else}
 				{#if session.updatedAt}
@@ -188,7 +186,10 @@
 				<Badge variant="default" capitalize={false}>
 					<p data-testid="model-name">{session.model}</p>
 				</Badge>
-			{/if}
+			{/if} -->
+			<p data-testid="model-name" class="text-sm text-muted">
+				{isNewSession ? 'New session' : session.model}
+			</p>
 		</div>
 		<svelte:fragment slot="nav">
 			{#if !isNewSession}

@@ -5,14 +5,14 @@
 
 	import Button from '$lib/components/Button.svelte';
 	import { type Knowledge, loadKnowledge, saveKnowledge } from '$lib/knowledge';
-	import { formatShortDistanceToNow, getUpdatedAtDate } from '$lib/utils';
+	import { getUpdatedAtDate } from '$lib/utils';
 	import { knowledgeStore } from '$lib/store';
 	import Header from '$lib/components/Header.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
-	import Badge from '$lib/components/Badge.svelte';
+	import { formatDistanceToNow } from 'date-fns';
 
 	export let data: PageData;
 
@@ -54,16 +54,19 @@
 				#{knowledge.id}
 			</Button>
 		</p>
-		<p class="text-sm text-muted">
-			{#if isNewKnowledge}
-				New knowledge
+		<p data-testid="knowledge-timestamp" class="text-sm text-muted">
+			<!-- {#if isNewKnowledge}
+			New knowledge
 			{:else}
-				<Badge variant="default" capitalize={false}>
-					<p data-testid="knowledge-timestamp">
-						{formatShortDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })}
+			<Badge variant="default" capitalize={false}>
+				<p data-testid="knowledge-timestamp">
+					{formatShortDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })}
 					</p>
-				</Badge>
-			{/if}
+					</Badge>
+					{/if} -->
+			{isNewKnowledge
+				? 'New knowledge'
+				: formatDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })}
 		</p>
 
 		<svelte:fragment slot="nav">

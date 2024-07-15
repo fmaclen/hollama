@@ -5,7 +5,7 @@
 	import { knowledgeStore } from '$lib/store';
 	import { Sitemap } from '$lib/sitemap';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
-	import { formatShortDistanceToNow } from '$lib/utils';
+	import { formatDistanceToNow } from 'date-fns';
 </script>
 
 <RobotsNoIndex />
@@ -15,7 +15,7 @@
 		{#if $knowledgeStore && $knowledgeStore.length > 0}
 			{#each $knowledgeStore as knowledge}
 				{@const subtitles = [
-					formatShortDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })
+					formatDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })
 				]}
 				<SectionListItem
 					sitemap={Sitemap.KNOWLEDGE}

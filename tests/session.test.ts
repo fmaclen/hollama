@@ -28,8 +28,8 @@ test.describe('Session', () => {
 		await newSessionButton.click();
 		await expect(sessionIdLocator).toBeVisible();
 		await expect(sessionIdLocator).toHaveText(/Session #[a-z0-9]{2,8}/);
-		await expect(modelNameLocator).not.toBeVisible();
-		await expect(newSessionText).toBeVisible();
+		await expect(modelNameLocator).toHaveText('New session');
+		// await expect(newSessionText).toBeVisible();
 		await expect(promptTextarea).toHaveText('');
 		await expect(runButton).toBeVisible();
 		await expect(runButton).toBeDisabled();
@@ -42,8 +42,8 @@ test.describe('Session', () => {
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.keyboard.press('Shift+Enter');
-		await expect(newSessionText).toHaveText('New session');
-		await expect(modelNameLocator).not.toBeVisible();
+		// await expect(newSessionText).toHaveText('New session');
+		await expect(modelNameLocator).toHaveText("New session");
 
 		await page.keyboard.press('Enter');
 		await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).toBeVisible();
@@ -262,7 +262,8 @@ test.describe('Session', () => {
 		await page.getByText("New session", { exact: true }).click();
 		await expect(userMessage).not.toBeVisible();
 		await expect(aiMessage).not.toBeVisible();
-		await expect(newSessionText).toBeVisible();
+		await expect(modelName).toHaveText('New session');
+		// await expect(newSessionText).toBeVisible();
 
 		// Mock a response that takes a while to generate
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);

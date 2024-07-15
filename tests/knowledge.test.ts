@@ -21,7 +21,7 @@ test('creates and edits knowledge', async ({ page }) => {
 	// Create knowledge
 	await page.getByText('New knowledge').click();
 	await expect(page.getByText('Create new knowlege or choose one from the list')).not.toBeVisible();
-	await expect(timestamp).not.toBeVisible();
+	await expect(timestamp).toHaveText('New knowledge');
 	await expect(fieldName).toBeVisible();
 	await expect(fieldContent).toBeVisible();
 	await expect(buttonSave).toBeDisabled();
@@ -57,7 +57,7 @@ test('creates and edits knowledge', async ({ page }) => {
 });
 
 test('deletes knowledge', async ({ page }) => {
-	const timestamp = page.getByTestId('knowledge-timestamp')
+	const timestamp = page.getByTestId('knowledge-timestamp');
 	const noKnowledgeMessage = page.getByText('No knowledge');
 	const noKnowledgeSelectedMessage = page.getByText('Create new knowlege or choose one from the list');
 	const knowledgeItems = page.getByTestId('knowledge-item');
