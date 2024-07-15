@@ -45,16 +45,22 @@ export const saveSession = (session: Session): void => {
 	const currentSessions = get(sessionsStore) || [];
 
 	// Find the index of the session with the same id, if it exists
-	const existingSessionIndex = currentSessions.findIndex((s) => s.id === session.id);
+	const existingIndex = currentSessions.findIndex((k) => k.id === session.id);
 
-	if (existingSessionIndex !== -1) {
+	if (existingIndex !== -1) {
 		// Update the existing session
-		currentSessions[existingSessionIndex] = session;
+		currentSessions[existingIndex] = session;
 	} else {
 		// Add the new session if it doesn't exist
 		currentSessions.push(session);
 	}
 
-	// Update the store, which will trigger the localStorage update
-	sessionsStore.set(currentSessions);
+	// Sort the sessions by updatedAt in descending order (most recent first)
+	const sortedSessions = currentSessions.sort((a, b) => {
+		if (!a.updatedAt || !b.updatedAt) return 0;
+		return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+	});
+
+	// Update the store with the sorted sessions
+	sessionsStore.set(sortedSessions);
 };
