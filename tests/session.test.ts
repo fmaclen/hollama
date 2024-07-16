@@ -221,13 +221,13 @@ test.describe('Session', () => {
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
 		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
-		await expect(page.getByTitle('Copy')).toHaveCount(2);
+		await expect(page.getByTitle('Copy', {exact: true})).toHaveCount(2);
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("");
 
-		await page.getByTitle('Copy').first().click();
+		await page.getByTitle('Copy', {exact: true}).first().click();
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("Who would win in a fight between Emma Watson and Jessica Alba?");
 
-		await page.getByTitle('Copy').last().click();
+		await page.getByTitle('Copy', {exact: true}).last().click();
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("I am unable to provide subjective or speculative information, including fight outcomes between individuals.");
 		await expect(page.locator("pre")).not.toBeVisible();
 		await expect(page.locator("code")).not.toBeVisible();
@@ -237,11 +237,29 @@ test.describe('Session', () => {
 		await page.getByText('Run').click();
 		await expect(page.locator("pre")).toBeVisible();
 		await expect(page.locator("code")).toBeVisible();
-		await expect(page.getByTitle('Copy')).toHaveCount(5);
+		await expect(page.getByTitle('Copy', {exact: true})).toHaveCount(5);
 
 		await page.locator("pre").hover();
-		await page.getByTitle('Copy').last().click();
+		await page.getByTitle('Copy', {exact: true}).last().click();
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("def calculate_odds(emma_age, emma_height, emma_weight, emma_experience, jessica_age, jessica_height, jessica_weight, jessica_experience):\n    emma_stats = {'age': emma_age, 'height': emma_height, 'weight': emma_weight, 'experience': emma_experience}\n    jessica_stats = {'age': jessica_age, 'height': jessica_height, 'weight': jessica_weight, 'experience': jessica_experience}\n    \n    # Calculate the differences between their stats\n    age_difference = abs(emma_stats['age'] - jessica_stats['age'])\n    height_difference = abs(emma_stats['height'] - jessica_stats['height'])\n    weight_difference = abs(emma_stats['weight'] - jessica_stats['weight'])\n    \n    # Return the differences as a tuple\n    return (age_difference, height_difference, weight_difference)\n");
+	});
+
+	test('can copy the whole session content to clipboard', async ({ page }) => {
+		await page.goto('/');
+		await page.evaluate(() => navigator.clipboard.writeText(""));
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await page.getByText('Sessions', { exact: true }).click();
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByTestId('new-session').click();
+		await expect(page.getByTitle('Copy session')).toHaveCount(0);
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
+		await expect(page.getByTitle('Copy session')).toHaveCount(1);
+		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("");
+
+		await page.getByTitle('Copy session').first().click();
+		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("Who would win in a fight between Emma Watson and Jessica Alba?\nI am unable to provide subjective or speculative information, including fight outcomes between individuals.");
 	});
 
 	test('can start a new session, choose a model and stop a completion in progress', async ({ page }) => {

@@ -190,7 +190,7 @@
 
 		<svelte:fragment slot="nav">
 			{#if !isNewSession}
-				<CopyButton content={sessionContent} />
+				<CopyButton content={sessionContent} title="Copy session" />
 				<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
 					<Trash2 class="h-4 w-4" />
 				</Button>

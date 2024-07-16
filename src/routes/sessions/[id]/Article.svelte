@@ -42,7 +42,7 @@
 		preElements.forEach((preElement) => {
 			const codeElement = preElement.querySelector('code');
 			if (codeElement)
-				new CopyButton({ target: preElement, props: { content: codeElement.innerText } });
+				new CopyButton({ target: preElement, props: { content: codeElement.innerText, title: 'Copy' } });
 		});
 	});
 </script>
@@ -61,7 +61,7 @@
 			</Badge>
 		</div>
 		<div class="article__interactive">
-			<CopyButton content={message.content} />
+			<CopyButton content={message.content} title="Copy" />
 		</div>
 	</nav>
 

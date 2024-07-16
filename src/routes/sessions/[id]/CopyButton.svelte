@@ -3,6 +3,7 @@
 	import { Files } from "lucide-svelte";
 
 	export let content: string;
+	export let title: string;
 
 	function copyContent() {
 		navigator.clipboard.writeText(content);
@@ -10,7 +11,7 @@
 </script>
 
 <span class="copy-button">
-	<Button title="Copy" variant="icon" size="icon" on:click={copyContent}>
+	<Button title={title} variant="icon" size="icon" on:click={copyContent}>
 		<Files class="h-4 w-4" />
 	</Button>
 </span>
