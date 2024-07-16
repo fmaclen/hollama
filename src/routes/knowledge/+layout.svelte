@@ -5,7 +5,7 @@
 	import { knowledgeStore } from '$lib/store';
 	import { Sitemap } from '$lib/sitemap';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
-	import { formatDistanceToNow } from 'date-fns';
+	import { formatTimestampToNow } from '$lib/utils';
 </script>
 
 <RobotsNoIndex />
@@ -14,14 +14,11 @@
 	<svelte:fragment slot="list-items">
 		{#if $knowledgeStore && $knowledgeStore.length > 0}
 			{#each $knowledgeStore as knowledge}
-				{@const subtitles = [
-					formatDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })
-				]}
 				<SectionListItem
 					sitemap={Sitemap.KNOWLEDGE}
 					id={knowledge.id}
 					title={knowledge.name}
-					subtitle={subtitles.join(' • ')}
+					subtitle={formatTimestampToNow(knowledge.updatedAt)}
 				/>
 			{/each}
 		{:else}

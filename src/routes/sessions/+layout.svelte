@@ -5,7 +5,7 @@
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
-	import { formatDistanceToNow } from 'date-fns';
+	import { formatTimestampToNow } from '$lib/utils';
 </script>
 
 <RobotsNoIndex />
@@ -20,9 +20,7 @@
 				{@const subtitles = [
 					session.model,
 					...(knowledgeName ? [knowledgeName] : []),
-					...(session.updatedAt
-						? [formatDistanceToNow(new Date(session.updatedAt), { addSuffix: true })]
-						: [])
+					...(session.updatedAt ? [formatTimestampToNow(session.updatedAt)] : [])
 				]}
 				<SectionListItem
 					sitemap={Sitemap.SESSIONS}

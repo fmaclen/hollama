@@ -5,14 +5,13 @@
 
 	import Button from '$lib/components/Button.svelte';
 	import { type Knowledge, loadKnowledge, saveKnowledge } from '$lib/knowledge';
-	import { getUpdatedAtDate } from '$lib/utils';
+	import { formatTimestampToNow, getUpdatedAtDate } from '$lib/utils';
 	import { knowledgeStore } from '$lib/store';
 	import Header from '$lib/components/Header.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
-	import { formatDistanceToNow } from 'date-fns';
 
 	export let data: PageData;
 
@@ -64,9 +63,7 @@
 					</p>
 					</Badge>
 					{/if} -->
-			{isNewKnowledge
-				? 'New knowledge'
-				: formatDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })}
+			{isNewKnowledge ? 'New knowledge' : formatTimestampToNow(knowledge.updatedAt)}
 		</p>
 
 		<svelte:fragment slot="nav">
