@@ -12,8 +12,7 @@ test.describe('Session', () => {
 
 	test('creates new session and chats', async ({ page }) => {
 		const sessionIdLocator = page.getByTestId('session-id');
-		const modelNameLocator = page.getByTestId('model-name');
-		const newSessionText = page.getByTestId('new-session-text');
+		const sessionMetadata = page.getByTestId('session-metadata');
 		const newSessionButton = page.getByTestId('new-session');
 		const runButton = page.getByText('Run');
 		const articleLocator = page.locator('article');
@@ -22,14 +21,13 @@ test.describe('Session', () => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
 		await expect(sessionIdLocator).not.toBeVisible();
-		await expect(modelNameLocator).not.toBeVisible();
+		await expect(sessionMetadata).not.toBeVisible();
 		await expect(newPromptHelp).not.toBeVisible();
 
 		await newSessionButton.click();
 		await expect(sessionIdLocator).toBeVisible();
 		await expect(sessionIdLocator).toHaveText(/Session #[a-z0-9]{2,8}/);
-		await expect(modelNameLocator).toHaveText('New session');
-		// await expect(newSessionText).toBeVisible();
+		await expect(sessionMetadata).toHaveText('New session');
 		await expect(promptTextarea).toHaveText('');
 		await expect(runButton).toBeVisible();
 		await expect(runButton).toBeDisabled();
@@ -42,13 +40,12 @@ test.describe('Session', () => {
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.keyboard.press('Shift+Enter');
-		// await expect(newSessionText).toHaveText('New session');
-		await expect(modelNameLocator).toHaveText("New session");
+		await expect(sessionMetadata).toHaveText("New session");
 
 		await page.keyboard.press('Enter');
 		await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).toBeVisible();
 		await expect(newPromptHelp).not.toBeVisible();
-		await expect(modelNameLocator).not.toHaveText('New session');
+		await expect(sessionMetadata).toHaveText(new RegExp(MOCK_API_TAGS_RESPONSE.models[0].name));
 
 		await expect(page.locator('article', { hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask' })).not.toBeVisible();
 		await expect(page.locator('article', { hasText: "I understand, it's okay" })).not.toBeVisible();
@@ -254,16 +251,14 @@ test.describe('Session', () => {
 		const stopButton = page.getByTitle('Stop response');
 		const userMessage = page.locator('article', { hasText: "You" })
 		const aiMessage = page.locator('article', { hasText: "AI" })
-		const modelName = page.getByTestId('model-name');
-		const newSessionText = page.getByTestId('new-session-text');
+		const sessionMetadata = page.getByTestId('session-metadata');
 
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByText("New session", { exact: true }).click();
 		await expect(userMessage).not.toBeVisible();
 		await expect(aiMessage).not.toBeVisible();
-		await expect(modelName).toHaveText('New session');
-		// await expect(newSessionText).toBeVisible();
+		await expect(sessionMetadata).toHaveText('New session');
 
 		// Mock a response that takes a while to generate
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -278,7 +273,7 @@ test.describe('Session', () => {
 		await expect(sendButton).toBeDisabled();
 		await expect(stopButton).toBeVisible();
 		await expect(page.getByText("Write a prompt to start a new session")).not.toBeVisible();
-		await expect(modelName).toHaveText(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await expect(sessionMetadata).toHaveText(new RegExp(MOCK_API_TAGS_RESPONSE.models[0].name));
 
 		await stopButton.click();
 		await expect(page.getByText("Write a prompt to start a new session")).toBeVisible();

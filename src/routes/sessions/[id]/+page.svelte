@@ -13,7 +13,13 @@
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, sessionsStore, knowledgeStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
-	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
+	import {
+		saveSession,
+		type Message,
+		type Session,
+		loadSession,
+		formatSessionMetadata
+	} from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
 
@@ -82,6 +88,15 @@
 		const message: Message = { role: 'ai', content: completion };
 		session.messages = [...session.messages, message];
 		session.updatedAt = new Date().toISOString();
+
+		if (knowledge) {
+			session.knowledge = knowledge;
+
+			// Now that we used the knowledge, we no longer need an `id`
+			// This will prevent `knowledge` from being used again
+			knowledgeId = '';
+		}
+
 		completion = '';
 		promptCached = '';
 		shouldFocusTextarea = true;
@@ -101,10 +116,6 @@
 				knowledge,
 				content: ''
 			};
-
-			// Now that we used the knowledge, we no longer need an `id`
-			// This will prevent `knowledge` from being used again
-			knowledgeId = '';
 		}
 
 		const message: Message = { role: 'user', content: prompt };
@@ -175,20 +186,8 @@
 			>
 		</p>
 		<div class="grid grid-cols-[auto,auto] gap-x-1">
-			<!-- {#if isNewSession}
-				<p data-testid="new-session-text" class="text-sm text-muted">New session</p>
-			{:else}
-				{#if session.updatedAt}
-					<Badge variant="default" capitalize={false}>
-						{formatShortDistanceToNow(new Date(session.updatedAt), { addSuffix: true })}
-					</Badge>
-				{/if}
-				<Badge variant="default" capitalize={false}>
-					<p data-testid="model-name">{session.model}</p>
-				</Badge>
-			{/if} -->
-			<p data-testid="model-name" class="text-sm text-muted">
-				{isNewSession ? 'New session' : session.model}
+			<p data-testid="session-metadata" class="text-sm text-muted">
+				{isNewSession ? 'New session' : formatSessionMetadata(session)}
 			</p>
 		</div>
 		<svelte:fragment slot="nav">

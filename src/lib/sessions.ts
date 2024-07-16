@@ -1,6 +1,7 @@
 import { get } from 'svelte/store';
 import { settingsStore, sessionsStore } from '$lib/store';
 import type { Knowledge } from './knowledge';
+import { formatTimestampToNow } from './utils';
 
 export interface Message {
 	role: 'user' | 'ai' | 'system';
@@ -64,3 +65,17 @@ export const saveSession = (session: Session): void => {
 	// Update the store with the sorted sessions
 	sessionsStore.set(sortedSessions);
 };
+
+export function getSessionMetadata(session: Session) {
+	const metadata: { model: string; updatedAt?: string; knowledge?: string } = {
+		model: session.model
+	};
+	if (session.updatedAt) metadata.updatedAt = formatTimestampToNow(session.updatedAt);
+	if (session.knowledge?.name) metadata.knowledge = session.knowledge?.name;
+	return metadata;
+}
+
+export function formatSessionMetadata(session: Session) {
+	const subtitles: string[] = Object.values(getSessionMetadata(session));
+	return subtitles.join(' • ');
+}
