@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { knowledgeStore } from '$lib/store';
+import { knowledgeStore, sortStore } from '$lib/store';
 
 export interface Knowledge {
 	id: string;
@@ -44,9 +44,7 @@ export const saveKnowledge = (knowledge: Knowledge): void => {
 	}
 
 	// Sort the knowledges by updatedAt in descending order (most recent first)
-	const sortedKnowledges = currentKnowledges.sort(
-		(a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-	);
+	const sortedKnowledges = sortStore(currentKnowledges);
 
 	// Update the store with the sorted knowledges
 	knowledgeStore.set(sortedKnowledges);

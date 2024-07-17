@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { settingsStore, sessionsStore } from '$lib/store';
+import { settingsStore, sessionsStore, sortStore } from '$lib/store';
 import type { Knowledge } from './knowledge';
 import { formatTimestampToNow } from './utils';
 
@@ -57,10 +57,7 @@ export const saveSession = (session: Session): void => {
 	}
 
 	// Sort the sessions by updatedAt in descending order (most recent first)
-	const sortedSessions = currentSessions.sort((a, b) => {
-		if (!a.updatedAt || !b.updatedAt) return 0;
-		return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-	});
+	const sortedSessions = sortStore(currentSessions);
 
 	// Update the store with the sorted sessions
 	sessionsStore.set(sortedSessions);
