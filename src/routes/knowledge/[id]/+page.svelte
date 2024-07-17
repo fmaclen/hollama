@@ -54,15 +54,6 @@
 			</Button>
 		</p>
 		<p data-testid="knowledge-timestamp" class="text-sm text-muted">
-			<!-- {#if isNewKnowledge}
-			New knowledge
-			{:else}
-			<Badge variant="default" capitalize={false}>
-				<p data-testid="knowledge-timestamp">
-					{formatShortDistanceToNow(new Date(knowledge.updatedAt), { addSuffix: true })}
-					</p>
-					</Badge>
-					{/if} -->
 			{isNewKnowledge ? 'New knowledge' : formatTimestampToNow(knowledge.updatedAt)}
 		</p>
 
