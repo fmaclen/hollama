@@ -66,11 +66,17 @@
 		messageWindow.scrollTop = messageWindow.scrollHeight;
 	}
 
-	function handleError(error: any) {
-		const message: Message = {
-			role: 'system',
-			content: typeof error === 'string' ? error : 'Sorry, something went wrong.'
-		};
+	function handleError(error: Error) {
+		resetPrompt();
+
+		let content: string;
+		if (error.message === 'Failed to fetch') {
+			content = `Couldn't connect to the Ollama. Is the server running?`;
+		} else {
+			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
+		}
+
+		const message: Message = { role: 'system', content };
 		session.messages = [...session.messages, message];
 	}
 
@@ -153,8 +159,6 @@
 						session.context = context;
 					}
 				}
-			} else {
-				throw new Error("Couldn't connect to Ollama");
 			}
 		} catch (error: any) {
 			if (error.name === 'AbortError') return; // User aborted the request
@@ -162,8 +166,7 @@
 		}
 	}
 
-	function handleAbort() {
-		abortController.abort();
+	function resetPrompt() {
 		// Reset the prompt to the last sent message
 		prompt = promptCached;
 		promptCached = '';
@@ -206,7 +209,9 @@
 				{/if}
 
 				{#each session.messages as message, i (session.id + i)}
-					<Article {message} />
+					{#key message.role}
+						<Article {message} />
+					{/key}
 				{/each}
 
 				{#if isLastMessageFromUser}
@@ -276,7 +281,10 @@
 										title="Stop response"
 										variant="outline"
 										size="icon"
-										on:click={handleAbort}
+										on:click={() => {
+											abortController.abort();
+											resetPrompt();
+										}}
 									>
 										<StopCircle class="h-4 w-4" />
 									</Button>
