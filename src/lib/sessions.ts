@@ -67,6 +67,5 @@ export function formatSessionMetadata(session: Session) {
 	const subtitles: string[] = [];
 	if (session.updatedAt) subtitles.push(formatTimestampToNow(session.updatedAt));
 	subtitles.push(session.model);
-	if (session.knowledge?.name) subtitles.push(session.knowledge?.name);
 	return subtitles.join(' • ');
 }
