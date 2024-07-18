@@ -78,7 +78,7 @@
 	}
 
 	.section-list-item__a {
-		@apply relative z-0 overflow-hidden text-ellipsis px-6 py-3;
+		@apply relative z-0 overflow-hidden text-ellipsis px-6 py-3 w-full;
 	}
 
 	.section-list-item__title {
