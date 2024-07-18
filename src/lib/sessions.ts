@@ -63,16 +63,12 @@ export const saveSession = (session: Session): void => {
 	sessionsStore.set(sortedSessions);
 };
 
-export function getSessionMetadata(session: Session) {
+export function formatSessionMetadata(session: Session) {
 	const metadata: { model: string; updatedAt?: string; knowledge?: string } = {
 		model: session.model
 	};
 	if (session.updatedAt) metadata.updatedAt = formatTimestampToNow(session.updatedAt);
 	if (session.knowledge?.name) metadata.knowledge = session.knowledge?.name;
-	return metadata;
-}
-
-export function formatSessionMetadata(session: Session) {
-	const subtitles: string[] = Object.values(getSessionMetadata(session));
+	const subtitles: string[] = Object.values(metadata);
 	return subtitles.join(' • ');
 }
