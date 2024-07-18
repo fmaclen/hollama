@@ -323,12 +323,43 @@ test.describe('Session', () => {
 		await expect(promptEditor).not.toHaveClass(/ prompt-editor--fullscreen/);
 	});
 
-	test.skip('handles API error when generating AI response', async ({ page }) => {
-		// TODO: Implement the test
-	});
+	test('handles errors when generating completion response', async ({ page }) => {
+		const runButton = page.locator('button', { hasText: 'Run' });
 
-	test.skip('displays system message when an error occurs', async ({ page }) => {
-		// TODO: Implement the test
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(0);
+		await expect(promptTextarea).not.toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await expect(page.getByText("Couldn't connect to Ollama. Is the server running?")).not.toBeVisible();
+		await expect(page.getByText("Sorry, something went wrong.")).not.toBeVisible();
+		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).not.toBeVisible();
+
+		// Mock a net::ERR_CONNECTION_REFUSED
+		await page.route('**/generate', async (route) => {
+			await route.abort('failed');
+		});
+		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await runButton.click();
+		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
+		await expect(page.getByText("Couldn't connect to Ollama. Is the server running?")).toBeVisible();
+		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).not.toBeVisible();
+		await expect(promptTextarea).toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
+
+		// Mock a 500 error response
+		await page.route('**/generate', async (route) => {
+			await route.fulfill({
+				status: 500,
+				contentType: 'application/json',
+				body: JSON.stringify({ error: 'Ollama says: Not so fast!' })
+			});
+		});
+		await runButton.click();
+		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(2);
+		await expect(page.getByText('Sorry, something went wrong.')).toBeVisible();
+		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).toBeVisible();
+		await expect(promptTextarea).toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
 	});
 
 	test.skip('auto-scrolls to the bottom when new messages are added', async ({ page }) => {
