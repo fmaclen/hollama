@@ -1,16 +1,17 @@
 <script lang="ts">
 	import { Check, Trash2, X } from 'lucide-svelte';
-	import { confirmDeletionStore } from '$lib/store';
+	import type { Writable } from 'svelte/store';
 
-	export let deleteRecord;
+	export let deleteRecord: () => void;
+	export let shouldConfirmDeletion: Writable<boolean>;
 
 	function updateConfirmDeletion(value: boolean) {
-		$confirmDeletionStore = value;
+		$shouldConfirmDeletion = value;
 	}
 </script>
 
-<div class="delete" class:delete--confirm-deletion={$confirmDeletionStore}>
-	{#if $confirmDeletionStore}
+<div class="delete" class:delete--confirm-deletion={$shouldConfirmDeletion}>
+	{#if $shouldConfirmDeletion}
 		<button class="delete__confirm" on:click={deleteRecord}>
 			<Check class="h-4 w-4" />
 		</button>

@@ -3,15 +3,18 @@
 	import { page } from '$app/stores';
 	import { Sitemap } from '$lib/sitemap';
 	import { sessionsStore, deleteStoreItem, knowledgeStore } from '$lib/store';
+	import { writable } from 'svelte/store';
 	import ButtonDelete from './ButtonDelete.svelte';
 	import Metadata from './Metadata.svelte';
-	import { confirmDeletionStore } from '$lib/store';
 
 	export let sitemap: Sitemap;
 	export let id: string;
 	export let title: string;
 	export let subtitle: string;
 	const isSession = sitemap === Sitemap.SESSIONS;
+
+	// Create a unique store for this instance
+	const shouldConfirmDeletion = writable(false);
 
 	function deleteRecord() {
 		switch (sitemap) {
@@ -27,7 +30,7 @@
 				break;
 		}
 		// Reset confirmDeletion after deletion
-		$confirmDeletionStore = false;
+		$shouldConfirmDeletion = false;
 	}
 </script>
 
@@ -36,7 +39,7 @@
 	<div
 		class="section-list-item"
 		class:section-list-item--active={$page.url.pathname.includes(id)}
-		class:section-list-item--confirm-deletion={$confirmDeletionStore}
+		class:section-list-item--confirm-deletion={$shouldConfirmDeletion}
 	>
 		<a
 			class="section-list-item__a"
@@ -51,8 +54,11 @@
 				{subtitle}
 			</Metadata>
 		</a>
-		<nav class="section-list-item__delete">
-			<ButtonDelete {deleteRecord} />
+		<nav
+			class="section-list-item__delete"
+			class:section-list-item__delete--confirm-deletion={$shouldConfirmDeletion}
+		>
+			<ButtonDelete {deleteRecord} {shouldConfirmDeletion} />
 		</nav>
 	</div>
 {/key}
@@ -73,12 +79,16 @@
 		@apply opacity-0;
 	}
 
+	.section-list-item__delete--confirm-deletion {
+		@apply opacity-100;
+	}
+
 	.section-list-item--active {
 		@apply bg-shade-1;
 	}
 
 	.section-list-item__a {
-		@apply relative z-0 overflow-hidden text-ellipsis px-6 py-3 w-full;
+		@apply relative z-0 w-full overflow-hidden text-ellipsis px-6 py-3;
 	}
 
 	.section-list-item__title {
