@@ -5,6 +5,7 @@
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
+	import { formatSessionMetadata } from '$lib/sessions';
 </script>
 
 <RobotsNoIndex />
@@ -12,15 +13,13 @@
 <Section sitemap={Sitemap.SESSIONS}>
 	<svelte:fragment slot="list-items">
 		{#if $sessionsStore && $sessionsStore.length > 0}
-			<!-- Using slice() to reverse $sessionsStore without affecting the original array -->
-			{#each $sessionsStore.slice().reverse() as session (session.id)}
+			{#each $sessionsStore as session}
 				{@const hasKnowledge = session.messages[0].knowledge}
-				{@const knowledgeName = session.messages[0].knowledge?.name}
 				<SectionListItem
 					sitemap={Sitemap.SESSIONS}
 					id={session.id}
 					title={hasKnowledge ? session.messages[1].content : session.messages[0].content}
-					subtitle={knowledgeName ? `${session.model} — ${knowledgeName}` : session.model}
+					subtitle={formatSessionMetadata(session)}
 				/>
 			{/each}
 		{:else}

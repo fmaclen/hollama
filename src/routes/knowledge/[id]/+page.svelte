@@ -5,7 +5,7 @@
 
 	import Button from '$lib/components/Button.svelte';
 	import { type Knowledge, loadKnowledge, saveKnowledge } from '$lib/knowledge';
-	import { getUpdatedAtDate } from '$lib/utils';
+	import { formatTimestampToNow, getUpdatedAtDate } from '$lib/utils';
 	import { knowledgeStore } from '$lib/store';
 	import Header from '$lib/components/Header.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
@@ -54,11 +54,7 @@
 			</Button>
 		</p>
 		<p data-testid="knowledge-timestamp" class="text-sm text-muted">
-			{#if isNewKnowledge}
-				New knowledge
-			{:else}
-				{knowledge.updatedAt}
-			{/if}
+			{isNewKnowledge ? 'New knowledge' : formatTimestampToNow(knowledge.updatedAt)}
 		</p>
 
 		<svelte:fragment slot="nav">

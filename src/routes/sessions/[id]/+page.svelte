@@ -13,7 +13,13 @@
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, sessionsStore, knowledgeStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
-	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
+	import {
+		saveSession,
+		type Message,
+		type Session,
+		loadSession,
+		formatSessionMetadata
+	} from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
 
@@ -81,6 +87,16 @@
 	async function handleCompletionDone(completion: string, context: number[]) {
 		const message: Message = { role: 'ai', content: completion };
 		session.messages = [...session.messages, message];
+		session.updatedAt = new Date().toISOString();
+
+		if (knowledge) {
+			session.knowledge = knowledge;
+
+			// Now that we used the knowledge, we no longer need an `id`
+			// This will prevent `knowledge` from being used again
+			knowledgeId = '';
+		}
+
 		completion = '';
 		promptCached = '';
 		shouldFocusTextarea = true;
@@ -100,10 +116,6 @@
 				knowledge,
 				content: ''
 			};
-
-			// Now that we used the knowledge, we no longer need an `id`
-			// This will prevent `knowledge` from being used again
-			knowledgeId = '';
 		}
 
 		const message: Message = { role: 'user', content: prompt };
@@ -169,12 +181,15 @@
 <div class="session">
 	<Header>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
-			Session <Button size="link" variant="link" href={`/${session.id}`}>#{session.id}</Button>
+			Session <Button size="link" variant="link" href={`/sessions/${session.id}`}
+				>#{session.id}</Button
+			>
 		</p>
-		<p data-testid="model-name" class="text-sm text-muted">
-			{isNewSession ? 'New session' : session.model}
-		</p>
-
+		<div class="grid grid-cols-[auto,auto] gap-x-1">
+			<p data-testid="session-metadata" class="text-sm text-muted">
+				{isNewSession ? 'New session' : formatSessionMetadata(session)}
+			</p>
+		</div>
 		<svelte:fragment slot="nav">
 			{#if !isNewSession}
 				<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
@@ -309,17 +324,16 @@
 		@apply lg:gap-x-2;
 	}
 
-
 	.prompt-editor--fullscreen {
 		@apply min-h-[60dvh];
 	}
 
 	.prompt-editor__form {
-		@apply h-full overflow-y-auto bg-shade-1;
+		@apply bg-shade-1 h-full overflow-y-auto;
 	}
 
 	.prompt-editor__toggle {
-		@apply border-b bg-shade-1;
+		@apply bg-shade-1 border-b;
 		@apply hover:bg-shade-2 active:bg-shade-2;
 		@apply 2xl:rounded-t-lg;
 	}

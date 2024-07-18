@@ -5,6 +5,7 @@
 	import { knowledgeStore } from '$lib/store';
 	import { Sitemap } from '$lib/sitemap';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
+	import { formatTimestampToNow } from '$lib/utils';
 </script>
 
 <RobotsNoIndex />
@@ -17,7 +18,7 @@
 					sitemap={Sitemap.KNOWLEDGE}
 					id={knowledge.id}
 					title={knowledge.name}
-					subtitle={knowledge.updatedAt}
+					subtitle={formatTimestampToNow(knowledge.updatedAt)}
 				/>
 			{/each}
 		{:else}
