@@ -5,15 +5,14 @@
 	import { sessionsStore, deleteStoreItem, knowledgeStore } from '$lib/store';
 	import ButtonDelete from './ButtonDelete.svelte';
 	import Metadata from './Metadata.svelte';
+	import { confirmDeletionStore } from '$lib/store';
 
 	export let sitemap: Sitemap;
 	export let id: string;
 	export let title: string;
 	export let subtitle: string;
-
 	const isSession = sitemap === Sitemap.SESSIONS;
-	let confirmDeletion: boolean = false;
-	
+
 	function deleteRecord() {
 		switch (sitemap) {
 			case Sitemap.KNOWLEDGE:
@@ -27,15 +26,17 @@
 			default:
 				break;
 		}
+		// Reset confirmDeletion after deletion
+		$confirmDeletionStore = false;
 	}
 </script>
 
 <!-- Need to use `#key id` to re-render the delete nav after deletion -->
 {#key id}
 	<div
-		class="section-list-item {$page.url.pathname.includes(id)
-			? 'section-list-item--active'
-			: ''} {confirmDeletion ? 'section-list-item--confirm-deletion' : ''}"
+		class="section-list-item"
+		class:section-list-item--active={$page.url.pathname.includes(id)}
+		class:section-list-item--confirm-deletion={$confirmDeletionStore}
 	>
 		<a
 			class="section-list-item__a"
@@ -50,9 +51,8 @@
 				{subtitle}
 			</Metadata>
 		</a>
-
 		<nav class="section-list-item__delete">
-			<ButtonDelete {confirmDeletion} {deleteRecord} />
+			<ButtonDelete {deleteRecord} />
 		</nav>
 	</div>
 {/key}

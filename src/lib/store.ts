@@ -53,6 +53,8 @@ export enum StorageKey {
 	HollamaKnowledge = `${LOCAL_STORAGE_PREFIX}-knowledge`
 }
 
+
+export const confirmDeletionStore = writable(false);
 export const settingsStore = createLocalStorageStore<Settings>(StorageKey.HollamaSettings);
 export const sessionsStore = createLocalStorageStore<Session[]>(StorageKey.HollamaSessions);
 export const knowledgeStore = createLocalStorageStore<Knowledge[]>(StorageKey.HollamaKnowledge);
