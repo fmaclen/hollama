@@ -56,5 +56,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/${{ secrets.GH_REGISTRY_USERNAME }}/hollama:latest, ghcr.io/${{ secrets.GH_USERNAME }}/hollama:${{ needs.release.outputs.new_release_version }}
+          tags: ghcr.io/${{ secrets.GH_REGISTRY_USERNAME }}/hollama:latest, ghcr.io/${{ secrets.GH_REGISTRY_USERNAME }}/hollama:${{ needs.release.outputs.new_release_version }}
           platforms: linux/arm64, linux/amd64
