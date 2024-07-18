@@ -71,7 +71,7 @@
 
 		let content: string;
 		if (error.message === 'Failed to fetch') {
-			content = `Couldn't connect to Ollama. Is the server running?`;
+			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
 		} else {
 			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
 		}
