@@ -113,6 +113,10 @@
 		@apply mx-auto my-3 w-full px-3;
 		@apply md:mb-6 md:px-6;
 
+		:global(a) {
+			@apply underline underline-offset-4 hover:text-active;
+		}
+
 		:global(> *:not(:first-child)) {
 			@apply mt-4;
 		}
