@@ -45,6 +45,8 @@
 	let knowledgeId: string;
 	let knowledge: Knowledge | null;
 
+	$: isServerConnected = !!$settingsStore?.ollamaServer;
+	$: isModelChosen = !!$settingsStore?.ollamaModel;
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
 	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
@@ -271,7 +273,11 @@
 						{/key}
 
 						<div class="flex w-full">
-							<ButtonSubmit {handleSubmit} hasMetaKey={isPromptFullscreen} disabled={!prompt}>
+							<ButtonSubmit
+								{handleSubmit}
+								hasMetaKey={isPromptFullscreen}
+								disabled={!prompt || !isServerConnected || !isModelChosen}
+							>
 								Run
 							</ButtonSubmit>
 
