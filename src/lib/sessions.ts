@@ -64,11 +64,8 @@ export const saveSession = (session: Session): void => {
 };
 
 export function formatSessionMetadata(session: Session) {
-	const metadata: { model: string; updatedAt?: string; knowledge?: string } = {
-		model: session.model
-	};
-	if (session.updatedAt) metadata.updatedAt = formatTimestampToNow(session.updatedAt);
-	if (session.knowledge?.name) metadata.knowledge = session.knowledge?.name;
-	const subtitles: string[] = Object.values(metadata);
+	const subtitles: string[] = [];
+	if (session.updatedAt) subtitles.push(formatTimestampToNow(session.updatedAt));
+	subtitles.push(session.model);
 	return subtitles.join(' • ');
 }

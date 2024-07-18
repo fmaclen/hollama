@@ -12,6 +12,7 @@
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
+	import Metadata from '$lib/components/Metadata.svelte';
 
 	export let data: PageData;
 
@@ -53,9 +54,9 @@
 				#{knowledge.id}
 			</Button>
 		</p>
-		<p data-testid="knowledge-timestamp" class="text-sm text-muted">
+		<Metadata dataTestid="knowledge-metadata">
 			{isNewKnowledge ? 'New knowledge' : formatTimestampToNow(knowledge.updatedAt)}
-		</p>
+		</Metadata>
 
 		<svelte:fragment slot="nav">
 			{#if !isNewKnowledge}
@@ -73,6 +74,6 @@
 			<FieldTextEditor label="Content" {handleSubmit} bind:value={content} />
 		{/key}
 
-		<ButtonSubmit {handleSubmit} disabled={!name || !content}>Save</ButtonSubmit>
+		<ButtonSubmit hasMetaKey={true} {handleSubmit} disabled={!name || !content}>Save</ButtonSubmit>
 	</Fieldset>
 </div>

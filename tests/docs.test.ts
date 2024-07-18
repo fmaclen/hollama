@@ -87,9 +87,9 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 
 	await seedKnowledgeAndReload(page);
 	await expect(page.getByText('No knowledge')).not.toBeVisible();
-	await expect(page.getByTestId('knowledge-timestamp')).not.toBeVisible();
+	await expect(page.getByTestId('knowledge-metadata')).not.toBeVisible();
 
 	await page.getByText(MOCK_KNOWLEDGE[0].name).click();
-	await expect(page.getByTestId('knowledge-timestamp')).toBeVisible();
+	await expect(page.getByTestId('knowledge-metadata')).toBeVisible();
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'knowledge.png' });
 });
