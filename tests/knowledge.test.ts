@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, seedKnowledgeAndReload, submitWithKeyboardShortcut, textEditorLocator } from './utils';
 
 test('creates and edits knowledge', async ({ page }) => {
-	const timestamp = page.getByTestId('knowledge-timestamp');
+	const timestamp = page.getByTestId('knowledge-metadata');
 	const fieldName = page.getByLabel('Name');
 	const fieldContent = textEditorLocator(page, 'Content');
 	const buttonSave = page.getByText('Save');
@@ -57,7 +57,7 @@ test('creates and edits knowledge', async ({ page }) => {
 });
 
 test('deletes knowledge', async ({ page }) => {
-	const timestamp = page.getByTestId('knowledge-timestamp');
+	const timestamp = page.getByTestId('knowledge-metadata');
 	const noKnowledgeMessage = page.getByText('No knowledge');
 	const noKnowledgeSelectedMessage = page.getByText('Create new knowlege or choose one from the list');
 	const knowledgeItems = page.getByTestId('knowledge-item');

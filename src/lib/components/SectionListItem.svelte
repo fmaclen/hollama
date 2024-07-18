@@ -27,7 +27,7 @@
 
 <style lang="scss">
 	.section-list-item {
-		@apply flex flex-col px-6 py-3 hover:bg-shade-1 border-b last:border-b-0;
+		@apply flex flex-col border-b px-6 py-3 last:border-b-0 hover:bg-shade-1;
 	}
 
 	.section-list-item--active {
