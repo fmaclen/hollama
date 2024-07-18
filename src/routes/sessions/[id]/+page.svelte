@@ -28,6 +28,7 @@
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import Metadata from '$lib/components/Metadata.svelte';
 
 	export let data: PageData;
 
@@ -185,11 +186,10 @@
 				>#{session.id}</Button
 			>
 		</p>
-		<div class="grid grid-cols-[auto,auto] gap-x-1">
-			<p data-testid="session-metadata" class="text-sm text-muted">
-				{isNewSession ? 'New session' : formatSessionMetadata(session)}
-			</p>
-		</div>
+		<Metadata dataTestid="session-metadata">
+			{isNewSession ? 'New session' : formatSessionMetadata(session)}
+		</Metadata>
+
 		<svelte:fragment slot="nav">
 			{#if !isNewSession}
 				<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
@@ -329,11 +329,11 @@
 	}
 
 	.prompt-editor__form {
-		@apply bg-shade-1 h-full overflow-y-auto;
+		@apply h-full overflow-y-auto bg-shade-1;
 	}
 
 	.prompt-editor__toggle {
-		@apply bg-shade-1 border-b;
+		@apply border-b bg-shade-1;
 		@apply hover:bg-shade-2 active:bg-shade-2;
 		@apply 2xl:rounded-t-lg;
 	}

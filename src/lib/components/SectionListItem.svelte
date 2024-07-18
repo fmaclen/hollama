@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { Sitemap } from '$lib/sitemap';
+	import Metadata from './Metadata.svelte';
 
 	export let sitemap: Sitemap;
 	export let id: string;
@@ -19,9 +20,9 @@
 	<p class="section-list-item__title">
 		{title}
 	</p>
-	<p class="section-list-item__subtitle">
+	<Metadata>
 		{subtitle}
-	</p>
+	</Metadata>
 </a>
 
 <style lang="scss">
@@ -35,9 +36,5 @@
 
 	.section-list-item__title {
 		@apply max-w-full truncate whitespace-nowrap text-sm font-bold;
-	}
-
-	.section-list-item__subtitle {
-		@apply flex max-w-full gap-x-2 truncate whitespace-nowrap text-sm;
 	}
 </style>
