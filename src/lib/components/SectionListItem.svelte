@@ -2,30 +2,40 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Sitemap } from '$lib/sitemap';
-	import { knowledgeStore } from '$lib/store';
+	import { sessionsStore, deleteStoreItem, knowledgeStore } from '$lib/store';
 	import ButtonDelete from './ButtonDelete.svelte';
+	import Metadata from './Metadata.svelte';
 
 	export let sitemap: Sitemap;
 	export let id: string;
 	export let title: string;
 	export let subtitle: string;
 
-	let confirmDeletion: boolean = false;
 	const isSession = sitemap === Sitemap.SESSIONS;
-
-	function deleteKnowledge() {
-		if ($knowledgeStore) {
-			const updatedKnowledge = $knowledgeStore.filter((s) => s.id !== id);
-			$knowledgeStore = updatedKnowledge;
+	let confirmDeletion: boolean = false;
+	
+	function deleteRecord() {
+		switch (sitemap) {
+			case Sitemap.KNOWLEDGE:
+				if ($knowledgeStore) $knowledgeStore = deleteStoreItem($knowledgeStore, id);
+				goto('/knowledge');
+				break;
+			case Sitemap.SESSIONS:
+				if ($sessionsStore) $sessionsStore = deleteStoreItem($sessionsStore, id);
+				goto('/sessions');
+				break;
+			default:
+				break;
 		}
-		goto('/knowledge');
 	}
 </script>
 
 <!-- Need to use `#key id` to re-render the delete nav after deletion -->
 {#key id}
 	<div
-		class="section-list-item {$page.url.pathname.includes(id) ? 'section-list-item--active' : ''} {confirmDeletion ? 'section-list-item--confirm-deletion' : ''}"
+		class="section-list-item {$page.url.pathname.includes(id)
+			? 'section-list-item--active'
+			: ''} {confirmDeletion ? 'section-list-item--confirm-deletion' : ''}"
 	>
 		<a
 			class="section-list-item__a"
@@ -36,13 +46,13 @@
 			<p class="section-list-item__title">
 				{title}
 			</p>
-			<p class="section-list-item__subtitle">
+			<Metadata>
 				{subtitle}
-			</p>
+			</Metadata>
 		</a>
 
 		<nav class="section-list-item__delete">
-			<ButtonDelete {confirmDeletion} deleteRecord={deleteKnowledge} />
+			<ButtonDelete {confirmDeletion} {deleteRecord} />
 		</nav>
 	</div>
 {/key}
@@ -73,13 +83,5 @@
 
 	.section-list-item__title {
 		@apply max-w-full truncate whitespace-nowrap text-sm font-bold;
-	}
-
-	.section-list-item__subtitle {
-		@apply flex max-w-full gap-x-2 truncate whitespace-nowrap text-sm;
-	}
-
-	.section-list-item:hover .section-list-item__delete {
-		@apply opacity-100;
 	}
 </style>

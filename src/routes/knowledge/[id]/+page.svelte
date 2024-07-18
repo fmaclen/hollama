@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { afterNavigate, goto } from '$app/navigation';
 	import type { PageData } from './$types';
-	import { MagnetIcon, Trash2 } from 'lucide-svelte';
 
 	import { type Knowledge, loadKnowledge, saveKnowledge } from '$lib/knowledge';
-	import { getUpdatedAtDate } from '$lib/utils';
+	import { formatTimestampToNow, getUpdatedAtDate } from '$lib/utils';
 	import { knowledgeStore } from '$lib/store';
 	import Button from '$lib/components/Button.svelte';
 	import Header from '$lib/components/Header.svelte';
@@ -13,6 +12,7 @@
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
+	import Metadata from '$lib/components/Metadata.svelte';
 
 	export let data: PageData;
 
@@ -51,16 +51,11 @@
 				#{knowledge.id}
 			</Button>
 		</p>
-		<p data-testid="knowledge-timestamp" class="text-sm text-muted">
-			{#if isNewKnowledge}
-				New knowledge
-			{:else}
-				{knowledge.updatedAt}
-			{/if}
-		</p>
+		<Metadata dataTestid="knowledge-metadata">
+			{isNewKnowledge ? 'New knowledge' : formatTimestampToNow(knowledge.updatedAt)}
+		</Metadata>
 
 		<svelte:fragment slot="nav">
-			<MagnetIcon class="h-4 w-4" />
 			{#if !isNewKnowledge}
 				<ButtonDelete deleteRecord={deleteKnowledge} />
 				<!-- <Button title="Delete knowledge" variant="outline" size="icon" on:click={deleteKnowledge}>
@@ -77,6 +72,6 @@
 			<FieldTextEditor label="Content" {handleSubmit} bind:value={content} />
 		{/key}
 
-		<ButtonSubmit {handleSubmit} disabled={!name || !content}>Save</ButtonSubmit>
+		<ButtonSubmit hasMetaKey={true} {handleSubmit} disabled={!name || !content}>Save</ButtonSubmit>
 	</Fieldset>
 </div>

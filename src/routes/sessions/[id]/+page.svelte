@@ -13,7 +13,13 @@
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, sessionsStore, knowledgeStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
-	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
+	import {
+		saveSession,
+		type Message,
+		type Session,
+		loadSession,
+		formatSessionMetadata
+	} from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
 
@@ -23,6 +29,7 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import Field from '$lib/components/Field.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
+	import Metadata from '$lib/components/Metadata.svelte';
 
 	export let data: PageData;
 
@@ -60,11 +67,17 @@
 		messageWindow.scrollTop = messageWindow.scrollHeight;
 	}
 
-	function handleError(error: any) {
-		const message: Message = {
-			role: 'system',
-			content: typeof error === 'string' ? error : 'Sorry, something went wrong.'
-		};
+	function handleError(error: Error) {
+		resetPrompt();
+
+		let content: string;
+		if (error.message === 'Failed to fetch') {
+			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
+		} else {
+			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
+		}
+
+		const message: Message = { role: 'system', content };
 		session.messages = [...session.messages, message];
 	}
 
@@ -76,12 +89,23 @@
 			const updatedSessions = $sessionsStore.filter((s) => s.id !== session.id);
 			$sessionsStore = updatedSessions;
 		}
+		debugger;
 		goto('/sessions');
 	}
 
 	async function handleCompletionDone(completion: string, context: number[]) {
 		const message: Message = { role: 'ai', content: completion };
 		session.messages = [...session.messages, message];
+		session.updatedAt = new Date().toISOString();
+
+		if (knowledge) {
+			session.knowledge = knowledge;
+
+			// Now that we used the knowledge, we no longer need an `id`
+			// This will prevent `knowledge` from being used again
+			knowledgeId = '';
+		}
+
 		completion = '';
 		promptCached = '';
 		shouldFocusTextarea = true;
@@ -101,10 +125,6 @@
 				knowledge,
 				content: ''
 			};
-
-			// Now that we used the knowledge, we no longer need an `id`
-			// This will prevent `knowledge` from being used again
-			knowledgeId = '';
 		}
 
 		const message: Message = { role: 'user', content: prompt };
@@ -141,8 +161,6 @@
 						session.context = context;
 					}
 				}
-			} else {
-				throw new Error("Couldn't connect to Ollama");
 			}
 		} catch (error: any) {
 			if (error.name === 'AbortError') return; // User aborted the request
@@ -150,8 +168,7 @@
 		}
 	}
 
-	function handleAbort() {
-		abortController.abort();
+	function resetPrompt() {
 		// Reset the prompt to the last sent message
 		prompt = promptCached;
 		promptCached = '';
@@ -170,11 +187,13 @@
 <div class="session">
 	<Header confirmDeletion={false}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
-			Session <Button size="link" variant="link" href={`/${session.id}`}>#{session.id}</Button>
+			Session <Button size="link" variant="link" href={`/sessions/${session.id}`}
+				>#{session.id}</Button
+			>
 		</p>
-		<p data-testid="model-name" class="text-sm text-muted">
-			{isNewSession ? 'New session' : session.model}
-		</p>
+		<Metadata dataTestid="session-metadata">
+			{isNewSession ? 'New session' : formatSessionMetadata(session)}
+		</Metadata>
 
 		<svelte:fragment slot="nav">
 			{#if !isNewSession}
@@ -190,7 +209,9 @@
 				{/if}
 
 				{#each session.messages as message, i (session.id + i)}
-					<Article {message} />
+					{#key message.role}
+						<Article {message} />
+					{/key}
 				{/each}
 
 				{#if isLastMessageFromUser}
@@ -260,7 +281,10 @@
 										title="Stop response"
 										variant="outline"
 										size="icon"
-										on:click={handleAbort}
+										on:click={() => {
+											abortController.abort();
+											resetPrompt();
+										}}
 									>
 										<StopCircle class="h-4 w-4" />
 									</Button>

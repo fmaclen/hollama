@@ -1,6 +1,7 @@
-import { get } from "svelte/store";
-import { settingsStore, sessionsStore } from "$lib/store";
-import type { Knowledge } from "./knowledge";
+import { get } from 'svelte/store';
+import { settingsStore, sessionsStore, sortStore } from '$lib/store';
+import type { Knowledge } from './knowledge';
+import { formatTimestampToNow } from './utils';
 
 export interface Message {
 	role: 'user' | 'ai' | 'system';
@@ -13,6 +14,7 @@ export interface Session {
 	model: string;
 	messages: Message[];
 	context: number[];
+	updatedAt?: string;
 	knowledge?: Knowledge;
 }
 
@@ -24,16 +26,16 @@ export const loadSession = (id: string): Session => {
 
 	// Find the session with the given id
 	if (currentSessions) {
-		const existingSession = currentSessions.find(s => s.id === id);
+		const existingSession = currentSessions.find((s) => s.id === id);
 		existingSession && (session = existingSession);
 	}
 
 	if (!session) {
 		// Get the current model
-		const model = get(settingsStore)?.ollamaModel || "";
+		const model = get(settingsStore)?.ollamaModel || '';
 
 		// Create a new session
-		session = { id, model, messages: [], context: [] };
+		session = { id, model, messages: [], context: [], updatedAt: new Date().toISOString() };
 	}
 
 	return session;
@@ -44,16 +46,26 @@ export const saveSession = (session: Session): void => {
 	const currentSessions = get(sessionsStore) || [];
 
 	// Find the index of the session with the same id, if it exists
-	const existingSessionIndex = currentSessions.findIndex(s => s.id === session.id);
+	const existingIndex = currentSessions.findIndex((k) => k.id === session.id);
 
-	if (existingSessionIndex !== -1) {
+	if (existingIndex !== -1) {
 		// Update the existing session
-		currentSessions[existingSessionIndex] = session;
+		currentSessions[existingIndex] = session;
 	} else {
 		// Add the new session if it doesn't exist
 		currentSessions.push(session);
 	}
 
-	// Update the store, which will trigger the localStorage update
-	sessionsStore.set(currentSessions);
+	// Sort the sessions by updatedAt in descending order (most recent first)
+	const sortedSessions = sortStore(currentSessions);
+
+	// Update the store with the sorted sessions
+	sessionsStore.set(sortedSessions);
 };
+
+export function formatSessionMetadata(session: Session) {
+	const subtitles: string[] = [];
+	if (session.updatedAt) subtitles.push(formatTimestampToNow(session.updatedAt));
+	subtitles.push(session.model);
+	return subtitles.join(' • ');
+}
