@@ -74,6 +74,6 @@
 			<FieldTextEditor label="Content" {handleSubmit} bind:value={content} />
 		{/key}
 
-		<ButtonSubmit {handleSubmit} disabled={!name || !content}>Save</ButtonSubmit>
+		<ButtonSubmit hasMetaKey={true} {handleSubmit} disabled={!name || !content}>Save</ButtonSubmit>
 	</Fieldset>
 </div>
