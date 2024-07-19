@@ -57,11 +57,11 @@
 		@apply px-2 py-2;
 	}
 
-	.delete__trash,
 	.delete__confirm {
 		@apply hover:text-negative;
 	}
 
+	.delete__trash,
 	.delete__cancel {
 		@apply hover:text-base;
 	}
