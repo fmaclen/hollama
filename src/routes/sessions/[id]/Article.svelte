@@ -52,7 +52,7 @@
 		<div data-testid="session-role" class="article__role">
 			<Badge>
 				{#if isKnowledgeRole}
-					Knowledge
+					System
 				{:else if isUserRole}
 					You
 				{:else}

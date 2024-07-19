@@ -223,7 +223,7 @@
 								<FieldSelectModel />
 								<div class="prompt-editor__knowledge">
 									<FieldSelect
-										label="Knowledge"
+										label="System prompt"
 										name="knowledge"
 										disabled={!$knowledgeStore}
 										options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}

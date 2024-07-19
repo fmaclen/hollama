@@ -6,6 +6,7 @@ type OllamaCompletionRequest = {
 	context: number[];
 	prompt: string;
 	model: string;
+	system?: string;
 }
 
 export type OllamaCompletionResponse = {
@@ -49,23 +50,9 @@ export async function ollamaGenerate(session: Session, abortSignal: AbortSignal)
 	let payload: OllamaCompletionRequest = {
 		model: session.model,
 		context: session.context,
-		prompt: session.messages[session.messages.length - 1].content
+		prompt: session.messages[session.messages.length - 1].content,
+		system: session.knowledge?.content
 	};
-
-	const firstMessage = session.messages[0]
-	if (firstMessage.knowledge) {
-		payload.prompt = `
-			<CONTEXT
-				name="${firstMessage.knowledge.name}"
-				id="${firstMessage.knowledge.id}"
-				updatedAt="${firstMessage.knowledge.updatedAt}"
-			>
-				${firstMessage.knowledge.content}
-			</CONTEXT>
-
-			${payload.prompt}
-		`;
-	}
 
 	return await fetch(`${settings.ollamaServer}/api/generate`, {
 		method: 'POST',
