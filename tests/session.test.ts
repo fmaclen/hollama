@@ -142,11 +142,11 @@ test.describe('Session', () => {
 		expect(await page.getByTestId('session-item').last().textContent()).toContain(MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		// Check the current session is highlighted in the sidebar
-		await expect(page.getByTestId('session-item').first()).toHaveClass(/ section-list-item--active/);
-		await expect(page.getByTestId('session-item').last()).not.toHaveClass(/ section-list-item--active/);
+		await expect(page.locator('.section-list-item').first()).toHaveClass(/ section-list-item--active/);
+		await expect(page.locator('.section-list-item').last()).not.toHaveClass(/ section-list-item--active/);
 	});
 
-	test('deletes a session from the sidebar', async ({ page }) => {
+	test('deletes a session from the header and sidebar', async ({ page }) => {
 		await page.goto('/');
 		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
@@ -156,12 +156,28 @@ test.describe('Session', () => {
 		await page.getByTestId('new-session').click();
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
-		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
+		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.response)).toBeVisible();
 		await expect(page.getByText('No sessions')).not.toBeVisible();
 		expect(await page.getByTestId('session-item').count()).toBe(1);
 
-		page.on('dialog', dialog => dialog.accept("Are you sure you want to delete this session?"));
-		await page.getByTitle('Delete session').click();
+		// Delete the session from the header
+		await page.locator('header').getByTitle('Delete session').click();
+		await page.getByTitle('Confirm deletion').click();
+		await expect(page.getByText('No sessions')).toBeVisible();
+		expect(await page.getByTestId('session-item').count()).toBe(0);
+
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByTestId('new-session').click();
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.response)).toBeVisible();
+		await expect(page.getByText('No sessions')).not.toBeVisible();
+		expect(await page.getByTestId('session-item').count()).toBe(1);
+
+		// Delete the session from the sidebar
+		await page.locator('.section-list-item').first().hover();
+		await page.locator('.section-list-item').getByTitle('Delete session').click();
+		await page.getByTitle('Confirm deletion').click();
 		await expect(page.getByText('No sessions')).toBeVisible();
 		expect(await page.getByTestId('session-item').count()).toBe(0);
 	});

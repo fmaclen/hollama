@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { afterUpdate, tick } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { Brain, StopCircle, Trash2, UnfoldVertical } from 'lucide-svelte';
+	import { writable } from 'svelte/store';
+	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
 
 	import Button from '$lib/components/Button.svelte';
 	import Article from './Article.svelte';
@@ -11,7 +11,7 @@
 	import Header from '$lib/components/Header.svelte';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { settingsStore, sessionsStore, knowledgeStore } from '$lib/store';
+	import { settingsStore, knowledgeStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import {
 		saveSession,
@@ -28,22 +28,24 @@
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 
 	export let data: PageData;
 
 	let messageWindow: HTMLElement;
+	let knowledgeId: string;
+	let knowledge: Knowledge | null;
 	let session: Session;
 	let completion: string;
+	let abortController: AbortController;
 	let prompt: string;
 	let promptCached: string;
-	let abortController: AbortController;
 	let promptTextarea: HTMLTextAreaElement;
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 
-	let knowledgeId: string;
-	let knowledge: Knowledge | null;
+	const shouldConfirmDeletion = writable(false);
 
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
@@ -78,17 +80,6 @@
 
 		const message: Message = { role: 'system', content };
 		session.messages = [...session.messages, message];
-	}
-
-	function deleteSession() {
-		const confirmed = confirm('Are you sure you want to delete this session?');
-		if (!confirmed) return;
-
-		if ($sessionsStore) {
-			const updatedSessions = $sessionsStore.filter((s) => s.id !== session.id);
-			$sessionsStore = updatedSessions;
-		}
-		goto('/sessions');
 	}
 
 	async function handleCompletionDone(completion: string, context: number[]) {
@@ -183,7 +174,7 @@
 </script>
 
 <div class="session">
-	<Header>
+	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
 			Session <Button size="link" variant="link" href={`/sessions/${session.id}`}
 				>#{session.id}</Button
@@ -195,9 +186,7 @@
 
 		<svelte:fragment slot="nav">
 			{#if !isNewSession}
-				<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
-					<Trash2 class="h-4 w-4" />
-				</Button>
+				<ButtonDelete sitemap={Sitemap.SESSIONS} id={session.id} {shouldConfirmDeletion} />
 			{/if}
 		</svelte:fragment>
 	</Header>
