@@ -47,11 +47,13 @@ export async function ollamaGenerate(session: Session, abortSignal: AbortSignal)
 	const settings = get(settingsStore);
 	if (!settings) throw new Error('No Ollama server specified');
 
+	const systemPrompt = session.messages[0].knowledge?.content;
+
 	let payload: OllamaCompletionRequest = {
 		model: session.model,
 		context: session.context,
 		prompt: session.messages[session.messages.length - 1].content,
-		system: session.knowledge?.content
+		system: systemPrompt
 	};
 
 	return await fetch(`${settings.ollamaServer}/api/generate`, {
