@@ -37,7 +37,7 @@
 	});
 </script>
 
-<div class="flex h-full w-full flex-col overflow-hidden">
+<div class="knowledge">
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="knowledge-id" class="text-sm font-bold leading-none">
 			Knowledge
@@ -66,3 +66,9 @@
 		<ButtonSubmit hasMetaKey={true} {handleSubmit} disabled={!name || !content}>Save</ButtonSubmit>
 	</Fieldset>
 </div>
+
+<style lang="scss">
+	.knowledge {
+		@apply flex h-full w-full flex-col overflow-hidden;
+	}
+</style>
