@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { afterNavigate, goto } from '$app/navigation';
+	import { writable } from 'svelte/store';
+	import { afterNavigate } from '$app/navigation';
 	import type { PageData } from './$types';
 
 	import { type Knowledge, loadKnowledge, saveKnowledge } from '$lib/knowledge';
 	import { formatTimestampToNow, getUpdatedAtDate } from '$lib/utils';
-	import { knowledgeStore } from '$lib/store';
+	import { Sitemap } from '$lib/sitemap';
 	import Button from '$lib/components/Button.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
@@ -19,6 +20,7 @@
 	let knowledge: Knowledge = loadKnowledge(data.id);
 	let name: string;
 	let content: string;
+	const shouldConfirmDeletion = writable(false);
 
 	$: isNewKnowledge = !name || !content;
 
@@ -26,14 +28,6 @@
 		if (!name || !content) return;
 		saveKnowledge({ id: data.id, name, content, updatedAt: getUpdatedAtDate() });
 		knowledge = loadKnowledge(data.id);
-	}
-
-	function deleteKnowledge() {
-		if ($knowledgeStore) {
-			const updatedKnowledge = $knowledgeStore.filter((s) => s.id !== knowledge.id);
-			$knowledgeStore = updatedKnowledge;
-		}
-		goto('/knowledge');
 	}
 
 	afterNavigate(() => {
@@ -44,7 +38,7 @@
 </script>
 
 <div class="flex h-full w-full flex-col overflow-hidden">
-	<Header confirmDeletion={true}>
+	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="knowledge-id" class="text-sm font-bold leading-none">
 			Knowledge
 			<Button size="link" variant="link" href={`/knowledge/${knowledge.id}`}>
@@ -57,10 +51,7 @@
 
 		<svelte:fragment slot="nav">
 			{#if !isNewKnowledge}
-				<ButtonDelete deleteRecord={deleteKnowledge} />
-				<!-- <Button title="Delete knowledge" variant="outline" size="icon" on:click={deleteKnowledge}>
-					<Trash2 class="h-4 w-4" />
-				</Button> -->
+				<ButtonDelete sitemap={Sitemap.KNOWLEDGE} id={knowledge.id} {shouldConfirmDeletion} />
 			{/if}
 		</svelte:fragment>
 	</Header>

@@ -1,9 +1,30 @@
 <script lang="ts">
+	import { Sitemap } from '$lib/sitemap';
 	import { Check, Trash2, X } from 'lucide-svelte';
 	import type { Writable } from 'svelte/store';
+	import { knowledgeStore, sessionsStore, deleteStoreItem } from '$lib/store';
+	import { goto } from '$app/navigation';
 
-	export let deleteRecord: () => void;
+	export let sitemap: Sitemap;
+	export let id: string;
 	export let shouldConfirmDeletion: Writable<boolean>;
+
+	function deleteRecord() {
+		$shouldConfirmDeletion = false;
+
+		switch (sitemap) {
+			case Sitemap.KNOWLEDGE:
+				if ($knowledgeStore) $knowledgeStore = deleteStoreItem($knowledgeStore, id);
+				return goto('/knowledge');
+
+			case Sitemap.SESSIONS:
+				if ($sessionsStore) $sessionsStore = deleteStoreItem($sessionsStore, id);
+				return goto('/sessions');
+
+			default:
+				break;
+		}
+	}
 
 	function updateConfirmDeletion(value: boolean) {
 		$shouldConfirmDeletion = value;
