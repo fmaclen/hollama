@@ -35,8 +35,7 @@ export function sortStore<T extends { updatedAt?: string }>(store: T[]) {
 }
 
 export function deleteStoreItem<T extends { id: string }>(store: T[], id: string) {
-	const updatedStore = store.filter((s) => s.id !== id);
-	return updatedStore;
+	return store.filter((s) => s.id !== id);
 }
 
 export const LOCAL_STORAGE_PREFIX = 'hollama';
