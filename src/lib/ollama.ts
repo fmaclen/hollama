@@ -46,14 +46,15 @@ export type OllamaTagResponse = {
 export async function ollamaGenerate(session: Session, abortSignal: AbortSignal) {
 	const settings = get(settingsStore);
 	if (!settings) throw new Error('No Ollama server specified');
-
-	const systemPrompt = session.messages[0].knowledge?.content;
+	
 
 	let payload: OllamaCompletionRequest = {
 		model: session.model,
 		context: session.context,
 		prompt: session.messages[session.messages.length - 1].content,
-		system: systemPrompt
+
+		// HACK: we need to be sure that the system prompt is only sent once per session
+		system: session.messages[session.messages.length - 2].knowledge?.content
 	};
 
 	return await fetch(`${settings.ollamaServer}/api/generate`, {
