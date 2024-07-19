@@ -17,20 +17,20 @@
 	const shouldConfirmDeletion = writable(false);
 
 	function deleteRecord() {
+		$shouldConfirmDeletion = false;
+
 		switch (sitemap) {
 			case Sitemap.KNOWLEDGE:
 				if ($knowledgeStore) $knowledgeStore = deleteStoreItem($knowledgeStore, id);
-				goto('/knowledge');
-				break;
+				return goto('/knowledge');
+
 			case Sitemap.SESSIONS:
 				if ($sessionsStore) $sessionsStore = deleteStoreItem($sessionsStore, id);
-				goto('/sessions');
-				break;
+				return goto('/sessions');
+
 			default:
 				break;
 		}
-		// Reset confirmDeletion after deletion
-		$shouldConfirmDeletion = false;
 	}
 </script>
 
@@ -68,7 +68,8 @@
 
 	.section-list-item {
 		@include delete-record-overlay;
-		@apply flex flex-row items-center justify-between border-b pr-3 last:border-b-0 hover:bg-shade-1;
+		@apply flex flex-row items-center justify-between border-b pr-3 ;
+		@apply last:border-b-0;
 	}
 
 	.section-list-item:hover .section-list-item__delete {
@@ -89,6 +90,7 @@
 
 	.section-list-item__a {
 		@apply relative z-0 w-full overflow-hidden text-ellipsis px-6 py-3;
+		@apply hover:text-active;
 	}
 
 	.section-list-item__title {
