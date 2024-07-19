@@ -33,14 +33,18 @@
 
 <div class="delete" class:delete--confirm-deletion={$shouldConfirmDeletion}>
 	{#if $shouldConfirmDeletion}
-		<button class="delete__confirm" on:click={deleteRecord}>
+		<button class="delete__confirm" on:click={deleteRecord} title="Confirm deletion">
 			<Check class="h-4 w-4" />
 		</button>
-		<button class="delete__cancel" on:click={() => updateConfirmDeletion(false)}>
+		<button class="delete__cancel" on:click={() => updateConfirmDeletion(false)} title="Dismiss">
 			<X class="h-4 w-4" />
 		</button>
 	{:else}
-		<button class="delete__trash" on:click={() => updateConfirmDeletion(true)}>
+		<button
+			class="delete__trash"
+			on:click={() => updateConfirmDeletion(true)}
+			title="Delete {sitemap === Sitemap.KNOWLEDGE ? 'knowledge' : 'session'}"
+		>
 			<Trash2 class="h-4 w-4" />
 		</button>
 	{/if}

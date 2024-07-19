@@ -87,7 +87,8 @@ test('deletes knowledge', async ({ page }) => {
 
 	// Delete the knowlege
 	page.on('dialog', dialog => dialog.accept("Are you sure you want to delete this knowledge?"));
-	await page.getByTitle('Delete knowledge').click();
+	await page.locator('header').getByTitle('Delete knowledge').click();
+	await page.getByTitle('Confirm deletion').click();
 	await expect(knowledgeItems).toHaveCount(MOCK_KNOWLEDGE.length - 1);
 	await expect(noKnowledgeSelectedMessage).toBeVisible();
 
