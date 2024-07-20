@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { afterUpdate, tick } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { Brain, StopCircle, Trash2, UnfoldVertical } from 'lucide-svelte';
+	import { writable } from 'svelte/store';
+	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
 
 	import Button from '$lib/components/Button.svelte';
 	import Article from './Article.svelte';
@@ -11,9 +11,15 @@
 	import Header from '$lib/components/Header.svelte';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { settingsStore, sessionsStore, knowledgeStore } from '$lib/store';
+	import { settingsStore, knowledgeStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
-	import { saveSession, type Message, type Session, loadSession } from '$lib/sessions';
+	import {
+		saveSession,
+		type Message,
+		type Session,
+		loadSession,
+		formatSessionMetadata
+	} from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
 
@@ -23,21 +29,24 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import Field from '$lib/components/Field.svelte';
 	import CopyButton from './CopyButton.svelte';
+	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
+	import Metadata from '$lib/components/Metadata.svelte';
 
 	export let data: PageData;
 
 	let messageWindow: HTMLElement;
+	let knowledgeId: string;
+	let knowledge: Knowledge | null;
 	let session: Session;
 	let completion: string;
+	let abortController: AbortController;
 	let prompt: string;
 	let promptCached: string;
-	let abortController: AbortController;
 	let promptTextarea: HTMLTextAreaElement;
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 
-	let knowledgeId: string;
-	let knowledge: Knowledge | null;
+	const shouldConfirmDeletion = writable(false);
 
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
@@ -60,28 +69,33 @@
 		messageWindow.scrollTop = messageWindow.scrollHeight;
 	}
 
-	function handleError(error: any) {
-		const message: Message = {
-			role: 'system',
-			content: typeof error === 'string' ? error : 'Sorry, something went wrong.'
-		};
-		session.messages = [...session.messages, message];
-	}
+	function handleError(error: Error) {
+		resetPrompt();
 
-	function deleteSession() {
-		const confirmed = confirm('Are you sure you want to delete this session?');
-		if (!confirmed) return;
-
-		if ($sessionsStore) {
-			const updatedSessions = $sessionsStore.filter((s) => s.id !== session.id);
-			$sessionsStore = updatedSessions;
+		let content: string;
+		if (error.message === 'Failed to fetch') {
+			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
+		} else {
+			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
 		}
-		goto('/sessions');
+
+		const message: Message = { role: 'system', content };
+		session.messages = [...session.messages, message];
 	}
 
 	async function handleCompletionDone(completion: string, context: number[]) {
 		const message: Message = { role: 'ai', content: completion };
 		session.messages = [...session.messages, message];
+		session.updatedAt = new Date().toISOString();
+
+		if (knowledge) {
+			session.knowledge = knowledge;
+
+			// Now that we used the knowledge, we no longer need an `id`
+			// This will prevent `knowledge` from being used again
+			knowledgeId = '';
+		}
+
 		completion = '';
 		promptCached = '';
 		shouldFocusTextarea = true;
@@ -101,10 +115,6 @@
 				knowledge,
 				content: ''
 			};
-
-			// Now that we used the knowledge, we no longer need an `id`
-			// This will prevent `knowledge` from being used again
-			knowledgeId = '';
 		}
 
 		const message: Message = { role: 'user', content: prompt };
@@ -141,8 +151,6 @@
 						session.context = context;
 					}
 				}
-			} else {
-				throw new Error("Couldn't connect to Ollama");
 			}
 		} catch (error: any) {
 			if (error.name === 'AbortError') return; // User aborted the request
@@ -150,8 +158,7 @@
 		}
 	}
 
-	function handleAbort() {
-		abortController.abort();
+	function resetPrompt() {
 		// Reset the prompt to the last sent message
 		prompt = promptCached;
 		promptCached = '';
@@ -168,20 +175,20 @@
 </script>
 
 <div class="session">
-	<Header>
+	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
-			Session <Button size="link" variant="link" href={`/${session.id}`}>#{session.id}</Button>
+			Session <Button size="link" variant="link" href={`/sessions/${session.id}`}
+				>#{session.id}</Button
+			>
 		</p>
-		<p data-testid="model-name" class="text-sm text-muted">
-			{isNewSession ? 'New session' : session.model}
-		</p>
+		<Metadata dataTestid="session-metadata">
+			{isNewSession ? 'New session' : formatSessionMetadata(session)}
+		</Metadata>
 
 		<svelte:fragment slot="nav">
 			{#if !isNewSession}
 				<CopyButton content={JSON.stringify(session.messages, null, 2)} />
-				<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
-					<Trash2 class="h-4 w-4" />
-				</Button>
+				<ButtonDelete sitemap={Sitemap.SESSIONS} id={session.id} {shouldConfirmDeletion} />
 			{/if}
 		</svelte:fragment>
 	</Header>
@@ -193,7 +200,9 @@
 				{/if}
 
 				{#each session.messages as message, i (session.id + i)}
-					<Article {message} />
+					{#key message.role}
+						<Article {message} />
+					{/key}
 				{/each}
 
 				{#if isLastMessageFromUser}
@@ -263,7 +272,10 @@
 										title="Stop response"
 										variant="outline"
 										size="icon"
-										on:click={handleAbort}
+										on:click={() => {
+											abortController.abort();
+											resetPrompt();
+										}}
 									>
 										<StopCircle class="h-4 w-4" />
 									</Button>
@@ -310,7 +322,6 @@
 		@apply grid grid-cols-[auto,max-content] items-end gap-x-1;
 		@apply lg:gap-x-2;
 	}
-
 
 	.prompt-editor--fullscreen {
 		@apply min-h-[60dvh];

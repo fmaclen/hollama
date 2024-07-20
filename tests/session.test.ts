@@ -12,7 +12,7 @@ test.describe('Session', () => {
 
 	test('creates new session and chats', async ({ page }) => {
 		const sessionIdLocator = page.getByTestId('session-id');
-		const modelNameLocator = page.getByTestId('model-name');
+		const sessionMetadata = page.getByTestId('session-metadata');
 		const newSessionButton = page.getByTestId('new-session');
 		const runButton = page.getByText('Run');
 		const articleLocator = page.locator('article');
@@ -21,13 +21,13 @@ test.describe('Session', () => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
 		await expect(sessionIdLocator).not.toBeVisible();
-		await expect(modelNameLocator).not.toBeVisible();
+		await expect(sessionMetadata).not.toBeVisible();
 		await expect(newPromptHelp).not.toBeVisible();
 
 		await newSessionButton.click();
 		await expect(sessionIdLocator).toBeVisible();
 		await expect(sessionIdLocator).toHaveText(/Session #[a-z0-9]{2,8}/);
-		await expect(modelNameLocator).toHaveText('New session');
+		await expect(sessionMetadata).toHaveText('New session');
 		await expect(promptTextarea).toHaveText('');
 		await expect(runButton).toBeVisible();
 		await expect(runButton).toBeDisabled();
@@ -40,12 +40,12 @@ test.describe('Session', () => {
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.keyboard.press('Shift+Enter');
-		await expect(modelNameLocator).toHaveText('New session');
+		await expect(sessionMetadata).toHaveText("New session");
 
 		await page.keyboard.press('Enter');
 		await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).toBeVisible();
 		await expect(newPromptHelp).not.toBeVisible();
-		await expect(modelNameLocator).not.toHaveText('New session');
+		await expect(sessionMetadata).toHaveText(new RegExp(MOCK_API_TAGS_RESPONSE.models[0].name));
 
 		await expect(page.locator('article', { hasText: 'No problem! If you have any other questions or would like to discuss something else, feel free to ask' })).not.toBeVisible();
 		await expect(page.locator('article', { hasText: "I understand, it's okay" })).not.toBeVisible();
@@ -142,11 +142,11 @@ test.describe('Session', () => {
 		expect(await page.getByTestId('session-item').last().textContent()).toContain(MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		// Check the current session is highlighted in the sidebar
-		await expect(page.getByTestId('session-item').first()).toHaveClass(/ section-list-item--active/);
-		await expect(page.getByTestId('session-item').last()).not.toHaveClass(/ section-list-item--active/);
+		await expect(page.locator('.section-list-item').first()).toHaveClass(/ section-list-item--active/);
+		await expect(page.locator('.section-list-item').last()).not.toHaveClass(/ section-list-item--active/);
 	});
 
-	test('deletes a session from the sidebar', async ({ page }) => {
+	test('deletes a session from the header and sidebar', async ({ page }) => {
 		await page.goto('/');
 		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
@@ -156,12 +156,28 @@ test.describe('Session', () => {
 		await page.getByTestId('new-session').click();
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
-		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
+		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.response)).toBeVisible();
 		await expect(page.getByText('No sessions')).not.toBeVisible();
 		expect(await page.getByTestId('session-item').count()).toBe(1);
 
-		page.on('dialog', dialog => dialog.accept("Are you sure you want to delete this session?"));
-		await page.getByTitle('Delete session').click();
+		// Delete the session from the header
+		await page.locator('header').getByTitle('Delete session').click();
+		await page.getByTitle('Confirm deletion').click();
+		await expect(page.getByText('No sessions')).toBeVisible();
+		expect(await page.getByTestId('session-item').count()).toBe(0);
+
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByTestId('new-session').click();
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.response)).toBeVisible();
+		await expect(page.getByText('No sessions')).not.toBeVisible();
+		expect(await page.getByTestId('session-item').count()).toBe(1);
+
+		// Delete the session from the sidebar
+		await page.locator('.section-list-item').first().hover();
+		await page.locator('.section-list-item').getByTitle('Delete session').click();
+		await page.getByTitle('Confirm deletion').click();
 		await expect(page.getByText('No sessions')).toBeVisible();
 		expect(await page.getByTestId('session-item').count()).toBe(0);
 	});
@@ -184,6 +200,7 @@ test.describe('Session', () => {
 							{ role: "ai", content: "Hello world! 👋 🌎\n\nIt's great to hear from you. What would you like to do today?" }
 						],
 						context: [],
+						updatedAt: new Date().toISOString(),
 					},
 					{
 						id: "m2jjac",
@@ -193,6 +210,7 @@ test.describe('Session', () => {
 							{ role: "ai", content: "Hello! It's always a pleasure to see you back. How can I assist you today?" }
 						],
 						context: [],
+						updatedAt: new Date().toISOString(),
 					}
 				]
 			)
@@ -271,14 +289,14 @@ test.describe('Session', () => {
 		const stopButton = page.getByTitle('Stop response');
 		const userMessage = page.locator('article', { hasText: "You" })
 		const aiMessage = page.locator('article', { hasText: "AI" })
-		const modelName = page.getByTestId('model-name');
+		const sessionMetadata = page.getByTestId('session-metadata');
 
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByText("New session", { exact: true }).click();
 		await expect(userMessage).not.toBeVisible();
 		await expect(aiMessage).not.toBeVisible();
-		await expect(modelName).toHaveText('New session');
+		await expect(sessionMetadata).toHaveText('New session');
 
 		// Mock a response that takes a while to generate
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -293,7 +311,7 @@ test.describe('Session', () => {
 		await expect(sendButton).toBeDisabled();
 		await expect(stopButton).toBeVisible();
 		await expect(page.getByText("Write a prompt to start a new session")).not.toBeVisible();
-		await expect(modelName).toHaveText(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await expect(sessionMetadata).toHaveText(new RegExp(MOCK_API_TAGS_RESPONSE.models[0].name));
 
 		await stopButton.click();
 		await expect(page.getByText("Write a prompt to start a new session")).toBeVisible();
@@ -343,12 +361,43 @@ test.describe('Session', () => {
 		await expect(promptEditor).not.toHaveClass(/ prompt-editor--fullscreen/);
 	});
 
-	test.skip('handles API error when generating AI response', async ({ page }) => {
-		// TODO: Implement the test
-	});
+	test('handles errors when generating completion response', async ({ page }) => {
+		const runButton = page.locator('button', { hasText: 'Run' });
 
-	test.skip('displays system message when an error occurs', async ({ page }) => {
-		// TODO: Implement the test
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(0);
+		await expect(promptTextarea).not.toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await expect(page.getByText("Couldn't connect to Ollama. Is the server running?")).not.toBeVisible();
+		await expect(page.getByText("Sorry, something went wrong.")).not.toBeVisible();
+		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).not.toBeVisible();
+
+		// Mock a net::ERR_CONNECTION_REFUSED
+		await page.route('**/generate', async (route) => {
+			await route.abort('failed');
+		});
+		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await runButton.click();
+		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
+		await expect(page.getByText("Couldn't connect to Ollama. Is the server running?")).toBeVisible();
+		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).not.toBeVisible();
+		await expect(promptTextarea).toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
+
+		// Mock a 500 error response
+		await page.route('**/generate', async (route) => {
+			await route.fulfill({
+				status: 500,
+				contentType: 'application/json',
+				body: JSON.stringify({ error: 'Ollama says: Not so fast!' })
+			});
+		});
+		await runButton.click();
+		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(2);
+		await expect(page.getByText('Sorry, something went wrong.')).toBeVisible();
+		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).toBeVisible();
+		await expect(promptTextarea).toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
 	});
 
 	test.skip('auto-scrolls to the bottom when new messages are added', async ({ page }) => {

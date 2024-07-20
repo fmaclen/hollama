@@ -6,3 +6,9 @@
 	@apply h-full w-full border-t overflow-y-auto bg-shade-2;
 	@apply lg:rounded-xl lg:border;
 }
+
+@mixin delete-record-overlay {
+	&--confirm-deletion {
+		@apply bg-gradient-to-r from-transparent to-red-50;
+	}
+}

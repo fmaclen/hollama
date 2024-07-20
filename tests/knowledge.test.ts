@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, seedKnowledgeAndReload, submitWithKeyboardShortcut, textEditorLocator } from './utils';
 
 test('creates and edits knowledge', async ({ page }) => {
-	const timestamp = page.getByTestId('knowledge-timestamp')
+	const timestamp = page.getByTestId('knowledge-metadata');
 	const fieldName = page.getByLabel('Name');
 	const fieldContent = textEditorLocator(page, 'Content');
 	const buttonSave = page.getByText('Save');
@@ -56,8 +56,31 @@ test('creates and edits knowledge', async ({ page }) => {
 	await expect(page.locator('.section-list', { hasText: "Wally's chabot" })).toBeVisible();
 });
 
-test('deletes knowledge', async ({ page }) => {
-	const timestamp = page.getByTestId('knowledge-timestamp')
+test('can delete knowledge from the header and sidebar', async ({ page }) => {
+	await page.goto('/');
+	await page.getByText('Knowledge', { exact: true }).click();
+	expect(await page.getByTestId('knowledge-item').count()).toBe(0);
+	
+	await seedKnowledgeAndReload(page);
+	await expect(page.locator('header').getByTitle('Delete knowledge')).not.toBeVisible();
+	expect(await page.getByTestId('knowledge-item').count()).toBe(2);
+
+	// Delete the knowledge from the header
+	await page.locator('.section-list-item__a').first().click();
+	await page.locator('header').getByTitle('Delete knowledge').click();
+	await page.getByTitle('Confirm deletion').click();
+	expect(await page.getByTestId('knowledge-item').count()).toBe(1);
+	await expect(page.locator('header').getByTitle('Delete knowledge')).not.toBeVisible();
+
+	// Delete the knowledge from the sidebar
+	await page.locator('.section-list-item').first().getByTitle('Delete knowledge').click();
+	await page.getByTitle('Confirm deletion').click();
+	await expect(page.getByText('No knowledge')).toBeVisible();
+	expect(await page.getByTestId('knowledge-item').count()).toBe(0);
+});
+
+test('knowledge cannot be used in a session after deletion', async ({ page }) => {
+	const timestamp = page.getByTestId('knowledge-metadata');
 	const noKnowledgeMessage = page.getByText('No knowledge');
 	const noKnowledgeSelectedMessage = page.getByText('Create new knowlege or choose one from the list');
 	const knowledgeItems = page.getByTestId('knowledge-item');
@@ -86,8 +109,8 @@ test('deletes knowledge', async ({ page }) => {
 	await expect(timestamp).toBeVisible();
 
 	// Delete the knowlege
-	page.on('dialog', dialog => dialog.accept("Are you sure you want to delete this knowledge?"));
-	await page.getByTitle('Delete knowledge').click();
+	await page.locator('header').getByTitle('Delete knowledge').click();
+	await page.getByTitle('Confirm deletion').click();
 	await expect(knowledgeItems).toHaveCount(MOCK_KNOWLEDGE.length - 1);
 	await expect(noKnowledgeSelectedMessage).toBeVisible();
 

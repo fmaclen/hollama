@@ -49,12 +49,12 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
+          username: ${{ secrets.GH_REGISTRY_USERNAME }}
           password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
 
       - name: Push the Docker image
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ghcr.io/${{ github.actor }}/hollama:latest, ghcr.io/${{ github.actor }}/hollama:${{ needs.release.outputs.new_release_version }}
+          tags: ghcr.io/${{ secrets.GH_REGISTRY_USERNAME }}/hollama:latest, ghcr.io/${{ secrets.GH_REGISTRY_USERNAME }}/hollama:${{ needs.release.outputs.new_release_version }}
           platforms: linux/arm64, linux/amd64

@@ -25,6 +25,19 @@ function createLocalStorageStore<T>(key: string, initialValue: T | null = null) 
 	return store;
 }
 
+export function sortStore<T extends { updatedAt?: string }>(store: T[]) {
+	return store.sort((a, b) => {
+		if (!a.updatedAt && !b.updatedAt) return 0;
+		if (!a.updatedAt) return 1;
+		if (!b.updatedAt) return -1;
+		return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+	});
+}
+
+export function deleteStoreItem<T extends { id: string }>(store: T[], id: string) {
+	return store.filter((s) => s.id !== id);
+}
+
 export const LOCAL_STORAGE_PREFIX = 'hollama';
 
 export interface Settings {

@@ -1,12 +1,11 @@
-import { get } from "svelte/store";
-import { knowledgeStore } from "$lib/store";
-import { generateStorageId } from "./utils";
+import { get } from 'svelte/store';
+import { knowledgeStore, sortStore } from '$lib/store';
 
 export interface Knowledge {
 	id: string;
 	name: string;
 	content: string;
-  updatedAt: string;
+	updatedAt: string;
 }
 
 export const loadKnowledge = (id: string): Knowledge => {
@@ -17,7 +16,7 @@ export const loadKnowledge = (id: string): Knowledge => {
 
 	// Find the knowledge with the given id
 	if (currentKnowledges) {
-		const existingKnowledge = currentKnowledges.find(s => s.id === id);
+		const existingKnowledge = currentKnowledges.find((s) => s.id === id);
 		existingKnowledge && (knowledge = existingKnowledge);
 	}
 
@@ -29,21 +28,24 @@ export const loadKnowledge = (id: string): Knowledge => {
 	return knowledge;
 };
 
-export const saveKnowledge = (Knowledge: Knowledge): void => {
+export const saveKnowledge = (knowledge: Knowledge): void => {
 	// Retrieve the current knowledges
 	const currentKnowledges = get(knowledgeStore) || [];
 
 	// Find the index of the knowledge with the same id, if it exists
-	const existingKnowledge = currentKnowledges.findIndex(s => s.id === Knowledge.id);
+	const existingIndex = currentKnowledges.findIndex((k) => k.id === knowledge.id);
 
-	if (existingKnowledge !== -1) {
+	if (existingIndex !== -1) {
 		// Update the existing knowledge
-		currentKnowledges[existingKnowledge] = Knowledge;
+		currentKnowledges[existingIndex] = knowledge;
 	} else {
 		// Add the new knowledge if it doesn't exist
-		currentKnowledges.push(Knowledge);
+		currentKnowledges.push(knowledge);
 	}
 
-	// Update the store, which will trigger the localStorage update
-	knowledgeStore.set(currentKnowledges);
+	// Sort the knowledges by updatedAt in descending order (most recent first)
+	const sortedKnowledges = sortStore(currentKnowledges);
+
+	// Update the store with the sorted knowledges
+	knowledgeStore.set(sortedKnowledges);
 };

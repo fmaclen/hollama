@@ -33,7 +33,8 @@
 		<script
 			defer
 			data-domain={env.PUBLIC_PLAUSIBLE_DOMAIN}
-			src="https://plausible.io/js/script.js"
+			data-api={env.PUBLIC_PLAUSIBLE_API}
+			src={env.PUBLIC_PLAUSIBLE_SRC}
 		></script>
 	{/if}
 
