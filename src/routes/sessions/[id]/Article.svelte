@@ -10,8 +10,10 @@
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import Badge from '$lib/components/Badge.svelte';
+	import { RefreshCw } from 'lucide-svelte';
 
 	export let message: Message;
+	export let canRetry: boolean | undefined = false;
 	let articleElement: HTMLElement;
 
 	const CODE_SNIPPET_ID = 'code-snippet';
@@ -61,6 +63,11 @@
 			</Badge>
 		</div>
 		<div class="article__interactive">
+			{#if canRetry}
+				<Button title="Retry" variant="icon">
+					<RefreshCw class="h-4 w-4" />
+				</Button>
+			{/if}
 			<ButtonCopy content={message.content} />
 		</div>
 	</nav>
@@ -88,7 +95,7 @@
 	}
 
 	.article--ai {
-		@apply bg-shade-0 border-transparent;
+		@apply border-transparent bg-shade-0;
 	}
 
 	.article__interactive {
@@ -125,11 +132,11 @@
 		}
 
 		:global(pre) {
-			@apply relative border border-shade-2 dark:border-none rounded-md overflow-auto;
+			@apply relative overflow-auto rounded-md border border-shade-2 dark:border-none;
 		}
 
 		:global(pre > .copy-button) {
-			@apply absolute right-1 top-2 rounded-tr-md rounded-bl-md bg-shade-0;
+			@apply absolute right-1 top-2 rounded-bl-md rounded-tr-md bg-shade-0;
 		}
 
 		:global(code) {
@@ -137,12 +144,12 @@
 		}
 
 		:global(pre > code) {
-			@apply p-4 pr-12 dark:invert ;
+			@apply p-4 pr-12 dark:invert;
 		}
 
 		:global(li > code),
 		:global(p > code) {
-			@apply bg-amber-50 p-1 text-orange-600 dark:text-orange-500 dark:bg-amber-950;
+			@apply bg-amber-50 p-1 text-orange-600 dark:bg-amber-950 dark:text-orange-500;
 		}
 
 		:global(ol),
