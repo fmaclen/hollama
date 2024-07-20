@@ -5,6 +5,7 @@
 	import { Brain, MessageSquareText, Settings2, Sun, Moon } from 'lucide-svelte';
 
 	import '../app.pcss';
+	import { settingsStore } from '$lib/store';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
@@ -13,17 +14,23 @@
 		['/settings', 'Settings']
 	];
 
-	let theme = 'light';
+	$: theme = $settingsStore?.userTheme;
 
 	function toggleTheme() {
 		theme = theme === 'light' ? 'dark' : 'light';
 		document.documentElement.setAttribute('data-color-theme', theme);
+		settingsStore.update((store) => {
+			store!.userTheme = theme;
+			return store;
+		});
 	}
 
 	onMount(() => {
-		// Set initial theme based on user's browser preference
-		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-		theme = prefersDark ? 'dark' : 'light';
+		if (!theme) {
+			// Set initial theme based on user's browser preference
+			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+			theme = prefersDark ? 'dark' : 'light';
+		}
 		document.documentElement.setAttribute('data-color-theme', theme);
 	});
 </script>
