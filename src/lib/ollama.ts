@@ -2,7 +2,7 @@ import { get } from "svelte/store";
 import type { Session } from "$lib/sessions";
 import { settingsStore } from "$lib/store";
 
-type OllamaCompletionRequest = {
+export type OllamaCompletionRequest = {
 	prompt: string;
 	model: string;
 	context?: number[];

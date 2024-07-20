@@ -5,7 +5,11 @@
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
-	import { ollamaRegenerate, type OllamaCompletionResponse } from '$lib/ollama';
+	import {
+		ollamaRegenerate,
+		type OllamaCompletionRequest,
+		type OllamaCompletionResponse
+	} from '$lib/ollama';
 	import {
 		saveSession,
 		type Message,
@@ -56,31 +60,53 @@
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
 
-	afterUpdate(() => {
-		if (shouldFocusTextarea && promptTextarea) {
-			promptTextarea.focus();
-			shouldFocusTextarea = false;
-		}
-	});
+	async function handleSubmit() {
+		if (!prompt) return;
 
-	async function scrollToBottom() {
-		if (!messageWindow) return;
-		await tick();
-		messageWindow.scrollTop = messageWindow.scrollHeight;
+		// Reset the prompt editor to its default state
+		isPromptFullscreen = false;
+
+		let knowledgeContext: Message | null = null;
+		if (knowledge) {
+			knowledgeContext = {
+				role: 'system',
+				knowledge,
+				content: ''
+			};
+		}
+
+		const message: Message = { role: 'user', content: prompt };
+		abortController = new AbortController();
+		promptCached = prompt;
+		prompt = '';
+		session.messages = knowledgeContext
+			? [knowledgeContext, ...session.messages, message]
+			: [...session.messages, message];
+
+		const previousAiResponse = session.messages[session.messages.length - 2];
+		let payload = {
+			model: session.model,
+			context: previousAiResponse?.context,
+			prompt: session.messages[session.messages.length - 1].content,
+			system: previousAiResponse?.knowledge?.content
+		};
+
+		await handleCompletion(payload, abortController.signal);
 	}
 
-	function handleError(error: Error) {
-		resetPrompt();
+	async function handleRetry(index: number) {
+		// Remove all the messages after the index
+		session.messages = session.messages.slice(0, index);
+		const userResponse = session.messages[index - 1];
 
-		let content: string;
-		if (error.message === 'Failed to fetch') {
-			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
-		} else {
-			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
-		}
+		let payload = {
+			model: session.model,
+			context: session.messages[index - 2]?.context, // Last AI response
+			prompt: userResponse.content,
+			system: userResponse?.knowledge?.content
+		};
 
-		const message: Message = { role: 'system', content };
-		session.messages = [...session.messages, message];
+		await handleCompletion(payload, abortController.signal);
 	}
 
 	async function handleCompletionDone(completion: string, context: number[]) {
@@ -102,90 +128,13 @@
 		saveSession({ ...session });
 	}
 
-	async function handleSubmit() {
-		if (!prompt) return;
-
-		// Reset the prompt editor to its default state
-		isPromptFullscreen = false;
-
-		let knowledgeContext: Message | null = null;
-		if (knowledge) {
-			knowledgeContext = {
-				role: 'system',
-				knowledge,
-				content: ''
-			};
-		}
-
-		const message: Message = { role: 'user', content: prompt };
+	async function handleCompletion(payload: OllamaCompletionRequest, abortSignal: AbortSignal) {
 		abortController = new AbortController();
-		promptCached = prompt;
-		prompt = '';
 		completion = '';
 		tokenizedContext = [];
-		session.messages = knowledgeContext
-			? [knowledgeContext, ...session.messages, message]
-			: [...session.messages, message];
-
-		const previousAiResponse = session.messages[session.messages.length - 2];
-		let payload = {
-			model: session.model,
-			context: previousAiResponse?.context,
-			prompt: session.messages[session.messages.length - 1].content,
-			system: previousAiResponse?.knowledge?.content
-		};
 
 		try {
-			const ollama = await ollamaRegenerate(payload, abortController.signal);
-
-			if (ollama && ollama.body) {
-				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
-
-				while (true) {
-					const { value, done } = await reader.read();
-
-					if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
-
-					if (done) {
-						if (!tokenizedContext) throw new Error('Ollama response is missing context');
-						handleCompletionDone(completion, tokenizedContext);
-						break;
-					}
-
-					if (!value) continue;
-
-					const jsonLines = value.split('\n').filter((line) => line);
-					for (const line of jsonLines) {
-						const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
-						completion += response;
-						tokenizedContext = context;
-					}
-				}
-			}
-		} catch (error: any) {
-			if (error.name === 'AbortError') return; // User aborted the request
-			handleError(error);
-		}
-	}
-
-	async function handleRetry(index: number) {
-		abortController = new AbortController();
-		completion = '';
-
-		// remove all the messages after the index
-		session.messages = session.messages.slice(0, index);
-
-		const userResponse = session.messages[index - 1];
-
-		let payload = {
-			model: session.model,
-			context: session.messages[index - 2]?.context, // Last AI response
-			prompt: userResponse.content,
-			system: userResponse?.knowledge?.content
-		};
-		
-		try {
-			const ollama = await ollamaRegenerate(payload, abortController.signal);
+			const ollama = await ollamaRegenerate(payload, abortSignal);
 
 			if (ollama && ollama.body) {
 				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
@@ -231,6 +180,33 @@
 		event.preventDefault();
 		handleSubmit();
 	}
+
+	async function scrollToBottom() {
+		if (!messageWindow) return;
+		await tick();
+		messageWindow.scrollTop = messageWindow.scrollHeight;
+	}
+
+	function handleError(error: Error) {
+		resetPrompt();
+
+		let content: string;
+		if (error.message === 'Failed to fetch') {
+			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
+		} else {
+			content = `Sorry, something went wrong.\nTry clicking "Retry"\n\`\`\`\n${error}\n\`\`\``;
+		}
+
+		const message: Message = { role: 'system', content };
+		session.messages = [...session.messages, message];
+	}
+
+	afterUpdate(() => {
+		if (shouldFocusTextarea && promptTextarea) {
+			promptTextarea.focus();
+			shouldFocusTextarea = false;
+		}
+	});
 </script>
 
 <div class="session">
