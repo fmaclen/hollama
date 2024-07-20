@@ -2,7 +2,6 @@
 	let className: string | undefined = undefined;
 	export { className as class };
 	export let variant: 'default' | 'outline' | 'link' | 'icon' | undefined = 'default';
-	export let size: 'default' | 'icon' | 'link' | undefined = 'default';
 	export let href: string | undefined = undefined;
 </script>
 
@@ -12,7 +11,6 @@
 		{href}
 		class="
 			button button--{variant}
-			button--size-{size}
 			{className}
 		"
 		on:click
@@ -20,12 +18,7 @@
 		<slot />
 	</a>
 {:else}
-	<button
-		{...$$restProps}
-		class="button button--{variant} button--size-{size} {className}"
-		type="button"
-		on:click
-	>
+	<button {...$$restProps} class="button button--{variant} {className}" type="button" on:click>
 		<slot />
 	</button>
 {/if}
@@ -36,12 +29,12 @@
 
 		&--default,
 		&--outline {
-			@apply border text-sm font-medium;
-			@apply disabled:text-muted disabled:bg-shade-2 disabled:border-shade-2 disabled:pointer-events-none;
+			@apply border px-3 py-2 text-sm font-medium h-10;
+			@apply disabled:pointer-events-none disabled:border-shade-2 disabled:bg-shade-2 disabled:text-muted;
 		}
 
 		&--default {
-			@apply bg-accent border-accent text-shade-0;
+			@apply border-accent bg-accent text-shade-0;
 		}
 
 		&--outline {
@@ -49,17 +42,14 @@
 		}
 
 		&--link {
-			@apply rounded-none underline underline-offset-4 hover:text-active;
+			@apply rounded-none underline underline-offset-4;
+			@apply hover:text-active;
 		}
 
-		&--size {
-			&-default {
-				@apply h-10 px-4 py-2;
-			}
-
-			&-icon {
-				@apply h-10 w-10;
-			}
+		&--icon {
+			@apply opacity-40 px-2 py-2 text-active;
+			@apply hover:opacity-60;
+			@apply active:opacity-100;
 		}
 	}
 </style>

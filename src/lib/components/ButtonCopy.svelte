@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Button from "$lib/components/Button.svelte";
 	import { Files } from "lucide-svelte";
+	import Button from "./Button.svelte";
 
 	export let content: string;
 
@@ -9,20 +9,18 @@
 	}
 </script>
 
-<span class="copy-button">
-	<Button title="Copy" variant="icon" size="icon" on:click={copyContent}>
+<div class="copy-button">
+	<Button title="Copy" variant="icon" on:click={copyContent}>
 		<Files class="h-4 w-4" />
 	</Button>
-</span>
+</div>
 
 <style lang="scss">
 	.copy-button {
-		@apply opacity-0;
+		display: none;
 
 		@media (hover: hover) {
-			@apply opacity-40;
-			@apply hover:opacity-60;
-			@apply active:opacity-100;
+			display: unset;
 		}
 	}
 </style>

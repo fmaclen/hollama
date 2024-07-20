@@ -41,7 +41,7 @@
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="knowledge-id" class="text-sm font-bold leading-none">
 			Knowledge
-			<Button size="link" variant="link" href={`/knowledge/${knowledge.id}`}>
+			<Button variant="link" href={`/knowledge/${knowledge.id}`}>
 				#{knowledge.id}
 			</Button>
 		</p>

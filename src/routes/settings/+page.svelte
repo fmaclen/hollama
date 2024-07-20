@@ -89,7 +89,6 @@
 							<code class="code">OLLAMA_ORIGINS</code>,
 							<Button
 								variant="link"
-								size="link"
 								href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
 								target="_blank"
 							>
@@ -143,7 +142,6 @@
 				<strong>Hollama</strong> is a minimalistic web interface for
 				<Button
 					variant="link"
-					size="link"
 					href="https://github.com/jmorganca/ollama/"
 					target="_blank"
 				>
@@ -152,7 +150,6 @@
 				servers. Code is available on
 				<Button
 					variant="link"
-					size="link"
 					href="https://github.com/fmaclen/hollama"
 					target="_blank"
 				>
@@ -161,7 +158,7 @@
 			</p>
 			<p class="p">
 				Made by
-				<Button variant="link" size="link" href="https://fernando.is" target="_blank">
+				<Button variant="link" href="https://fernando.is" target="_blank">
 					@fmaclen
 				</Button>
 			</p>

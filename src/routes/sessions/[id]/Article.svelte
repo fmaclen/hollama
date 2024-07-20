@@ -5,10 +5,10 @@
 	import 'highlight.js/styles/github.css';
 
 	import { type Message } from '$lib/sessions';
-	import CopyButton from './CopyButton.svelte';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
 	import Button from '$lib/components/Button.svelte';
+	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 
 	export let message: Message;
@@ -42,7 +42,7 @@
 		preElements.forEach((preElement) => {
 			const codeElement = preElement.querySelector('code');
 			if (codeElement)
-				new CopyButton({ target: preElement, props: { content: codeElement.innerText } });
+				new ButtonCopy({ target: preElement, props: { content: codeElement.innerText } });
 		});
 	});
 </script>
@@ -61,7 +61,7 @@
 			</Badge>
 		</div>
 		<div class="article__interactive">
-			<CopyButton content={message.content} />
+			<ButtonCopy content={message.content} />
 		</div>
 	</nav>
 
@@ -83,13 +83,12 @@
 <style lang="scss">
 	.article {
 		@apply mx-auto mb-2 flex w-full max-w-[80ch] flex-col rounded-md border border-shade-3;
-		@apply hover:border-shade-6;
 		@apply last:mb-0;
 		@apply lg:mb-6;
 	}
 
 	.article--ai {
-		@apply bg-shade-0;
+		@apply bg-shade-0 border-transparent;
 	}
 
 	.article__interactive {
@@ -126,15 +125,11 @@
 		}
 
 		:global(pre) {
-			@apply relative border border-transparent hover:border-shade-2 rounded-md;
-		}
-
-		:global(pre:hover > .copy-button) {
-			@apply bg-shade-0;
+			@apply relative border border-shade-2 dark:border-none rounded-md overflow-auto;
 		}
 
 		:global(pre > .copy-button) {
-			@apply absolute right-0 top-0 rounded-tr-md rounded-bl-md;
+			@apply absolute right-1 top-2 rounded-tr-md rounded-bl-md bg-shade-0;
 		}
 
 		:global(code) {
