@@ -28,6 +28,7 @@
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import CopyButton from './CopyButton.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 
@@ -186,6 +187,7 @@
 
 		<svelte:fragment slot="nav">
 			{#if !isNewSession}
+				<CopyButton content={JSON.stringify(session.messages, null, 2)} />
 				<ButtonDelete sitemap={Sitemap.SESSIONS} id={session.id} {shouldConfirmDeletion} />
 			{/if}
 		</svelte:fragment>
