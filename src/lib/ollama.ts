@@ -1,5 +1,4 @@
 import { get } from "svelte/store";
-import type { Session } from "$lib/sessions";
 import { settingsStore } from "$lib/store";
 
 export type OllamaCompletionRequest = {
