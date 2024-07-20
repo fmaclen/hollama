@@ -159,6 +159,18 @@ test.describe('Session', () => {
 		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.response)).toBeVisible();
 		await expect(page.getByText('No sessions')).not.toBeVisible();
 		expect(await page.getByTestId('session-item').count()).toBe(1);
+		await expect(page.locator('header').getByTitle('Copy')).toBeVisible();
+		await expect(page.getByTitle('Dismiss')).not.toBeVisible();
+		
+		// Check the navigation changes when session deletion needs confirmation
+		await page.locator('header').getByTitle('Delete session').click();
+		await expect(page.locator('header').getByTitle('Copy')).not.toBeVisible();
+		await expect(page.getByTitle('Confirm deletion')).toBeVisible();
+		
+		await page.getByTitle('Dismiss').click();
+		await expect(page.locator('header').getByTitle('Copy')).toBeVisible();
+		await expect(page.getByTitle('Confirm deletion')).not.toBeVisible();
+		await expect(page.getByTitle('Dismiss')).not.toBeVisible();
 
 		// Delete the session from the header
 		await page.locator('header').getByTitle('Delete session').click();
