@@ -5,7 +5,7 @@
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
-	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
+	import { ollamaRegenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import {
 		saveSession,
 		type Message,
@@ -42,6 +42,7 @@
 	let prompt: string;
 	let promptCached: string;
 	let promptTextarea: HTMLTextAreaElement;
+	let tokenizedContext: number[];
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 
@@ -83,7 +84,7 @@
 	}
 
 	async function handleCompletionDone(completion: string, context: number[]) {
-		const message: Message = { role: 'ai', content: completion };
+		const message: Message = { role: 'ai', content: completion, context };
 		session.messages = [...session.messages, message];
 		session.updatedAt = new Date().toISOString();
 
@@ -98,7 +99,7 @@
 		completion = '';
 		promptCached = '';
 		shouldFocusTextarea = true;
-		saveSession({ ...session, context });
+		saveSession({ ...session });
 	}
 
 	async function handleSubmit() {
@@ -121,12 +122,21 @@
 		promptCached = prompt;
 		prompt = '';
 		completion = '';
+		tokenizedContext = [];
 		session.messages = knowledgeContext
 			? [knowledgeContext, ...session.messages, message]
 			: [...session.messages, message];
 
+		const previousAiResponse = session.messages[session.messages.length - 2];
+		let payload = {
+			model: session.model,
+			context: previousAiResponse?.context,
+			prompt: session.messages[session.messages.length - 1].content,
+			system: previousAiResponse?.knowledge?.content
+		};
+
 		try {
-			const ollama = await ollamaGenerate(session, abortController.signal);
+			const ollama = await ollamaRegenerate(payload, abortController.signal);
 
 			if (ollama && ollama.body) {
 				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
@@ -137,7 +147,8 @@
 					if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
 
 					if (done) {
-						handleCompletionDone(completion, session.context);
+						if (!tokenizedContext) throw new Error('Ollama response is missing context');
+						handleCompletionDone(completion, tokenizedContext);
 						break;
 					}
 
@@ -147,7 +158,7 @@
 					for (const line of jsonLines) {
 						const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
 						completion += response;
-						session.context = context;
+						tokenizedContext = context;
 					}
 				}
 			}
@@ -200,7 +211,7 @@
 
 				{#each session.messages as message, i (session.id + i)}
 					{#key message.role}
-						<Article {message} />
+						<Article {message} canRetry={message.role === 'ai'} />
 					{/key}
 				{/each}
 
