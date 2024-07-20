@@ -17,9 +17,11 @@
 
 <style lang="scss">
 	.copy-button {
+		// Hiding the button by default because this functionality is not supported on mobile
 		display: none;
 
 		@media (hover: hover) {
+			// Show the button in devices that support hover (i.e. desktop)
 			display: unset;
 		}
 	}
