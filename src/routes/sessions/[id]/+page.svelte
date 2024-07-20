@@ -1,17 +1,10 @@
 <script lang="ts">
 	import { afterUpdate, tick } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { Brain, StopCircle, Trash2, UnfoldVertical } from 'lucide-svelte';
-
-	import Button from '$lib/components/Button.svelte';
-	import Article from './Article.svelte';
-	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
-	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
-	import FieldSelect from '$lib/components/FieldSelect.svelte';
-	import Header from '$lib/components/Header.svelte';
+	import { writable } from 'svelte/store';
+	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { settingsStore, sessionsStore, knowledgeStore } from '$lib/store';
+	import { settingsStore, knowledgeStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import {
 		saveSession,
@@ -22,28 +15,37 @@
 	} from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
-
 	import type { PageData } from './$types';
+
+	import Button from '$lib/components/Button.svelte';
+	import Article from './Article.svelte';
+	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
+	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
+	import FieldSelect from '$lib/components/FieldSelect.svelte';
+	import Header from '$lib/components/Header.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
+	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 
 	export let data: PageData;
 
 	let messageWindow: HTMLElement;
+	let knowledgeId: string;
+	let knowledge: Knowledge | null;
 	let session: Session;
 	let completion: string;
+	let abortController: AbortController;
 	let prompt: string;
 	let promptCached: string;
-	let abortController: AbortController;
 	let promptTextarea: HTMLTextAreaElement;
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 
-	let knowledgeId: string;
-	let knowledge: Knowledge | null;
+	const shouldConfirmDeletion = writable(false);
 
 	$: isServerConnected = !!$settingsStore?.ollamaServer;
 	$: isModelChosen = !!$settingsStore?.ollamaModel;
@@ -80,17 +82,6 @@
 
 		const message: Message = { role: 'system', content };
 		session.messages = [...session.messages, message];
-	}
-
-	function deleteSession() {
-		const confirmed = confirm('Are you sure you want to delete this session?');
-		if (!confirmed) return;
-
-		if ($sessionsStore) {
-			const updatedSessions = $sessionsStore.filter((s) => s.id !== session.id);
-			$sessionsStore = updatedSessions;
-		}
-		goto('/sessions');
 	}
 
 	async function handleCompletionDone(completion: string, context: number[]) {
@@ -185,11 +176,9 @@
 </script>
 
 <div class="session">
-	<Header>
+	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
-			Session <Button size="link" variant="link" href={`/sessions/${session.id}`}
-				>#{session.id}</Button
-			>
+			Session <Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
 		</p>
 		<Metadata dataTestid="session-metadata">
 			{isNewSession ? 'New session' : formatSessionMetadata(session)}
@@ -197,9 +186,10 @@
 
 		<svelte:fragment slot="nav">
 			{#if !isNewSession}
-				<Button title="Delete session" variant="outline" size="icon" on:click={deleteSession}>
-					<Trash2 class="h-4 w-4" />
-				</Button>
+				{#if !$shouldConfirmDeletion}
+					<ButtonCopy content={JSON.stringify(session.messages, null, 2)} />
+				{/if}
+				<ButtonDelete sitemap={Sitemap.SESSIONS} id={session.id} {shouldConfirmDeletion} />
 			{/if}
 		</svelte:fragment>
 	</Header>
@@ -246,7 +236,6 @@
 									<Button
 										aria-label="New knowledge"
 										variant="outline"
-										size="icon"
 										href={generateNewUrl(Sitemap.KNOWLEDGE)}
 									>
 										<Brain class="h-4 w-4" />
@@ -286,7 +275,6 @@
 									<Button
 										title="Stop response"
 										variant="outline"
-										size="icon"
 										on:click={() => {
 											abortController.abort();
 											resetPrompt();
@@ -355,5 +343,6 @@
 	.prompt-editor__textarea {
 		@include base-input;
 		@apply min-h-16;
+		@apply md:min-h-20;
 	}
 </style>

@@ -142,11 +142,11 @@ test.describe('Session', () => {
 		expect(await page.getByTestId('session-item').last().textContent()).toContain(MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		// Check the current session is highlighted in the sidebar
-		await expect(page.getByTestId('session-item').first()).toHaveClass(/ section-list-item--active/);
-		await expect(page.getByTestId('session-item').last()).not.toHaveClass(/ section-list-item--active/);
+		await expect(page.locator('.section-list-item').first()).toHaveClass(/ section-list-item--active/);
+		await expect(page.locator('.section-list-item').last()).not.toHaveClass(/ section-list-item--active/);
 	});
 
-	test('deletes a session from the sidebar', async ({ page }) => {
+	test('deletes a session from the header and sidebar', async ({ page }) => {
 		await page.goto('/');
 		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
@@ -156,12 +156,40 @@ test.describe('Session', () => {
 		await page.getByTestId('new-session').click();
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
-		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
+		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.response)).toBeVisible();
+		await expect(page.getByText('No sessions')).not.toBeVisible();
+		expect(await page.getByTestId('session-item').count()).toBe(1);
+		await expect(page.locator('header').getByTitle('Copy')).toBeVisible();
+		await expect(page.getByTitle('Dismiss')).not.toBeVisible();
+		
+		// Check the navigation changes when session deletion needs confirmation
+		await page.locator('header').getByTitle('Delete session').click();
+		await expect(page.locator('header').getByTitle('Copy')).not.toBeVisible();
+		await expect(page.getByTitle('Confirm deletion')).toBeVisible();
+		
+		await page.getByTitle('Dismiss').click();
+		await expect(page.locator('header').getByTitle('Copy')).toBeVisible();
+		await expect(page.getByTitle('Confirm deletion')).not.toBeVisible();
+		await expect(page.getByTitle('Dismiss')).not.toBeVisible();
+
+		// Delete the session from the header
+		await page.locator('header').getByTitle('Delete session').click();
+		await page.getByTitle('Confirm deletion').click();
+		await expect(page.getByText('No sessions')).toBeVisible();
+		expect(await page.getByTestId('session-item').count()).toBe(0);
+
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByTestId('new-session').click();
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.response)).toBeVisible();
 		await expect(page.getByText('No sessions')).not.toBeVisible();
 		expect(await page.getByTestId('session-item').count()).toBe(1);
 
-		page.on('dialog', dialog => dialog.accept("Are you sure you want to delete this session?"));
-		await page.getByTitle('Delete session').click();
+		// Delete the session from the sidebar
+		await page.locator('.section-list-item').first().hover();
+		await page.locator('.section-list-item').getByTitle('Delete session').click();
+		await page.getByTitle('Confirm deletion').click();
 		await expect(page.getByText('No sessions')).toBeVisible();
 		expect(await page.getByTestId('session-item').count()).toBe(0);
 	});
@@ -223,13 +251,13 @@ test.describe('Session', () => {
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
 		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
-		await expect(page.getByTitle('Copy')).toHaveCount(2);
+		await expect(page.locator('.session__history').getByTitle('Copy')).toHaveCount(2);
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("");
 
-		await page.getByTitle('Copy').first().click();
+		await page.locator('.session__history').getByTitle('Copy').first().click();
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("Who would win in a fight between Emma Watson and Jessica Alba?");
 
-		await page.getByTitle('Copy').last().click();
+		await page.locator('.session__history').getByTitle('Copy').last().click();
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("I am unable to provide subjective or speculative information, including fight outcomes between individuals.");
 		await expect(page.locator("pre")).not.toBeVisible();
 		await expect(page.locator("code")).not.toBeVisible();
@@ -239,11 +267,33 @@ test.describe('Session', () => {
 		await page.getByText('Run').click();
 		await expect(page.locator("pre")).toBeVisible();
 		await expect(page.locator("code")).toBeVisible();
-		await expect(page.getByTitle('Copy')).toHaveCount(5);
+		await expect(page.locator('.session__history').getByTitle('Copy')).toHaveCount(5);
 
 		await page.locator("pre").hover();
-		await page.getByTitle('Copy').last().click();
+		await page.locator('.session__history').getByTitle('Copy').last().click();
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("def calculate_odds(emma_age, emma_height, emma_weight, emma_experience, jessica_age, jessica_height, jessica_weight, jessica_experience):\n    emma_stats = {'age': emma_age, 'height': emma_height, 'weight': emma_weight, 'experience': emma_experience}\n    jessica_stats = {'age': jessica_age, 'height': jessica_height, 'weight': jessica_weight, 'experience': jessica_experience}\n    \n    # Calculate the differences between their stats\n    age_difference = abs(emma_stats['age'] - jessica_stats['age'])\n    height_difference = abs(emma_stats['height'] - jessica_stats['height'])\n    weight_difference = abs(emma_stats['weight'] - jessica_stats['weight'])\n    \n    # Return the differences as a tuple\n    return (age_difference, height_difference, weight_difference)\n");
+	});
+
+	test('can copy the whole session content to clipboard', async ({ page }) => {
+		await page.goto('/');
+		await page.evaluate(() => navigator.clipboard.writeText(""));
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await page.getByText('Sessions', { exact: true }).click();
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByTestId('new-session').click();
+		await expect(page.locator('.header').getByTitle('Copy')).toHaveCount(0);
+
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
+		await expect(page.locator('.header').getByTitle('Copy')).toHaveCount(1);
+		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("");
+
+		await page.locator('.header').getByTitle('Copy').first().click();
+		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))).toHaveLength(2);
+
+		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[0]).toEqual({ "content": "Who would win in a fight between Emma Watson and Jessica Alba?", "role": "user" });
+		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[1]).toEqual({ "content": "I am unable to provide subjective or speculative information, including fight outcomes between individuals.", "role": "ai" });
 	});
 
 	test('can start a new session, choose a model and stop a completion in progress', async ({ page }) => {

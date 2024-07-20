@@ -1,17 +1,18 @@
 <script lang="ts">
-	import { afterNavigate, goto } from '$app/navigation';
+	import { writable } from 'svelte/store';
+	import { afterNavigate } from '$app/navigation';
 	import type { PageData } from './$types';
-	import { Trash2 } from 'lucide-svelte';
 
-	import Button from '$lib/components/Button.svelte';
 	import { type Knowledge, loadKnowledge, saveKnowledge } from '$lib/knowledge';
 	import { formatTimestampToNow, getUpdatedAtDate } from '$lib/utils';
-	import { knowledgeStore } from '$lib/store';
+	import { Sitemap } from '$lib/sitemap';
+	import Button from '$lib/components/Button.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
+	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 
 	export let data: PageData;
@@ -19,6 +20,7 @@
 	let knowledge: Knowledge = loadKnowledge(data.id);
 	let name: string;
 	let content: string;
+	const shouldConfirmDeletion = writable(false);
 
 	$: isNewKnowledge = !name || !content;
 
@@ -28,17 +30,6 @@
 		knowledge = loadKnowledge(data.id);
 	}
 
-	function deleteKnowledge() {
-		const confirmed = confirm('Are you sure you want to delete this knowledge?');
-		if (!confirmed) return;
-
-		if ($knowledgeStore) {
-			const updatedKnowledge = $knowledgeStore.filter((s) => s.id !== knowledge.id);
-			$knowledgeStore = updatedKnowledge;
-		}
-		goto('/knowledge');
-	}
-
 	afterNavigate(() => {
 		knowledge = loadKnowledge(data.id);
 		name = knowledge.name;
@@ -46,11 +37,11 @@
 	});
 </script>
 
-<div class="flex h-full w-full flex-col overflow-hidden">
-	<Header>
+<div class="knowledge">
+	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="knowledge-id" class="text-sm font-bold leading-none">
 			Knowledge
-			<Button size="link" variant="link" href={`/knowledge/${knowledge.id}`}>
+			<Button variant="link" href={`/knowledge/${knowledge.id}`}>
 				#{knowledge.id}
 			</Button>
 		</p>
@@ -60,9 +51,7 @@
 
 		<svelte:fragment slot="nav">
 			{#if !isNewKnowledge}
-				<Button title="Delete knowledge" variant="outline" size="icon" on:click={deleteKnowledge}>
-					<Trash2 class="h-4 w-4" />
-				</Button>
+				<ButtonDelete sitemap={Sitemap.KNOWLEDGE} id={knowledge.id} {shouldConfirmDeletion} />
 			{/if}
 		</svelte:fragment>
 	</Header>
@@ -77,3 +66,9 @@
 		<ButtonSubmit hasMetaKey={true} {handleSubmit} disabled={!name || !content}>Save</ButtonSubmit>
 	</Fieldset>
 </div>
+
+<style lang="scss">
+	.knowledge {
+		@apply flex h-full w-full flex-col overflow-hidden;
+	}
+</style>
