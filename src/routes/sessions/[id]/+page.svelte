@@ -168,6 +168,55 @@
 		}
 	}
 
+	async function handleRetry(index: number) {
+		abortController = new AbortController();
+		completion = '';
+
+		// remove all the messages after the index
+		session.messages = session.messages.slice(0, index);
+
+		const userResponse = session.messages[index - 1];
+
+		let payload = {
+			model: session.model,
+			context: session.messages[index - 2]?.context, // Last AI response
+			prompt: userResponse.content,
+			system: userResponse?.knowledge?.content
+		};
+		
+		try {
+			const ollama = await ollamaRegenerate(payload, abortController.signal);
+
+			if (ollama && ollama.body) {
+				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
+
+				while (true) {
+					const { value, done } = await reader.read();
+
+					if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
+
+					if (done) {
+						if (!tokenizedContext) throw new Error('Ollama response is missing context');
+						handleCompletionDone(completion, tokenizedContext);
+						break;
+					}
+
+					if (!value) continue;
+
+					const jsonLines = value.split('\n').filter((line) => line);
+					for (const line of jsonLines) {
+						const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
+						completion += response;
+						tokenizedContext = context;
+					}
+				}
+			}
+		} catch (error: any) {
+			if (error.name === 'AbortError') return; // User aborted the request
+			handleError(error);
+		}
+	}
+
 	function resetPrompt() {
 		// Reset the prompt to the last sent message
 		prompt = promptCached;
@@ -211,7 +260,7 @@
 
 				{#each session.messages as message, i (session.id + i)}
 					{#key message.role}
-						<Article {message} canRetry={message.role === 'ai'} />
+						<Article {message} retryIndex={message.role === 'ai' ? i : undefined} {handleRetry} />
 					{/key}
 				{/each}
 

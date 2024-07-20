@@ -13,7 +13,8 @@
 	import { RefreshCw } from 'lucide-svelte';
 
 	export let message: Message;
-	export let canRetry: boolean | undefined = false;
+	export let retryIndex: number | undefined = undefined;
+	export let handleRetry: ((index: number) => void) | undefined = undefined;
 	let articleElement: HTMLElement;
 
 	const CODE_SNIPPET_ID = 'code-snippet';
@@ -63,8 +64,13 @@
 			</Badge>
 		</div>
 		<div class="article__interactive">
-			{#if canRetry}
-				<Button title="Retry" variant="icon">
+			{#if retryIndex}
+				<Button
+					title="Retry"
+					variant="icon"
+					id="retry-index-{retryIndex}"
+					on:click={() => handleRetry && handleRetry(retryIndex)}
+				>
 					<RefreshCw class="h-4 w-4" />
 				</Button>
 			{/if}
