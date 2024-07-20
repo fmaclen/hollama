@@ -26,7 +26,7 @@
 	}
 
 	.header__nav {
-		@apply flex flex-row items-center gap-x-2 pr-4 pb-4;
+		@apply flex flex-row items-center pr-4 pb-4;
 		@apply lg:pr-6 lg:pb-6;
 	}
 </style>
