@@ -6,7 +6,7 @@
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
 	import {
-		ollamaRegenerate,
+		ollamaGenerate,
 		type OllamaCompletionRequest,
 		type OllamaCompletionResponse
 	} from '$lib/ollama';
@@ -76,7 +76,6 @@
 		}
 
 		const message: Message = { role: 'user', content: prompt };
-		abortController = new AbortController();
 		promptCached = prompt;
 		prompt = '';
 		session.messages = knowledgeContext
@@ -91,7 +90,7 @@
 			system: previousAiResponse?.knowledge?.content
 		};
 
-		await handleCompletion(payload, abortController.signal);
+		await handleCompletion(payload);
 	}
 
 	async function handleRetry(index: number) {
@@ -106,35 +105,16 @@
 			system: userResponse?.knowledge?.content
 		};
 
-		await handleCompletion(payload, abortController.signal);
+		await handleCompletion(payload);
 	}
 
-	async function handleCompletionDone(completion: string, context: number[]) {
-		const message: Message = { role: 'ai', content: completion, context };
-		session.messages = [...session.messages, message];
-		session.updatedAt = new Date().toISOString();
-
-		if (knowledge) {
-			session.knowledge = knowledge;
-
-			// Now that we used the knowledge, we no longer need an `id`
-			// This will prevent `knowledge` from being used again
-			knowledgeId = '';
-		}
-
-		completion = '';
-		promptCached = '';
-		shouldFocusTextarea = true;
-		saveSession({ ...session });
-	}
-
-	async function handleCompletion(payload: OllamaCompletionRequest, abortSignal: AbortSignal) {
+	async function handleCompletion(payload: OllamaCompletionRequest) {
 		abortController = new AbortController();
 		completion = '';
 		tokenizedContext = [];
 
 		try {
-			const ollama = await ollamaRegenerate(payload, abortSignal);
+			const ollama = await ollamaGenerate(payload, abortController.signal);
 
 			if (ollama && ollama.body) {
 				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
@@ -164,6 +144,27 @@
 			if (error.name === 'AbortError') return; // User aborted the request
 			handleError(error);
 		}
+	}
+
+	async function handleCompletionDone(completion: string, context: number[]) {
+		abortController = new AbortController();
+
+		const message: Message = { role: 'ai', content: completion, context };
+		session.messages = [...session.messages, message];
+		session.updatedAt = new Date().toISOString();
+
+		if (knowledge) {
+			session.knowledge = knowledge;
+
+			// Now that we used the knowledge, we no longer need an `id`
+			// This will prevent `knowledge` from being used again
+			knowledgeId = '';
+		}
+
+		completion = '';
+		promptCached = '';
+		shouldFocusTextarea = true;
+		saveSession({ ...session });
 	}
 
 	function resetPrompt() {

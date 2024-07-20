@@ -43,40 +43,7 @@ export type OllamaTagResponse = {
 	models: OllamaModel[];
 };
 
-// export async function ollamaGenerate(session: Session, abortSignal: AbortSignal) {
-// 	const settings = get(settingsStore);
-// 	if (!settings) throw new Error('No Ollama server specified');
-
-// 	let payload: OllamaCompletionRequest = {
-// 		model: session.model,
-// 		context: session.context,
-// 		prompt: session.messages[session.messages.length - 1].content
-// 	};
-
-// 	const firstMessage = session.messages[0]
-// 	if (firstMessage.knowledge) {
-// 		payload.prompt = `
-// 			<CONTEXT
-// 				name="${firstMessage.knowledge.name}"
-// 				id="${firstMessage.knowledge.id}"
-// 				updatedAt="${firstMessage.knowledge.updatedAt}"
-// 			>
-// 				${firstMessage.knowledge.content}
-// 			</CONTEXT>
-
-// 			${payload.prompt}
-// 		`;
-// 	}
-
-// 	return await fetch(`${settings.ollamaServer}/api/generate`, {
-// 		method: 'POST',
-// 		headers: { 'Content-Type': 'text/event-stream' },
-// 		body: JSON.stringify(payload),
-// 		signal: abortSignal
-// 	});
-// }
-
-export async function ollamaRegenerate(payload: OllamaCompletionRequest, abortSignal: AbortSignal) {
+export async function ollamaGenerate(payload: OllamaCompletionRequest, abortSignal: AbortSignal) {
 	const settings = get(settingsStore);
 	if (!settings) throw new Error('No Ollama server specified');
 
