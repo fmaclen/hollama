@@ -95,9 +95,10 @@
 
 <style lang="scss">
 	.article {
-		@apply mx-auto mb-2 flex w-full max-w-[80ch] flex-col rounded-md border border-shade-3;
+		@apply mx-auto mb-2 flex w-full max-w-[80ch] flex-col rounded-md border border-shade-3 p-3 gap-y-2;
+		@apply md:mb-4 md:p-4 gap-y-4;
+		@apply lg:mb-6 lg:p-6;
 		@apply last:mb-0;
-		@apply lg:mb-6;
 	}
 
 	.article--ai {
@@ -105,25 +106,30 @@
 	}
 
 	.article__interactive {
-		@apply opacity-0;
+		@apply opacity-100;
+		
+		@media (hover: hover) {
+			// The interactive elements should be visible by default on mobile
+			// and hidden by default on desktop.
+			@apply opacity-0;
+		}
 	}
 	.article:hover .article__interactive {
 		@apply opacity-100;
 	}
 
 	.article__nav {
-		@apply ml-2 flex items-center justify-between text-muted;
-		@apply md:mx-2 md:mt-3;
+		@apply flex items-center justify-between text-muted;
+		@apply -mt-1; // Visually reduce the spacing between the top of the article and the nav
 	}
 
 	.article__role {
 		@apply text-center text-xs font-bold uppercase leading-7;
-		@apply md:pl-3;
 	}
 
 	.markdown {
-		@apply mx-auto my-3 w-full px-3;
-		@apply md:mb-6 md:px-6;
+		@apply mx-auto w-full text-sm;
+		@apply md:text-base;
 
 		:global(a) {
 			@apply underline underline-offset-4 hover:text-active;
@@ -142,15 +148,21 @@
 		}
 
 		:global(pre > .copy-button) {
-			@apply absolute right-1 top-2 rounded-bl-md rounded-tr-md bg-shade-0;
+			@apply opacity-0 absolute right-1 top-2 rounded-bl-md rounded-tr-md bg-shade-0;
+		}
+
+		:global(pre:hover > .copy-button) {
+			@apply opacity-100;
 		}
 
 		:global(code) {
-			@apply rounded-md text-sm;
+			@apply rounded-md text-xs;
+			@apply md:text-sm;
 		}
 
 		:global(pre > code) {
-			@apply p-4 pr-12 dark:invert;
+			@apply p-4 pr-12;
+			@apply dark:invert;
 		}
 
 		:global(li > code),
