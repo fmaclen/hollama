@@ -5,7 +5,11 @@
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
-	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
+	import {
+		ollamaGenerate,
+		type OllamaCompletionRequest,
+		type OllamaCompletionResponse
+	} from '$lib/ollama';
 	import {
 		saveSession,
 		type Message,
@@ -42,6 +46,7 @@
 	let prompt: string;
 	let promptCached: string;
 	let promptTextarea: HTMLTextAreaElement;
+	let tokenizedContext: number[];
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 
@@ -55,12 +60,130 @@
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
 
-	afterUpdate(() => {
-		if (shouldFocusTextarea && promptTextarea) {
-			promptTextarea.focus();
-			shouldFocusTextarea = false;
+	async function handleSubmit() {
+		if (!prompt) return;
+
+		// Reset the prompt editor to its default state
+		isPromptFullscreen = false;
+
+		let knowledgeContext: Message | null = null;
+		if (knowledge) {
+			knowledgeContext = {
+				role: 'system',
+				knowledge,
+				content: ''
+			};
 		}
-	});
+
+		const message: Message = { role: 'user', content: prompt };
+		promptCached = prompt;
+		prompt = '';
+		session.messages = knowledgeContext
+			? [knowledgeContext, ...session.messages, message]
+			: [...session.messages, message];
+
+		const previousAiResponse = session.messages[session.messages.length - 2];
+		let payload = {
+			model: session.model,
+			context: previousAiResponse?.context,
+			prompt: session.messages[session.messages.length - 1].content,
+			system: previousAiResponse?.knowledge?.content
+		};
+
+		await handleCompletion(payload);
+	}
+
+	async function handleRetry(index: number) {
+		// Remove all the messages after the index
+		session.messages = session.messages.slice(0, index);
+
+		const mostRecentUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
+		const mostRecentSystemMessage = session.messages.filter((m) => m.role === 'system').at(-1);
+		if (!mostRecentUserMessage) throw new Error('No user message to retry');
+
+		let payload = {
+			model: session.model,
+			context: session.messages[index - 2]?.context, // Last AI response
+			prompt: mostRecentUserMessage.content,
+			system: mostRecentSystemMessage?.knowledge?.content
+		};
+
+		await handleCompletion(payload);
+	}
+
+	async function handleCompletion(payload: OllamaCompletionRequest) {
+		abortController = new AbortController();
+		completion = '';
+		tokenizedContext = [];
+
+		try {
+			const ollama = await ollamaGenerate(payload, abortController.signal);
+
+			if (ollama && ollama.body) {
+				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
+
+				while (true) {
+					const { value, done } = await reader.read();
+
+					if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
+
+					if (done) {
+						if (!tokenizedContext) throw new Error('Ollama response is missing context');
+						handleCompletionDone(completion, tokenizedContext);
+						break;
+					}
+
+					if (!value) continue;
+
+					const jsonLines = value.split('\n').filter((line) => line);
+					for (const line of jsonLines) {
+						const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
+						completion += response;
+						tokenizedContext = context;
+					}
+				}
+			}
+		} catch (error: any) {
+			if (error.name === 'AbortError') return; // User aborted the request
+			handleError(error);
+		}
+	}
+
+	async function handleCompletionDone(completion: string, context: number[]) {
+		abortController = new AbortController();
+
+		const message: Message = { role: 'ai', content: completion, context };
+		session.messages = [...session.messages, message];
+		session.updatedAt = new Date().toISOString();
+
+		if (knowledge) {
+			session.knowledge = knowledge;
+
+			// Now that we used the knowledge, we no longer need an `id`
+			// This will prevent `knowledge` from being used again
+			knowledgeId = '';
+		}
+
+		completion = '';
+		promptCached = '';
+		shouldFocusTextarea = true;
+		saveSession({ ...session });
+	}
+
+	function resetPrompt() {
+		// Reset the prompt to the last sent message
+		prompt = promptCached;
+		promptCached = '';
+		// Remove the "incomplete" AI response
+		session.messages = session.messages.slice(0, -1);
+	}
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if (event.shiftKey) return;
+		if (event.key !== 'Enter') return;
+		event.preventDefault();
+		handleSubmit();
+	}
 
 	async function scrollToBottom() {
 		if (!messageWindow) return;
@@ -82,95 +205,12 @@
 		session.messages = [...session.messages, message];
 	}
 
-	async function handleCompletionDone(completion: string, context: number[]) {
-		const message: Message = { role: 'ai', content: completion };
-		session.messages = [...session.messages, message];
-		session.updatedAt = new Date().toISOString();
-
-		if (knowledge) {
-			session.knowledge = knowledge;
-
-			// Now that we used the knowledge, we no longer need an `id`
-			// This will prevent `knowledge` from being used again
-			knowledgeId = '';
+	afterUpdate(() => {
+		if (shouldFocusTextarea && promptTextarea) {
+			promptTextarea.focus();
+			shouldFocusTextarea = false;
 		}
-
-		completion = '';
-		promptCached = '';
-		shouldFocusTextarea = true;
-		saveSession({ ...session, context });
-	}
-
-	async function handleSubmit() {
-		if (!prompt) return;
-
-		// Reset the prompt editor to its default state
-		isPromptFullscreen = false;
-
-		let knowledgeContext: Message | null = null;
-		if (knowledge) {
-			knowledgeContext = {
-				role: 'system',
-				knowledge,
-				content: ''
-			};
-		}
-
-		const message: Message = { role: 'user', content: prompt };
-		abortController = new AbortController();
-		promptCached = prompt;
-		prompt = '';
-		completion = '';
-		session.messages = knowledgeContext
-			? [knowledgeContext, ...session.messages, message]
-			: [...session.messages, message];
-
-		try {
-			const ollama = await ollamaGenerate(session, abortController.signal);
-
-			if (ollama && ollama.body) {
-				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
-
-				while (true) {
-					const { value, done } = await reader.read();
-
-					if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
-
-					if (done) {
-						handleCompletionDone(completion, session.context);
-						break;
-					}
-
-					if (!value) continue;
-
-					const jsonLines = value.split('\n').filter((line) => line);
-					for (const line of jsonLines) {
-						const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
-						completion += response;
-						session.context = context;
-					}
-				}
-			}
-		} catch (error: any) {
-			if (error.name === 'AbortError') return; // User aborted the request
-			handleError(error);
-		}
-	}
-
-	function resetPrompt() {
-		// Reset the prompt to the last sent message
-		prompt = promptCached;
-		promptCached = '';
-		// Remove the "incomplete" AI response
-		session.messages = session.messages.slice(0, -1);
-	}
-
-	function handleKeyDown(event: KeyboardEvent) {
-		if (event.shiftKey) return;
-		if (event.key !== 'Enter') return;
-		event.preventDefault();
-		handleSubmit();
-	}
+	});
 </script>
 
 <div class="session">
@@ -200,7 +240,7 @@
 
 				{#each session.messages as message, i (session.id + i)}
 					{#key message.role}
-						<Article {message} />
+						<Article {message} retryIndex={message.role === 'ai' ? i : undefined} {handleRetry} />
 					{/key}
 				{/each}
 
@@ -224,7 +264,7 @@
 								<FieldSelectModel />
 								<div class="prompt-editor__knowledge">
 									<FieldSelect
-										label="Knowledge"
+										label="System prompt"
 										name="knowledge"
 										disabled={!$knowledgeStore}
 										options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
