@@ -395,6 +395,19 @@ test.describe('Session', () => {
 		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).not.toBeVisible();
 		await expect(promptTextarea).not.toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
 
+		// Mock an incomplete JSON response
+		await page.route('**/generate', async (route) => {
+			await route.fulfill({
+				status: 200,
+				contentType: 'application/json',
+				body: "{ incomplete"
+			});
+		});
+		await page.getByTitle('Retry').click();
+		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
+		await expect(page.getByText(`Sorry, this session is likely exceeding the context window of ${MOCK_API_TAGS_RESPONSE.models[0].name}`)).toBeVisible();
+		await expect(page.locator('code', { hasText: 'SyntaxError' })).toBeVisible();
+
 		// Mock a 500 error response
 		await page.route('**/generate', async (route) => {
 			await route.fulfill({
@@ -408,19 +421,6 @@ test.describe('Session', () => {
 		await expect(page.getByText('Sorry, something went wrong.')).toBeVisible();
 		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).toBeVisible();
 		await expect(promptTextarea).not.toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
-
-		// Mock an incomplete JSON response
-		await page.route('**/generate', async (route) => {
-			await route.fulfill({
-				status: 200,
-				contentType: 'application/json',
-				body: "{ incomplete"
-			});
-		});
-		await page.getByTitle('Retry').click();
-		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
-		await expect(page.getByText(`Sorry, this session is likely exceeding the context window of ${MOCK_API_TAGS_RESPONSE.models[0].name}`)).toBeVisible();
-		await expect(page.locator('code', { hasText: 'SyntaxError' })).toBeVisible();
 	});
 
 	test('ai completion can be retried', async ({ page }) => {
