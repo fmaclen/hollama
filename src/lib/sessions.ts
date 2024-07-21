@@ -71,6 +71,6 @@ export function formatSessionMetadata(session: Session) {
 }
 
 export function getSessionTitle(session: Session) {
-	const hasKnowledge = session.messages[0].knowledge;
-	return hasKnowledge ? session.messages[1].content : session.messages[0].content;
+	const hasKnowledge = session.messages[0]?.knowledge;
+	return hasKnowledge ? session.messages[1]?.content : session.messages[0]?.content;
 }

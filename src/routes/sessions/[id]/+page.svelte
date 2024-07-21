@@ -9,7 +9,6 @@
 	import {
 		saveSession,
 		type Message,
-		type Session,
 		loadSession,
 		formatSessionMetadata,
 		getSessionTitle
@@ -31,13 +30,14 @@
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
+	import { afterNavigate } from '$app/navigation';
 
 	export let data: PageData;
 
 	let messageWindow: HTMLElement;
 	let knowledgeId: string;
 	let knowledge: Knowledge | null;
-	let session: Session;
+	let session = loadSession(data.id);
 	let completion: string;
 	let abortController: AbortController;
 	let prompt: string;
@@ -48,21 +48,23 @@
 
 	const shouldConfirmDeletion = writable(false);
 
-	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
 	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
 	$: session && scrollToBottom();
 	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
-	$: if (session)
-		updatePageTitle([isNewSession ? 'New session' : getSessionTitle(session), 'Sessions']);
 
 	afterUpdate(() => {
 		if (shouldFocusTextarea && promptTextarea) {
 			promptTextarea.focus();
 			shouldFocusTextarea = false;
 		}
+	});
+
+	afterNavigate(() => {
+		session = loadSession(data.id);
+		updatePageTitle(!session?.messages.length ? 'New session' : getSessionTitle(session));
 	});
 
 	async function scrollToBottom() {

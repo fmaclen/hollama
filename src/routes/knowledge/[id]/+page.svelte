@@ -24,8 +24,6 @@
 	const shouldConfirmDeletion = writable(false);
 
 	$: isNewKnowledge = !name || !content;
-	$: if (knowledge)
-		updatePageTitle([knowledge.name ? knowledge.name : 'New knowledge', 'Knowledge']);
 
 	function handleSubmit() {
 		if (!name || !content) return;
@@ -37,6 +35,7 @@
 		knowledge = loadKnowledge(data.id);
 		name = knowledge.name;
 		content = knowledge.content;
+		updatePageTitle([knowledge.name ? knowledge.name : 'New knowledge', 'Knowledge']);
 	});
 </script>
 
