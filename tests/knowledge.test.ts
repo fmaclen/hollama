@@ -60,7 +60,7 @@ test('can delete knowledge from the header and sidebar', async ({ page }) => {
 	await page.goto('/');
 	await page.getByText('Knowledge', { exact: true }).click();
 	expect(await page.getByTestId('knowledge-item').count()).toBe(0);
-	
+
 	await seedKnowledgeAndReload(page);
 	await expect(page.locator('header').getByTitle('Delete knowledge')).not.toBeVisible();
 	expect(await page.getByTestId('knowledge-item').count()).toBe(2);
@@ -150,7 +150,7 @@ test('all knowledge can be deleted', async ({ page }) => {
 test('can use knowledge as system prompt in the session', async ({ page }) => {
 	const sessionArticle = page.locator('.session__articles .article');
 	const knowledgeId = page.getByTestId('knowledge-id');
-	
+
 	await mockTagsResponse(page);
 	await page.goto('/');
 	await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -166,12 +166,38 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	// Create a new session with knowledge
 	await page.getByLabel('System prompt').selectOption(MOCK_KNOWLEDGE[0].name);
 	await page.locator('.prompt-editor__textarea').fill('What is this about?');
+
+	// Check the request includes the knowledge as a system prompt when submitting the form
+	let requestPostData: string | null = null;
+	page.on('request', request => {
+		if (request.url().includes('/api/generate')) requestPostData = request.postData();
+	});
+
 	await page.getByText('Run').click();
+	expect(requestPostData).toContain(JSON.stringify({
+		model: MOCK_API_TAGS_RESPONSE.models[0].name,
+		prompt: 'What is this about?',
+		system: MOCK_KNOWLEDGE[0].content,
+	}));
 	expect(await sessionArticle.count()).toBe(3);
 	expect(await sessionArticle.first().textContent()).toContain(MOCK_KNOWLEDGE[0].name);
 	expect(await sessionArticle.nth(1).textContent()).toContain('What is this about?');
 	expect(await sessionArticle.last().textContent()).toContain(MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.response);
 	await expect(knowledgeId).not.toBeVisible();
+
+	// Check subsequent requests don't include the knowledge as a system prompt
+	page.on('request', request => {
+		if (request.url().includes('/api/generate')) requestPostData = request.postData();
+	});
+
+	await page.locator('.prompt-editor__textarea').fill('Gotcha, thanks for the clarification');
+	await page.getByText('Run').click();
+	expect(requestPostData).toContain(JSON.stringify({
+		model: MOCK_API_TAGS_RESPONSE.models[0].name,
+		context: [123, 4567, 890],
+		prompt: 'Gotcha, thanks for the clarification'
+	}));
+	expect(await sessionArticle.count()).toBe(5);
 
 	// Can click on the knowledge to see it in the knowledge view
 	await page.getByLabel('Go to knowledge').click();
