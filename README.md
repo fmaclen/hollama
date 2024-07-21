@@ -7,10 +7,11 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 - Large prompt fields with code editor features
 - Markdown parsing w/syntax highlighting
 - Easily copy markdown as raw text
-- _"Knowledge"_ lets you add context to sessions
+- Use _"Knowledge"_ as a system prompt
 - Saves all changes on your browser's `localStorage`
-- Responsive layout
-- Dark mode
+- Desktop & mobile friendly layout
+- Light & dark themes
+- Retry completions
 - Streams completions
 
 ### Live demo
