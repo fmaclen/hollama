@@ -5,6 +5,8 @@
 	import { Brain, MessageSquareText, Settings2, Sun, Moon } from 'lucide-svelte';
 
 	import '../app.pcss';
+	import { settingsStore } from '$lib/store';
+	import PageTitle from '$lib/components/PageTitle.svelte';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
@@ -13,6 +15,7 @@
 		['/settings', 'Settings']
 	];
 
+	$: pageTitle = $settingsStore?.pageTitle;
 	let theme = 'light';
 
 	function toggleTheme() {
@@ -38,7 +41,7 @@
 		></script>
 	{/if}
 
-	<title>Hollama</title>
+	<PageTitle title={pageTitle} />
 </svelte:head>
 
 <div class="layout">

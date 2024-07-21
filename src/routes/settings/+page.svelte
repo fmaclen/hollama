@@ -9,7 +9,7 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 
 	import type { OllamaTagResponse } from '$lib/ollama';
-	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
+	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey, updatePageTitle } from '$lib/store';
 
 	export let ollamaURL: URL | null = null;
 
@@ -20,11 +20,12 @@
 	let ollamaModel = $settingsStore?.ollamaModel || '';
 	let ollamaTagResponse: OllamaTagResponse | null = null;
 
-	$: settingsStore.set({
+	$: settingsStore.update((settings) => ({
+		...settings,
 		ollamaServer,
 		ollamaModels: ollamaTagResponse?.models || [],
 		ollamaModel
-	});
+	}));
 
 	async function getModelsList(): Promise<void> {
 		try {
@@ -52,6 +53,8 @@
 	}
 
 	onMount(async () => {
+		updatePageTitle('Settings');
+
 		// Get the current URL and set the default server
 		ollamaURL = new URL(window.location.href);
 		if (ollamaURL.port) {

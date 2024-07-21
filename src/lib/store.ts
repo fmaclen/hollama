@@ -38,12 +38,21 @@ export function deleteStoreItem<T extends { id: string }>(store: T[], id: string
 	return store.filter((s) => s.id !== id);
 }
 
+export function updatePageTitle(title: string | string[]) {
+	settingsStore.update((settings) => {
+		if (!settings) return settings;
+		settings.pageTitle = title;
+		return settings;
+	});
+}
+
 export const LOCAL_STORAGE_PREFIX = 'hollama';
 
 export interface Settings {
 	ollamaServer: string | null;
 	ollamaModel: string | null;
 	ollamaModels: OllamaModel[];
+	pageTitle?: string | string[];
 }
 
 export enum StorageKey {

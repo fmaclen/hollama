@@ -4,14 +4,15 @@
 	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { settingsStore, knowledgeStore } from '$lib/store';
+	import { settingsStore, knowledgeStore, updatePageTitle } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import {
 		saveSession,
 		type Message,
 		type Session,
 		loadSession,
-		formatSessionMetadata
+		formatSessionMetadata,
+		getSessionTitle
 	} from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
@@ -54,6 +55,8 @@
 	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
+	$: if (session)
+		updatePageTitle([isNewSession ? 'New session' : getSessionTitle(session), 'Sessions']);
 
 	afterUpdate(() => {
 		if (shouldFocusTextarea && promptTextarea) {

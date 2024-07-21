@@ -14,6 +14,7 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
+	import { updatePageTitle } from '$lib/store';
 
 	export let data: PageData;
 
@@ -23,6 +24,8 @@
 	const shouldConfirmDeletion = writable(false);
 
 	$: isNewKnowledge = !name || !content;
+	$: if (knowledge)
+		updatePageTitle([knowledge.name ? knowledge.name : 'New knowledge', 'Knowledge']);
 
 	function handleSubmit() {
 		if (!name || !content) return;
