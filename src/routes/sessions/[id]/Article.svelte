@@ -10,7 +10,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import Badge from '$lib/components/Badge.svelte';
-	import { RefreshCw } from 'lucide-svelte';
+	import { Brain, RefreshCw } from 'lucide-svelte';
 
 	export let message: Message;
 	export let retryIndex: number | undefined = undefined;
@@ -19,7 +19,6 @@
 
 	const CODE_SNIPPET_ID = 'code-snippet';
 	const isUserRole = message.role === 'user';
-	const isKnowledgeRole = message.role === 'system' && message.knowledge;
 
 	function renderCodeSnippet(code: string) {
 		return `<pre id="${CODE_SNIPPET_ID}"><code class="hljs">${code}</code></pre>`;
@@ -54,9 +53,7 @@
 	<nav class="article__nav">
 		<div data-testid="session-role" class="article__role">
 			<Badge>
-				{#if isKnowledgeRole}
-					Knowledge
-				{:else if isUserRole}
+				{#if isUserRole}
 					You
 				{:else}
 					{message.role}
@@ -86,6 +83,7 @@
 				aria-label="Go to knowledge"
 			>
 				{message.knowledge.name}
+				<Brain class="-mr-1 ml-2 h-4 w-4" />
 			</Button>
 		{:else if message.content}
 			{@html md.render(message.content)}
@@ -95,8 +93,8 @@
 
 <style lang="scss">
 	.article {
-		@apply mx-auto mb-2 flex w-full max-w-[80ch] flex-col rounded-md border border-shade-3 p-3 gap-y-2;
-		@apply md:mb-4 md:p-4 gap-y-4;
+		@apply mx-auto mb-2 flex w-full max-w-[80ch] flex-col gap-y-2 rounded-md border border-shade-3 p-3;
+		@apply gap-y-4 md:mb-4 md:p-4;
 		@apply lg:mb-6 lg:p-6;
 		@apply last:mb-0;
 	}
@@ -107,7 +105,7 @@
 
 	.article__interactive {
 		@apply opacity-100;
-		
+
 		@media (hover: hover) {
 			// The interactive elements should be visible by default on mobile
 			// and hidden by default on desktop.
@@ -148,7 +146,7 @@
 		}
 
 		:global(pre > .copy-button) {
-			@apply opacity-0 absolute right-1 top-2 rounded-bl-md rounded-tr-md bg-shade-0;
+			@apply absolute right-1 top-2 rounded-bl-md rounded-tr-md bg-shade-0 opacity-0;
 		}
 
 		:global(pre:hover > .copy-button) {
