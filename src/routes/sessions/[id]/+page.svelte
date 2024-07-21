@@ -192,11 +192,11 @@
 	}
 
 	function handleError(error: Error) {
-		resetPrompt();
-
 		let content: string;
 		if (error.message === 'Failed to fetch') {
 			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
+		} else if (error.name === 'SyntaxError') {
+			content = `Sorry, this session is _likely_ exceeding the context window of \`${session.model}\`\n\`\`\`\n${error.name}: ${error.message}\n\`\`\``;
 		} else {
 			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
 		}
@@ -240,7 +240,11 @@
 
 				{#each session.messages as message, i (session.id + i)}
 					{#key message.role}
-						<Article {message} retryIndex={message.role === 'ai' ? i : undefined} {handleRetry} />
+						<Article
+							{message}
+							retryIndex={['ai', 'system'].includes(message.role) ? i : undefined}
+							{handleRetry}
+						/>
 					{/key}
 				{/each}
 
