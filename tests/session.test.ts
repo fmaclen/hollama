@@ -293,7 +293,7 @@ test.describe('Session', () => {
 		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))).toHaveLength(2);
 
 		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[0]).toEqual({ "content": "Who would win in a fight between Emma Watson and Jessica Alba?", "role": "user" });
-		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[1]).toEqual({ "content": "I am unable to provide subjective or speculative information, including fight outcomes between individuals.", "role": "ai" });
+		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[1]).toEqual({ "content": "I am unable to provide subjective or speculative information, including fight outcomes between individuals.", "role": "ai", "context": [123, 4567, 890] });
 	});
 
 	test('can start a new session, choose a model and stop a completion in progress', async ({ page }) => {
