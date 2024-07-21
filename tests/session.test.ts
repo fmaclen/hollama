@@ -412,6 +412,25 @@ test.describe('Session', () => {
 		await expect(promptTextarea).toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
 	});
 
+	test('ai completion can be retried', async ({ page }) => {
+		await page.goto('/');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await page.getByText('Sessions', { exact: true }).click();
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByTestId('new-session').click();
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		expect(await page.getByTitle('Retry').count()).toBe(0);
+
+		await page.getByText('Run').click();
+		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
+		expect(await page.getByTitle('Retry').count()).toBe(1);
+		
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_2);
+		await page.getByTitle('Retry').click();
+		await expect(page.getByText("No problem! If you have any other questions or would like to discuss something else, feel free to ask.")).toBeVisible();
+		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).not.toBeVisible();
+	});
+
 	test.skip('auto-scrolls to the bottom when new messages are added', async ({ page }) => {
 		// TODO: Implement the test
 	});
