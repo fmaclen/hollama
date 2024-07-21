@@ -373,9 +373,7 @@ test.describe('Session', () => {
 		await expect(promptEditor).not.toHaveClass(/ prompt-editor--fullscreen/);
 	});
 
-	test('handles errors when generating completion response', async ({ page }) => {
-		const runButton = page.locator('button', { hasText: 'Run' });
-
+	test('handles errors when generating completion response and retries', async ({ page }) => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
@@ -391,11 +389,11 @@ test.describe('Session', () => {
 		});
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
-		await runButton.click();
+		await page.locator('button', { hasText: 'Run' }).click();
 		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
 		await expect(page.getByText("Couldn't connect to Ollama. Is the server running?")).toBeVisible();
 		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).not.toBeVisible();
-		await expect(promptTextarea).toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await expect(promptTextarea).not.toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
 
 		// Mock a 500 error response
 		await page.route('**/generate', async (route) => {
@@ -405,11 +403,24 @@ test.describe('Session', () => {
 				body: JSON.stringify({ error: 'Ollama says: Not so fast!' })
 			});
 		});
-		await runButton.click();
-		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(2);
+		await page.getByTitle('Retry').click();
+		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
 		await expect(page.getByText('Sorry, something went wrong.')).toBeVisible();
 		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).toBeVisible();
-		await expect(promptTextarea).toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await expect(promptTextarea).not.toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
+
+		// Mock an incomplete JSON response
+		await page.route('**/generate', async (route) => {
+			await route.fulfill({
+				status: 200,
+				contentType: 'application/json',
+				body: "{ incomplete"
+			});
+		});
+		await page.getByTitle('Retry').click();
+		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
+		await expect(page.getByText(`Sorry, this session is likely exceeding the context window of ${MOCK_API_TAGS_RESPONSE.models[0].name}`)).toBeVisible();
+		await expect(page.locator('code', { hasText: 'SyntaxError' })).toBeVisible();
 	});
 
 	test('ai completion can be retried', async ({ page }) => {
