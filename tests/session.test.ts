@@ -1,5 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
-import { MOCK_API_TAGS_RESPONSE, MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, textEditorLocator, submitWithKeyboardShortcut } from './utils';
+import { MOCK_API_TAGS_RESPONSE, MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, textEditorLocator, submitWithKeyboardShortcut, seedKnowledgeAndReload } from './utils';
 
 
 test.describe('Session', () => {
@@ -161,12 +161,12 @@ test.describe('Session', () => {
 		expect(await page.getByTestId('session-item').count()).toBe(1);
 		await expect(page.locator('header').getByTitle('Copy')).toBeVisible();
 		await expect(page.getByTitle('Dismiss')).not.toBeVisible();
-		
+
 		// Check the navigation changes when session deletion needs confirmation
 		await page.locator('header').getByTitle('Delete session').click();
 		await expect(page.locator('header').getByTitle('Copy')).not.toBeVisible();
 		await expect(page.getByTitle('Confirm deletion')).toBeVisible();
-		
+
 		await page.getByTitle('Dismiss').click();
 		await expect(page.locator('header').getByTitle('Copy')).toBeVisible();
 		await expect(page.getByTitle('Confirm deletion')).not.toBeVisible();
@@ -424,7 +424,7 @@ test.describe('Session', () => {
 		await page.getByText('Run').click();
 		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
 		expect(await page.getByTitle('Retry').count()).toBe(1);
-		
+
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_2);
 		await page.getByTitle('Retry').click();
 		await expect(page.getByText("No problem! If you have any other questions or would like to discuss something else, feel free to ask.")).toBeVisible();

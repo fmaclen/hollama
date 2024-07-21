@@ -96,13 +96,16 @@
 	async function handleRetry(index: number) {
 		// Remove all the messages after the index
 		session.messages = session.messages.slice(0, index);
-		const userResponse = session.messages[index - 1];
+
+		const mostRecentUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
+		const mostRecentSystemMessage = session.messages.filter((m) => m.role === 'system').at(-1);
+		if (!mostRecentUserMessage) throw new Error('No user message to retry');
 
 		let payload = {
 			model: session.model,
 			context: session.messages[index - 2]?.context, // Last AI response
-			prompt: userResponse.content,
-			system: userResponse?.knowledge?.content
+			prompt: mostRecentUserMessage.content,
+			system: mostRecentSystemMessage?.knowledge?.content
 		};
 
 		await handleCompletion(payload);
