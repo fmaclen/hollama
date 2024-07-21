@@ -192,8 +192,6 @@
 	}
 
 	function handleError(error: Error) {
-		resetPrompt();
-
 		let content: string;
 		if (error.message === 'Failed to fetch') {
 			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
@@ -240,7 +238,11 @@
 
 				{#each session.messages as message, i (session.id + i)}
 					{#key message.role}
-						<Article {message} retryIndex={message.role === 'ai' ? i : undefined} {handleRetry} />
+						<Article
+							{message}
+							retryIndex={['ai', 'system'].includes(message.role) ? i : undefined}
+							{handleRetry}
+						/>
 					{/key}
 				{/each}
 
