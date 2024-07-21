@@ -195,6 +195,8 @@
 		let content: string;
 		if (error.message === 'Failed to fetch') {
 			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
+		} else if (error.name === 'SyntaxError') {
+			content = `Sorry, this session is _likely_ exceeding the context window of \`${session.model}\`\n\`\`\`\n${error.name}: ${error.message}\n\`\`\``;
 		} else {
 			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
 		}
