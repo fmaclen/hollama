@@ -5,7 +5,7 @@ export type OllamaCompletionRequest = {
 	prompt: string;
 	model: string;
 	context?: number[];
-	system?:string;
+	system?: string;
 }
 
 export type OllamaCompletionResponse = {
