@@ -29,9 +29,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
 
-      - name: Update package.json
-        run: node .github/workflows/publish/update-package-json.cjs ${{ steps.semantic.outputs.new_release_version }}
-
   docker:
     needs: release
     if: ${{ needs.release.outputs.new_release_published == 'true' }}
@@ -41,6 +38,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Update app version in package.json
+        run: node .github/workflows/publish/update-package-json.cjs ${{ needs.release.outputs.new_release_version }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

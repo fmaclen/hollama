@@ -14,8 +14,9 @@ fs.readFile('package.json', (err, data) => {
   json.version = version;
 
   // Write updated package.json
+  console.log("##### Updating version in `package.json`");
   fs.writeFile('package.json', JSON.stringify(json, null, 2), (err) => {
     if (err) throw err;
-    console.log('Package.json file has been updated');
+    console.log('##### `package.json` file has been updated. New version: ' + version);
   });
 });
