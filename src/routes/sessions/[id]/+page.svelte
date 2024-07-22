@@ -6,7 +6,10 @@
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
 	import {
+		ollamaChat,
 		ollamaGenerate,
+		type OllamaChatRequest,
+		type OllamaChatResponse,
 		type OllamaCompletionRequest,
 		type OllamaCompletionResponse
 	} from '$lib/ollama';
@@ -70,8 +73,7 @@
 		if (knowledge) {
 			knowledgeContext = {
 				role: 'system',
-				knowledge,
-				content: ''
+				content: knowledge.content
 			};
 		}
 
@@ -82,12 +84,19 @@
 			? [knowledgeContext, ...session.messages, message]
 			: [...session.messages, message];
 
-		const previousAiResponse = session.messages[session.messages.length - 2];
-		let payload = {
+		// const previousAiResponse = session.messages[session.messages.length - 2];
+		// let payload = {
+		// 	model: session.model,
+		// 	context: previousAiResponse?.context,
+		// 	prompt: session.messages[session.messages.length - 1].content,
+		// 	system: previousAiResponse?.knowledge?.content
+		// };
+
+		let payload: OllamaChatRequest = {
 			model: session.model,
-			context: previousAiResponse?.context,
-			prompt: session.messages[session.messages.length - 1].content,
-			system: previousAiResponse?.knowledge?.content
+			messages: session.messages,
+			stream: true,
+			options: {} // Add any additional options here
 		};
 
 		await handleCompletion(payload);
@@ -101,23 +110,67 @@
 		const mostRecentSystemMessage = session.messages.filter((m) => m.role === 'system').at(-1);
 		if (!mostRecentUserMessage) throw new Error('No user message to retry');
 
-		let payload = {
+		// let payload = {
+		// 	model: session.model,
+		// 	context: session.messages[index - 2]?.context, // Last AI response
+		// 	prompt: mostRecentUserMessage.content,
+		// 	system: mostRecentSystemMessage?.knowledge?.content
+		// };
+
+		let payload: OllamaChatRequest = {
 			model: session.model,
-			context: session.messages[index - 2]?.context, // Last AI response
-			prompt: mostRecentUserMessage.content,
-			system: mostRecentSystemMessage?.knowledge?.content
+			messages: session.messages,
+			stream: true,
+			options: {} // Add any additional options here
 		};
 
 		await handleCompletion(payload);
 	}
 
-	async function handleCompletion(payload: OllamaCompletionRequest) {
+	// async function handleCompletion(payload: OllamaCompletionRequest) {
+	// 	abortController = new AbortController();
+	// 	completion = '';
+	// 	tokenizedContext = [];
+
+	// 	try {
+	// 		const ollama = await ollamaGenerate(payload, abortController.signal);
+
+	// 		if (ollama && ollama.body) {
+	// 			const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
+
+	// 			while (true) {
+	// 				const { value, done } = await reader.read();
+
+	// 				if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
+
+	// 				if (done) {
+	// 					if (!tokenizedContext) throw new Error('Ollama response is missing context');
+	// 					handleCompletionDone(completion, tokenizedContext);
+	// 					break;
+	// 				}
+
+	// 				if (!value) continue;
+
+	// 				const jsonLines = value.split('\n').filter((line) => line);
+	// 				for (const line of jsonLines) {
+	// 					const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
+	// 					completion += response;
+	// 					tokenizedContext = context;
+	// 				}
+	// 			}
+	// 		}
+	// 	} catch (error: any) {
+	// 		if (error.name === 'AbortError') return; // User aborted the request
+	// 		handleError(error);
+	// 	}
+	// }
+
+	async function handleCompletion(payload: OllamaChatRequest) {
 		abortController = new AbortController();
 		completion = '';
-		tokenizedContext = [];
 
 		try {
-			const ollama = await ollamaGenerate(payload, abortController.signal);
+			const ollama = await ollamaChat(payload, abortController.signal);
 
 			if (ollama && ollama.body) {
 				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
@@ -128,8 +181,7 @@
 					if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
 
 					if (done) {
-						if (!tokenizedContext) throw new Error('Ollama response is missing context');
-						handleCompletionDone(completion, tokenizedContext);
+						handleCompletionDone(completion);
 						break;
 					}
 
@@ -137,30 +189,47 @@
 
 					const jsonLines = value.split('\n').filter((line) => line);
 					for (const line of jsonLines) {
-						const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
-						completion += response;
-						tokenizedContext = context;
+						const { message } = JSON.parse(line) as OllamaChatResponse;
+						completion += message.content;
 					}
 				}
 			}
 		} catch (error: any) {
-			if (error.name === 'AbortError') return; // User aborted the request
+			if (error.name === 'AbortError') return;
 			handleError(error);
 		}
 	}
 
-	async function handleCompletionDone(completion: string, context: number[]) {
+	// async function handleCompletionDone(completion: string, context: number[]) {
+	// 	abortController = new AbortController();
+
+	// 	const message: Message = { role: 'assistant', content: completion, context };
+	// 	session.messages = [...session.messages, message];
+	// 	session.updatedAt = new Date().toISOString();
+
+	// 	if (knowledge) {
+	// 		session.knowledge = knowledge;
+
+	// 		// Now that we used the knowledge, we no longer need an `id`
+	// 		// This will prevent `knowledge` from being used again
+	// 		knowledgeId = '';
+	// 	}
+
+	// 	completion = '';
+	// 	promptCached = '';
+	// 	shouldFocusTextarea = true;
+	// 	saveSession({ ...session });
+	// }
+
+	async function handleCompletionDone(completion: string) {
 		abortController = new AbortController();
 
-		const message: Message = { role: 'ai', content: completion, context };
+		const message: Message = { role: 'assistant', content: completion };
 		session.messages = [...session.messages, message];
 		session.updatedAt = new Date().toISOString();
 
 		if (knowledge) {
 			session.knowledge = knowledge;
-
-			// Now that we used the knowledge, we no longer need an `id`
-			// This will prevent `knowledge` from being used again
 			knowledgeId = '';
 		}
 
@@ -242,14 +311,14 @@
 					{#key message.role}
 						<Article
 							{message}
-							retryIndex={['ai', 'system'].includes(message.role) ? i : undefined}
+							retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
 							{handleRetry}
 						/>
 					{/key}
 				{/each}
 
 				{#if isLastMessageFromUser}
-					<Article message={{ role: 'ai', content: completion || '...' }} />
+					<Article message={{ role: 'assistant', content: completion || '...' }} />
 				{/if}
 			</div>
 
