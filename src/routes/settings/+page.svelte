@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { version } from '$app/environment';
 
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -163,6 +164,11 @@
 				</Button>
 			</p>
 		</div>
+		<div class="version">
+			<p class="p">
+				<strong>Version</strong> <Button variant="link" href="https://github.com/fmaclen/hollama/releases" target="_blank">{version}</Button>
+			</p>
+		</div>
 	</div>
 </section>
 
@@ -178,9 +184,14 @@
 		@apply flex flex-col gap-y-4 my-auto;
 	}
 
-	.about {
+	.about,
+	.version {
 		@apply container mx-auto flex max-w-[80ch] flex-col gap-y-2 p-4;
 		@apply lg:p-6;
+	}
+
+	.version {
+		@apply last:py-0 last:text-muted;
 	}
 
 	.code {
