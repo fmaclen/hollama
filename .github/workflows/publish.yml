@@ -30,7 +30,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
 
       - name: Update package.json
-        run: node .github/workflows/publish/update-package-json.js ${{ steps.semantic.outputs.new_release_version }}
+        run: node .github/workflows/publish/update-package-json.cjs ${{ steps.semantic.outputs.new_release_version }}
 
   docker:
     needs: release
