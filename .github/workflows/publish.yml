@@ -39,6 +39,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Update app version in package.json
+        run: node .github/workflows/publish/update-package-json.cjs ${{ needs.release.outputs.new_release_version }}
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 

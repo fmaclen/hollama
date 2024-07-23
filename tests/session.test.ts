@@ -1,5 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
-import { MOCK_API_TAGS_RESPONSE, MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, textEditorLocator, submitWithKeyboardShortcut } from './utils';
+import { MOCK_API_TAGS_RESPONSE, MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, textEditorLocator, submitWithKeyboardShortcut, seedKnowledgeAndReload } from './utils';
 
 
 test.describe('Session', () => {
@@ -161,12 +161,12 @@ test.describe('Session', () => {
 		expect(await page.getByTestId('session-item').count()).toBe(1);
 		await expect(page.locator('header').getByTitle('Copy')).toBeVisible();
 		await expect(page.getByTitle('Dismiss')).not.toBeVisible();
-		
+
 		// Check the navigation changes when session deletion needs confirmation
 		await page.locator('header').getByTitle('Delete session').click();
 		await expect(page.locator('header').getByTitle('Copy')).not.toBeVisible();
 		await expect(page.getByTitle('Confirm deletion')).toBeVisible();
-		
+
 		await page.getByTitle('Dismiss').click();
 		await expect(page.locator('header').getByTitle('Copy')).toBeVisible();
 		await expect(page.getByTitle('Confirm deletion')).not.toBeVisible();
@@ -293,7 +293,7 @@ test.describe('Session', () => {
 		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))).toHaveLength(2);
 
 		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[0]).toEqual({ "content": "Who would win in a fight between Emma Watson and Jessica Alba?", "role": "user" });
-		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[1]).toEqual({ "content": "I am unable to provide subjective or speculative information, including fight outcomes between individuals.", "role": "ai" });
+		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[1]).toEqual({ "content": "I am unable to provide subjective or speculative information, including fight outcomes between individuals.", "role": "ai", "context": [123, 4567, 890] });
 	});
 
 	test('can start a new session, choose a model and stop a completion in progress', async ({ page }) => {
@@ -373,9 +373,7 @@ test.describe('Session', () => {
 		await expect(promptEditor).not.toHaveClass(/ prompt-editor--fullscreen/);
 	});
 
-	test('handles errors when generating completion response', async ({ page }) => {
-		const runButton = page.locator('button', { hasText: 'Run' });
-
+	test('handles errors when generating completion response and retries', async ({ page }) => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
@@ -391,11 +389,24 @@ test.describe('Session', () => {
 		});
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
-		await runButton.click();
+		await page.locator('button', { hasText: 'Run' }).click();
 		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
 		await expect(page.getByText("Couldn't connect to Ollama. Is the server running?")).toBeVisible();
 		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).not.toBeVisible();
-		await expect(promptTextarea).toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await expect(promptTextarea).not.toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
+
+		// Mock an incomplete JSON response
+		await page.route('**/generate', async (route) => {
+			await route.fulfill({
+				status: 200,
+				contentType: 'application/json',
+				body: "{ incomplete"
+			});
+		});
+		await page.getByTitle('Retry').click();
+		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
+		await expect(page.getByText(`Sorry, this session is likely exceeding the context window of ${MOCK_API_TAGS_RESPONSE.models[0].name}`)).toBeVisible();
+		await expect(page.locator('code', { hasText: 'SyntaxError' })).toBeVisible();
 
 		// Mock a 500 error response
 		await page.route('**/generate', async (route) => {
@@ -405,11 +416,30 @@ test.describe('Session', () => {
 				body: JSON.stringify({ error: 'Ollama says: Not so fast!' })
 			});
 		});
-		await runButton.click();
-		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(2);
+		await page.getByTitle('Retry').click();
+		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
 		await expect(page.getByText('Sorry, something went wrong.')).toBeVisible();
 		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).toBeVisible();
-		await expect(promptTextarea).toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await expect(promptTextarea).not.toHaveValue('Who would win in a fight between Emma Watson and Jessica Alba?');
+	});
+
+	test('ai completion can be retried', async ({ page }) => {
+		await page.goto('/');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await page.getByText('Sessions', { exact: true }).click();
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByTestId('new-session').click();
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		expect(await page.getByTitle('Retry').count()).toBe(0);
+
+		await page.getByText('Run').click();
+		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
+		expect(await page.getByTitle('Retry').count()).toBe(1);
+
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_2);
+		await page.getByTitle('Retry').click();
+		await expect(page.getByText("No problem! If you have any other questions or would like to discuss something else, feel free to ask.")).toBeVisible();
+		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).not.toBeVisible();
 	});
 
 	test.skip('auto-scrolls to the bottom when new messages are added', async ({ page }) => {
