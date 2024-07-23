@@ -6,12 +6,10 @@
 	import { Sitemap } from '$lib/sitemap';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import { formatTimestampToNow } from '$lib/utils';
-	import Head from '$lib/components/Head.svelte';
 </script>
 
 <RobotsNoIndex />
 
-<Head title="Knowledge" />
 <Section sitemap={Sitemap.KNOWLEDGE}>
 	<svelte:fragment slot="list-items">
 		{#if $knowledgeStore && $knowledgeStore.length > 0}

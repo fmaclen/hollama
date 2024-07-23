@@ -6,12 +6,10 @@
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
-	import Head from '$lib/components/Head.svelte';
 </script>
 
 <RobotsNoIndex />
 
-<Head title="Sessions" />
 <Section sitemap={Sitemap.SESSIONS}>
 	<svelte:fragment slot="list-items">
 		{#if $sessionsStore && $sessionsStore.length > 0}
