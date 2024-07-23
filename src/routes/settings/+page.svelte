@@ -9,7 +9,8 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 
 	import type { OllamaTagResponse } from '$lib/ollama';
-	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey, updatePageTitle } from '$lib/store';
+	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
+	import Head from '$lib/components/Head.svelte';
 
 	export let ollamaURL: URL | null = null;
 
@@ -53,8 +54,6 @@
 	}
 
 	onMount(async () => {
-		updatePageTitle('Settings');
-
 		// Get the current URL and set the default server
 		ollamaURL = new URL(window.location.href);
 		if (ollamaURL.port) {
@@ -67,6 +66,7 @@
 	});
 </script>
 
+<Head title="Settings" />
 <section class="settings">
 	<div class="settings__container">
 		<Fieldset>
@@ -143,27 +143,17 @@
 			<p class="p"><strong>About</strong></p>
 			<p class="p">
 				<strong>Hollama</strong> is a minimalistic web interface for
-				<Button
-					variant="link"
-					href="https://github.com/jmorganca/ollama/"
-					target="_blank"
-				>
+				<Button variant="link" href="https://github.com/jmorganca/ollama/" target="_blank">
 					Ollama
 				</Button>
 				servers. Code is available on
-				<Button
-					variant="link"
-					href="https://github.com/fmaclen/hollama"
-					target="_blank"
-				>
+				<Button variant="link" href="https://github.com/fmaclen/hollama" target="_blank">
 					Github
 				</Button>
 			</p>
 			<p class="p">
 				Made by
-				<Button variant="link" href="https://fernando.is" target="_blank">
-					@fmaclen
-				</Button>
+				<Button variant="link" href="https://fernando.is" target="_blank">@fmaclen</Button>
 			</p>
 		</div>
 	</div>
@@ -174,11 +164,11 @@
 
 	.settings {
 		@include base-section;
-		@apply flex border-spacing-1 flex-col p-8 bg-shade-1;
+		@apply flex border-spacing-1 flex-col bg-shade-1 p-8;
 	}
 
 	.settings__container {
-		@apply flex flex-col gap-y-4 my-auto;
+		@apply my-auto flex flex-col gap-y-4;
 	}
 
 	.about {

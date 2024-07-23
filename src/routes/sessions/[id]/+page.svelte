@@ -4,7 +4,7 @@
 	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { settingsStore, knowledgeStore, updatePageTitle } from '$lib/store';
+	import { settingsStore, knowledgeStore } from '$lib/store';
 	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
 	import {
 		saveSession,
@@ -31,6 +31,7 @@
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import { afterNavigate } from '$app/navigation';
+	import Head from '$lib/components/Head.svelte';
 
 	export let data: PageData;
 
@@ -64,7 +65,6 @@
 
 	afterNavigate(() => {
 		session = loadSession(data.id);
-		updatePageTitle(!session?.messages.length ? 'New session' : getSessionTitle(session));
 	});
 
 	async function scrollToBottom() {
@@ -179,6 +179,7 @@
 </script>
 
 <div class="session">
+	<Head title={[isNewSession ? 'New session' : getSessionTitle(session), 'Sessions']} />
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
 			Session <Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>

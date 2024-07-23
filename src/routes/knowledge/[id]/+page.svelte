@@ -14,7 +14,7 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
-	import { updatePageTitle } from '$lib/store';
+	import Head from '$lib/components/Head.svelte';
 
 	export let data: PageData;
 
@@ -35,10 +35,10 @@
 		knowledge = loadKnowledge(data.id);
 		name = knowledge.name;
 		content = knowledge.content;
-		updatePageTitle([knowledge.name ? knowledge.name : 'New knowledge', 'Knowledge']);
 	});
 </script>
 
+<Head title={[knowledge.name ? knowledge.name : 'New knowledge', 'Knowledge']} />
 <div class="knowledge">
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="knowledge-id" class="text-sm font-bold leading-none">

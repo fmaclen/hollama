@@ -1,19 +1,17 @@
 <script lang="ts">
-	import { sessionsStore, updatePageTitle } from '$lib/store';
+	import { sessionsStore } from '$lib/store';
 	import { Sitemap } from '$lib/sitemap';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
-	import { page } from '$app/stores';
-
-	// This is necessary for the case in which user is viewing a session and then clicks the Sessions link at the sidebar
-	$: if ($page.url.pathname === '/sessions') updatePageTitle('Sessions');
+	import Head from '$lib/components/Head.svelte';
 </script>
 
 <RobotsNoIndex />
 
+<Head title="Sessions" />
 <Section sitemap={Sitemap.SESSIONS}>
 	<svelte:fragment slot="list-items">
 		{#if $sessionsStore && $sessionsStore.length > 0}
