@@ -22,20 +22,20 @@
 			const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 				? 'dark'
 				: 'light';
-			settingsStore.update((store) => {
-				store!.userTheme = systemTheme;
-				return store;
-			});
+			settingsStore.update((store) => ({
+				...store!,
+				userTheme: systemTheme
+			}));
 		}
 	});
 
 	function toggleTheme() {
 		theme = theme === 'light' ? 'dark' : 'light';
 		document.documentElement.setAttribute('data-color-theme', theme);
-		settingsStore.update((store) => {
-			store!.userTheme = theme;
-			return store;
-		});
+		settingsStore.update((store) => ({
+			...store!,
+			userTheme: theme
+		}));
 	}
 </script>
 
