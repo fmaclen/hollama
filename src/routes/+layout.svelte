@@ -5,7 +5,6 @@
 	import { Brain, MessageSquareText, Settings2, Sun, Moon } from 'lucide-svelte';
 
 	import '../app.pcss';
-	import Head from '$lib/components/Head.svelte';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
@@ -38,8 +37,6 @@
 			src={env.PUBLIC_PLAUSIBLE_SRC}
 		></script>
 	{/if}
-
-	<Head />
 </svelte:head>
 
 <div class="layout">
