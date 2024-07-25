@@ -22,12 +22,11 @@
 	let ollamaModel = $settingsStore?.ollamaModel || '';
 	let ollamaTagResponse: OllamaTagResponse | null = null;
 
-	$: settingsStore.update((settings) => ({
-		...settings,
+	$: settingsStore.set({
 		ollamaServer,
 		ollamaModels: ollamaTagResponse?.models || [],
 		ollamaModel
-	}));
+	});
 
 	async function getModelsList(): Promise<void> {
 		try {
