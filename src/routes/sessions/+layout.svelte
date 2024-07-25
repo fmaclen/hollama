@@ -5,7 +5,7 @@
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
-	import { formatSessionMetadata } from '$lib/sessions';
+	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
 </script>
 
 <RobotsNoIndex />
@@ -14,11 +14,10 @@
 	<svelte:fragment slot="list-items">
 		{#if $sessionsStore && $sessionsStore.length > 0}
 			{#each $sessionsStore as session}
-				{@const hasKnowledge = session.messages[0].knowledge}
 				<SectionListItem
 					sitemap={Sitemap.SESSIONS}
 					id={session.id}
-					title={hasKnowledge ? session.messages[1].content : session.messages[0].content}
+					title={getSessionTitle(session)}
 					subtitle={formatSessionMetadata(session)}
 				/>
 			{/each}

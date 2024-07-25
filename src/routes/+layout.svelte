@@ -37,8 +37,6 @@
 			src={env.PUBLIC_PLAUSIBLE_SRC}
 		></script>
 	{/if}
-
-	<title>Hollama</title>
 </svelte:head>
 
 <div class="layout">

@@ -14,6 +14,7 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
+	import Head from '$lib/components/Head.svelte';
 
 	export let data: PageData;
 
@@ -37,6 +38,7 @@
 	});
 </script>
 
+<Head title={[knowledge.name ? knowledge.name : 'New knowledge', 'Knowledge']} />
 <div class="knowledge">
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="knowledge-id" class="text-sm font-bold leading-none">

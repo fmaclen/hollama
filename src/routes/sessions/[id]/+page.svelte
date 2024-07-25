@@ -13,9 +13,10 @@
 	import {
 		saveSession,
 		type Message,
-		type Session,
 		loadSession,
-		formatSessionMetadata
+		formatSessionMetadata,
+		getSessionTitle,
+		type Session
 	} from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
@@ -34,6 +35,7 @@
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
+	import Head from '$lib/components/Head.svelte';
 
 	export let data: PageData;
 
@@ -214,6 +216,7 @@
 </script>
 
 <div class="session">
+	<Head title={[isNewSession ? 'New session' : getSessionTitle(session), 'Sessions']} />
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
 			Session <Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
