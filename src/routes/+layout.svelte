@@ -18,24 +18,16 @@
 	$: theme = $settingsStore?.userTheme;
 
 	onMount(() => {
-		if (browser && !theme) {
-			const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-				? 'dark'
-				: 'light';
-			settingsStore.update((store) => ({
-				...store!,
-				userTheme: systemTheme
-			}));
-		}
+		if (!$settingsStore || !browser || theme) return;
+		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+			? 'dark'
+			: 'light';
 	});
 
 	function toggleTheme() {
 		theme = theme === 'light' ? 'dark' : 'light';
 		document.documentElement.setAttribute('data-color-theme', theme);
-		settingsStore.update((store) => ({
-			...store!,
-			userTheme: theme
-		}));
+		if ($settingsStore) $settingsStore.userTheme = theme;
 	}
 </script>
 
