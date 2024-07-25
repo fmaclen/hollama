@@ -5,6 +5,8 @@
 
 	import '../app.pcss';
 	import { settingsStore } from '$lib/store';
+	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
@@ -14,6 +16,18 @@
 	];
 
 	$: theme = $settingsStore?.userTheme;
+
+	onMount(() => {
+		if (browser && !theme) {
+			const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+				? 'dark'
+				: 'light';
+			settingsStore.update((store) => {
+				store!.userTheme = systemTheme;
+				return store;
+			});
+		}
+	});
 
 	function toggleTheme() {
 		theme = theme === 'light' ? 'dark' : 'light';
