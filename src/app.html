@@ -1,13 +1,23 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-		<link rel="stylesheet" href="/fonts/inter/inter.css">
-		<link rel="stylesheet" href="/fonts/jetbrains-mono/jetbrains-mono.css">
+		<link rel="stylesheet" href="/fonts/inter/inter.css" />
+		<link rel="stylesheet" href="/fonts/jetbrains-mono/jetbrains-mono.css" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 		%sveltekit.head%
 	</head>
+	<script>
+		// We check and apply the color theme preference on initial load
+		// to prevent a flash of unstyled content
+		let theme = JSON.parse(localStorage.getItem('hollama-settings'))?.userTheme;
+		if (theme) document.documentElement.setAttribute('data-color-theme', theme);
+		else {
+			theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+			document.documentElement.setAttribute('data-color-theme', theme);
+		}
+	</script>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>

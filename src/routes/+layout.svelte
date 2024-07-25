@@ -24,15 +24,6 @@
 			return store;
 		});
 	}
-
-	onMount(() => {
-		if (!theme) {
-			// Set initial theme based on user's browser preference
-			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			theme = prefersDark ? 'dark' : 'light';
-		}
-		document.documentElement.setAttribute('data-color-theme', theme);
-	});
 </script>
 
 <svelte:head>
