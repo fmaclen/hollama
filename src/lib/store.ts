@@ -44,6 +44,7 @@ export interface Settings {
 	ollamaServer: string | null;
 	ollamaModel: string | null;
 	ollamaModels: OllamaModel[];
+	userTheme?: 'light' | 'dark';
 }
 
 export enum StorageKey {
