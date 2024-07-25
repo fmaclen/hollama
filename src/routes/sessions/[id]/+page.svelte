@@ -15,7 +15,8 @@
 		type Message,
 		loadSession,
 		formatSessionMetadata,
-		getSessionTitle
+		getSessionTitle,
+		type Session
 	} from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
@@ -34,7 +35,6 @@
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
-	import { afterNavigate } from '$app/navigation';
 	import Head from '$lib/components/Head.svelte';
 
 	export let data: PageData;
@@ -42,7 +42,7 @@
 	let messageWindow: HTMLElement;
 	let knowledgeId: string;
 	let knowledge: Knowledge | null;
-	let session = loadSession(data.id);
+	let session: Session;
 	let completion: string;
 	let abortController: AbortController;
 	let prompt: string;
@@ -54,16 +54,13 @@
 
 	const shouldConfirmDeletion = writable(false);
 
+	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
 	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
 	$: session && scrollToBottom();
 	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
-
-	afterNavigate(() => {
-		session = loadSession(data.id);
-	});
 
 	async function handleSubmit() {
 		if (!prompt) return;
