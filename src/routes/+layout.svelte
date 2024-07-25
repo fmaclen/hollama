@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { env } from '$env/dynamic/public';
 	import { page } from '$app/stores';
 	import { Brain, MessageSquareText, Settings2, Sun, Moon } from 'lucide-svelte';
