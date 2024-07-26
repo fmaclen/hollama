@@ -1,12 +1,12 @@
-import { get } from "svelte/store";
-import type { Session } from "$lib/sessions";
-import { settingsStore } from "$lib/store";
+import { get } from 'svelte/store';
+import type { Session } from '$lib/sessions';
+import { settingsStore } from '$lib/store';
 
 type OllamaCompletionRequest = {
 	context: number[];
 	prompt: string;
 	model: string;
-}
+};
 
 export type OllamaCompletionResponse = {
 	model: string;
@@ -20,7 +20,7 @@ export type OllamaCompletionResponse = {
 	prompt_eval_duration: number;
 	eval_count: number;
 	eval_duration: number;
-}
+};
 
 export type OllamaModel = {
 	name: string;
@@ -42,6 +42,16 @@ export type OllamaTagResponse = {
 	models: OllamaModel[];
 };
 
+export async function ollamaTags() {
+	const settings = get(settingsStore);
+	if (!settings) throw new Error('No Ollama server specified');
+
+	const response = await fetch(`${settings.ollamaServer}/api/tags`);
+	if (!response.ok) throw new Error('Failed to fetch Ollama tags');
+
+	return response.json() as Promise<OllamaTagResponse>;
+}
+
 export async function ollamaGenerate(session: Session, abortSignal: AbortSignal) {
 	const settings = get(settingsStore);
 	if (!settings) throw new Error('No Ollama server specified');
@@ -52,7 +62,7 @@ export async function ollamaGenerate(session: Session, abortSignal: AbortSignal)
 		prompt: session.messages[session.messages.length - 1].content
 	};
 
-	const firstMessage = session.messages[0]
+	const firstMessage = session.messages[0];
 	if (firstMessage.knowledge) {
 		payload.prompt = `
 			<CONTEXT
