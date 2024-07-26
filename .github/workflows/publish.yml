@@ -74,7 +74,7 @@ jobs:
           image: hollama-gh-actions
           registry: ghcr.io
           multiPlatform: true
-          platform: linux/amd64,linux/arm64,linux/arm/v7
+          platform: linux/amd64,linux/arm64
           tags: latest, ${{ needs.release.outputs.new_release_version }}
           username: ${{ secrets.GH_REGISTRY_USERNAME }}
           password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
