@@ -47,8 +47,6 @@
 
 	const shouldConfirmDeletion = writable(false);
 
-	$: isServerConnected = !!$settingsStore?.ollamaServer;
-	$: isModelChosen = !!$settingsStore?.ollamaModel;
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
 	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
@@ -265,7 +263,7 @@
 							<ButtonSubmit
 								{handleSubmit}
 								hasMetaKey={isPromptFullscreen}
-								disabled={!prompt || !isServerConnected || !isModelChosen}
+								disabled={!prompt || !$settingsStore?.ollamaModel}
 							>
 								Run
 							</ButtonSubmit>
