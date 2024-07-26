@@ -157,11 +157,11 @@
 				<Button variant="link" href="https://fernando.is" target="_blank">@fmaclen</Button>
 			</p>
 		</div>
-		<!-- <div class="version">
+		<div class="version">
 			<p class="p">
 				<strong>Version</strong> <Button variant="link" href="https://github.com/fmaclen/hollama/releases" target="_blank">{version}</Button>
 			</p>
-		</div> -->
+		</div>
 	</div>
 </section>
 
