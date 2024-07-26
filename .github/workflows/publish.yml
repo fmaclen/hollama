@@ -29,11 +29,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
 
-  docker:
+  cloudflare:
+    name: CloudFlare Pages
     needs: release
     if: ${{ needs.release.outputs.new_release_published == 'true' }}
-
-    name: Build & publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -42,22 +41,40 @@ jobs:
       - name: Update app version in package.json
         run: node .github/workflows/publish/update-package-json.cjs ${{ needs.release.outputs.new_release_version }}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: pages publish .svelte-kit/cloudflare --project-name hollama
+        
+  docker:
+    needs: release
+    if: ${{ needs.release.outputs.new_release_published == 'true' }}
+
+    name: Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update app version in package.json
+        run: node .github/workflows/publish/update-package-json.cjs ${{ needs.release.outputs.new_release_version }}
+
+      - name: Build & publish
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: hollama
           registry: ghcr.io
+          multiPlatform: true
+          platform: linux/amd64,linux/arm64
+          tags: latest, ${{ needs.release.outputs.new_release_version }}
           username: ${{ secrets.GH_REGISTRY_USERNAME }}
           password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-
-      - name: Push the Docker image
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          tags: ghcr.io/${{ secrets.GH_REGISTRY_USERNAME }}/hollama:latest, ghcr.io/${{ secrets.GH_REGISTRY_USERNAME }}/hollama:${{ needs.release.outputs.new_release_version }}
-          platforms: linux/arm64, linux/amd64

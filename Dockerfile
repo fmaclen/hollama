@@ -2,7 +2,7 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-ENV ADAPTER 'docker-node'
+ENV ADAPTER='docker-node'
 
 COPY . .
 
