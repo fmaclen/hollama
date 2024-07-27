@@ -35,6 +35,12 @@
 
 			const response = await fetch(`${ollamaServer}/api/tags`);
 			const data = (await response.json()) as OllamaTagResponse;
+			data.models = data.models.sort((a, b) => {
+				// split the model name from third party repositories
+				const nameA = a.model.split('/').at(-1)!;
+				const nameB = b.model.split('/').at(-1)!;
+				return nameA.localeCompare(nameB);
+			});
 			ollamaTagResponse = data;
 			serverStatus = 'connected';
 		} catch {
