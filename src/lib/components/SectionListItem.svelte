@@ -45,9 +45,12 @@
 
 <style lang="postcss">
 	.section-list-item {
-		@apply delete-record-overlay;
 		@apply flex flex-row items-center justify-between border-b pr-3;
 		@apply last:border-b-0;
+
+		&--confirm-deletion {
+			@apply confirm-deletion;
+		}
 	}
 
 	.section-list-item:hover .section-list-item__delete {
