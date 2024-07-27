@@ -69,7 +69,7 @@
 	</Fieldset>
 </div>
 
-<style lang="scss">
+<style lang="postcss">
 	.knowledge {
 		@apply flex h-full w-full flex-col overflow-hidden;
 	}

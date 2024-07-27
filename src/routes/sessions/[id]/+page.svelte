@@ -335,8 +335,8 @@
 	{/key}
 </div>
 
-<style lang="scss">
-	@import '$lib/mixins.scss';
+<style lang="postcss">
+	@import '$lib/mixins.pcss';
 
 	.session {
 		@apply flex h-full w-full flex-col overflow-y-auto;
@@ -384,7 +384,7 @@
 	}
 
 	.prompt-editor__textarea {
-		@include base-input;
+		@mixin base-input;
 		@apply min-h-16;
 		@apply md:min-h-20;
 	}

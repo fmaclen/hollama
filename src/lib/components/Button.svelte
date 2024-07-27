@@ -23,7 +23,7 @@
 	</button>
 {/if}
 
-<style lang="scss">
+<style lang="postcss">
 	.button {
 		@apply inline-flex items-center justify-center whitespace-nowrap rounded-md;
 

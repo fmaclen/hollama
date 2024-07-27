@@ -12,11 +12,11 @@
 	</nav>
 </header>
 
-<style lang="scss">
-	@import '$lib/mixins.scss';
+<style lang="postcss">
+	@import '$lib/mixins.pcss';
 
 	.header {
-		@include delete-record-overlay;
+		@mixin delete-record-overlay;
 		@apply flex items-end justify-between border-b bg-shade-1;
 	}
 

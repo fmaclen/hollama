@@ -28,11 +28,11 @@
 	{/if}
 </Field>
 
-<style lang="scss">
-	@import '$lib/mixins.scss';
+<style lang="postcss">
+	@import '$lib/mixins.pcss';
 
 	.field-input {
-		@include base-input;
+		@mixin base-input;
 	}
 
 	.field-label-status {

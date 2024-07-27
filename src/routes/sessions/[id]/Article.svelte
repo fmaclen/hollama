@@ -93,7 +93,7 @@
 	</div>
 </article>
 
-<style lang="scss">
+<style lang="postcss">
 	.article {
 		@apply mx-auto mb-2 flex w-full max-w-[80ch] flex-col gap-y-2 rounded-md border border-shade-3 p-3;
 		@apply md:mb-4 md:gap-y-4 md:p-4;
@@ -109,18 +109,20 @@
 		@apply opacity-100;
 
 		@media (hover: hover) {
-			// The interactive elements should be visible by default on mobile
-			// and hidden by default on desktop.
-			@apply opacity-0;
+			/* The interactive elements should be visible by default on mobile and hidden by default on desktop.	*/
+			& {
+				@apply opacity-0;
+			}
 		}
 	}
+
 	.article:hover .article__interactive {
 		@apply opacity-100;
 	}
 
 	.article__nav {
 		@apply flex items-center justify-between text-muted;
-		@apply -mt-1; // Visually reduce the spacing between the top of the article and the nav
+		@apply -mt-1; /* Visually reduce the spacing between the top of the article and the nav */
 	}
 
 	.article__role {

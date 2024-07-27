@@ -168,11 +168,11 @@
 	</div>
 </section>
 
-<style lang="scss">
-	@import '$lib/mixins.scss';
+<style lang="postcss">
+	@import '$lib/mixins.pcss';
 
 	.settings {
-		@include base-section;
+		@mixin base-section;
 		@apply flex border-spacing-1 flex-col bg-shade-1 p-8;
 	}
 
