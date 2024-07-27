@@ -1,6 +1,17 @@
 import { expect, test, type Locator } from '@playwright/test';
-import { MOCK_API_TAGS_RESPONSE, MOCK_SESSION_1_RESPONSE_1, MOCK_SESSION_1_RESPONSE_2, MOCK_SESSION_1_RESPONSE_3, MOCK_SESSION_2_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, textEditorLocator, submitWithKeyboardShortcut, seedKnowledgeAndReload } from './utils';
-
+import {
+	MOCK_API_TAGS_RESPONSE,
+	MOCK_SESSION_1_RESPONSE_1,
+	MOCK_SESSION_1_RESPONSE_2,
+	MOCK_SESSION_1_RESPONSE_3,
+	MOCK_SESSION_2_RESPONSE_1,
+	chooseModelFromSettings,
+	mockCompletionResponse,
+	mockTagsResponse,
+	textEditorLocator,
+	submitWithKeyboardShortcut,
+	seedKnowledgeAndReload
+} from './utils';
 
 test.describe('Session', () => {
 	let promptTextarea: Locator;
@@ -40,7 +51,7 @@ test.describe('Session', () => {
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.keyboard.press('Shift+Enter');
-		await expect(sessionMetadata).toHaveText("New session");
+		await expect(sessionMetadata).toHaveText('New session');
 
 		await page.keyboard.press('Enter');
 		await expect(page.locator('article', { hasText: 'I am unable to provide subjective or speculative information, including fight outcomes between individuals.' })).toBeVisible();
@@ -101,7 +112,8 @@ test.describe('Session', () => {
 		await expect(sessionLink).not.toHaveClass(/ layout__a--active/);
 
 		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
-		await sessionLink.click(); await expect(page.getByText('No sessions')).toBeVisible();
+		await sessionLink.click();
+		await expect(page.getByText('No sessions')).toBeVisible();
 		await expect(settingsLink).not.toHaveClass(/ layout__a--active/);
 		await expect(sessionLink).toHaveClass(/ layout__a--active/);
 		await expect(page.locator('aside', { hasText: 'Who would win in a fight between Emma Watson and Jessica Alba?' })).not.toBeVisible();
@@ -200,33 +212,46 @@ test.describe('Session', () => {
 		await expect(page.getByTestId('session-item')).toHaveCount(0);
 
 		// Stage 2 sessions
-		await page.evaluate(({ modelA, modelB }) => window.localStorage.setItem(
-			'hollama-sessions',
-			JSON.stringify(
-				[
-					{
-						id: "qbhc0q",
-						model: modelA,
-						messages: [
-							{ role: "user", content: "Hello world!" },
-							{ role: "ai", content: "Hello world! 👋 🌎\n\nIt's great to hear from you. What would you like to do today?" }
-						],
-						context: [],
-						updatedAt: new Date().toISOString(),
-					},
-					{
-						id: "m2jjac",
-						model: modelB,
-						messages: [
-							{ role: "user", content: "Hello world, again!" },
-							{ role: "ai", content: "Hello! It's always a pleasure to see you back. How can I assist you today?" }
-						],
-						context: [],
-						updatedAt: new Date().toISOString(),
-					}
-				]
-			)
-		), { modelA: MOCK_API_TAGS_RESPONSE.models[0].name, modelB: MOCK_API_TAGS_RESPONSE.models[1].name });
+		await page.evaluate(
+			({ modelA, modelB }) =>
+				window.localStorage.setItem(
+					'hollama-sessions',
+					JSON.stringify([
+						{
+							id: 'qbhc0q',
+							model: modelA,
+							messages: [
+								{ role: 'user', content: 'Hello world!' },
+								{
+									role: 'ai',
+									content:
+										"Hello world! 👋 🌎\n\nIt's great to hear from you. What would you like to do today?"
+								}
+							],
+							context: [],
+							updatedAt: new Date().toISOString()
+						},
+						{
+							id: 'm2jjac',
+							model: modelB,
+							messages: [
+								{ role: 'user', content: 'Hello world, again!' },
+								{
+									role: 'ai',
+									content:
+										"Hello! It's always a pleasure to see you back. How can I assist you today?"
+								}
+							],
+							context: [],
+							updatedAt: new Date().toISOString()
+						}
+					])
+				),
+			{
+				modelA: MOCK_API_TAGS_RESPONSE.models[0].name,
+				modelB: MOCK_API_TAGS_RESPONSE.models[1].name
+			}
+		);
 
 		await page.reload();
 		await expect(page.getByText('No sessions')).not.toBeVisible();
@@ -234,7 +259,7 @@ test.describe('Session', () => {
 
 		await page.getByText('Settings').click();
 		// Click the delete button
-		page.on('dialog', dialog => dialog.accept("Are you sure you want to delete all sessions?"));
+		page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all sessions?'));
 		await page.getByText('Delete all sessions').click();
 		await page.getByText('Sessions', { exact: true }).click();
 		await expect(page.getByText('No sessions')).toBeVisible();
@@ -252,7 +277,7 @@ test.describe('Session', () => {
 		await page.getByText('Run').click();
 		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
 		await expect(page.locator('.session__history').getByTitle('Copy')).toHaveCount(2);
-		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("");
+		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual('');
 
 		await page.locator('.session__history').getByTitle('Copy').first().click();
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("Who would win in a fight between Emma Watson and Jessica Alba?");
@@ -265,18 +290,20 @@ test.describe('Session', () => {
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_3);
 		await promptTextarea.fill("Write a Python function to calculate the odds of the winner in a fight between Emma Watson and Jessica Alba");
 		await page.getByText('Run').click();
-		await expect(page.locator("pre")).toBeVisible();
-		await expect(page.locator("code")).toBeVisible();
+		await expect(page.locator('pre')).toBeVisible();
+		await expect(page.locator('code')).toBeVisible();
 		await expect(page.locator('.session__history').getByTitle('Copy')).toHaveCount(5);
 
-		await page.locator("pre").hover();
+		await page.locator('pre').hover();
 		await page.locator('.session__history').getByTitle('Copy').last().click();
-		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("def calculate_odds(emma_age, emma_height, emma_weight, emma_experience, jessica_age, jessica_height, jessica_weight, jessica_experience):\n    emma_stats = {'age': emma_age, 'height': emma_height, 'weight': emma_weight, 'experience': emma_experience}\n    jessica_stats = {'age': jessica_age, 'height': jessica_height, 'weight': jessica_weight, 'experience': jessica_experience}\n    \n    # Calculate the differences between their stats\n    age_difference = abs(emma_stats['age'] - jessica_stats['age'])\n    height_difference = abs(emma_stats['height'] - jessica_stats['height'])\n    weight_difference = abs(emma_stats['weight'] - jessica_stats['weight'])\n    \n    # Return the differences as a tuple\n    return (age_difference, height_difference, weight_difference)\n");
+		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual(
+			"def calculate_odds(emma_age, emma_height, emma_weight, emma_experience, jessica_age, jessica_height, jessica_weight, jessica_experience):\n    emma_stats = {'age': emma_age, 'height': emma_height, 'weight': emma_weight, 'experience': emma_experience}\n    jessica_stats = {'age': jessica_age, 'height': jessica_height, 'weight': jessica_weight, 'experience': jessica_experience}\n    \n    # Calculate the differences between their stats\n    age_difference = abs(emma_stats['age'] - jessica_stats['age'])\n    height_difference = abs(emma_stats['height'] - jessica_stats['height'])\n    weight_difference = abs(emma_stats['weight'] - jessica_stats['weight'])\n    \n    # Return the differences as a tuple\n    return (age_difference, height_difference, weight_difference)\n"
+		);
 	});
 
 	test('can copy the whole session content to clipboard', async ({ page }) => {
 		await page.goto('/');
-		await page.evaluate(() => navigator.clipboard.writeText(""));
+		await page.evaluate(() => navigator.clipboard.writeText(''));
 		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
@@ -287,46 +314,54 @@ test.describe('Session', () => {
 		await page.getByText('Run').click();
 		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).toBeVisible();
 		await expect(page.locator('.header').getByTitle('Copy')).toHaveCount(1);
-		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual("");
+		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual('');
 
 		await page.locator('.header').getByTitle('Copy').first().click();
 		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))).toHaveLength(2);
 
-		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[0]).toEqual({ "content": "Who would win in a fight between Emma Watson and Jessica Alba?", "role": "user" });
-		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[1]).toEqual({ "content": "I am unable to provide subjective or speculative information, including fight outcomes between individuals.", "role": "ai", "context": [123, 4567, 890] });
+		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[0]).toEqual({
+			content: 'Who would win in a fight between Emma Watson and Jessica Alba?',
+			role: 'user'
+		});
+		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[1]).toEqual({
+			content:
+				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.',
+			role: 'ai',
+			context: [123, 4567, 890]
+		});
 	});
 
 	test('can start a new session, choose a model and stop a completion in progress', async ({ page }) => {
 		const sendButton = page.getByText('Run');
 		const stopButton = page.getByTitle('Stop response');
-		const userMessage = page.locator('article', { hasText: "You" })
-		const aiMessage = page.locator('article', { hasText: "AI" })
+		const userMessage = page.locator('article', { hasText: 'You' });
+		const aiMessage = page.locator('article', { hasText: 'AI' });
 		const sessionMetadata = page.getByTestId('session-metadata');
 
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
-		await page.getByText("New session", { exact: true }).click();
+		await page.getByText('New session', { exact: true }).click();
 		await expect(userMessage).not.toBeVisible();
 		await expect(aiMessage).not.toBeVisible();
 		await expect(sessionMetadata).toHaveText('New session');
 
 		// Mock a response that takes a while to generate
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
-		await page.route('**/generate', () => { });
+		await page.route('**/generate', () => {});
 		await promptTextarea.fill('Hello world!');
 		await sendButton.click();
 		await expect(userMessage).toBeVisible();
-		await expect(userMessage).toContainText('Hello world!')
+		await expect(userMessage).toContainText('Hello world!');
 		await expect(aiMessage).toBeVisible();
 		await expect(aiMessage).toContainText('...');
 		await expect(promptTextarea).toHaveValue('');
 		await expect(sendButton).toBeDisabled();
 		await expect(stopButton).toBeVisible();
-		await expect(page.getByText("Write a prompt to start a new session")).not.toBeVisible();
+		await expect(page.getByText('Write a prompt to start a new session')).not.toBeVisible();
 		await expect(sessionMetadata).toHaveText(new RegExp(MOCK_API_TAGS_RESPONSE.models[0].name));
 
 		await stopButton.click();
-		await expect(page.getByText("Write a prompt to start a new session")).toBeVisible();
+		await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
 		await expect(userMessage).not.toBeVisible();
 		await expect(aiMessage).not.toBeVisible();
 		await expect(stopButton).not.toBeVisible();
@@ -400,7 +435,7 @@ test.describe('Session', () => {
 			await route.fulfill({
 				status: 200,
 				contentType: 'application/json',
-				body: "{ incomplete"
+				body: '{ incomplete'
 			});
 		});
 		await page.getByTitle('Retry').click();
@@ -446,4 +481,3 @@ test.describe('Session', () => {
 		// TODO: Implement the test
 	});
 });
-

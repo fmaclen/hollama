@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 
 test('displays model list and updates settings store', async ({ page }) => {
 	const modelSelect = page.getByLabel('Model');
-	
+
 	await page.goto('/');
 
 	// Check if the model list contains the expected models
@@ -17,7 +17,9 @@ test('displays model list and updates settings store', async ({ page }) => {
 	await modelSelect.selectOption(MOCK_API_TAGS_RESPONSE.models[1].name);
 
 	// Check if the settings store is updated with the selected model
-	const localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
+	const localStorageValue = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-settings')
+	);
 	expect(localStorageValue).toContain(`"ollamaModel":"${MOCK_API_TAGS_RESPONSE.models[1].name}"`);
 });
 
@@ -51,12 +53,17 @@ test('settings can be deleted', async ({ page }) => {
 	await expect(modelSelect).toHaveValue('');
 
 	// Stage the settings store with a model
-	await page.evaluate((modelName: string) => window.localStorage.setItem(
-		'hollama-settings',
-		JSON.stringify({
-			ollamaServer: 'http://localhost:3000',
-			ollamaModel: modelName
-		})), MOCK_API_TAGS_RESPONSE.models[1].name);
+	await page.evaluate(
+		(modelName: string) =>
+			window.localStorage.setItem(
+				'hollama-settings',
+				JSON.stringify({
+					ollamaServer: 'http://localhost:3000',
+					ollamaModel: modelName
+				})
+			),
+		MOCK_API_TAGS_RESPONSE.models[1].name
+	);
 
 	await page.reload();
 	await expect(page.getByLabel('Server')).toHaveValue('http://localhost:3000');
@@ -68,7 +75,7 @@ test('settings can be deleted', async ({ page }) => {
 	expect(localStorageValue).toContain(`"ollamaModel":"${MOCK_API_TAGS_RESPONSE.models[1].name}"`);
 
 	// Click the delete button
-	page.on('dialog', dialog => dialog.accept("Are you sure you want to delete server settings?"));
+	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete server settings?'));
 	await page.getByText('Delete server settings').click();
 
 	// Wait for page reload
