@@ -62,9 +62,7 @@
 	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
-	$: if (messageWindow) {
-		messageWindow.addEventListener('scroll', handleScroll);
-	}
+	$: if (messageWindow) messageWindow.addEventListener('scroll', handleScroll);
 
 	function handleScroll() {
 		const { scrollTop, scrollHeight, clientHeight } = messageWindow;
