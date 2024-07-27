@@ -51,7 +51,8 @@ const config = {
 		function ({ addComponents }) {
 			addComponents({
 				'.base-input': {
-					'@apply flex h-10 w-full rounded-md border bg-shade-0 px-3 py-2 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50': {}
+					'@apply flex h-10 w-full rounded-md border bg-shade-0 px-3 py-2 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50':
+						{}
 				},
 				'.base-section': {
 					'@apply h-full w-full overflow-y-auto border-t bg-shade-2 lg:rounded-xl lg:border': {}
@@ -59,7 +60,7 @@ const config = {
 				'.delete-record-overlay': {
 					'@apply bg-gradient-to-r from-transparent to-red-50': {}
 				}
-			})
+			});
 		}
 	]
 };
