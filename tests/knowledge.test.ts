@@ -17,7 +17,9 @@ test('creates and edits knowledge', async ({ page }) => {
 	const fieldContent = textEditorLocator(page, 'Content');
 	const buttonSave = page.getByText('Save');
 	const noKnowledgeMessage = page.getByText('No knowledge');
-	const mockedKnowledgeInSidebar = page.locator('.section-list', { hasText: MOCK_KNOWLEDGE[0].name });
+	const mockedKnowledgeInSidebar = page.locator('.section-list', {
+		hasText: MOCK_KNOWLEDGE[0].name
+	});
 
 	await page.goto('/');
 	await page.getByText('Knowledge', { exact: true }).click();
@@ -89,10 +91,14 @@ test('can delete knowledge from the header and sidebar', async ({ page }) => {
 	expect(await page.getByTestId('knowledge-item').count()).toBe(0);
 });
 
-test('knowledge cannot be used as a system prompt in a session after deletion', async ({ page }) => {
+test('knowledge cannot be used as a system prompt in a session after deletion', async ({
+	page
+}) => {
 	const timestamp = page.getByTestId('knowledge-metadata');
 	const noKnowledgeMessage = page.getByText('No knowledge');
-	const noKnowledgeSelectedMessage = page.getByText('Create new knowlege or choose one from the list');
+	const noKnowledgeSelectedMessage = page.getByText(
+		'Create new knowlege or choose one from the list'
+	);
 	const knowledgeItems = page.getByTestId('knowledge-item');
 	const systemPromptSelect = page.getByLabel('System prompt');
 
@@ -194,7 +200,9 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	expect(await sessionArticle.count()).toBe(3);
 	expect(await sessionArticle.first().textContent()).toContain(MOCK_KNOWLEDGE[0].name);
 	expect(await sessionArticle.nth(1).textContent()).toContain('What is this about?');
-	expect(await sessionArticle.last().textContent()).toContain(MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.response);
+	expect(await sessionArticle.last().textContent()).toContain(
+		MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.response
+	);
 	await expect(knowledgeId).not.toBeVisible();
 
 	// Retrying the ai completion should include the system prompt

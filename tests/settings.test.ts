@@ -70,7 +70,9 @@ test('settings can be deleted', async ({ page }) => {
 	await expect(modelSelect).toHaveValue(MOCK_API_TAGS_RESPONSE.models[1].name);
 
 	// Check if the settings store is updated with the selected model
-	let localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
+	let localStorageValue = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-settings')
+	);
 	expect(localStorageValue).toContain('"ollamaServer":"http://localhost:3000"');
 	expect(localStorageValue).toContain(`"ollamaModel":"${MOCK_API_TAGS_RESPONSE.models[1].name}"`);
 
