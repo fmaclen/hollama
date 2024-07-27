@@ -51,6 +51,7 @@
 	let tokenizedContext: number[];
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
+	let userScrolledUp = false;
 
 	const shouldConfirmDeletion = writable(false);
 
@@ -61,6 +62,14 @@
 	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
+	$: if (messageWindow) {
+		messageWindow.addEventListener('scroll', handleScroll);
+	}
+
+	function handleScroll() {
+		const { scrollTop, scrollHeight, clientHeight } = messageWindow;
+		userScrolledUp = scrollTop + clientHeight < scrollHeight;
+	}
 
 	async function handleSubmit() {
 		if (!prompt) return;
@@ -142,6 +151,7 @@
 						const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
 						completion += response;
 						tokenizedContext = context;
+						await scrollToBottom();
 					}
 				}
 			}
@@ -170,6 +180,7 @@
 		promptCached = '';
 		shouldFocusTextarea = true;
 		saveSession({ ...session });
+		await scrollToBottom();
 	}
 
 	function resetPrompt() {
@@ -188,7 +199,7 @@
 	}
 
 	async function scrollToBottom() {
-		if (!messageWindow) return;
+		if (!messageWindow || userScrolledUp) return;
 		await tick();
 		messageWindow.scrollTop = messageWindow.scrollHeight;
 	}
