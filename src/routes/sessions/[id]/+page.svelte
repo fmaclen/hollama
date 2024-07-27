@@ -5,7 +5,7 @@
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
-	import { ollamaGenerate, type OllamaCompletionResponse } from '$lib/ollama';
+	import { ollamaGenerate, ollamaTags, type OllamaCompletionResponse } from '$lib/ollama';
 	import {
 		saveSession,
 		type Message,
@@ -46,6 +46,7 @@
 	let shouldFocusTextarea = false;
 
 	const shouldConfirmDeletion = writable(false);
+	const currentSessionId = writable(data.id);
 
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
@@ -54,6 +55,23 @@
 	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
+	$: {
+		if (session && session.id !== $currentSessionId) {
+			getModelsList();
+			currentSessionId.set(session.id);
+		}
+	}
+
+	async function getModelsList() {
+		if (!$settingsStore) return;
+		try {
+			$settingsStore.ollamaModels = (await ollamaTags()).models;
+			//TODO hide error message if present
+		} catch {
+			$settingsStore.ollamaModels = [];
+			handleError(new Error('Failed to fetch'));
+		}
+	}
 
 	afterUpdate(() => {
 		if (shouldFocusTextarea && promptTextarea) {
@@ -263,7 +281,9 @@
 							<ButtonSubmit
 								{handleSubmit}
 								hasMetaKey={isPromptFullscreen}
-								disabled={!prompt || !$settingsStore?.ollamaModel}
+								disabled={!prompt ||
+									!$settingsStore?.ollamaModels.length ||
+									!$settingsStore?.ollamaModel}
 							>
 								Run
 							</ButtonSubmit>
