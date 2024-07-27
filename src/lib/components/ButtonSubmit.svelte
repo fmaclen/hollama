@@ -7,7 +7,7 @@
 </script>
 
 <Button class="w-full text-left" on:click={handleSubmit} {disabled}>
-	<slot></slot>
+	<slot />
 
 	{#if !disabled}
 		<span class="tag">

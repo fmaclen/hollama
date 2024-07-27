@@ -1,12 +1,12 @@
-import { get } from "svelte/store";
-import { settingsStore } from "$lib/store";
+import { get } from 'svelte/store';
+import { settingsStore } from '$lib/store';
 
 export type OllamaCompletionRequest = {
 	prompt: string;
 	model: string;
 	context?: number[];
 	system?: string;
-}
+};
 
 export type OllamaCompletionResponse = {
 	model: string;
@@ -20,7 +20,7 @@ export type OllamaCompletionResponse = {
 	prompt_eval_duration: number;
 	eval_count: number;
 	eval_duration: number;
-}
+};
 
 export type OllamaModel = {
 	name: string;

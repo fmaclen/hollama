@@ -8,7 +8,7 @@
 
 <style lang="scss">
 	.fieldset {
-		@apply container flex mx-auto max-w-[80ch] flex-col gap-y-4 p-4;
+		@apply container mx-auto flex max-w-[80ch] flex-col gap-y-4 p-4;
 		@apply lg:p-6;
 
 		&--fullscreen {

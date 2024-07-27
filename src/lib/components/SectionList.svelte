@@ -1,5 +1,5 @@
 <nav class="section-list">
-	<slot></slot>
+	<slot />
 </nav>
 
 <style lang="scss">

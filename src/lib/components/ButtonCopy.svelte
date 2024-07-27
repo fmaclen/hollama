@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Files } from "lucide-svelte";
-	import Button from "./Button.svelte";
+	import { Files } from 'lucide-svelte';
+	import Button from './Button.svelte';
 
 	export let content: string;
 

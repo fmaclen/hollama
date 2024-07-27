@@ -29,7 +29,7 @@
 
 		&--default,
 		&--outline {
-			@apply border px-3 py-2 text-sm font-medium h-10;
+			@apply h-10 border px-3 py-2 text-sm font-medium;
 			@apply disabled:pointer-events-none disabled:border-shade-2 disabled:bg-shade-2 disabled:text-muted;
 		}
 
@@ -47,7 +47,7 @@
 		}
 
 		&--icon {
-			@apply opacity-40 px-2 py-2 text-active;
+			@apply px-2 py-2 text-active opacity-40;
 			@apply hover:opacity-60;
 			@apply active:opacity-100;
 		}

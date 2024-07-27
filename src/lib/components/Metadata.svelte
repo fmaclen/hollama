@@ -8,6 +8,6 @@
 
 <style lang="scss">
 	.metadata {
-		@apply truncate whitespace-nowrap text-xs text-muted max-w-full;
+		@apply max-w-full truncate whitespace-nowrap text-xs text-muted;
 	}
 </style>

@@ -32,7 +32,7 @@ No sign up is required and data is _100% stored locally on your browser_.
 To host your own Hollama server, [install Docker](https://www.docker.com/products/docker-desktop/) and run the command below in your favorite terminal:
 
 ```shell
-docker run --rm -d -p 4173:4173 ghcr.io/fmaclen/hollama:latest 
+docker run --rm -d -p 4173:4173 ghcr.io/fmaclen/hollama:latest
 ```
 
 Then visit [http://localhost:4173](http://localhost:4173).

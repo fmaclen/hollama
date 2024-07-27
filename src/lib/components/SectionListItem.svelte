@@ -48,7 +48,7 @@
 
 	.section-list-item {
 		@include delete-record-overlay;
-		@apply flex flex-row items-center justify-between border-b pr-3 ;
+		@apply flex flex-row items-center justify-between border-b pr-3;
 		@apply last:border-b-0;
 	}
 
