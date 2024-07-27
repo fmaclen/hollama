@@ -2,7 +2,7 @@
 	<slot />
 </nav>
 
-<style lang="postcss">
+<style lang="scss">
 	.section-list {
 		@apply flex h-full flex-col overflow-y-auto;
 	}

@@ -63,7 +63,7 @@
 	{/if}
 </div>
 
-<style lang="postcss">
+<style lang="scss">
 	.delete-button {
 		@apply flex h-full flex-row;
 	}

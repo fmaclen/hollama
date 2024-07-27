@@ -43,11 +43,11 @@
 	</div>
 {/key}
 
-<style lang="postcss">
-	@import '$lib/mixins.pcss';
+<style lang="scss">
+	@import '$lib/mixins.scss';
 
 	.section-list-item {
-		@mixin delete-record-overlay;
+		@include delete-record-overlay;
 		@apply flex flex-row items-center justify-between border-b pr-3;
 		@apply last:border-b-0;
 	}

@@ -21,11 +21,11 @@
 	</div>
 </section>
 
-<style lang="postcss">
-	@import '$lib/mixins.pcss';
+<style lang="scss">
+	@import '$lib/mixins.scss';
 
 	.section {
-		@mixin base-section;
+		@include base-section;
 		@apply grid grid-flow-row;
 		@apply lg:grid-cols-[1fr,4fr];
 	}
