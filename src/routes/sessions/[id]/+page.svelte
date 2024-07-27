@@ -56,9 +56,9 @@
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
 	$: {
-		if (session && session.id !== $currentSessionId) {
+		if (session?.id !== $currentSessionId) {
 			getModelsList();
-			currentSessionId.set(session.id);
+			$currentSessionId = session.id;
 		}
 	}
 
