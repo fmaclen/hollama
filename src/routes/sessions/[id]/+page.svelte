@@ -336,8 +336,6 @@
 </div>
 
 <style lang="scss">
-	@import '$lib/mixins.scss';
-
 	.session {
 		@apply flex h-full w-full flex-col overflow-y-auto;
 	}
@@ -384,7 +382,7 @@
 	}
 
 	.prompt-editor__textarea {
-		@include base-input;
+		@apply base-input;
 		@apply min-h-16;
 		@apply md:min-h-20;
 	}

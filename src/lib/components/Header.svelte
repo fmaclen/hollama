@@ -13,10 +13,8 @@
 </header>
 
 <style lang="scss">
-	@import '$lib/mixins.scss';
-
 	.header {
-		@include delete-record-overlay;
+		@apply delete-record-overlay;
 		@apply flex items-end justify-between border-b bg-shade-1;
 	}
 

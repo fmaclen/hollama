@@ -169,10 +169,8 @@
 </section>
 
 <style lang="scss">
-	@import '$lib/mixins.scss';
-
 	.settings {
-		@include base-section;
+		@apply base-section;
 		@apply flex border-spacing-1 flex-col bg-shade-1 p-8;
 	}
 

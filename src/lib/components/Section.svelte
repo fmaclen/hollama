@@ -22,10 +22,8 @@
 </section>
 
 <style lang="scss">
-	@import '$lib/mixins.scss';
-
 	.section {
-		@include base-section;
+		@apply base-section;
 		@apply grid grid-flow-row;
 		@apply lg:grid-cols-[1fr,4fr];
 	}

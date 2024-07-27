@@ -19,9 +19,7 @@
 </Field>
 
 <style lang="scss">
-	@import '$lib/mixins.scss';
-
 	.select {
-		@include base-input;
+		@apply base-input;
 	}
 </style>

@@ -29,10 +29,8 @@
 </Field>
 
 <style lang="scss">
-	@import '$lib/mixins.scss';
-
 	.field-input {
-		@include base-input;
+		@apply base-input;
 	}
 
 	.field-label-status {

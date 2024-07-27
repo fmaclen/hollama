@@ -57,10 +57,8 @@
 </Field>
 
 <style lang="scss">
-	@import '$lib/mixins.scss';
-
 	.text-editor {
-		@include base-input;
+		@apply base-input;
 		@apply h-full max-h-full min-h-[88px] overflow-y-auto p-0;
 
 		:global(.cm-editor) {
