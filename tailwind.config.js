@@ -58,7 +58,7 @@ const config = {
 					'@apply h-full w-full overflow-y-auto border-t bg-shade-2 lg:rounded-xl lg:border': {}
 				},
 				'.confirm-deletion': {
-					'@apply bg-gradient-to-r from-transparent to-red-50': {}
+					'@apply bg-gradient-to-r from-transparent to-red-50 dark:to-red-900': {}
 				}
 			});
 		}
