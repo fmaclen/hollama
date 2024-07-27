@@ -109,8 +109,8 @@
 		@apply opacity-100;
 
 		@media (hover: hover) {
-			// The interactive elements should be visible by default on mobile
-			// and hidden by default on desktop.
+			/* The interactive elements should be visible by default on mobile
+			and hidden by default on desktop. */
 			@apply opacity-0;
 		}
 	}
@@ -120,7 +120,7 @@
 
 	.article__nav {
 		@apply flex items-center justify-between text-muted;
-		@apply -mt-1; // Visually reduce the spacing between the top of the article and the nav
+		@apply -mt-1; /* Visually reduce the spacing between the top of the article and the nav */
 	}
 
 	.article__role {

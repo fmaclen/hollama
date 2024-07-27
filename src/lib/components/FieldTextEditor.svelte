@@ -73,8 +73,8 @@
 			@apply bg-shade-2 text-accent;
 		}
 
-		// HACK: Need to use !important to override the default styles because
-		// CodeMirror's styles for text selection have higher specificity than ours.
+		/* HACK: Need to use !important to override the default styles because
+		CodeMirror's styles for text selection have higher specificity than ours. */
 		:global(.cm-activeLine) {
 			background-color: hsl(var(--color-shade-6) / 10%) !important;
 		}
