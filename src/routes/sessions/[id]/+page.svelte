@@ -124,6 +124,7 @@
 			if (ollama && ollama.body) {
 				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
 
+				// eslint-disable-next-line no-constant-condition
 				while (true) {
 					const { value, done } = await reader.read();
 
@@ -145,9 +146,10 @@
 					}
 				}
 			}
-		} catch (error: any) {
-			if (error.name === 'AbortError') return; // User aborted the request
-			handleError(error);
+		} catch (error) {
+			const typedError = error instanceof Error ? error : new Error(String(error));
+			if (typedError.name === 'AbortError') return; // User aborted the request
+			handleError(typedError);
 		}
 	}
 

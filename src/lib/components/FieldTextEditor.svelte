@@ -7,7 +7,7 @@
 
 	export let label: string;
 	export let value: string;
-	export let handleSubmit: Function;
+	export let handleSubmit: (event?: Event) => void;
 
 	let view: EditorView;
 	let container: HTMLDivElement | null;

@@ -31,7 +31,9 @@
 					return renderCodeSnippet(
 						hljs.highlight(str, { language: lang, ignoreIllegals: true }).value
 					);
-				} catch (_) {}
+				} catch (error) {
+					console.error('Error in renderCodeSnippet:', error);
+				}
 			}
 
 			return renderCodeSnippet(md.utils.escapeHtml(str));
@@ -86,7 +88,7 @@
 				<Brain class="-mr-1 ml-2 h-4 w-4" />
 			</Button>
 		{:else if message.content}
-			{@html md.render(message.content)}
+			{@html md.render(message.content)} <!-- eslint-disable-line svelte/no-at-html-tags -->
 		{/if}
 	</div>
 </article>

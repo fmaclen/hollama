@@ -578,7 +578,7 @@ test.describe('Session', () => {
 		).not.toBeVisible();
 	});
 
-	test.skip('auto-scrolls to the bottom when new messages are added', async ({ page }) => {
+	test.skip('auto-scrolls to the bottom when new messages are added', async () => {
 		// TODO: Implement the test
 	});
 });
