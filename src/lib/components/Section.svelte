@@ -21,7 +21,7 @@
 	</div>
 </section>
 
-<style lang="scss">
+<style lang="postcss">
 	.section {
 		@apply base-section;
 		@apply grid grid-flow-row;

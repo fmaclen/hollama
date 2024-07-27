@@ -168,7 +168,7 @@
 	</div>
 </section>
 
-<style lang="scss">
+<style lang="postcss">
 	.settings {
 		@apply base-section;
 		@apply flex border-spacing-1 flex-col bg-shade-1 p-8;

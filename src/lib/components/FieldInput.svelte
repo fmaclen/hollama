@@ -28,7 +28,7 @@
 	{/if}
 </Field>
 
-<style lang="scss">
+<style lang="postcss">
 	.field-input {
 		@apply base-input;
 	}

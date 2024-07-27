@@ -18,7 +18,7 @@
 	</select>
 </Field>
 
-<style lang="scss">
+<style lang="postcss">
 	.select {
 		@apply base-input;
 	}

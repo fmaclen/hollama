@@ -93,7 +93,7 @@
 	</div>
 </article>
 
-<style lang="scss">
+<style lang="postcss">
 	.article {
 		@apply mx-auto mb-2 flex w-full max-w-[80ch] flex-col gap-y-2 rounded-md border border-shade-3 p-3;
 		@apply md:mb-4 md:gap-y-4 md:p-4;

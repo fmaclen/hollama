@@ -56,7 +56,7 @@
 	<div class="text-editor" bind:this={container}></div>
 </Field>
 
-<style lang="scss">
+<style lang="postcss">
 	.text-editor {
 		@apply base-input;
 		@apply h-full max-h-full min-h-[88px] overflow-y-auto p-0;

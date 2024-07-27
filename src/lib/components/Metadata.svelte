@@ -6,7 +6,7 @@
 	<slot />
 </p>
 
-<style lang="scss">
+<style lang="postcss">
 	.metadata {
 		@apply max-w-full truncate whitespace-nowrap text-xs text-muted;
 	}

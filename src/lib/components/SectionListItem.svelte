@@ -43,7 +43,7 @@
 	</div>
 {/key}
 
-<style lang="scss">
+<style lang="postcss">
 	.section-list-item {
 		@apply delete-record-overlay;
 		@apply flex flex-row items-center justify-between border-b pr-3;

@@ -15,7 +15,7 @@
 	</Button>
 </div>
 
-<style lang="scss">
+<style lang="postcss">
 	.copy-button {
 		// Hiding the button by default because this functionality is not supported on mobile
 		display: none;

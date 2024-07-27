@@ -12,7 +12,7 @@
 	</nav>
 </header>
 
-<style lang="scss">
+<style lang="postcss">
 	.header {
 		@apply delete-record-overlay;
 		@apply flex items-end justify-between border-b bg-shade-1;

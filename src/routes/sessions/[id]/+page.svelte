@@ -335,7 +335,7 @@
 	{/key}
 </div>
 
-<style lang="scss">
+<style lang="postcss">
 	.session {
 		@apply flex h-full w-full flex-col overflow-y-auto;
 	}
