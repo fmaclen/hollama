@@ -25,7 +25,10 @@ const config = {
 		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: process.env.ADAPTER === 'docker-node' ?
 			adapterNode(adapterConfig) :
-			adapterCloudflare(adapterConfig)
+			adapterCloudflare(adapterConfig),
+			version: {
+				name: process.env.npm_package_version
+			}
 	}
 };
 

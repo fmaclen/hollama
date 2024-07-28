@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { env } from '$env/dynamic/public';
 	import { page } from '$app/stores';
 	import { Brain, MessageSquareText, Settings2, Sun, Moon } from 'lucide-svelte';
 
 	import '../app.pcss';
+	import { settingsStore } from '$lib/store';
+	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
@@ -13,19 +15,20 @@
 		['/settings', 'Settings']
 	];
 
-	let theme = 'light';
+	$: theme = $settingsStore?.userTheme;
+
+	onMount(() => {
+		if (!$settingsStore || !browser || theme) return;
+		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+			? 'dark'
+			: 'light';
+	});
 
 	function toggleTheme() {
 		theme = theme === 'light' ? 'dark' : 'light';
 		document.documentElement.setAttribute('data-color-theme', theme);
+		if ($settingsStore) $settingsStore.userTheme = theme;
 	}
-
-	onMount(() => {
-		// Set initial theme based on user's browser preference
-		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-		theme = prefersDark ? 'dark' : 'light';
-		document.documentElement.setAttribute('data-color-theme', theme);
-	});
 </script>
 
 <svelte:head>
@@ -37,8 +40,6 @@
 			src={env.PUBLIC_PLAUSIBLE_SRC}
 		></script>
 	{/if}
-
-	<title>Hollama</title>
 </svelte:head>
 
 <div class="layout">
