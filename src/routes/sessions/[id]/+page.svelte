@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ollama from 'ollama';
+	import { Ollama } from 'ollama/browser';
 	import { afterUpdate, tick } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
@@ -114,6 +114,8 @@
 		completion = '';
 
 		try {
+			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
+			const ollama = new Ollama({ host: $settingsStore.ollamaServer });
 			const response = await ollama.chat({
 				model: payload.model,
 				messages: payload.messages,
