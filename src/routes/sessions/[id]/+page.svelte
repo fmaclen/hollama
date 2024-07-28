@@ -67,7 +67,8 @@
 		if (knowledge) {
 			knowledgeContext = {
 				role: 'system',
-				content: knowledge.content
+				content: knowledge.content,
+				knowledge: knowledge
 			};
 		}
 
@@ -98,8 +99,7 @@
 		let payload = {
 			model: session.model,
 			messages: session.messages,
-			stream: true,
-			options: {} // Add any additional options here
+			stream: true
 		};
 
 		await handleCompletion(payload);
@@ -115,15 +115,18 @@
 
 		try {
 			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
+
 			const ollama = new Ollama({ host: $settingsStore.ollamaServer });
 			const response = await ollama.chat({
 				model: payload.model,
 				messages: payload.messages,
 				stream: true
 			});
+
 			for await (const part of response) {
 				completion += part.message.content;
 			}
+
 			handleCompletionDone(completion);
 		} catch (error: any) {
 			if (error.name === 'AbortError') return;
