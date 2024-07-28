@@ -1,4 +1,5 @@
 <script lang="ts">
+	import ollama from 'ollama';
 	import { afterUpdate, tick } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
@@ -172,30 +173,36 @@
 		completion = '';
 
 		try {
-			const ollama = await ollamaChat(payload, abortController.signal);
+			// const ollama = await ollamaChat(payload, abortController.signal);
 
-			if (ollama && ollama.body) {
-				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
+			// if (ollama && ollama.body) {
+			// 	const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
 
-				while (true) {
-					const { value, done } = await reader.read();
+			// 	while (true) {
+			// 		const { value, done } = await reader.read();
 
-					if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
+			// 		if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
 
-					if (done) {
-						handleCompletionDone(completion);
-						break;
-					}
+			// 		if (done) {
+			// 			handleCompletionDone(completion);
+			// 			break;
+			// 		}
 
-					if (!value) continue;
+			// 		if (!value) continue;
 
-					const jsonLines = value.split('\n').filter((line) => line);
-					for (const line of jsonLines) {
-						const { message } = JSON.parse(line) as OllamaChatResponse;
-						completion += message.content;
-					}
-				}
+			// 		const jsonLines = value.split('\n').filter((line) => line);
+			// 		for (const line of jsonLines) {
+			// 			const { message } = JSON.parse(line) as OllamaChatResponse;
+			// 			completion += message.content;
+			// 		}
+			// 	}
+			// }
+			const response = await ollama.chat({ model: payload.model, messages: payload.messages, stream: true });
+			for await (const part of response) {
+				// process.stdout.write(part.message.content);
+				completion += part.message.content;
 			}
+			handleCompletionDone(completion);
 		} catch (error: any) {
 			if (error.name === 'AbortError') return;
 			handleError(error);
