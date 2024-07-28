@@ -7,14 +7,6 @@
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
 	import {
-		ollamaChat,
-		ollamaGenerate,
-		type OllamaChatRequest,
-		type OllamaChatResponse,
-		type OllamaCompletionRequest,
-		type OllamaCompletionResponse
-	} from '$lib/ollama';
-	import {
 		saveSession,
 		type Message,
 		loadSession,
@@ -52,7 +44,6 @@
 	let prompt: string;
 	let promptCached: string;
 	let promptTextarea: HTMLTextAreaElement;
-	let tokenizedContext: number[];
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 
@@ -87,15 +78,7 @@
 			? [knowledgeContext, ...session.messages, message]
 			: [...session.messages, message];
 
-		// const previousAiResponse = session.messages[session.messages.length - 2];
-		// let payload = {
-		// 	model: session.model,
-		// 	context: previousAiResponse?.context,
-		// 	prompt: session.messages[session.messages.length - 1].content,
-		// 	system: previousAiResponse?.knowledge?.content
-		// };
-
-		let payload: OllamaChatRequest = {
+		let payload = {
 			model: session.model,
 			messages: session.messages,
 			stream: true,
@@ -110,17 +93,9 @@
 		session.messages = session.messages.slice(0, index);
 
 		const mostRecentUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
-		const mostRecentSystemMessage = session.messages.filter((m) => m.role === 'system').at(-1);
 		if (!mostRecentUserMessage) throw new Error('No user message to retry');
 
-		// let payload = {
-		// 	model: session.model,
-		// 	context: session.messages[index - 2]?.context, // Last AI response
-		// 	prompt: mostRecentUserMessage.content,
-		// 	system: mostRecentSystemMessage?.knowledge?.content
-		// };
-
-		let payload: OllamaChatRequest = {
+		let payload = {
 			model: session.model,
 			messages: session.messages,
 			stream: true,
@@ -130,76 +105,21 @@
 		await handleCompletion(payload);
 	}
 
-	// async function handleCompletion(payload: OllamaCompletionRequest) {
-	// 	abortController = new AbortController();
-	// 	completion = '';
-	// 	tokenizedContext = [];
-
-	// 	try {
-	// 		const ollama = await ollamaGenerate(payload, abortController.signal);
-
-	// 		if (ollama && ollama.body) {
-	// 			const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
-
-	// 			while (true) {
-	// 				const { value, done } = await reader.read();
-
-	// 				if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
-
-	// 				if (done) {
-	// 					if (!tokenizedContext) throw new Error('Ollama response is missing context');
-	// 					handleCompletionDone(completion, tokenizedContext);
-	// 					break;
-	// 				}
-
-	// 				if (!value) continue;
-
-	// 				const jsonLines = value.split('\n').filter((line) => line);
-	// 				for (const line of jsonLines) {
-	// 					const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
-	// 					completion += response;
-	// 					tokenizedContext = context;
-	// 				}
-	// 			}
-	// 		}
-	// 	} catch (error: any) {
-	// 		if (error.name === 'AbortError') return; // User aborted the request
-	// 		handleError(error);
-	// 	}
-	// }
-
-	async function handleCompletion(payload: OllamaChatRequest) {
+	async function handleCompletion(payload: {
+		model: string;
+		messages: Message[];
+		stream: boolean;
+	}) {
 		abortController = new AbortController();
 		completion = '';
 
 		try {
-			// const ollama = await ollamaChat(payload, abortController.signal);
-
-			// if (ollama && ollama.body) {
-			// 	const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
-
-			// 	while (true) {
-			// 		const { value, done } = await reader.read();
-
-			// 		if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
-
-			// 		if (done) {
-			// 			handleCompletionDone(completion);
-			// 			break;
-			// 		}
-
-			// 		if (!value) continue;
-
-			// 		const jsonLines = value.split('\n').filter((line) => line);
-			// 		for (const line of jsonLines) {
-			// 			const { message } = JSON.parse(line) as OllamaChatResponse;
-			// 			completion += message.content;
-			// 		}
-			// 	}
-			// }
-			const response = await ollama.chat({ model: payload.model, messages: payload.messages, stream: true });
+			const response = await ollama.chat({
+				model: payload.model,
+				messages: payload.messages,
+				stream: true
+			});
 			for await (const part of response) {
-				// process.stdout.write(part.message.content);
 				completion += part.message.content;
 			}
 			handleCompletionDone(completion);
@@ -208,27 +128,6 @@
 			handleError(error);
 		}
 	}
-
-	// async function handleCompletionDone(completion: string, context: number[]) {
-	// 	abortController = new AbortController();
-
-	// 	const message: Message = { role: 'assistant', content: completion, context };
-	// 	session.messages = [...session.messages, message];
-	// 	session.updatedAt = new Date().toISOString();
-
-	// 	if (knowledge) {
-	// 		session.knowledge = knowledge;
-
-	// 		// Now that we used the knowledge, we no longer need an `id`
-	// 		// This will prevent `knowledge` from being used again
-	// 		knowledgeId = '';
-	// 	}
-
-	// 	completion = '';
-	// 	promptCached = '';
-	// 	shouldFocusTextarea = true;
-	// 	saveSession({ ...session });
-	// }
 
 	async function handleCompletionDone(completion: string) {
 		abortController = new AbortController();
