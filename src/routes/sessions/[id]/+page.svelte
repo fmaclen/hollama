@@ -140,9 +140,10 @@
 			completion = '';
 			promptCached = '';
 			shouldFocusTextarea = true;
-		} catch (error: any) {
-			if (error.name === 'AbortError') return;
-			handleError(error);
+		} catch (error) {
+			const typedError = error instanceof Error ? error : new Error(String(error));
+			if (typedError.name === 'AbortError') return; // User aborted the request
+			handleError(typedError);
 		}
 	}
 
