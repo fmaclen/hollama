@@ -442,8 +442,41 @@ test.describe('Session', () => {
 		await expect(page.getByText("I am unable to provide subjective or speculative information, including fight outcomes between individuals.")).not.toBeVisible();
 	});
 
-	test.skip('auto-scrolls to the bottom when new messages are added', async ({ page }) => {
-		// TODO: Implement the test
+	test('auto scrolls to the bottom when a new message is received', async ({ page }) => {
+		const newSessionButton = page.getByTestId('new-session');
+		const runButton = page.getByText('Run');
+		const articleLocator = page.locator('article');
+		const sessionHistory = page.locator('.session__history');
+		const sessionMetadata = page.getByTestId('session-metadata');
+
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await newSessionButton.click();
+		await expect(articleLocator).toHaveCount(0);
+
+		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await expect(runButton).toBeEnabled();
+
+		// Mock the response and submit the prompt
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.keyboard.press('Shift+Enter');
+		await expect(sessionMetadata).toHaveText('New session');
+
+		await page.keyboard.press('Enter');
+		await expect(
+			page.locator('article', {
+				hasText:
+					'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+			})
+		).toBeVisible();
+
+		// Check if the session history auto-scrolls to the bottom
+		const scrollHeight = await sessionHistory.evaluate((el) => el.scrollHeight);
+		const clientHeight = await sessionHistory.evaluate((el) => el.clientHeight);
+		const scrollTop = await sessionHistory.evaluate((el) => el.scrollTop);
+
+		expect(scrollTop + clientHeight).toBe(scrollHeight);
 	});
 });
 
