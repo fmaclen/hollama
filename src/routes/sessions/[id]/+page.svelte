@@ -268,7 +268,7 @@
 										Prompt
 
 										{#if !$settingsStore?.ollamaModels.length}
-											<a class="ml-auto" href="/settings">
+											<a class="ml-auto" href="/settings" data-testid="disconnected-server">
 												<Badge variant="warning">disconnected</Badge>
 											</a>
 										{/if}
