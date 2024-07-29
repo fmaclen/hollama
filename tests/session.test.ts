@@ -478,5 +478,28 @@ test.describe('Session', () => {
 
 		expect(scrollTop + clientHeight).toBe(scrollHeight);
 	});
+
+	test('handles errors when fetching models', async ({ page }) => {
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		await expect(page.getByTestId('disconnected-server')).not.toBeVisible();
+
+		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await expect(page.getByText('Run')).toBeEnabled();
+
+		// Mock a net::ERR_CONNECTION_REFUSED
+		await page.route('**/tags', async (route) => {
+			await route.abort('failed');
+		});
+		await page.getByTestId('new-session').click();
+		await expect(page.getByTestId('disconnected-server')).toBeVisible();
+		await expect(page.getByText('Run')).toBeDisabled();
+
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await expect(page.getByText('Run')).toBeDisabled();
+	})
 });
 

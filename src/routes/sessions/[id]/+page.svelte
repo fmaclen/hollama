@@ -6,6 +6,7 @@
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
+	import { ollamaTags } from '$lib/ollama';
 	import {
 		saveSession,
 		type Message,
@@ -31,6 +32,7 @@
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
+	import Badge from '$lib/components/Badge.svelte';
 	import Head from '$lib/components/Head.svelte';
 
 	export let data: PageData;
@@ -49,6 +51,7 @@
 	let userScrolledUp = false;
 
 	const shouldConfirmDeletion = writable(false);
+	const currentSessionId = writable(data.id);
 
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
@@ -58,6 +61,22 @@
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
 	$: if (messageWindow) messageWindow.addEventListener('scroll', handleScroll);
+
+	$: {
+		if (session?.id !== $currentSessionId) {
+			getModelsList();
+			$currentSessionId = session.id;
+		}
+	}
+
+	async function getModelsList() {
+		if (!$settingsStore) return;
+		try {
+			$settingsStore.ollamaModels = (await ollamaTags()).models;
+		} catch {
+			$settingsStore.ollamaModels = [];
+		}
+	}
 
 	function handleScroll() {
 		const { scrollTop, scrollHeight, clientHeight } = messageWindow;
@@ -276,7 +295,15 @@
 								<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
 							{:else}
 								<Field name="prompt">
-									<svelte:fragment slot="label">Prompt</svelte:fragment>
+									<svelte:fragment slot="label">
+										Prompt
+
+										{#if !$settingsStore?.ollamaModels.length}
+											<a class="ml-auto" href="/settings" data-testid="disconnected-server">
+												<Badge variant="warning">disconnected</Badge>
+											</a>
+										{/if}
+									</svelte:fragment>
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
@@ -289,7 +316,13 @@
 						{/key}
 
 						<div class="flex w-full">
-							<ButtonSubmit {handleSubmit} hasMetaKey={isPromptFullscreen} disabled={!prompt}>
+							<ButtonSubmit
+								{handleSubmit}
+								hasMetaKey={isPromptFullscreen}
+								disabled={!prompt ||
+									!$settingsStore?.ollamaModels.length ||
+									!$settingsStore?.ollamaModel}
+							>
 								Run
 							</ButtonSubmit>
 
