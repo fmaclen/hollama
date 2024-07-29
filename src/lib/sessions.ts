@@ -4,16 +4,16 @@ import type { Knowledge } from './knowledge';
 import { formatTimestampToNow } from './utils';
 
 export interface Message {
-	role: 'user' | 'ai' | 'system';
+	role: 'user' | 'assistant' | 'system';
 	content: string;
 	knowledge?: Knowledge;
+	context?: number[];
 }
 
 export interface Session {
 	id: string;
 	model: string;
 	messages: Message[];
-	context: number[];
 	updatedAt?: string;
 	knowledge?: Knowledge;
 }
@@ -35,7 +35,7 @@ export const loadSession = (id: string): Session => {
 		const model = get(settingsStore)?.ollamaModel || '';
 
 		// Create a new session
-		session = { id, model, messages: [], context: [], updatedAt: new Date().toISOString() };
+		session = { id, model, messages: [], updatedAt: new Date().toISOString() };
 	}
 
 	return session;
@@ -68,4 +68,9 @@ export function formatSessionMetadata(session: Session) {
 	if (session.updatedAt) subtitles.push(formatTimestampToNow(session.updatedAt));
 	subtitles.push(session.model);
 	return subtitles.join(' • ');
+}
+
+export function getSessionTitle(session: Session) {
+	const hasKnowledge = session.messages[0]?.knowledge;
+	return hasKnowledge ? session.messages[1]?.content : session.messages[0]?.content;
 }

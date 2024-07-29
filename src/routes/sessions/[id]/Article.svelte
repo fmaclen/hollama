@@ -10,13 +10,15 @@
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import Badge from '$lib/components/Badge.svelte';
+	import { Brain, RefreshCw } from 'lucide-svelte';
 
 	export let message: Message;
+	export let retryIndex: number | undefined = undefined;
+	export let handleRetry: ((index: number) => void) | undefined = undefined;
 	let articleElement: HTMLElement;
 
 	const CODE_SNIPPET_ID = 'code-snippet';
 	const isUserRole = message.role === 'user';
-	const isKnowledgeRole = message.role === 'system' && message.knowledge;
 
 	function renderCodeSnippet(code: string) {
 		return `<pre id="${CODE_SNIPPET_ID}"><code class="hljs">${code}</code></pre>`;
@@ -51,9 +53,7 @@
 	<nav class="article__nav">
 		<div data-testid="session-role" class="article__role">
 			<Badge>
-				{#if isKnowledgeRole}
-					Knowledge
-				{:else if isUserRole}
+				{#if isUserRole}
 					You
 				{:else}
 					{message.role}
@@ -61,6 +61,16 @@
 			</Badge>
 		</div>
 		<div class="article__interactive">
+			{#if retryIndex}
+				<Button
+					title="Retry"
+					variant="icon"
+					id="retry-index-{retryIndex}"
+					on:click={() => handleRetry && handleRetry(retryIndex)}
+				>
+					<RefreshCw class="h-4 w-4" />
+				</Button>
+			{/if}
 			<ButtonCopy content={message.content} />
 		</div>
 	</nav>
@@ -73,6 +83,7 @@
 				aria-label="Go to knowledge"
 			>
 				{message.knowledge.name}
+				<Brain class="-mr-1 ml-2 h-4 w-4" />
 			</Button>
 		{:else if message.content}
 			{@html md.render(message.content)}
@@ -82,35 +93,41 @@
 
 <style lang="scss">
 	.article {
-		@apply mx-auto mb-2 flex w-full max-w-[80ch] flex-col rounded-md border border-shade-3;
+		@apply mx-auto mb-2 flex w-full max-w-[80ch] flex-col gap-y-2 rounded-md border border-shade-3 p-3;
+		@apply gap-y-4 md:mb-4 md:p-4;
+		@apply lg:mb-6 lg:p-6;
 		@apply last:mb-0;
-		@apply lg:mb-6;
 	}
 
-	.article--ai {
-		@apply bg-shade-0 border-transparent;
+	.article--assistant {
+		@apply border-transparent bg-shade-0;
 	}
 
 	.article__interactive {
-		@apply opacity-0;
+		@apply opacity-100;
+
+		@media (hover: hover) {
+			// The interactive elements should be visible by default on mobile
+			// and hidden by default on desktop.
+			@apply opacity-0;
+		}
 	}
 	.article:hover .article__interactive {
 		@apply opacity-100;
 	}
 
 	.article__nav {
-		@apply ml-2 flex items-center justify-between text-muted;
-		@apply md:mx-2 md:mt-3;
+		@apply flex items-center justify-between text-muted;
+		@apply -mt-1; // Visually reduce the spacing between the top of the article and the nav
 	}
 
 	.article__role {
 		@apply text-center text-xs font-bold uppercase leading-7;
-		@apply md:pl-3;
 	}
 
 	.markdown {
-		@apply mx-auto my-3 w-full px-3;
-		@apply md:mb-6 md:px-6;
+		@apply mx-auto w-full text-sm;
+		@apply md:text-base;
 
 		:global(a) {
 			@apply underline underline-offset-4 hover:text-active;
@@ -125,24 +142,30 @@
 		}
 
 		:global(pre) {
-			@apply relative border border-shade-2 dark:border-none rounded-md overflow-auto;
+			@apply relative overflow-auto rounded-md border border-shade-2 dark:border-none;
 		}
 
 		:global(pre > .copy-button) {
-			@apply absolute right-1 top-2 rounded-tr-md rounded-bl-md bg-shade-0;
+			@apply absolute right-1 top-2 rounded-bl-md rounded-tr-md bg-shade-0 opacity-0;
+		}
+
+		:global(pre:hover > .copy-button) {
+			@apply opacity-100;
 		}
 
 		:global(code) {
-			@apply rounded-md text-sm;
+			@apply rounded-md text-xs;
+			@apply md:text-sm;
 		}
 
 		:global(pre > code) {
-			@apply p-4 pr-12 dark:invert ;
+			@apply p-4 pr-12;
+			@apply dark:invert;
 		}
 
 		:global(li > code),
 		:global(p > code) {
-			@apply bg-amber-50 p-1 text-orange-600 dark:text-orange-500 dark:bg-amber-950;
+			@apply bg-amber-50 p-1 text-orange-600 dark:bg-amber-950 dark:text-orange-500;
 		}
 
 		:global(ol),

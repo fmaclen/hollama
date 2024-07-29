@@ -1,6 +1,6 @@
 {
 	"name": "hollama",
-	"version": "0.0.1",
+	"version": "0.0.0-dev",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev --host",
@@ -32,6 +32,7 @@
 		"highlight.js": "^11.9.0",
 		"lucide-svelte": "^0.372.0",
 		"markdown-it": "^14.1.0",
+		"ollama": "^0.5.6",
 		"postcss": "^8.4.32",
 		"postcss-load-config": "^5.0.2",
 		"prettier": "^3.1.1",

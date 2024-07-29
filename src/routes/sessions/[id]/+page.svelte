@@ -1,17 +1,19 @@
 <script lang="ts">
+	import { Ollama } from 'ollama/browser';
 	import { afterUpdate, tick } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
-	import { ollamaGenerate, ollamaTags, type OllamaCompletionResponse } from '$lib/ollama';
+	import { ollamaTags } from '$lib/ollama';
 	import {
 		saveSession,
 		type Message,
-		type Session,
 		loadSession,
-		formatSessionMetadata
+		formatSessionMetadata,
+		getSessionTitle,
+		type Session
 	} from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
@@ -31,6 +33,7 @@
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import Badge from '$lib/components/Badge.svelte';
+	import Head from '$lib/components/Head.svelte';
 
 	export let data: PageData;
 
@@ -72,52 +75,6 @@
 		}
 	}
 
-	afterUpdate(() => {
-		if (shouldFocusTextarea && promptTextarea) {
-			promptTextarea.focus();
-			shouldFocusTextarea = false;
-		}
-	});
-
-	async function scrollToBottom() {
-		if (!messageWindow) return;
-		await tick();
-		messageWindow.scrollTop = messageWindow.scrollHeight;
-	}
-
-	function handleError(error: Error) {
-		resetPrompt();
-
-		let content: string;
-		if (error.message === 'Failed to fetch') {
-			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
-		} else {
-			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
-		}
-
-		const message: Message = { role: 'system', content };
-		session.messages = [...session.messages, message];
-	}
-
-	async function handleCompletionDone(completion: string, context: number[]) {
-		const message: Message = { role: 'ai', content: completion };
-		session.messages = [...session.messages, message];
-		session.updatedAt = new Date().toISOString();
-
-		if (knowledge) {
-			session.knowledge = knowledge;
-
-			// Now that we used the knowledge, we no longer need an `id`
-			// This will prevent `knowledge` from being used again
-			knowledgeId = '';
-		}
-
-		completion = '';
-		promptCached = '';
-		shouldFocusTextarea = true;
-		saveSession({ ...session, context });
-	}
-
 	async function handleSubmit() {
 		if (!prompt) return;
 
@@ -128,49 +85,83 @@
 		if (knowledge) {
 			knowledgeContext = {
 				role: 'system',
-				knowledge,
-				content: ''
+				// Ollama only needs the content of the knowledge
+				content: knowledge.content,
+				// But we include the entire knowledge object to use the metadata in the UI
+				knowledge
 			};
 		}
 
 		const message: Message = { role: 'user', content: prompt };
-		abortController = new AbortController();
 		promptCached = prompt;
 		prompt = '';
-		completion = '';
 		session.messages = knowledgeContext
 			? [knowledgeContext, ...session.messages, message]
 			: [...session.messages, message];
 
+		let payload = {
+			model: session.model,
+			messages: session.messages,
+			stream: true
+		};
+
+		await handleCompletion(payload);
+	}
+
+	async function handleRetry(index: number) {
+		// Remove all the messages after the index
+		session.messages = session.messages.slice(0, index);
+
+		const mostRecentUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
+		if (!mostRecentUserMessage) throw new Error('No user message to retry');
+
+		let payload = {
+			model: session.model,
+			messages: session.messages,
+			stream: true
+		};
+
+		await handleCompletion(payload);
+	}
+
+	async function handleCompletion(payload: { model: string; messages: Message[] }) {
+		abortController = new AbortController();
+		completion = '';
+
 		try {
-			const ollama = await ollamaGenerate(session, abortController.signal);
+			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
 
-			if (ollama && ollama.body) {
-				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
+			const ollama = new Ollama({ host: $settingsStore.ollamaServer });
+			const response = await ollama.chat({
+				model: payload.model,
+				messages: payload.messages,
+				stream: true
+			});
 
-				while (true) {
-					const { value, done } = await reader.read();
-
-					if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
-
-					if (done) {
-						handleCompletionDone(completion, session.context);
-						break;
-					}
-
-					if (!value) continue;
-
-					const jsonLines = value.split('\n').filter((line) => line);
-					for (const line of jsonLines) {
-						const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
-						completion += response;
-						session.context = context;
-					}
-				}
+			for await (const part of response) {
+				completion += part.message.content;
 			}
-		} catch (error: any) {
-			if (error.name === 'AbortError') return; // User aborted the request
-			handleError(error);
+
+			// After the completion save the session
+			const message: Message = { role: 'assistant', content: completion };
+			session.messages = [...session.messages, message];
+			session.updatedAt = new Date().toISOString();
+
+			if (knowledge) {
+				session.knowledge = knowledge;
+				knowledgeId = '';
+			}
+
+			saveSession({ ...session });
+
+			// Final housekeeping
+			completion = '';
+			promptCached = '';
+			shouldFocusTextarea = true;
+		} catch (error) {
+			const typedError = error instanceof Error ? error : new Error(String(error));
+			if (typedError.name === 'AbortError') return; // User aborted the request
+			handleError(typedError);
 		}
 	}
 
@@ -188,9 +179,35 @@
 		event.preventDefault();
 		handleSubmit();
 	}
+
+	async function scrollToBottom() {
+		if (!messageWindow) return;
+		await tick();
+		messageWindow.scrollTop = messageWindow.scrollHeight;
+	}
+
+	function handleError(error: Error) {
+		let content: string;
+		if (error.message === 'Failed to fetch') {
+			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
+		} else {
+			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
+		}
+
+		const message: Message = { role: 'system', content };
+		session.messages = [...session.messages, message];
+	}
+
+	afterUpdate(() => {
+		if (shouldFocusTextarea && promptTextarea) {
+			promptTextarea.focus();
+			shouldFocusTextarea = false;
+		}
+	});
 </script>
 
 <div class="session">
+	<Head title={[isNewSession ? 'New session' : getSessionTitle(session), 'Sessions']} />
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
 			Session <Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
@@ -217,12 +234,16 @@
 
 				{#each session.messages as message, i (session.id + i)}
 					{#key message.role}
-						<Article {message} />
+						<Article
+							{message}
+							retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
+							{handleRetry}
+						/>
 					{/key}
 				{/each}
 
 				{#if isLastMessageFromUser}
-					<Article message={{ role: 'ai', content: completion || '...' }} />
+					<Article message={{ role: 'assistant', content: completion || '...' }} />
 				{/if}
 			</div>
 
@@ -241,7 +262,7 @@
 								<FieldSelectModel />
 								<div class="prompt-editor__knowledge">
 									<FieldSelect
-										label="Knowledge"
+										label="System prompt"
 										name="knowledge"
 										disabled={!$knowledgeStore}
 										options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
