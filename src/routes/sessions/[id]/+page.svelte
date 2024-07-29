@@ -67,8 +67,10 @@
 		if (knowledge) {
 			knowledgeContext = {
 				role: 'system',
+				// Ollama only needs the content of the knowledge
 				content: knowledge.content,
-				knowledge: knowledge
+				// But we include the entire knowledge object to use the metadata in the UI
+				knowledge
 			};
 		}
 
@@ -82,8 +84,7 @@
 		let payload = {
 			model: session.model,
 			messages: session.messages,
-			stream: true,
-			options: {} // Add any additional options here
+			stream: true
 		};
 
 		await handleCompletion(payload);
@@ -127,29 +128,26 @@
 				completion += part.message.content;
 			}
 
-			handleCompletionDone(completion);
+			// After the completion save the session
+			const message: Message = { role: 'assistant', content: completion };
+			session.messages = [...session.messages, message];
+			session.updatedAt = new Date().toISOString();
+
+			if (knowledge) {
+				session.knowledge = knowledge;
+				knowledgeId = '';
+			}
+
+			saveSession({ ...session });
+
+			// Final housekeeping
+			completion = '';
+			promptCached = '';
+			shouldFocusTextarea = true;
 		} catch (error: any) {
 			if (error.name === 'AbortError') return;
 			handleError(error);
 		}
-	}
-
-	async function handleCompletionDone(completion: string) {
-		abortController = new AbortController();
-
-		const message: Message = { role: 'assistant', content: completion };
-		session.messages = [...session.messages, message];
-		session.updatedAt = new Date().toISOString();
-
-		if (knowledge) {
-			session.knowledge = knowledge;
-			knowledgeId = '';
-		}
-
-		completion = '';
-		promptCached = '';
-		shouldFocusTextarea = true;
-		saveSession({ ...session });
 	}
 
 	function resetPrompt() {
