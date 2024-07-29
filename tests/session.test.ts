@@ -92,7 +92,7 @@ test.describe('Session', () => {
 					'No problem! If you have any other questions or would like to discuss something else, feel free to ask'
 			})
 		).toBeVisible();
-		await expect(page.locator('article nav', { hasText: 'AI' })).toHaveCount(2);
+		await expect(page.locator('article nav', { hasText: 'Assistant' })).toHaveCount(2);
 		await expect(page.locator('article nav', { hasText: 'You' })).toHaveCount(2);
 
 		// Check the session is saved to localStorage
@@ -225,7 +225,7 @@ test.describe('Session', () => {
 		await page.getByTestId('new-session').click();
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
-		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.response)).toBeVisible();
+		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.message.content)).toBeVisible();
 		await expect(page.getByText('No sessions')).not.toBeVisible();
 		expect(await page.getByTestId('session-item').count()).toBe(1);
 		await expect(page.locator('header').getByTitle('Copy')).toBeVisible();
@@ -251,7 +251,7 @@ test.describe('Session', () => {
 		await page.getByTestId('new-session').click();
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
-		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.response)).toBeVisible();
+		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.message.content)).toBeVisible();
 		await expect(page.getByText('No sessions')).not.toBeVisible();
 		expect(await page.getByTestId('session-item').count()).toBe(1);
 
@@ -280,7 +280,7 @@ test.describe('Session', () => {
 							messages: [
 								{ role: 'user', content: 'Hello world!' },
 								{
-									role: 'ai',
+									role: 'assistant',
 									content:
 										"Hello world! 👋 🌎\n\nIt's great to hear from you. What would you like to do today?"
 								}
@@ -294,7 +294,7 @@ test.describe('Session', () => {
 							messages: [
 								{ role: 'user', content: 'Hello world, again!' },
 								{
-									role: 'ai',
+									role: 'assistant',
 									content:
 										"Hello! It's always a pleasure to see you back. How can I assist you today?"
 								}
@@ -397,8 +397,7 @@ test.describe('Session', () => {
 		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[1]).toEqual({
 			content:
 				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.',
-			role: 'ai',
-			context: [123, 4567, 890]
+			role: 'assistant'
 		});
 	});
 
@@ -408,7 +407,7 @@ test.describe('Session', () => {
 		const sendButton = page.getByText('Run');
 		const stopButton = page.getByTitle('Stop response');
 		const userMessage = page.locator('article', { hasText: 'You' });
-		const aiMessage = page.locator('article', { hasText: 'AI' });
+		const aiMessage = page.locator('article', { hasText: 'Assistant' });
 		const sessionMetadata = page.getByTestId('session-metadata');
 
 		await page.goto('/');
@@ -420,7 +419,7 @@ test.describe('Session', () => {
 
 		// Mock a response that takes a while to generate
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
-		await page.route('**/generate', () => {});
+		await page.route('**/chat', () => {});
 		await promptTextarea.fill('Hello world!');
 		await sendButton.click();
 		await expect(userMessage).toBeVisible();
@@ -498,7 +497,7 @@ test.describe('Session', () => {
 		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).not.toBeVisible();
 
 		// Mock a net::ERR_CONNECTION_REFUSED
-		await page.route('**/generate', async (route) => {
+		await page.route('**/chat', async (route) => {
 			await route.abort('failed');
 		});
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -514,7 +513,7 @@ test.describe('Session', () => {
 		);
 
 		// Mock an incomplete JSON response
-		await page.route('**/generate', async (route) => {
+		await page.route('**/chat', async (route) => {
 			await route.fulfill({
 				status: 200,
 				contentType: 'application/json',
@@ -523,15 +522,15 @@ test.describe('Session', () => {
 		});
 		await page.getByTitle('Retry').click();
 		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
+		await expect(page.getByText('Sorry, something went wrong.')).toBeVisible();
 		await expect(
-			page.getByText(
-				`Sorry, this session is likely exceeding the context window of ${MOCK_API_TAGS_RESPONSE.models[0].name}`
-			)
+			page.locator('code', {
+				hasText: 'Error: Did not receive done or success response in stream.'
+			})
 		).toBeVisible();
-		await expect(page.locator('code', { hasText: 'SyntaxError' })).toBeVisible();
 
 		// Mock a 500 error response
-		await page.route('**/generate', async (route) => {
+		await page.route('**/chat', async (route) => {
 			await route.fulfill({
 				status: 500,
 				contentType: 'application/json',

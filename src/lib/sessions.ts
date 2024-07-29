@@ -4,7 +4,7 @@ import type { Knowledge } from './knowledge';
 import { formatTimestampToNow } from './utils';
 
 export interface Message {
-	role: 'user' | 'ai' | 'system';
+	role: 'user' | 'assistant' | 'system';
 	content: string;
 	knowledge?: Knowledge;
 	context?: number[];

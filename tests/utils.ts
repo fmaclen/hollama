@@ -1,5 +1,6 @@
+import type { ChatResponse } from 'ollama/browser';
 import type { Knowledge } from '$lib/knowledge';
-import type { OllamaCompletionResponse, OllamaTagResponse } from '$lib/ollama';
+import type { OllamaTagResponse } from '$lib/ollama';
 import type { Locator, Page, Route } from '@playwright/test';
 
 export const MOCK_API_TAGS_RESPONSE: OllamaTagResponse = {
@@ -37,13 +38,16 @@ export const MOCK_API_TAGS_RESPONSE: OllamaTagResponse = {
 	]
 };
 
-export const MOCK_SESSION_1_RESPONSE_1: OllamaCompletionResponse = {
+export const MOCK_SESSION_1_RESPONSE_1: ChatResponse = {
 	model: 'gemma:7b',
-	created_at: '2024-04-10T22:54:40.310905Z',
-	response:
-		'I am unable to provide subjective or speculative information, including fight outcomes between individuals.',
+	created_at: new Date('2024-04-10T22:54:40.310905Z'),
+	message: {
+		role: 'assistant',
+		content:
+			'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+	},
 	done: true,
-	context: [123, 4567, 890],
+	done_reason: 'stop',
 	total_duration: 564546083,
 	load_duration: 419166,
 	prompt_eval_count: 18,
@@ -52,13 +56,16 @@ export const MOCK_SESSION_1_RESPONSE_1: OllamaCompletionResponse = {
 	eval_duration: 296374000
 };
 
-export const MOCK_SESSION_1_RESPONSE_2: OllamaCompletionResponse = {
+export const MOCK_SESSION_1_RESPONSE_2: ChatResponse = {
 	model: 'gemma:7b',
-	created_at: '2024-04-10T23:08:33.419483Z',
-	response:
-		'No problem! If you have any other questions or would like to discuss something else, feel free to ask.',
+	created_at: new Date('2024-04-10T23:08:33.419483Z'),
+	message: {
+		role: 'assistant',
+		content:
+			'No problem! If you have any other questions or would like to discuss something else, feel free to ask.'
+	},
 	done: true,
-	context: [123, 4567, 890],
+	done_reason: 'stop',
 	total_duration: 1574338000,
 	load_duration: 1044484792,
 	prompt_eval_count: 55,
@@ -67,13 +74,16 @@ export const MOCK_SESSION_1_RESPONSE_2: OllamaCompletionResponse = {
 	eval_duration: 399362000
 };
 
-export const MOCK_SESSION_1_RESPONSE_3: OllamaCompletionResponse = {
+export const MOCK_SESSION_1_RESPONSE_3: ChatResponse = {
 	model: 'gemma:7b',
-	created_at: '2024-04-10T23:08:33.419483Z',
-	response:
-		"Here's a basic function that takes the age, height, weight, and fighting experience of both individuals as input and returns the difference between their ages, heights, and weights.\n```python\ndef calculate_odds(emma_age, emma_height, emma_weight, emma_experience, jessica_age, jessica_height, jessica_weight, jessica_experience):\n    emma_stats = {'age': emma_age, 'height': emma_height, 'weight': emma_weight, 'experience': emma_experience}\n    jessica_stats = {'age': jessica_age, 'height': jessica_height, 'weight': jessica_weight, 'experience': jessica_experience}\n    \n    # Calculate the differences between their stats\n    age_difference = abs(emma_stats['age'] - jessica_stats['age'])\n    height_difference = abs(emma_stats['height'] - jessica_stats['height'])\n    weight_difference = abs(emma_stats['weight'] - jessica_stats['weight'])\n    \n    # Return the differences as a tuple\n    return (age_difference, height_difference, weight_difference)\n```\nYou can use this function to compare Emma Watson and Jessica Alba by providing their respective statistics as inputs.",
+	created_at: new Date('2024-04-10T23:08:33.419483Z'),
+	message: {
+		role: 'assistant',
+		content:
+			"Here's a basic function that takes the age, height, weight, and fighting experience of both individuals as input and returns the difference between their ages, heights, and weights.\n```python\ndef calculate_odds(emma_age, emma_height, emma_weight, emma_experience, jessica_age, jessica_height, jessica_weight, jessica_experience):\n    emma_stats = {'age': emma_age, 'height': emma_height, 'weight': emma_weight, 'experience': emma_experience}\n    jessica_stats = {'age': jessica_age, 'height': jessica_height, 'weight': jessica_weight, 'experience': jessica_experience}\n    \n    # Calculate the differences between their stats\n    age_difference = abs(emma_stats['age'] - jessica_stats['age'])\n    height_difference = abs(emma_stats['height'] - jessica_stats['height'])\n    weight_difference = abs(emma_stats['weight'] - jessica_stats['weight'])\n    \n    # Return the differences as a tuple\n    return (age_difference, height_difference, weight_difference)\n```\nYou can use this function to compare Emma Watson and Jessica Alba by providing their respective statistics as inputs."
+	},
 	done: true,
-	context: [123, 4567, 890],
+	done_reason: 'stop',
 	total_duration: 1574338000,
 	load_duration: 1044484792,
 	prompt_eval_count: 55,
@@ -82,13 +92,16 @@ export const MOCK_SESSION_1_RESPONSE_3: OllamaCompletionResponse = {
 	eval_duration: 399362000
 };
 
-export const MOCK_SESSION_2_RESPONSE_1: OllamaCompletionResponse = {
+export const MOCK_SESSION_2_RESPONSE_1: ChatResponse = {
 	model: 'openhermes2.5-mistral:latest',
-	created_at: '2024-04-11T12:50:18.826017Z',
-	response:
-		'The fox says various things, such as "ring-a-ding-ding," "bada bing-bing" and "higglety-pigglety pop.',
+	created_at: new Date('2024-04-11T12:50:18.826017Z'),
+	message: {
+		role: 'assistant',
+		content:
+			'The fox says various things, such as "ring-a-ding-ding," "bada bing-bing" and "higglety-pigglety pop.'
+	},
 	done: true,
-	context: [123, 4567, 890],
+	done_reason: 'stop',
 	total_duration: 8048965583,
 	load_duration: 5793693500,
 	prompt_eval_count: 22,
@@ -112,8 +125,8 @@ export async function mockTagsResponse(page: Page) {
 	});
 }
 
-export async function mockCompletionResponse(page: Page, response: OllamaCompletionResponse) {
-	await page.route('**/generate', async (route: Route) => {
+export async function mockCompletionResponse(page: Page, response: ChatResponse) {
+	await page.route('**/api/chat', async (route: Route) => {
 		await route.fulfill({
 			status: 200,
 			contentType: 'application/json',
@@ -122,13 +135,16 @@ export async function mockCompletionResponse(page: Page, response: OllamaComplet
 	});
 }
 
-export const MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1: OllamaCompletionResponse = {
+export const MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1: ChatResponse = {
 	model: 'gemma:7b',
-	created_at: '2024-04-11T12:50:18.826017Z',
-	response:
-		'Wally has been approved to work from home and plans to have a chatbot answer his emails and text messages. However, Dilbert expresses concern that the automated responses may not sound like him, rendering them useless.',
+	created_at: new Date('2024-04-11T12:50:18.826017Z'),
+	message: {
+		role: 'assistant',
+		content:
+			'Wally has been approved to work from home and plans to have a chatbot answer his emails and text messages. However, Dilbert expresses concern that the automated responses may not sound like him, rendering them useless.'
+	},
 	done: true,
-	context: [123, 4567, 890],
+	done_reason: 'stop',
 	total_duration: 8048965583,
 	load_duration: 5793693500,
 	prompt_eval_count: 22,
