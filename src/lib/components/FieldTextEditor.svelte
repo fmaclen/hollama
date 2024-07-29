@@ -7,7 +7,7 @@
 
 	export let label: string;
 	export let value: string;
-	export let handleSubmit: Function;
+	export let handleSubmit: (event?: Event) => void;
 
 	let view: EditorView;
 	let container: HTMLDivElement | null;
@@ -56,11 +56,9 @@
 	<div class="text-editor" bind:this={container}></div>
 </Field>
 
-<style lang="scss">
-	@import '$lib/mixins.scss';
-
+<style lang="postcss">
 	.text-editor {
-		@include base-input;
+		@apply base-input;
 		@apply h-full max-h-full min-h-[88px] overflow-y-auto p-0;
 
 		:global(.cm-editor) {
@@ -75,8 +73,8 @@
 			@apply bg-shade-2 text-accent;
 		}
 
-		// HACK: Need to use !important to override the default styles because
-		// CodeMirror's styles for text selection have higher specificity than ours.
+		/* HACK: Need to use !important to override the default styles because
+		CodeMirror's styles for text selection have higher specificity than ours. */
 		:global(.cm-activeLine) {
 			background-color: hsl(var(--color-shade-6) / 10%) !important;
 		}

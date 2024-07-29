@@ -7,7 +7,7 @@
 </script>
 
 <Button class="w-full text-left" on:click={handleSubmit} {disabled}>
-	<slot></slot>
+	<slot />
 
 	{#if !disabled}
 		<span class="tag">
@@ -16,7 +16,7 @@
 	{/if}
 </Button>
 
-<style lang="scss">
+<style lang="postcss">
 	.tag {
 		@apply ml-2.5 inline-flex items-center rounded-md border border-shade-0/50 px-2.5 py-0.5 text-xs font-semibold;
 	}

@@ -18,10 +18,8 @@
 	</select>
 </Field>
 
-<style lang="scss">
-	@import '$lib/mixins.scss';
-
+<style lang="postcss">
 	.select {
-		@include base-input;
+		@apply base-input;
 	}
 </style>

@@ -15,7 +15,7 @@
 	<slot />
 </svelte:element>
 
-<style lang="scss">
+<style lang="postcss">
 	.badge {
 		@apply inline-flex select-none items-center rounded-md px-2.5 py-0.5 font-mono text-xs;
 
