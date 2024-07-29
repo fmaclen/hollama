@@ -48,6 +48,7 @@
 	let promptTextarea: HTMLTextAreaElement;
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
+	let userScrolledUp = false;
 
 	const shouldConfirmDeletion = writable(false);
 	const currentSessionId = writable(data.id);
@@ -59,6 +60,8 @@
 	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
+	$: if (messageWindow) messageWindow.addEventListener('scroll', handleScroll);
+
 	$: {
 		if (session?.id !== $currentSessionId) {
 			getModelsList();
@@ -73,6 +76,11 @@
 		} catch {
 			$settingsStore.ollamaModels = [];
 		}
+	}
+
+	function handleScroll() {
+		const { scrollTop, scrollHeight, clientHeight } = messageWindow;
+		userScrolledUp = scrollTop + clientHeight < scrollHeight;
 	}
 
 	async function handleSubmit() {
@@ -140,6 +148,7 @@
 
 			for await (const part of response) {
 				completion += part.message.content;
+				await scrollToBottom();
 			}
 
 			// After the completion save the session
@@ -158,6 +167,7 @@
 			completion = '';
 			promptCached = '';
 			shouldFocusTextarea = true;
+			await scrollToBottom();
 		} catch (error) {
 			const typedError = error instanceof Error ? error : new Error(String(error));
 			if (typedError.name === 'AbortError') return; // User aborted the request
@@ -181,7 +191,7 @@
 	}
 
 	async function scrollToBottom() {
-		if (!messageWindow) return;
+		if (!messageWindow || userScrolledUp) return;
 		await tick();
 		messageWindow.scrollTop = messageWindow.scrollHeight;
 	}

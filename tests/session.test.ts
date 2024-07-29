@@ -577,6 +577,36 @@ test.describe('Session', () => {
 		).not.toBeVisible();
 	});
 
+	test('auto scrolls to the bottom when a new message is received', async ({ page }) => {
+		const newSessionButton = page.getByTestId('new-session');
+		const articleLocator = page.locator('article');
+		const sessionHistory = page.locator('.session__history');
+
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await newSessionButton.click();
+		await expect(articleLocator).toHaveCount(0);
+
+		const initialScrollHeight = await sessionHistory.evaluate((el) => el.scrollHeight);
+		const initialClientHeight = await sessionHistory.evaluate((el) => el.clientHeight);
+		const initialScrollTop = await sessionHistory.evaluate((el) => el.scrollTop);
+
+		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_3);
+		await page.getByText('Run').click();
+
+		const finalScrollTop = await sessionHistory.evaluate((el) => el.scrollTop);
+		const finalScrollHeight = await sessionHistory.evaluate((el) => el.scrollHeight);
+		const finalClientHeight = await sessionHistory.evaluate((el) => el.clientHeight);
+
+		expect(finalScrollHeight).toBeGreaterThan(initialScrollHeight);
+		expect(finalClientHeight).toBe(initialClientHeight);
+		expect(finalScrollTop).toBeGreaterThan(initialScrollTop);
+
+		// TODO: Add assertions for the `userScrolledUp` behavior
+	});
+
 	test('handles errors when fetching models', async ({ page }) => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
