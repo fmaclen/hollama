@@ -1,3 +1,6 @@
+import { get } from 'svelte/store';
+import { settingsStore } from '$lib/store';
+
 export type OllamaModel = {
 	name: string;
 	model: string;
@@ -17,3 +20,13 @@ export type OllamaModel = {
 export type OllamaTagResponse = {
 	models: OllamaModel[];
 };
+
+export async function ollamaTags() {
+	const settings = get(settingsStore);
+	if (!settings) throw new Error('No Ollama server specified');
+
+	const response = await fetch(`${settings.ollamaServer}/api/tags`);
+	if (!response.ok) throw new Error('Failed to fetch Ollama tags');
+
+	return response.json() as Promise<OllamaTagResponse>;
+}
