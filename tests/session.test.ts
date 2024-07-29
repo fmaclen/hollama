@@ -419,7 +419,7 @@ test.describe('Session', () => {
 
 		// Mock a response that takes a while to generate
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
-		await page.route('**/chat', () => { });
+		await page.route('**/chat', () => {});
 		await promptTextarea.fill('Hello world!');
 		await sendButton.click();
 		await expect(userMessage).toBeVisible();
