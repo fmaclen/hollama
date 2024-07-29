@@ -1,15 +1,11 @@
 <script lang="ts">
+	import { Ollama } from 'ollama/browser';
 	import { afterUpdate, tick } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
-	import {
-		ollamaGenerate,
-		type OllamaCompletionRequest,
-		type OllamaCompletionResponse
-	} from '$lib/ollama';
 	import {
 		saveSession,
 		type Message,
@@ -48,7 +44,6 @@
 	let prompt: string;
 	let promptCached: string;
 	let promptTextarea: HTMLTextAreaElement;
-	let tokenizedContext: number[];
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 
@@ -72,8 +67,10 @@
 		if (knowledge) {
 			knowledgeContext = {
 				role: 'system',
-				knowledge,
-				content: ''
+				// Ollama only needs the content of the knowledge
+				content: knowledge.content,
+				// But we include the entire knowledge object to use the metadata in the UI
+				knowledge
 			};
 		}
 
@@ -84,12 +81,10 @@
 			? [knowledgeContext, ...session.messages, message]
 			: [...session.messages, message];
 
-		const previousAiResponse = session.messages[session.messages.length - 2];
 		let payload = {
 			model: session.model,
-			context: previousAiResponse?.context,
-			prompt: session.messages[session.messages.length - 1].content,
-			system: previousAiResponse?.knowledge?.content
+			messages: session.messages,
+			stream: true
 		};
 
 		await handleCompletion(payload);
@@ -100,76 +95,56 @@
 		session.messages = session.messages.slice(0, index);
 
 		const mostRecentUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
-		const mostRecentSystemMessage = session.messages.filter((m) => m.role === 'system').at(-1);
 		if (!mostRecentUserMessage) throw new Error('No user message to retry');
 
 		let payload = {
 			model: session.model,
-			context: session.messages[index - 2]?.context, // Last AI response
-			prompt: mostRecentUserMessage.content,
-			system: mostRecentSystemMessage?.knowledge?.content
+			messages: session.messages,
+			stream: true
 		};
 
 		await handleCompletion(payload);
 	}
 
-	async function handleCompletion(payload: OllamaCompletionRequest) {
+	async function handleCompletion(payload: { model: string; messages: Message[] }) {
 		abortController = new AbortController();
 		completion = '';
-		tokenizedContext = [];
 
 		try {
-			const ollama = await ollamaGenerate(payload, abortController.signal);
+			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
 
-			if (ollama && ollama.body) {
-				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
+			const ollama = new Ollama({ host: $settingsStore.ollamaServer });
+			const response = await ollama.chat({
+				model: payload.model,
+				messages: payload.messages,
+				stream: true
+			});
 
-				while (true) {
-					const { value, done } = await reader.read();
-
-					if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
-
-					if (done) {
-						if (!tokenizedContext) throw new Error('Ollama response is missing context');
-						handleCompletionDone(completion, tokenizedContext);
-						break;
-					}
-
-					if (!value) continue;
-
-					const jsonLines = value.split('\n').filter((line) => line);
-					for (const line of jsonLines) {
-						const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
-						completion += response;
-						tokenizedContext = context;
-					}
-				}
+			for await (const part of response) {
+				completion += part.message.content;
 			}
-		} catch (error: any) {
-			if (error.name === 'AbortError') return; // User aborted the request
-			handleError(error);
+
+			// After the completion save the session
+			const message: Message = { role: 'assistant', content: completion };
+			session.messages = [...session.messages, message];
+			session.updatedAt = new Date().toISOString();
+
+			if (knowledge) {
+				session.knowledge = knowledge;
+				knowledgeId = '';
+			}
+
+			saveSession({ ...session });
+
+			// Final housekeeping
+			completion = '';
+			promptCached = '';
+			shouldFocusTextarea = true;
+		} catch (error) {
+			const typedError = error instanceof Error ? error : new Error(String(error));
+			if (typedError.name === 'AbortError') return; // User aborted the request
+			handleError(typedError);
 		}
-	}
-
-	async function handleCompletionDone(completion: string, context: number[]) {
-		abortController = new AbortController();
-
-		const message: Message = { role: 'ai', content: completion, context };
-		session.messages = [...session.messages, message];
-		session.updatedAt = new Date().toISOString();
-
-		if (knowledge) {
-			session.knowledge = knowledge;
-
-			// Now that we used the knowledge, we no longer need an `id`
-			// This will prevent `knowledge` from being used again
-			knowledgeId = '';
-		}
-
-		completion = '';
-		promptCached = '';
-		shouldFocusTextarea = true;
-		saveSession({ ...session });
 	}
 
 	function resetPrompt() {
@@ -197,8 +172,6 @@
 		let content: string;
 		if (error.message === 'Failed to fetch') {
 			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
-		} else if (error.name === 'SyntaxError') {
-			content = `Sorry, this session is _likely_ exceeding the context window of \`${session.model}\`\n\`\`\`\n${error.name}: ${error.message}\n\`\`\``;
 		} else {
 			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
 		}
@@ -245,14 +218,14 @@
 					{#key message.role}
 						<Article
 							{message}
-							retryIndex={['ai', 'system'].includes(message.role) ? i : undefined}
+							retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
 							{handleRetry}
 						/>
 					{/key}
 				{/each}
 
 				{#if isLastMessageFromUser}
-					<Article message={{ role: 'ai', content: completion || '...' }} />
+					<Article message={{ role: 'assistant', content: completion || '...' }} />
 				{/if}
 			</div>
 

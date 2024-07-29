@@ -99,7 +99,7 @@
 		@apply last:mb-0;
 	}
 
-	.article--ai {
+	.article--assistant {
 		@apply border-transparent bg-shade-0;
 	}
 
