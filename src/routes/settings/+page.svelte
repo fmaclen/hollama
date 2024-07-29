@@ -155,17 +155,18 @@
 		</div>
 		<div class="version">
 			<p class="p">
-				<strong>Version</strong> <Button variant="link" href="https://github.com/fmaclen/hollama/releases" target="_blank">{version}</Button>
+				<strong>Version</strong>
+				<Button variant="link" href="https://github.com/fmaclen/hollama/releases" target="_blank">
+					{version}
+				</Button>
 			</p>
 		</div>
 	</div>
 </section>
 
-<style lang="scss">
-	@import '$lib/mixins.scss';
-
+<style lang="postcss">
 	.settings {
-		@include base-section;
+		@apply base-section;
 		@apply flex border-spacing-1 flex-col bg-shade-1 p-8;
 	}
 

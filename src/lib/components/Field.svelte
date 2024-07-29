@@ -12,7 +12,7 @@
 	<slot />
 </div>
 
-<style lang="scss">
+<style lang="postcss">
 	.field {
 		@apply flex w-full flex-col gap-y-2;
 	}

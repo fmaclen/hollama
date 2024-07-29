@@ -31,7 +31,9 @@
 					return renderCodeSnippet(
 						hljs.highlight(str, { language: lang, ignoreIllegals: true }).value
 					);
-				} catch (_) {}
+				} catch (error) {
+					console.error('Error in renderCodeSnippet:', error);
+				}
 			}
 
 			return renderCodeSnippet(md.utils.escapeHtml(str));
@@ -86,15 +88,15 @@
 				<Brain class="-mr-1 ml-2 h-4 w-4" />
 			</Button>
 		{:else if message.content}
-			{@html md.render(message.content)}
+			{@html md.render(message.content)} <!-- eslint-disable-line svelte/no-at-html-tags -->
 		{/if}
 	</div>
 </article>
 
-<style lang="scss">
+<style lang="postcss">
 	.article {
 		@apply mx-auto mb-2 flex w-full max-w-[80ch] flex-col gap-y-2 rounded-md border border-shade-3 p-3;
-		@apply gap-y-4 md:mb-4 md:p-4;
+		@apply md:mb-4 md:gap-y-4 md:p-4;
 		@apply lg:mb-6 lg:p-6;
 		@apply last:mb-0;
 	}
@@ -107,8 +109,8 @@
 		@apply opacity-100;
 
 		@media (hover: hover) {
-			// The interactive elements should be visible by default on mobile
-			// and hidden by default on desktop.
+			/* The interactive elements should be visible by default on mobile
+			and hidden by default on desktop. */
 			@apply opacity-0;
 		}
 	}
@@ -118,7 +120,7 @@
 
 	.article__nav {
 		@apply flex items-center justify-between text-muted;
-		@apply -mt-1; // Visually reduce the spacing between the top of the article and the nav
+		@apply -mt-1; /* Visually reduce the spacing between the top of the article and the nav */
 	}
 
 	.article__role {

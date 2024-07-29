@@ -12,12 +12,13 @@
 	</nav>
 </header>
 
-<style lang="scss">
-	@import '$lib/mixins.scss';
-
+<style lang="postcss">
 	.header {
-		@include delete-record-overlay;
 		@apply flex items-end justify-between border-b bg-shade-1;
+
+		&--confirm-deletion {
+			@apply confirm-deletion;
+		}
 	}
 
 	.header__headline {
@@ -26,7 +27,7 @@
 	}
 
 	.header__nav {
-		@apply flex flex-row items-center pr-4 pb-4;
-		@apply lg:pr-6 lg:pb-6;
+		@apply flex flex-row items-center pb-4 pr-4;
+		@apply lg:pb-6 lg:pr-6;
 	}
 </style>

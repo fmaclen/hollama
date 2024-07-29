@@ -54,7 +54,7 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: pages publish .svelte-kit/cloudflare --project-name hollama
-        
+
   docker:
     needs: release
     if: ${{ needs.release.outputs.new_release_published == 'true' }}
