@@ -30,6 +30,7 @@
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
+	import Badge from '$lib/components/Badge.svelte';
 
 	export let data: PageData;
 
@@ -66,10 +67,8 @@
 		if (!$settingsStore) return;
 		try {
 			$settingsStore.ollamaModels = (await ollamaTags()).models;
-			//TODO hide error message if present
 		} catch {
 			$settingsStore.ollamaModels = [];
-			handleError(new Error('Failed to fetch'));
 		}
 	}
 
@@ -265,7 +264,15 @@
 								<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
 							{:else}
 								<Field name="prompt">
-									<svelte:fragment slot="label">Prompt</svelte:fragment>
+									<svelte:fragment slot="label">
+										Prompt
+
+										{#if !$settingsStore?.ollamaModels.length}
+											<a class="ml-auto" href="/settings">
+												<Badge variant="warning">disconnected</Badge>
+											</a>
+										{/if}
+									</svelte:fragment>
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
