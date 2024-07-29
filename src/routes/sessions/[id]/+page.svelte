@@ -106,11 +106,7 @@
 		await handleCompletion(payload);
 	}
 
-	async function handleCompletion(payload: {
-		model: string;
-		messages: Message[];
-		stream: boolean;
-	}) {
+	async function handleCompletion(payload: { model: string; messages: Message[] }) {
 		abortController = new AbortController();
 		completion = '';
 
