@@ -9,7 +9,7 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
 
-	import type { OllamaTagResponse } from '$lib/ollama';
+	import { ollamaTags, type OllamaTagResponse } from '$lib/ollama';
 	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
 	import Head from '$lib/components/Head.svelte';
 
@@ -31,11 +31,7 @@
 
 	async function getModelsList(): Promise<void> {
 		try {
-			if (!ollamaServer) throw new Error('No server provided');
-
-			const response = await fetch(`${ollamaServer}/api/tags`);
-			const data = (await response.json()) as OllamaTagResponse;
-			ollamaTagResponse = data;
+			ollamaTagResponse = await ollamaTags();
 			serverStatus = 'connected';
 		} catch {
 			ollamaTagResponse = null;
