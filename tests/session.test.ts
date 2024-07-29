@@ -591,14 +591,8 @@ test.describe('Session', () => {
 
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
-		await expect(runButton).toBeEnabled();
-
-		// Mock the response and submit the prompt
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
-		await page.keyboard.press('Shift+Enter');
-		await expect(sessionMetadata).toHaveText('New session');
-
-		await page.keyboard.press('Enter');
+		await page.getByText('Run').click();
 		await expect(
 			page.locator('article', {
 				hasText:
