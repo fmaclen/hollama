@@ -3,7 +3,7 @@
 	import { basicSetup } from 'codemirror';
 	import { EditorView, keymap } from '@codemirror/view';
 	import { Prec } from '@codemirror/state';
-	import { tomorrow, boysAndGirls } from 'thememirror';
+	import { createTheme } from 'thememirror';
 	import { settingsStore } from '$lib/store';
 	import Field from './Field.svelte';
 
@@ -14,6 +14,38 @@
 	let view: EditorView;
 	let container: HTMLDivElement | null;
 	let editorValue: string;
+
+	// Re-render text editor when theme changes
+	$: if (container && $settingsStore?.userTheme) renderTextEditor();
+
+	// REF https://thememirror.net/create
+	const hollamaThemeLight = createTheme({
+		variant: 'light',
+		settings: {
+			background: '#fff',
+			foreground: '#333',
+			caret: '#F97316',
+			selection: '#F973161A', // Doesn't seem to work correctly
+			lineHighlight: '#F973161A',
+			gutterBackground: '#fff',
+			gutterForeground: '#c0c0c0'
+		},
+		styles: [] // No styles for syntax highlighting
+	});
+
+	const hollamaThemeDark = createTheme({
+		variant: 'dark',
+		settings: {
+			background: '#1e1e1e',
+			foreground: '#c0c0c0',
+			caret: '#F97316',
+			selection: '#F973161A', // Doesn't seem to work correctly
+			lineHighlight: '#F973161A',
+			gutterBackground: '#222',
+			gutterForeground: '#666'
+		},
+		styles: []
+	});
 
 	const updateValue = EditorView.updateListener.of((view) => {
 		if (view.docChanged) value = view.state.doc.toString();
@@ -31,7 +63,9 @@
 		}
 	]);
 
-	onMount(() => {
+	function renderTextEditor() {
+		if (view) view.destroy();
+
 		if (value !== editorValue) editorValue = value;
 
 		if (!container) throw new Error('Text editor container not found');
@@ -43,10 +77,14 @@
 				updateValue,
 				EditorView.lineWrapping,
 				Prec.highest(overrideModEnterKeymap),
-				$settingsStore?.userTheme === 'dark' ? boysAndGirls : tomorrow
+				$settingsStore?.userTheme === 'dark' ? hollamaThemeDark : hollamaThemeLight
 			],
 			parent: container
 		});
+	}
+
+	onMount(() => {
+		renderTextEditor();
 
 		return () => {
 			view.destroy();
