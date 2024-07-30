@@ -3,6 +3,8 @@
 	import { basicSetup } from 'codemirror';
 	import { EditorView, keymap } from '@codemirror/view';
 	import { Prec } from '@codemirror/state';
+	import { createTheme } from 'thememirror';
+	import { settingsStore } from '$lib/store';
 	import Field from './Field.svelte';
 
 	export let label: string;
@@ -12,6 +14,38 @@
 	let view: EditorView;
 	let container: HTMLDivElement | null;
 	let editorValue: string;
+
+	// Re-render text editor when theme changes
+	$: if (container && $settingsStore?.userTheme) renderTextEditor();
+
+	// REF https://thememirror.net/create
+	const hollamaThemeLight = createTheme({
+		variant: 'light',
+		settings: {
+			background: '#fff',
+			foreground: '#333',
+			caret: '#F97316',
+			selection: '#F973161A', // Doesn't seem to work correctly
+			lineHighlight: '#F973161A',
+			gutterBackground: '#fff',
+			gutterForeground: '#c0c0c0'
+		},
+		styles: [] // No styles for syntax highlighting
+	});
+
+	const hollamaThemeDark = createTheme({
+		variant: 'dark',
+		settings: {
+			background: '#1e1e1e',
+			foreground: '#c0c0c0',
+			caret: '#F97316',
+			selection: '#F973161A', // Doesn't seem to work correctly
+			lineHighlight: '#F973161A',
+			gutterBackground: '#222',
+			gutterForeground: '#666'
+		},
+		styles: [] // No styles for syntax highlighting
+	});
 
 	const updateValue = EditorView.updateListener.of((view) => {
 		if (view.docChanged) value = view.state.doc.toString();
@@ -29,9 +63,9 @@
 		}
 	]);
 
-	onMount(() => {
+	function renderTextEditor() {
+		if (view) view.destroy();
 		if (value !== editorValue) editorValue = value;
-
 		if (!container) throw new Error('Text editor container not found');
 
 		view = new EditorView({
@@ -40,14 +74,16 @@
 				basicSetup,
 				updateValue,
 				EditorView.lineWrapping,
-				Prec.highest(overrideModEnterKeymap)
+				Prec.highest(overrideModEnterKeymap),
+				$settingsStore?.userTheme === 'dark' ? hollamaThemeDark : hollamaThemeLight
 			],
 			parent: container
 		});
+	}
 
-		return () => {
-			view.destroy();
-		};
+	onMount(() => {
+		renderTextEditor();
+		return () => view.destroy();
 	});
 </script>
 
@@ -63,28 +99,6 @@
 
 		:global(.cm-editor) {
 			@apply h-full w-full text-sm;
-		}
-
-		:global(.cm-gutters) {
-			@apply border-shade-3 bg-shade-1;
-		}
-
-		:global(.cm-activeLineGutter) {
-			@apply bg-shade-2 text-accent;
-		}
-
-		/* HACK: Need to use !important to override the default styles because
-		CodeMirror's styles for text selection have higher specificity than ours. */
-		:global(.cm-activeLine) {
-			background-color: hsl(var(--color-shade-6) / 10%) !important;
-		}
-
-		:global(.cm-activeLine.cm-line) {
-			caret-color: hsl(var(--color-shade-6)) !important;
-		}
-
-		:global(.cm-selectionBackground) {
-			background-color: hsl(var(--color-primary) / 50%) !important;
 		}
 	}
 </style>
