@@ -44,7 +44,7 @@
 			gutterBackground: '#222',
 			gutterForeground: '#666'
 		},
-		styles: []
+		styles: [] // No styles for syntax highlighting
 	});
 
 	const updateValue = EditorView.updateListener.of((view) => {
@@ -65,9 +65,7 @@
 
 	function renderTextEditor() {
 		if (view) view.destroy();
-
 		if (value !== editorValue) editorValue = value;
-
 		if (!container) throw new Error('Text editor container not found');
 
 		view = new EditorView({
@@ -85,10 +83,7 @@
 
 	onMount(() => {
 		renderTextEditor();
-
-		return () => {
-			view.destroy();
-		};
+		return () => view.destroy();
 	});
 </script>
 
