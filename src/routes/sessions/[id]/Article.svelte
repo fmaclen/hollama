@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import MarkdownIt from 'markdown-it';
 	import hljs from 'highlight.js';
-	import 'highlight.js/styles/github.css';
+	import 'highlight.js/styles/github.min.css';
 
 	import { type Message } from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
@@ -143,26 +143,26 @@
 			@apply mb-4;
 		}
 
-		:global(pre) {
-			@apply relative overflow-auto rounded-md border border-shade-2 dark:border-none;
-		}
-
-		:global(pre > .copy-button) {
-			@apply absolute right-1 top-2 rounded-bl-md rounded-tr-md bg-shade-0 opacity-0;
-		}
-
-		:global(pre:hover > .copy-button) {
-			@apply opacity-100;
-		}
-
 		:global(code) {
 			@apply rounded-md text-xs;
 			@apply md:text-sm;
 		}
 
-		:global(pre > code) {
-			@apply p-4 pr-12;
-			@apply dark:invert;
+		:global(pre) {
+			@apply relative overflow-auto rounded-md border border-shade-2 mt-4 mb-4;
+		}
+
+		:global(pre code) {
+			@apply bg-shade-1 p-4 pr-12;
+			@apply dark:invert dark:bg-neutral-50;
+		}
+		
+		:global(pre > .copy-button) {
+			@apply absolute right-1 top-2 rounded-md bg-shade-1 opacity-0;
+		}
+
+		:global(pre:hover > .copy-button) {
+			@apply opacity-100;
 		}
 
 		:global(li > code),
