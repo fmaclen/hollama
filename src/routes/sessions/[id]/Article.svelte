@@ -149,14 +149,14 @@
 		}
 
 		:global(pre) {
-			@apply relative overflow-auto rounded-md border border-shade-2 mt-4 mb-4;
+			@apply relative mb-4 mt-4 overflow-auto rounded-md border border-shade-2;
 		}
 
 		:global(pre code) {
 			@apply bg-shade-1 p-4 pr-12;
-			@apply dark:invert dark:bg-neutral-50;
+			@apply dark:bg-neutral-50 dark:invert;
 		}
-		
+
 		:global(pre > .copy-button) {
 			@apply absolute right-2 top-2 rounded-md bg-shade-1 opacity-0;
 		}
