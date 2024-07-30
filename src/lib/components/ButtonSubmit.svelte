@@ -18,6 +18,6 @@
 
 <style lang="postcss">
 	.tag {
-		@apply ml-2.5 inline-flex items-center rounded-md border border-shade-0/50 px-2.5 py-0.5 text-xs font-semibold;
+		@apply ml-2.5 inline-flex items-center rounded-md border border-neutral-50/50 px-2.5 py-0.5 text-xs font-semibold;
 	}
 </style>

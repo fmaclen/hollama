@@ -158,7 +158,7 @@
 		}
 		
 		:global(pre > .copy-button) {
-			@apply absolute right-1 top-2 rounded-md bg-shade-1 opacity-0;
+			@apply absolute right-2 top-2 rounded-md bg-shade-1 opacity-0;
 		}
 
 		:global(pre:hover > .copy-button) {

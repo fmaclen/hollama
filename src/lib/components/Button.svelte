@@ -34,7 +34,7 @@
 		}
 
 		&--default {
-			@apply border-accent bg-accent text-shade-0;
+			@apply border-accent bg-accent text-neutral-50;
 		}
 
 		&--outline {
