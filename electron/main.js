@@ -27,7 +27,6 @@ function createWindow() {
 			preload: path.join(electron, 'preload.js')
 		}
 	});
-	console.log(path.join(electron, 'preload.js'));
 
 	// and load the index.html of the app.
 	//   mainWindow.loadFile('index.html')
