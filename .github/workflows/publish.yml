@@ -78,3 +78,38 @@ jobs:
           tags: latest, ${{ needs.release.outputs.new_release_version }}
           username: ${{ secrets.GH_REGISTRY_USERNAME }}
           password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+
+  electron:
+    needs: release
+    if: ${{ needs.release.outputs.new_release_published == 'true' }}
+
+    name: Build & release Electron (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-13, ubuntu-latest, windows-latest] # AFAIK macos-13 is the lastest one on x86
+    env:
+      ADAPTER: electron-node
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+
+      - name: Install Electron dependencies
+        run: npm ci
+
+      - name: 'Generate Electron build'
+        run: npm run build
+
+      - name: Install & build SvelteKit
+        uses: ./.github/actions/install-build-sveltekit
+        env:
+          APP_VERSION: ${{ needs.release.outputs.new_release_version }}
+
+      - name: Build & release Electron app
+        uses: coparse-inc/action-electron-builder@v1.0.0
+        with:
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          build_script_name: 'package:electron'
+          release: true
