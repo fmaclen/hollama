@@ -89,8 +89,6 @@ jobs:
     strategy:
       matrix:
         os: [macos-13, ubuntu-latest, windows-latest] # AFAIK macos-13 is the lastest one on x86
-    env:
-      ADAPTER: electron-node
 
     steps:
       - uses: actions/checkout@v4
@@ -99,13 +97,20 @@ jobs:
       - name: Install Electron dependencies
         run: npm ci
 
-      - name: 'Generate Electron build'
+      - name: Generate Electron build
         run: npm run build
 
-      - name: Install & build SvelteKit
-        uses: ./.github/actions/install-build-sveltekit
+      - name: Install SvelteKit dependencies
+        working-directory: ./sveltekit
+        run: npm ci
+        shell: bash
+
+      - name: Generate SvelteKit build
+        working-directory: ./sveltekit
+        run: npm run build
+        shell: bash
         env:
-          APP_VERSION: ${{ needs.release.outputs.new_release_version }}
+          ADAPTER: electron-node
 
       - name: Build & release Electron app
         uses: coparse-inc/action-electron-builder@v1.0.0
