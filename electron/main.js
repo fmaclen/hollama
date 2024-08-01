@@ -21,8 +21,10 @@ const startLocalServer = (done) => {
 function createWindow() {
 	// Create the browser window.
 	const mainWindow = new BrowserWindow({
-		width: 800,
-		height: 600,
+		width: 1280,
+		height: 800,
+		minWidth: 400,
+		minHeight: 640
 		webPreferences: {
 			preload: path.join(electron, 'preload.js')
 		}
