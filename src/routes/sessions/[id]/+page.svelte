@@ -307,6 +307,7 @@
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
+										placeholder="Write literally anything"
 										bind:this={promptTextarea}
 										bind:value={prompt}
 										on:keydown={handleKeyDown}
@@ -395,8 +396,7 @@
 	}
 
 	.prompt-editor__textarea {
-		@apply base-input;
-		@apply min-h-16;
+		@apply base-input min-h-16 resize-none scroll-p-4;
 		@apply md:min-h-20;
 	}
 </style>
