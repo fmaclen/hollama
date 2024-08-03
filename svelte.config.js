@@ -6,25 +6,30 @@ import adapterCloudflare from '@sveltejs/adapter-cloudflare';
 import adapterStatic from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
-let adapter;
-if (process.env.ADAPTER === 'electron-node') {
-	adapter = adapterStatic({
-		pages: 'build',
-		assets: 'build',
-		fallback: 'index.html'
-	});
-} else {
-	const adapterConfig = {
-		// See below for an explanation of these options
-		routes: {
-			include: ['/*'],
-			exclude: ['<all>']
-		}
-	};
+let adapter = adapterNode({
+	routes: {
+		include: ['/*'],
+		exclude: ['<all>']
+	}
+});
+// if (process.env.ADAPTER === 'electron-node') {
+// adapter = adapterStatic({
+// 	pages: 'build',
+// 	assets: 'build',
+// 	fallback: 'index.html'
+// });
+// } else {
+// 	const adapterConfig = {
+// 		// See below for an explanation of these options
+// 		routes: {
+// 			include: ['/*'],
+// 			exclude: ['<all>']
+// 		}
+// 	};
 
-	if (process.env.ADAPTER === 'docker-node') adapter = adapterNode(adapterConfig);
-	else adapter = adapterCloudflare(adapterConfig);
-}
+// 	if (process.env.ADAPTER === 'docker-node') adapter = adapterNode(adapterConfig);
+// 	else adapter = adapterCloudflare(adapterConfig);
+// }
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {

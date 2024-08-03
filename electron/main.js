@@ -1,55 +1,57 @@
-// Modules to control application life and create native browser window
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, utilityProcess } from 'electron';
 import path from 'path';
-import express from 'express';
-import cors from 'cors';
+import { fileURLToPath } from 'url';
 
-const { pathname: electron } = new URL('.', import.meta.url);
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const localServerApp = express();
-const PORT = 5173;
-const startLocalServer = (done) => {
-	localServerApp.use(express.json({ limit: '100mb' }));
-	localServerApp.use(cors());
-	localServerApp.use(express.static('./build/'));
-	localServerApp.listen(PORT, async () => {
-		console.log('Server started on port', PORT);
-		done();
-	});
-};
+const HOST = '127.0.0.1';
+const PORT = '5173';
 
 function createWindow() {
-	// Create the browser window.
 	const mainWindow = new BrowserWindow({
 		width: 1280,
 		height: 800,
 		minWidth: 400,
 		minHeight: 640
-		webPreferences: {
-			preload: path.join(electron, 'preload.js')
-		}
 	});
 
-	// and load the index.html of the app.
-	//   mainWindow.loadFile('index.html')
-	mainWindow.loadURL('http://localhost:' + PORT);
+	mainWindow.loadURL(`http://${HOST}:${PORT}`);
 
 	// Open the DevTools.
-	// mainWindow.webContents.openDevTools()
+	// mainWindow.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-	startLocalServer(createWindow);
+app
+	.whenReady()
+	.then(() => {
+		const file = path.join(__dirname, '../build', 'index.js');
+		console.log(file);
+		const utility = utilityProcess.fork(file, {
+			env: {
+				HOST,
+				PORT
+			}
+		});
 
-	app.on('activate', function () {
-		// On macOS it's common to re-create a window in the app when the
-		// dock icon is clicked and there are no other windows open.
-		if (BrowserWindow.getAllWindows().length === 0) createWindow();
-	});
-});
+		utility.on('message', (message) => {
+			console.log(message);
+			if (message === 'ready') {
+				createWindow();
+			}
+		});
+
+		app.on('activate', function () {
+			// On macOS it's common to re-create a window in the app when the
+			// dock icon is clicked and there are no other windows open.
+			if (BrowserWindow.getAllWindows().length === 0) createWindow();
+		});
+	})
+	.catch(console.error);
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -57,6 +59,3 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
 	if (process.platform !== 'darwin') app.quit();
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

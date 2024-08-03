@@ -94,21 +94,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
 
-      - name: Install Electron dependencies
+      - name: Install Electron & SvelteKit's dependencies
         run: npm ci
 
-      - name: Generate Electron build
+      - name: Generate build
         run: npm run build
-
-      - name: Install SvelteKit dependencies
-        working-directory: ./sveltekit
-        run: npm ci
-        shell: bash
-
-      - name: Generate SvelteKit build
-        working-directory: ./sveltekit
-        run: npm run build
-        shell: bash
         env:
           ADAPTER: electron-node
 
