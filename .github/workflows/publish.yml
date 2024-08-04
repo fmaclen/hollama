@@ -79,8 +79,6 @@ jobs:
           github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
           build_script_name: 'electron:build'
           release: true
-        env:
-          ADAPTER: electron-node
 
   docker:
     needs: release
