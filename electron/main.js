@@ -1,4 +1,4 @@
-import { join } from "path";
+import { join } from 'path';
 import { app, BrowserWindow, utilityProcess } from 'electron';
 
 const isAppPackaged = app.getVersion() !== '0.0.0-dev';
@@ -16,23 +16,25 @@ function createWindow() {
 	mainWindow.loadURL(`http://${hollamaHost}:${hollamaPort}`);
 }
 
-app.whenReady().then(() => {
-	if (isAppPackaged) {
-		const utility = utilityProcess.fork(join(app.getAppPath(), "build", "index.js"), {
-			env: { HOST: hollamaHost, PORT: hollamaPort }
+app
+	.whenReady()
+	.then(() => {
+		if (isAppPackaged) {
+			const utility = utilityProcess.fork(join(app.getAppPath(), 'build', 'index.js'), {
+				env: { HOST: hollamaHost, PORT: hollamaPort }
+			});
+
+			utility.on('message', (message) => message === 'ready' && createWindow());
+		} else {
+			console.warn('Running Electron in development mode');
+			console.log('Run `npm run dev` to start the Hollama server separately');
+		}
+
+		app.on('activate', function () {
+			if (BrowserWindow.getAllWindows().length === 0) createWindow();
 		});
-
-		utility.on('message', (message) => message === 'ready' && createWindow());
-
-	} else {
-		console.warn('Running Electron in development mode');
-		console.log('Run `npm run dev` to start the Hollama server separately')
-	}
-
-	app.on('activate', function () {
-		if (BrowserWindow.getAllWindows().length === 0) createWindow();
-	});
-}).catch(console.error);
+	})
+	.catch(console.error);
 
 // Quit when all windows are closed, except on macOS.
 app.on('window-all-closed', function () {
