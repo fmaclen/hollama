@@ -62,7 +62,7 @@
 	$: if (data.id) handleSessionChange();
 
 	async function handleSessionChange() {
-		if (!$settingsStore) throw new Error('Settings are not available');
+		if (!$settingsStore) return;
 		try {
 			$settingsStore.ollamaModels = (await ollamaTags()).models;
 		} catch {

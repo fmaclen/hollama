@@ -25,7 +25,7 @@
 	}
 
 	.field--text-editor {
-		@apply h-full overflow-y-auto p-0 gap-y-0;
+		@apply h-full gap-y-0 overflow-y-auto p-0;
 	}
 
 	.field__label {
@@ -33,6 +33,6 @@
 	}
 
 	.field__label--text-editor {
-		@apply p-3 border-b border-shade-2;
+		@apply border-b border-shade-2 p-3;
 	}
 </style>
