@@ -1,12 +1,11 @@
 <script lang="ts">
 	export let name: string;
-	export let hasLabel: boolean | undefined = true;
 	export let isTextEditor: boolean | undefined = false;
 </script>
 
 <div class="field" class:field--text-editor={isTextEditor}>
-	{#if hasLabel}
-		<label class="field__label" for={name}>
+	{#if $$slots.label}
+		<label for={name} class="field__label" class:field__label--text-editor={isTextEditor}>
 			<slot name="label" />
 		</label>
 	{/if}
@@ -21,10 +20,14 @@
 	}
 
 	.field--text-editor {
-		@apply h-full overflow-y-auto p-0;
+		@apply h-full overflow-y-auto p-0 gap-y-0;
 	}
 
 	.field__label {
 		@apply flex items-center gap-x-2 text-xs font-medium leading-none;
+	}
+
+	.field__label--text-editor {
+		@apply p-3 border-b border-shade-2;
 	}
 </style>

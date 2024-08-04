@@ -295,7 +295,7 @@
 							{#if isPromptFullscreen}
 								<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
 							{:else}
-								<Field name="prompt" hasLabel={false}>
+								<Field name="prompt">
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"

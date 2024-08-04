@@ -87,7 +87,7 @@
 	});
 </script>
 
-<Field name={label.toLocaleLowerCase()} hasLabel={false} isTextEditor={true}>
+<Field name={label.toLocaleLowerCase()} isTextEditor={true}>
 	<svelte:fragment slot="label">{label}</svelte:fragment>
 	<div class="text-editor" bind:this={container}></div>
 </Field>
