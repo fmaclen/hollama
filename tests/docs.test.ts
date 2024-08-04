@@ -5,7 +5,6 @@ import {
 	mockTagsResponse,
 	seedKnowledgeAndReload
 } from './utils';
-import type { Session } from '../src/lib/sessions';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
