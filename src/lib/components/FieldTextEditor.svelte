@@ -87,7 +87,7 @@
 	});
 </script>
 
-<Field name={label.toLocaleLowerCase()} hasLabel={false} class="h-full overflow-y-auto">
+<Field name={label.toLocaleLowerCase()} hasLabel={false} isTextEditor={true}>
 	<svelte:fragment slot="label">{label}</svelte:fragment>
 	<div class="text-editor" bind:this={container}></div>
 </Field>
@@ -95,7 +95,7 @@
 <style lang="postcss">
 	.text-editor {
 		@apply base-input;
-		@apply h-full max-h-full min-h-[88px] overflow-y-auto p-0 -m-3;
+		@apply h-full max-h-full min-h-[88px] overflow-y-auto p-0;
 
 		:global(.cm-editor) {
 			@apply h-full w-full text-sm;
