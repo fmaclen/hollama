@@ -6,7 +6,6 @@ const hollamaHost = isAppPackaged ? '0.0.0.0' : '127.0.0.1';
 const hollamaPort = isAppPackaged ? '4173' : '5173';
 
 function createWindow() {
-	console.log("creating window")
 	const mainWindow = new BrowserWindow({
 		width: 1280,
 		height: 800,

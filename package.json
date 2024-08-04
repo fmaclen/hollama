@@ -89,7 +89,10 @@
 			}
 		},
 		"linux": {
-			"target": ["deb", "tar.gz"],
+			"target": [
+				"deb",
+				"tar.gz"
+			],
 			"icon": "electron/resources/icons/png/1024x1024.png"
 		}
 	}
