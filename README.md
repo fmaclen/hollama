@@ -19,7 +19,7 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 - ⚡️ [Live demo](https://hollama.fernando.is)
   - _No sign-up required_
 - 🐳 [Self-hosting](#self-host-docker) with Docker
-- 🖥️ Download for [macOS, Windows & Linux](https://github.com/fmaclen/hollama/releases) _(Coming soon)_ 
+- 🖥️ Download for [macOS, Windows & Linux](https://github.com/fmaclen/hollama/releases) _(Coming soon)_
 - 🐞 [Contribute](CONTRIBUTING.md)
 
 > ![session](tests/docs.test.ts-snapshots/session.png)
@@ -47,4 +47,3 @@ If you are using the publicly hosted version or your Docker server is on a separ
 ```bash
 OLLAMA_ORIGINS=https://hollama.fernando.is ollama serve
 ```
-

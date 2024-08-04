@@ -11,6 +11,7 @@ Here's ways in which you can contribute:
 ## Developing
 
 Hollama is a static site built with:
+
 - TypeScript
 - Svelte & SvelteKit
 - Vite
