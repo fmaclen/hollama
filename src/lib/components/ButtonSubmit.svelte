@@ -9,9 +9,9 @@
 <Button class="w-full text-left" on:click={handleSubmit} {disabled}>
 	<slot />
 
-		<span class="tag">
-			{hasMetaKey ? (navigator.userAgent.indexOf('Mac') !== -1 ? '⌘' : 'Ctrl') : ''} ↵
-		</span>
+	<span class="tag">
+		{hasMetaKey ? (navigator.userAgent.indexOf('Mac') !== -1 ? '⌘' : 'Ctrl') : ''} ↵
+	</span>
 </Button>
 
 <style lang="postcss">

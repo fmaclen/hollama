@@ -5,7 +5,6 @@
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
-	import Field from '$lib/components/Field.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
 

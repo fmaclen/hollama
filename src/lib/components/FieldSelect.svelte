@@ -11,7 +11,7 @@
 <Field {name}>
 	<svelte:fragment slot="label">{label}</svelte:fragment>
 	<select id={name} class="select" {disabled} bind:value>
-    <option></option>
+		<option></option>
 		{#each options as { value, option }}
 			<option {value}>{option}</option>
 		{/each}

@@ -1,5 +1,4 @@
 <script lang="ts">
-	let className: string | undefined = undefined;
 	export let name: string;
 	export let hasLabel: boolean | undefined = true;
 	export let isTextEditor: boolean | undefined = false;
