@@ -38,6 +38,6 @@
 	}
 
 	.field-help {
-		@apply flex flex-col gap-y-3 text-sm text-muted;
+		@apply flex flex-col gap-y-3 text-muted;
 	}
 </style>

@@ -8,7 +8,7 @@
 	export let value: string | undefined = undefined;
 </script>
 
-<Field {name}>
+<Field {name} {disabled}>
 	<svelte:fragment slot="label">{label}</svelte:fragment>
 	<select id={name} class="select" {disabled} bind:value>
 		<option></option>
