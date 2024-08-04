@@ -11,8 +11,8 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"electron": "ADAPTER=electron-node vite build && electron .",
-		"electron:build": "electron-builder"
+		"electron": "electron .",
+		"electron:build": "ADAPTER=electron-node vite build && electron-builder"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.43.0",

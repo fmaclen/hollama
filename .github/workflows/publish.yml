@@ -55,6 +55,33 @@ jobs:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           command: pages publish .svelte-kit/cloudflare --project-name hollama
 
+  electron:
+    needs: release
+    if: ${{ needs.release.outputs.new_release_published == 'true' }}
+
+    name: Build & release Electron (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-13, ubuntu-latest, windows-latest] # AFAIK macos-13 is the lastest one on x86
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+
+      - name: Install Electron & SvelteKit's dependencies
+        run: npm ci
+
+      - name: Build & release Electron app
+        uses: coparse-inc/action-electron-builder@v1.0.0
+        with:
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          build_script_name: 'electron:build'
+          release: true
+        env:
+          ADAPTER: electron-node
+
   docker:
     needs: release
     if: ${{ needs.release.outputs.new_release_published == 'true' }}
@@ -78,33 +105,3 @@ jobs:
           tags: latest, ${{ needs.release.outputs.new_release_version }}
           username: ${{ secrets.GH_REGISTRY_USERNAME }}
           password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-
-  electron:
-    needs: release
-    if: ${{ needs.release.outputs.new_release_published == 'true' }}
-
-    name: Build & release Electron (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [macos-13, ubuntu-latest, windows-latest] # AFAIK macos-13 is the lastest one on x86
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-
-      - name: Install Electron & SvelteKit's dependencies
-        run: npm ci
-
-      - name: Generate build
-        run: npm run build
-        env:
-          ADAPTER: electron-node
-
-      - name: Build & release Electron app
-        uses: coparse-inc/action-electron-builder@v1.0.0
-        with:
-          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-          build_script_name: 'package:electron'
-          release: true
