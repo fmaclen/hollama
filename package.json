@@ -3,6 +3,7 @@
 	"version": "0.0.0-dev",
 	"private": true,
 	"homepage": "https://hollama.fernando.is",
+	"description": "A minimal UI for talking to Ollama servers",
 	"scripts": {
 		"dev": "vite dev --host",
 		"build": "vite build",
@@ -13,7 +14,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"electron": "electron .",
-		"electron:build": "cross-env ADAPTER=electron-node vite build && electron-builder"
+		"electron:build": "cross-env ADAPTER=electron-node IS_APP_PACKAGED=true vite build && electron-builder"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.43.0",
@@ -81,7 +82,11 @@
 		},
 		"win": {
 			"target": "nsis",
-			"icon": "electron/resources/icons/win/icon.ico"
+			"icon": "electron/resources/icons/win/icon.ico",
+			"nsis": {
+				"oneClick": false,
+				"allowToChangeInstallationDirectory": true
+			}
 		},
 		"linux": {
 			"target": ["deb", "tar.gz"],
