@@ -60,6 +60,7 @@
 		"@sveltejs/adapter-cloudflare": "^4.2.1"
 	},
 	"type": "module",
+	"email": "hollama@fernando.is",
 	"main": "./electron/main.js",
 	"build": {
 		"appId": "com.hollama.app",
