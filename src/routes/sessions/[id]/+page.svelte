@@ -296,15 +296,6 @@
 								<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
 							{:else}
 								<Field name="prompt" hasLabel={false}>
-									<svelte:fragment slot="label">
-										Prompt
-
-										{#if !$settingsStore?.ollamaModels.length}
-											<a class="ml-auto" href="/settings" data-testid="disconnected-server">
-												<Badge variant="warning">disconnected</Badge>
-											</a>
-										{/if}
-									</svelte:fragment>
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
