@@ -9,11 +9,9 @@
 <Button class="w-full text-left" on:click={handleSubmit} {disabled}>
 	<slot />
 
-	{#if !disabled}
 		<span class="tag">
 			{hasMetaKey ? (navigator.userAgent.indexOf('Mac') !== -1 ? '⌘' : 'Ctrl') : ''} ↵
 		</span>
-	{/if}
 </Button>
 
 <style lang="postcss">

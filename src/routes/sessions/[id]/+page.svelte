@@ -283,7 +283,7 @@
 										aria-label="New knowledge"
 										variant="outline"
 										href={generateNewUrl(Sitemap.KNOWLEDGE)}
-										class="h-full"
+										class="h-full text-muted"
 									>
 										<Brain class="h-4 w-4" />
 									</Button>
