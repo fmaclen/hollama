@@ -82,39 +82,41 @@
 
 				<svelte:fragment slot="help">
 					{#if ollamaURL && serverStatus === 'disconnected'}
-						<p class="p">
-							Needs to allow connections from
-							<code class="code">{ollamaURL.origin}</code>
-							in
-							<code class="code">OLLAMA_ORIGINS</code>,
-							<Button
-								variant="link"
-								href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
-								target="_blank"
-							>
-								see docs
-							</Button>. Also check no browser extensions are blocking the connection.
-						</p>
-						{#if ollamaURL.protocol === 'https:'}
+						<div class="field-help">
 							<p class="p">
-								If trying to connect to an Ollama server that is not available on
-								<code class="code">localhost</code> or <code class="code">127.0.0.1</code> you will
-								need to
-								<a
-									href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
+								Needs to allow connections from
+								<Badge capitalize={false}>{ollamaURL.origin}</Badge>
+								in
+								<Badge capitalize={false}>OLLAMA_ORIGINS</Badge>,
+								<Button
+									variant="link"
+									href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
 									target="_blank"
 								>
-									create a tunnel
-								</a>
-								to your server or
-								<a
-									href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
-									target="_blank"
-								>
-									allow mixed content
-								</a> in this browser's site settings.
+									see docs
+								</Button>. Also check no browser extensions are blocking the connection.
 							</p>
-						{/if}
+							{#if ollamaURL.protocol === 'https:'}
+								<p class="p">
+									If trying to connect to an Ollama server that is not available on
+									<code class="code">localhost</code> or <code class="code">127.0.0.1</code> you
+									will need to
+									<a
+										href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
+										target="_blank"
+									>
+										create a tunnel
+									</a>
+									to your server or
+									<a
+										href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
+										target="_blank"
+									>
+										allow mixed content
+									</a> in this browser's site settings.
+								</p>
+							{/if}
+						</div>
 					{/if}
 				</svelte:fragment>
 			</FieldInput>
@@ -123,15 +125,15 @@
 
 		<div class="about">
 			<p class="p"><strong>Danger zone</strong></p>
-			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSessions)}
-				>Delete all sessions</Button
-			>
-			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaKnowledge)}
-				>Delete all knowledge</Button
-			>
-			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSettings)}
-				>Delete server settings</Button
-			>
+			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSessions)}>
+				Delete all session
+			</Button>
+			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaKnowledge)}>
+				Delete all knowledge
+			</Button>
+			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSettings)}>
+				Delete server settings
+			</Button>
 		</div>
 
 		<div class="about">
@@ -192,5 +194,9 @@
 		strong {
 			@apply font-medium leading-none;
 		}
+	}
+
+	.field-help {
+		@apply my-2 flex flex-col gap-y-3 px-0.5 text-muted;
 	}
 </style>

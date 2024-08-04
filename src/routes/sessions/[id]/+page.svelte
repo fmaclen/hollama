@@ -357,11 +357,11 @@
 	}
 
 	.prompt-editor__project {
-		@apply grid grid-cols-[1fr,1fr] items-end gap-x-4;
+		@apply grid grid-cols-[1fr,1fr] items-end gap-x-3;
 	}
 
 	.prompt-editor__knowledge {
-		@apply grid grid-cols-[auto,max-content] items-end gap-x-1;
+		@apply grid grid-cols-[auto,max-content] items-end gap-x-2;
 		@apply lg:gap-x-2;
 	}
 
@@ -380,7 +380,7 @@
 	}
 
 	.prompt-editor__textarea {
-		@apply base-input min-h-16 resize-none scroll-p-4;
+		@apply base-input min-h-16 resize-none scroll-p-2 px-3 py-2;
 		@apply md:min-h-20;
 	}
 

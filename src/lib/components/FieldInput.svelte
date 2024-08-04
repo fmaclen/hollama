@@ -21,11 +21,9 @@
 
 	<input class="field-input" id={name} {disabled} {placeholder} bind:value on:keyup />
 
-	{#if $$slots.help}
-		<div class="field-help">
-			<slot name="help" />
-		</div>
-	{/if}
+	<svelte:fragment slot="help">
+		<slot name="help" />
+	</svelte:fragment>
 </Field>
 
 <style lang="postcss">
@@ -34,10 +32,6 @@
 	}
 
 	.field-label-status {
-		@apply ml-auto;
-	}
-
-	.field-help {
-		@apply flex flex-col gap-y-3 text-muted;
+		@apply -mt-2 ml-auto max-h-1;
 	}
 </style>

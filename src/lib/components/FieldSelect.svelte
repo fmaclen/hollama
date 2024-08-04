@@ -20,6 +20,6 @@
 
 <style lang="postcss">
 	.select {
-		@apply base-input -mx-1;
+		@apply base-input -ml-1;
 	}
 </style>
