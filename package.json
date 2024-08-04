@@ -82,11 +82,11 @@
 		},
 		"win": {
 			"target": "nsis",
-			"icon": "electron/resources/icons/win/icon.ico",
-			"nsis": {
-				"oneClick": false,
-				"allowToChangeInstallationDirectory": true
-			}
+			"icon": "electron/resources/icons/win/icon.ico"
+		},
+		"nsis": {
+			"oneClick": false,
+			"allowToChangeInstallationDirectory": true
 		},
 		"linux": {
 			"target": [
