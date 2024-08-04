@@ -29,7 +29,7 @@
 
 		&--default,
 		&--outline {
-			@apply h-10 border px-3 py-2 text-sm font-medium;
+			@apply border px-3 py-2 text-sm font-medium;
 			@apply disabled:pointer-events-none disabled:border-shade-2 disabled:bg-shade-2 disabled:text-muted;
 		}
 
