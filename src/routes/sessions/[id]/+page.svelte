@@ -2,7 +2,8 @@
 	import { Ollama } from 'ollama/browser';
 	import { afterUpdate, tick } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { Brain, Link, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { toast } from 'svelte-sonner';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
@@ -32,7 +33,6 @@
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
-	import Badge from '$lib/components/Badge.svelte';
 	import Head from '$lib/components/Head.svelte';
 
 	export let data: PageData;
@@ -51,31 +51,25 @@
 	let userScrolledUp = false;
 
 	const shouldConfirmDeletion = writable(false);
-	const currentSessionId = writable(data.id);
 
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
 	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
-	$: session && scrollToBottom();
-	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
+	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: if (messageWindow) messageWindow.addEventListener('scroll', handleScroll);
+	$: if (data.id) handleSessionChange();
 
-	$: {
-		if (session?.id !== $currentSessionId) {
-			getModelsList();
-			$currentSessionId = session.id;
-		}
-	}
-
-	async function getModelsList() {
-		if (!$settingsStore) return;
+	async function handleSessionChange() {
+		if (!$settingsStore) throw new Error('Settings are not available');
 		try {
 			$settingsStore.ollamaModels = (await ollamaTags()).models;
 		} catch {
 			$settingsStore.ollamaModels = [];
+			toast.warning("Can't connect to Ollama server");
 		}
+		scrollToBottom();
 	}
 
 	function handleScroll() {
