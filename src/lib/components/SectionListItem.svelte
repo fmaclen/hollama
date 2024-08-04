@@ -46,7 +46,7 @@
 <style lang="postcss">
 	.section-list-item {
 		@apply flex flex-row items-center justify-between border-b pr-3;
-		@apply last:border-b-0;
+		@apply first:border-t;
 
 		&--confirm-deletion {
 			@apply confirm-deletion;

@@ -29,7 +29,7 @@
 
 		&--default,
 		&--outline {
-			@apply h-10 border px-3 py-2 text-sm font-medium;
+			@apply border px-3 py-2 text-sm font-medium;
 			@apply disabled:pointer-events-none disabled:border-shade-2 disabled:bg-shade-2 disabled:text-muted;
 		}
 
@@ -38,7 +38,7 @@
 		}
 
 		&--outline {
-			@apply border-shade-4 hover:border-shade-6;
+			@apply border-shade-4 hover:border-shade-6 hover:text-active;
 		}
 
 		&--link {
@@ -47,9 +47,9 @@
 		}
 
 		&--icon {
-			@apply px-2 py-2 text-active opacity-40;
-			@apply hover:opacity-60;
-			@apply active:opacity-100;
+			@apply px-2 py-2 text-muted;
+			@apply hover:text-base;
+			@apply active:text-active;
 		}
 	}
 </style>

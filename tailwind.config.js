@@ -51,7 +51,7 @@ const config = {
 		function ({ addComponents }) {
 			addComponents({
 				'.base-input': {
-					'@apply flex h-10 w-full rounded-md border bg-shade-0 px-3 py-2 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50':
+					'@apply flex w-full outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-transparent px-3 pb-3 placeholder:text-shade-6':
 						{}
 				},
 				'.base-section': {

@@ -3,6 +3,7 @@
 	import { afterUpdate, tick } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { toast } from 'svelte-sonner';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
@@ -32,7 +33,6 @@
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
-	import Badge from '$lib/components/Badge.svelte';
 	import Head from '$lib/components/Head.svelte';
 
 	export let data: PageData;
@@ -51,31 +51,25 @@
 	let userScrolledUp = false;
 
 	const shouldConfirmDeletion = writable(false);
-	const currentSessionId = writable(data.id);
 
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
 	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
-	$: session && scrollToBottom();
-	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
+	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: if (messageWindow) messageWindow.addEventListener('scroll', handleScroll);
+	$: if (data.id) handleSessionChange();
 
-	$: {
-		if (session?.id !== $currentSessionId) {
-			getModelsList();
-			$currentSessionId = session.id;
-		}
-	}
-
-	async function getModelsList() {
+	async function handleSessionChange() {
 		if (!$settingsStore) return;
 		try {
 			$settingsStore.ollamaModels = (await ollamaTags()).models;
 		} catch {
 			$settingsStore.ollamaModels = [];
+			toast.warning("Can't connect to Ollama server");
 		}
+		scrollToBottom();
 	}
 
 	function handleScroll() {
@@ -268,7 +262,7 @@
 				<div class="prompt-editor__form">
 					<Fieldset isFullscreen={isPromptFullscreen}>
 						{#if isNewSession}
-							<div class="prompt-editor__tools">
+							<div class="prompt-editor__project">
 								<FieldSelectModel />
 								<div class="prompt-editor__knowledge">
 									<FieldSelect
@@ -283,6 +277,7 @@
 										aria-label="New knowledge"
 										variant="outline"
 										href={generateNewUrl(Sitemap.KNOWLEDGE)}
+										class="h-full text-muted"
 									>
 										<Brain class="h-4 w-4" />
 									</Button>
@@ -295,18 +290,10 @@
 								<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
 							{:else}
 								<Field name="prompt">
-									<svelte:fragment slot="label">
-										Prompt
-
-										{#if !$settingsStore?.ollamaModels.length}
-											<a class="ml-auto" href="/settings" data-testid="disconnected-server">
-												<Badge variant="warning">disconnected</Badge>
-											</a>
-										{/if}
-									</svelte:fragment>
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
+										placeholder="Write literally anything"
 										bind:this={promptTextarea}
 										bind:value={prompt}
 										on:keydown={handleKeyDown}
@@ -315,7 +302,7 @@
 							{/if}
 						{/key}
 
-						<div class="flex w-full">
+						<nav class="prompt-editor__toolbar">
 							<ButtonSubmit
 								{handleSubmit}
 								hasMetaKey={isPromptFullscreen}
@@ -327,20 +314,18 @@
 							</ButtonSubmit>
 
 							{#if isLastMessageFromUser}
-								<div class="ml-2">
-									<Button
-										title="Stop response"
-										variant="outline"
-										on:click={() => {
-											abortController.abort();
-											resetPrompt();
-										}}
-									>
-										<StopCircle class="h-4 w-4" />
-									</Button>
-								</div>
+								<Button
+									title="Stop response"
+									variant="outline"
+									on:click={() => {
+										abortController.abort();
+										resetPrompt();
+									}}
+								>
+									<StopCircle class="h-4 w-4" />
+								</Button>
 							{/if}
-						</div>
+						</nav>
 					</Fieldset>
 				</div>
 			</div>
@@ -371,12 +356,12 @@
 		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
 	}
 
-	.prompt-editor__tools {
-		@apply grid grid-cols-[1fr,1fr] items-end gap-x-4;
+	.prompt-editor__project {
+		@apply grid grid-cols-[1fr,1fr] items-end gap-x-3;
 	}
 
 	.prompt-editor__knowledge {
-		@apply grid grid-cols-[auto,max-content] items-end gap-x-1;
+		@apply grid grid-cols-[auto,max-content] items-end gap-x-2;
 		@apply lg:gap-x-2;
 	}
 
@@ -395,8 +380,11 @@
 	}
 
 	.prompt-editor__textarea {
-		@apply base-input;
-		@apply min-h-16;
+		@apply base-input min-h-16 resize-none scroll-p-2 px-3 py-2;
 		@apply md:min-h-20;
+	}
+
+	.prompt-editor__toolbar {
+		@apply flex items-center gap-x-2;
 	}
 </style>

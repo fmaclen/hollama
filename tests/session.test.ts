@@ -364,7 +364,7 @@ test.describe('Session', () => {
 		await page.locator('pre').hover();
 		await page.locator('.session__history').getByTitle('Copy').last().click();
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual(
-			"def calculate_odds(emma_age, emma_height, emma_weight, emma_experience, jessica_age, jessica_height, jessica_weight, jessica_experience):\n    emma_stats = {'age': emma_age, 'height': emma_height, 'weight': emma_weight, 'experience': emma_experience}\n    jessica_stats = {'age': jessica_age, 'height': jessica_height, 'weight': jessica_weight, 'experience': jessica_experience}\n    \n    # Calculate the differences between their stats\n    age_difference = abs(emma_stats['age'] - jessica_stats['age'])\n    height_difference = abs(emma_stats['height'] - jessica_stats['height'])\n    weight_difference = abs(emma_stats['weight'] - jessica_stats['weight'])\n    \n    # Return the differences as a tuple\n    return (age_difference, height_difference, weight_difference)\n"
+			"def calculate_odds(emma_age, emma_height, emma_weight, emma_experience, jessica_age, jessica_height, jessica_weight, jessica_experience):\n    emma_stats = {'age': emma_age,\n                 'height': emma_height,\n                 'weight': emma_weight,\n                 'experience': emma_experience}\n    jessica_stats = {'age': jessica_age,\n                     'height': jessica_height,\n                     'weight': jessica_weight,\n                     'experience': jessica_experience}\n\n    # Calculate the differences between their stats\n    age_difference = abs(emma_stats['age'] - jessica_stats['age'])\n    height_difference = abs(emma_stats['height'] - jessica_stats['height'])\n    weight_difference = abs(emma_stats['weight'] - jessica_stats['weight'])\n\n    # Return the differences as a tuple\n    return (age_difference, height_difference, weight_difference)\n"
 		);
 	});
 
@@ -617,14 +617,19 @@ test.describe('Session', () => {
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(page.getByText('Run')).toBeEnabled();
+		await expect(
+			page.locator('ol[data-sonner-toaster] li', { hasText: "Can't connect to Ollama server" })
+		).not.toBeVisible();
 
 		// Mock a net::ERR_CONNECTION_REFUSED
 		await page.route('**/tags', async (route) => {
 			await route.abort('failed');
 		});
 		await page.getByTestId('new-session').click();
-		await expect(page.getByTestId('disconnected-server')).toBeVisible();
 		await expect(page.getByText('Run')).toBeDisabled();
+		await expect(
+			page.locator('ol[data-sonner-toaster] li', { hasText: "Can't connect to Ollama server" })
+		).toBeVisible();
 
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(page.getByText('Run')).toBeDisabled();
