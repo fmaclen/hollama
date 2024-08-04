@@ -309,15 +309,6 @@
 						{/key}
 
 						<nav class="prompt-editor__toolbar">
-							<nav class="prompt-editor__tools">
-								<Button
-									variant="icon"
-									title="Extract text from URLs"
-									on:click={() => console.log('TODO')}
-								>
-									<Link class="h-4 w-4" />
-								</Button>
-							</nav>
 							<ButtonSubmit
 								{handleSubmit}
 								hasMetaKey={isPromptFullscreen}
@@ -329,18 +320,16 @@
 							</ButtonSubmit>
 
 							{#if isLastMessageFromUser}
-								<div class="ml-2">
-									<Button
-										title="Stop response"
-										variant="outline"
-										on:click={() => {
-											abortController.abort();
-											resetPrompt();
-										}}
-									>
-										<StopCircle class="h-4 w-4" />
-									</Button>
-								</div>
+								<Button
+									title="Stop response"
+									variant="outline"
+									on:click={() => {
+										abortController.abort();
+										resetPrompt();
+									}}
+								>
+									<StopCircle class="h-4 w-4" />
+								</Button>
 							{/if}
 						</nav>
 					</Fieldset>
@@ -402,10 +391,6 @@
 	}
 
 	.prompt-editor__toolbar {
-		@apply grid grid-cols-[max-content,max-content] justify-between gap-x-2;
-	}
-
-	.prompt-editor__tools {
-		@apply flex items-center gap-0 rounded border px-1;
+		@apply flex items-center gap-x-2;
 	}
 </style>
