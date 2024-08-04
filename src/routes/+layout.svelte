@@ -2,6 +2,7 @@
 	import { env } from '$env/dynamic/public';
 	import { page } from '$app/stores';
 	import { Brain, MessageSquareText, Settings2, Sun, Moon } from 'lucide-svelte';
+	import { Toaster } from 'svelte-sonner';
 
 	import '../app.pcss';
 	import { settingsStore } from '$lib/store';
@@ -41,6 +42,8 @@
 		></script>
 	{/if}
 </svelte:head>
+
+<Toaster richColors={true} />
 
 <div class="layout">
 	<aside class="layout__aside">
@@ -105,7 +108,8 @@
 
 	.layout__button,
 	.layout__a {
-		@apply flex flex-col items-center gap-x-2 gap-y-0.5 py-3 text-sm font-medium text-muted transition-colors duration-150;
+		@apply flex flex-col items-center gap-x-2 gap-y-0.5 py-3 text-xs font-medium text-muted transition-colors duration-150;
+		@apply sm:text-sm;
 		@apply lg:flex-row lg:items-center lg:gap-4 lg:px-2;
 		@apply hover:text-active;
 	}

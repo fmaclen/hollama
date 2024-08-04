@@ -15,7 +15,7 @@ test('creates and edits knowledge', async ({ page }) => {
 	const timestamp = page.getByTestId('knowledge-metadata');
 	const fieldName = page.getByLabel('Name');
 	const fieldContent = textEditorLocator(page, 'Content');
-	const buttonSave = page.getByText('Save');
+	const buttonSave = page.locator('button', { hasText: 'Save' });
 	const noKnowledgeMessage = page.getByText('No knowledge');
 	const mockedKnowledgeInSidebar = page.locator('.section-list', {
 		hasText: MOCK_KNOWLEDGE[0].name
@@ -55,11 +55,17 @@ test('creates and edits knowledge', async ({ page }) => {
 	await expect(buttonSave).not.toBeDisabled();
 	await expect(noKnowledgeMessage).toBeVisible();
 	await expect(mockedKnowledgeInSidebar).not.toBeVisible();
+	await expect(
+		page.locator('ol[data-sonner-toaster] li', { hasText: 'Knowledge saved' })
+	).not.toBeVisible();
 
 	await fieldContent.focus();
 	await submitWithKeyboardShortcut(page);
 	await expect(mockedKnowledgeInSidebar).toBeVisible();
 	await expect(noKnowledgeMessage).not.toBeVisible();
+	await expect(
+		page.locator('ol[data-sonner-toaster] li', { hasText: 'Knowledge saved' })
+	).toBeVisible();
 
 	// Edit knowledge
 	await fieldName.fill("Wally's chabot");
