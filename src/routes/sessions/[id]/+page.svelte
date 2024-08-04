@@ -2,7 +2,7 @@
 	import { Ollama } from 'ollama/browser';
 	import { afterUpdate, tick } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { Brain, Link, StopCircle, UnfoldVertical } from 'lucide-svelte';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
@@ -268,7 +268,7 @@
 				<div class="prompt-editor__form">
 					<Fieldset isFullscreen={isPromptFullscreen}>
 						{#if isNewSession}
-							<div class="prompt-editor__tools">
+							<div class="prompt-editor__project">
 								<FieldSelectModel />
 								<div class="prompt-editor__knowledge">
 									<FieldSelect
@@ -294,7 +294,7 @@
 							{#if isPromptFullscreen}
 								<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
 							{:else}
-								<Field name="prompt">
+								<Field name="prompt" hasLabel={false}>
 									<svelte:fragment slot="label">
 										Prompt
 
@@ -316,7 +316,16 @@
 							{/if}
 						{/key}
 
-						<div class="flex w-full">
+						<nav class="prompt-editor__toolbar">
+							<nav class="prompt-editor__tools">
+								<Button
+									variant="icon"
+									title="Extract text from URLs"
+									on:click={() => console.log('TODO')}
+								>
+									<Link class="h-4 w-4" />
+								</Button>
+							</nav>
 							<ButtonSubmit
 								{handleSubmit}
 								hasMetaKey={isPromptFullscreen}
@@ -341,7 +350,7 @@
 									</Button>
 								</div>
 							{/if}
-						</div>
+						</nav>
 					</Fieldset>
 				</div>
 			</div>
@@ -372,7 +381,7 @@
 		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
 	}
 
-	.prompt-editor__tools {
+	.prompt-editor__project {
 		@apply grid grid-cols-[1fr,1fr] items-end gap-x-4;
 	}
 
@@ -398,5 +407,13 @@
 	.prompt-editor__textarea {
 		@apply base-input min-h-16 resize-none scroll-p-4;
 		@apply md:min-h-20;
+	}
+
+	.prompt-editor__toolbar {
+		@apply grid grid-cols-[max-content,max-content] justify-between gap-x-2;
+	}
+
+	.prompt-editor__tools {
+		@apply flex items-center gap-0 rounded border px-1;
 	}
 </style>

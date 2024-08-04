@@ -121,20 +121,18 @@
 			<FieldSelectModel />
 		</Fieldset>
 
-		<Fieldset>
-			<Field name="danger-zone">
-				<svelte:fragment slot="label">Danger zone</svelte:fragment>
-				<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSessions)}
-					>Delete all sessions</Button
-				>
-				<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaKnowledge)}
-					>Delete all knowledge</Button
-				>
-				<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSettings)}
-					>Delete server settings</Button
-				>
-			</Field>
-		</Fieldset>
+		<div class="about">
+			<p class="p"><strong>Danger zone</strong></p>
+			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSessions)}
+				>Delete all sessions</Button
+			>
+			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaKnowledge)}
+				>Delete all knowledge</Button
+			>
+			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSettings)}
+				>Delete server settings</Button
+			>
+		</div>
 
 		<div class="about">
 			<p class="p"><strong>About</strong></p>
