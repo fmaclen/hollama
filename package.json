@@ -2,6 +2,7 @@
 	"name": "hollama",
 	"version": "0.0.0-dev",
 	"private": true,
+	"homepage": "https://hollama.fernando.is",
 	"scripts": {
 		"dev": "vite dev --host",
 		"build": "vite build",
