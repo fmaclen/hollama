@@ -89,10 +89,7 @@
 			"allowToChangeInstallationDirectory": true
 		},
 		"linux": {
-			"target": [
-				"deb",
-				"tar.gz"
-			],
+			"target": "tar.gz",
 			"icon": "electron/resources/icons/png/1024x1024.png"
 		}
 	}
