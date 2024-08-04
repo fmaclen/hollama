@@ -126,7 +126,7 @@
 		<div class="about">
 			<p class="p"><strong>Danger zone</strong></p>
 			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSessions)}>
-				Delete all session
+				Delete all sessions
 			</Button>
 			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaKnowledge)}>
 				Delete all knowledge
