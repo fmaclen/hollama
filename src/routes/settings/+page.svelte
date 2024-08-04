@@ -66,6 +66,7 @@
 <section class="settings">
 	<div class="settings__container">
 		<Fieldset>
+			<p class="p"><strong>Ollama</strong></p>
 			<FieldInput
 				name="server"
 				label="Server"
@@ -153,8 +154,8 @@
 		<div class="version">
 			<p class="p">
 				<strong>Version</strong>
-				<Button variant="link" href="https://github.com/fmaclen/hollama/releases" target="_blank">
-					{version}
+				<Button variant="icon" href="https://github.com/fmaclen/hollama/releases" target="_blank">
+					<Badge>{version}</Badge>
 				</Button>
 			</p>
 		</div>
@@ -164,7 +165,7 @@
 <style lang="postcss">
 	.settings {
 		@apply base-section;
-		@apply flex border-spacing-1 flex-col bg-shade-1 p-8;
+		@apply flex border-spacing-1 flex-col bg-shade-1;
 	}
 
 	.settings__container {
