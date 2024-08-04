@@ -41,7 +41,7 @@
 	}
 
 	/* Text editor */
-	
+
 	.field--text-editor {
 		@apply h-full;
 	}
