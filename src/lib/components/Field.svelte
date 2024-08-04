@@ -4,7 +4,7 @@
 	export let isTextEditor: boolean | undefined = false;
 </script>
 
-<div class="field">
+<div class="field" class:field--text-editor={isTextEditor}>
 	<div
 		class="field__container"
 		class:field__container--text-editor={isTextEditor}
@@ -30,18 +30,24 @@
 	.field__container {
 		@apply flex w-full flex-col gap-y-1 rounded-md border bg-shade-0 text-sm;
 		@apply focus-within:border-shade-6 focus-within:outline focus-within:outline-shade-2;
-	}
 
-	.field__container--disabled {
-		@apply bg-shade-1;
-	}
-
-	.field__container--text-editor {
-		@apply h-full gap-y-0 overflow-y-auto p-0;
+		&--disabled {
+			@apply bg-shade-1;
+		}
 	}
 
 	.field__label {
 		@apply flex items-center gap-x-2 px-3 pb-0.5 pt-3 text-xs font-medium leading-none;
+	}
+
+	/* Text editor */
+	
+	.field--text-editor {
+		@apply h-full;
+	}
+
+	.field__container--text-editor {
+		@apply h-full gap-y-0 overflow-y-auto p-0;
 	}
 
 	.field__label--text-editor {
