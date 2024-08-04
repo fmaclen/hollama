@@ -150,10 +150,11 @@
 
 		:global(pre) {
 			@apply relative mb-4 mt-4 overflow-auto rounded-md border border-shade-2;
+			@apply first:mt-0;
 		}
 
 		:global(pre code) {
-			@apply bg-shade-1 p-4 pr-12;
+			@apply bg-neutral-50/50 p-4 pr-12 text-xs;
 			@apply dark:bg-neutral-50 dark:invert;
 		}
 
@@ -184,21 +185,25 @@
 		}
 
 		:global(h1) {
-			@apply text-3xl font-bold;
+			@apply text-3xl font-semibold tracking-tight;
+		}
+
+		:global(strong) {
+			@apply font-semibold;
 		}
 
 		:global(h2) {
-			@apply text-2xl font-bold;
+			@apply text-2xl font-semibold tracking-tight;
 		}
 
 		:global(h3) {
-			@apply text-xl font-bold;
+			@apply text-xl font-semibold tracking-tight;
 		}
 
 		:global(h4),
 		:global(h5),
 		:global(h5) {
-			@apply text-lg font-bold;
+			@apply text-lg font-semibold;
 		}
 	}
 </style>
