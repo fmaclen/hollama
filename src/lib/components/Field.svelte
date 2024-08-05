@@ -43,11 +43,11 @@
 	/* Text editor */
 
 	.field--text-editor {
-		@apply h-full;
+		@apply h-full overflow-y-auto;
 	}
 
 	.field__container--text-editor {
-		@apply h-full gap-y-0 overflow-y-auto p-0;
+		@apply h-full gap-y-0  p-0;
 	}
 
 	.field__label--text-editor {
