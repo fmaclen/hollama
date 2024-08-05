@@ -1,8 +1,8 @@
 import { join } from 'path';
 import { app, BrowserWindow, utilityProcess } from 'electron';
 
-const hollamaHost = app.isPackaged ? '127.0.0.1' : '0.0.0.0';
-const hollamaPort = app.isPackaged ? '5173' : '4173';
+const hollamaHost = app.isPackaged ? '0.0.0.0' : '127.0.0.1';
+const hollamaPort = app.isPackaged ? '4173' : '5173';
 
 function createWindow() {
 	const mainWindow = new BrowserWindow({
