@@ -1,9 +1,8 @@
 import { join } from 'path';
 import { app, BrowserWindow, utilityProcess } from 'electron';
 
-const isAppPackaged = process.env.IS_APP_PACKAGED === 'true';
-const hollamaHost = isAppPackaged ? '0.0.0.0' : '127.0.0.1';
-const hollamaPort = isAppPackaged ? '4173' : '5173';
+const hollamaHost = app.isPackaged ? '127.0.0.1' : '0.0.0.0';
+const hollamaPort = app.isPackaged ? '5173' : '4173';
 
 function createWindow() {
 	const mainWindow = new BrowserWindow({
@@ -19,7 +18,7 @@ function createWindow() {
 app
 	.whenReady()
 	.then(() => {
-		if (isAppPackaged) {
+		if (app.isPackaged) {
 			const utility = utilityProcess.fork(join(app.getAppPath(), 'build', 'index.js'), {
 				env: { HOST: hollamaHost, PORT: hollamaPort }
 			});
