@@ -1,0 +1,25 @@
+appId: com.hollama.desktop
+productName: Hollama
+artifactName: ${productName}_${version}-${os}-${arch}.${ext}
+
+files:
+  - build/**/*
+  - electron/**/*
+
+mac:
+  category: public.app-category.developer-tools
+  icon: electron/resources/icons/mac/icon.icns
+  hardenedRuntime: true
+  target: dmg
+
+win:
+  target: nsis
+  icon: electron/resources/icons/win/icon.ico
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+
+linux:
+  target: tar.gz
+  icon: electron/resources/icons/png/1024x1024.png

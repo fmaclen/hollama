@@ -14,7 +14,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"electron": "electron .",
-		"electron:build": "cross-env ADAPTER=electron-node IS_APP_PACKAGED=true vite build && electron-builder"
+		"electron:build": "cross-env ADAPTER=electron-node vite build && electron-builder"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.43.0",
@@ -68,30 +68,5 @@
 		"email": "hello@fernando.is",
 		"url": "https://fernando.is"
 	},
-	"main": "./electron/main.js",
-	"build": {
-		"appId": "com.hollama.app",
-		"productName": "Hollama",
-		"files": [
-			"build/**/*",
-			"electron/**/*"
-		],
-		"mac": {
-			"category": "public.app-category.developer-tools",
-			"target": "dmg",
-			"icon": "electron/resources/icons/mac/icon.icns"
-		},
-		"win": {
-			"target": "nsis",
-			"icon": "electron/resources/icons/win/icon.ico"
-		},
-		"nsis": {
-			"oneClick": false,
-			"allowToChangeInstallationDirectory": true
-		},
-		"linux": {
-			"target": "tar.gz",
-			"icon": "electron/resources/icons/png/1024x1024.png"
-		}
-	}
+	"main": "./electron/main.js"
 }
