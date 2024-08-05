@@ -28,4 +28,3 @@ publish:
   provider: github
   releaseType: release
   vPrefixedTagName: false
-  token: ${env.GITHUB_TOKEN}
