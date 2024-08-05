@@ -25,8 +25,8 @@ app
 
 			utility.on('message', (message) => message === 'ready' && createWindow());
 		} else {
-			console.warn('Running Electron in development mode');
-			console.log('Run `npm run dev` to start the Hollama server separately');
+			console.warn('##### Running Electron in development mode');
+			console.log('##### Run `npm run dev` to start the Hollama server separately');
 			createWindow();
 		}
 
