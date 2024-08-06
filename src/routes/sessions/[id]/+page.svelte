@@ -4,6 +4,7 @@
 	import { writable } from 'svelte/store';
 	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
+	import { beforeNavigate } from '$app/navigation';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
@@ -34,7 +35,6 @@
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import Head from '$lib/components/Head.svelte';
-	import { beforeNavigate } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -206,12 +206,16 @@
 
 	beforeNavigate((navigation) => {
 		if (completion) {
-			const userConfirmed = confirm('A completion is in progress. Do you really want to leave?');
+			const userConfirmed = confirm(
+				'Are you sure you want to leave?\nThe completion in progress will stop'
+			);
 			if (userConfirmed) {
 				ollamaInstance?.abort();
 				completion = '';
 				resetPrompt();
-			} else navigation.cancel();
+				return;
+			}
+			navigation.cancel();
 		}
 	});
 
