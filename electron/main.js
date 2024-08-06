@@ -67,14 +67,8 @@ app
 
 		await checkServerAvailability(parseInt(hollamaPort));
 		createWindow();
-
-		// macOS: Open a window if none are open
-		app.on('activate', function () {
-			if (BrowserWindow.getAllWindows().length === 0) createWindow();
-		});
 	})
 	.catch((error) => {
-		console.error(error);
 		dialog.showErrorBox('Error', error.message);
 		app.quit();
 	});
@@ -82,4 +76,9 @@ app
 // Quit when all windows are closed, except on macOS.
 app.on('window-all-closed', function () {
 	if (process.platform !== 'darwin') app.quit();
+});
+
+// macOS: Open a window if none are open
+app.on('activate', function () {
+	if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
