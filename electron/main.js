@@ -53,10 +53,6 @@ function checkServerAvailability(port) {
 	});
 }
 
-function showErrorDialog(message) {
-	dialog.showErrorBox('Server Connection Error', message);
-}
-
 app
 	.whenReady()
 	.then(async () => {
@@ -79,7 +75,7 @@ app
 	})
 	.catch((error) => {
 		console.error(error);
-		showErrorDialog(error.message);
+		dialog.showErrorBox('Error', error.message);
 		app.quit();
 	});
 
