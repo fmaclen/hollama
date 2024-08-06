@@ -1,7 +1,6 @@
 import { join } from 'path';
 import { app, BrowserWindow, utilityProcess } from 'electron';
 
-const hollamaHost = app.isPackaged ? '0.0.0.0' : '127.0.0.1';
 const hollamaPort = app.isPackaged ? '4173' : '5173';
 
 function createWindow() {
@@ -9,26 +8,29 @@ function createWindow() {
 		width: 1280,
 		height: 800,
 		minWidth: 400,
-		minHeight: 640
+		minHeight: 640,
 	});
 
-	mainWindow.loadURL(`http://${hollamaHost}:${hollamaPort}`);
+	mainWindow.menuBarVisible = false; // Hides the menu bar in Windows
+	mainWindow.loadURL(`http:/127.0.0.1:${hollamaPort}`);
 }
 
 app
 	.whenReady()
 	.then(() => {
 		if (app.isPackaged) {
-			const utility = utilityProcess.fork(join(app.getAppPath(), 'build', 'index.js'), {
-				env: { ...process.env, HOST: hollamaHost, PORT: hollamaPort }
+			utilityProcess.fork(join(app.getAppPath(), 'build', 'index.js'), {
+				env: { ...process.env, PORT: hollamaPort }
 			});
-
-			utility.on('message', (message) => message === 'ready' && createWindow());
 		} else {
 			console.warn('##### Running Electron in development mode');
 			console.log('##### Run `npm run dev` to start the Hollama server separately');
-			createWindow();
 		}
+
+		// FIXME: We create the window before we know if the server is ready.
+		// Ideally we would receive a signal from the server or check that it's listening
+		// to requests, otherwise the window could be created with a blank page.
+		createWindow();
 
 		// macOS: Open a window if none are open
 		app.on('activate', function () {
