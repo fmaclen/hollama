@@ -20,7 +20,7 @@ app
 	.then(() => {
 		if (app.isPackaged) {
 			const utility = utilityProcess.fork(join(app.getAppPath(), 'build', 'index.js'), {
-				env: { HOST: hollamaHost, PORT: hollamaPort }
+				env: { ...process.env, HOST: hollamaHost, PORT: hollamaPort }
 			});
 
 			utility.on('message', (message) => message === 'ready' && createWindow());
