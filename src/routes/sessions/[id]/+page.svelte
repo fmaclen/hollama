@@ -34,6 +34,7 @@
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import Head from '$lib/components/Head.svelte';
+	import { beforeNavigate } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -49,6 +50,7 @@
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
+	let ollamaInstance: Ollama | null = null;
 
 	const shouldConfirmDeletion = writable(false);
 
@@ -133,8 +135,8 @@
 		try {
 			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
 
-			const ollama = new Ollama({ host: $settingsStore.ollamaServer });
-			const response = await ollama.chat({
+			ollamaInstance = new Ollama({ host: $settingsStore.ollamaServer });
+			const response = await ollamaInstance.chat({
 				model: payload.model,
 				messages: payload.messages,
 				stream: true
@@ -201,6 +203,17 @@
 		const message: Message = { role: 'system', content };
 		session.messages = [...session.messages, message];
 	}
+
+	beforeNavigate((navigation) => {
+		if (completion) {
+			const userConfirmed = confirm('A completion is in progress. Do you really want to leave?');
+			if (userConfirmed) {
+				ollamaInstance?.abort();
+				completion = '';
+				resetPrompt();
+			} else navigation.cancel();
+		}
+	});
 
 	afterUpdate(() => {
 		if (shouldFocusTextarea && promptTextarea) {
@@ -318,6 +331,7 @@
 									title="Stop response"
 									variant="outline"
 									on:click={() => {
+										ollamaInstance?.abort();
 										abortController.abort();
 										resetPrompt();
 									}}
