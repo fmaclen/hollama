@@ -15,8 +15,9 @@ Hollama is a static site built with:
 - TypeScript
 - Svelte & SvelteKit
 - Vite
-- Playwright
 - Tailwind CSS
+- Playwright
+- Electron
 
 Install dependencies with `npm install`, start a development server:
 
@@ -25,6 +26,9 @@ npm run dev
 
 # or start the server and open the app in a new browser tab
 npm run dev -- --open
+
+# run the app with Electron
+npm run electron
 ```
 
 ## Building
@@ -33,6 +37,9 @@ To create a production version of Hollama:
 
 ```bash
 npm run build
+
+# or package with Electron
+npm run electron:build
 ```
 
 You can preview the production build with `npm run preview`.
