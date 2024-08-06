@@ -1,23 +1,65 @@
+import net from 'net';
 import { join } from 'path';
-import { app, BrowserWindow, utilityProcess } from 'electron';
+import { app, BrowserWindow, utilityProcess, dialog } from 'electron';
 
+// Vite default dev & production ports
 const hollamaPort = app.isPackaged ? '4173' : '5173';
+const HOLLAMA_HOST = '127.0.0.1';
 
 function createWindow() {
 	const mainWindow = new BrowserWindow({
 		width: 1280,
 		height: 800,
 		minWidth: 400,
-		minHeight: 640,
+		minHeight: 640
 	});
 
-	mainWindow.menuBarVisible = false; // Hides the menu bar in Windows
-	mainWindow.loadURL(`http:/127.0.0.1:${hollamaPort}`);
+	mainWindow.menuBarVisible = false; // Windows: hides the menu bar
+	mainWindow.loadURL(`http://${HOLLAMA_HOST}:${hollamaPort}`);
+}
+
+function checkServerAvailability(port) {
+	const MAX_RETRIES = 10;
+	const RETRY_INTERVAL_IN_MS = 1000;
+
+	return new Promise((resolve, reject) => {
+		let retries = 0;
+
+		function tryConnection() {
+			const socket = new net.Socket();
+
+			const onError = () => {
+				socket.destroy();
+
+				if (retries >= MAX_RETRIES) {
+					reject(new Error(`Couldn't connect to Hollama server after ${MAX_RETRIES} attempts`));
+				} else {
+					retries++;
+					setTimeout(tryConnection, RETRY_INTERVAL_IN_MS);
+				}
+			};
+
+			socket.setTimeout(1000);
+			socket.once('error', onError);
+			socket.once('timeout', onError);
+
+			socket.connect(port, HOLLAMA_HOST, () => {
+				socket.destroy();
+				resolve();
+			});
+		}
+
+		tryConnection();
+	});
+}
+
+function showErrorDialog(message) {
+	dialog.showErrorBox('Server Connection Error', message);
 }
 
 app
 	.whenReady()
-	.then(() => {
+	.then(async () => {
 		if (app.isPackaged) {
 			utilityProcess.fork(join(app.getAppPath(), 'build', 'index.js'), {
 				env: { ...process.env, PORT: hollamaPort }
@@ -27,9 +69,7 @@ app
 			console.log('##### Run `npm run dev` to start the Hollama server separately');
 		}
 
-		// FIXME: We create the window before we know if the server is ready.
-		// Ideally we would receive a signal from the server or check that it's listening
-		// to requests, otherwise the window could be created with a blank page.
+		await checkServerAvailability(parseInt(hollamaPort));
 		createWindow();
 
 		// macOS: Open a window if none are open
@@ -37,7 +77,11 @@ app
 			if (BrowserWindow.getAllWindows().length === 0) createWindow();
 		});
 	})
-	.catch(console.error);
+	.catch((error) => {
+		console.error(error);
+		showErrorDialog(error.message);
+		app.quit();
+	});
 
 // Quit when all windows are closed, except on macOS.
 app.on('window-all-closed', function () {
