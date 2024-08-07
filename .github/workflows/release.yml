@@ -64,7 +64,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-13, ubuntu-latest, windows-latest] # macos-13 is the lastest one on x86
+        os: [macos-13, macos-latest, ubuntu-latest, windows-latest] # macos-13 is the lastest one on x86
 
     steps:
       - uses: actions/checkout@v4
@@ -77,9 +77,14 @@ jobs:
         run: npm ci
 
       - name: Build & release Electron app
-        run: npm run electron:build
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          CSC_LINK: ${{ secrets.APPLE_CERTIFICATE }}
+          CSC_KEY_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+        run: npm run electron:build
 
   docker:
     needs: versioning
