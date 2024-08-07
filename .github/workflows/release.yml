@@ -69,6 +69,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Update app version in package.json
         run: node .github/workflows/publish/update-package-json.cjs ${{ needs.versioning.outputs.new_release_version }}
