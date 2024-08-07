@@ -86,7 +86,6 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
         run: npm run electron:build
 
-
   docker:
     needs: versioning
     if: ${{ needs.versioning.outputs.new_release_published == 'true' }}
