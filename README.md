@@ -18,8 +18,8 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 
 - ⚡️ [Live demo](https://hollama.fernando.is)
   - _No sign-up required_
-- 🐳 [Self-hosting](#self-host-docker) with Docker
 - 🖥️ Download for [macOS, Windows & Linux](https://github.com/fmaclen/hollama/releases)
+- 🐳 [Self-hosting](#self-host-docker) with Docker
 - 🐞 [Contribute](CONTRIBUTING.md)
 
 > ![session](tests/docs.test.ts-snapshots/session.png)
