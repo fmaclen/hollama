@@ -171,14 +171,6 @@
 		}
 	}
 
-	function resetPrompt() {
-		// Reset the prompt to the last sent message
-		prompt = promptCached;
-		promptCached = '';
-		// Remove the "incomplete" AI response
-		session.messages = session.messages.slice(0, -1);
-	}
-
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.shiftKey) return;
 		if (event.key !== 'Enter') return;
@@ -204,15 +196,26 @@
 		session.messages = [...session.messages, message];
 	}
 
+	function resetPrompt() {
+		// Reset the prompt to the last sent message
+		prompt = promptCached;
+		promptCached = '';
+	}
+
+	function abortOllama() {
+		ollamaInstance?.abort();
+		completion = '';
+		// Remove the "incomplete" AI response
+		session.messages = session.messages.slice(0, -1);
+	}
+
 	beforeNavigate((navigation) => {
 		if (completion) {
 			const userConfirmed = confirm(
 				'Are you sure you want to leave?\nThe completion in progress will stop'
 			);
 			if (userConfirmed) {
-				ollamaInstance?.abort();
-				completion = '';
-				resetPrompt();
+				abortOllama();
 				return;
 			}
 			navigation.cancel();
@@ -335,9 +338,9 @@
 									title="Stop response"
 									variant="outline"
 									on:click={() => {
-										ollamaInstance?.abort();
-										abortController.abort();
+										abortOllama();
 										resetPrompt();
+										abortController.abort();
 									}}
 								>
 									<StopCircle class="h-4 w-4" />
