@@ -9,7 +9,10 @@ files:
 mac:
   category: public.app-category.developer-tools
   icon: electron/resources/icons/mac/icon.icns
+  entitlements: electron/resources/mac/entitlements.mac.plist
+  entitlementsInherit: electron/resources/mac/entitlements.mac.plist
   hardenedRuntime: true
+  gatekeeperAssess: false
   target: dmg
 
 win:
