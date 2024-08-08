@@ -92,4 +92,8 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.getByText(MOCK_KNOWLEDGE[0].name).click();
 	await expect(page.getByTestId('knowledge-metadata')).toBeVisible();
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'knowledge.png' });
+
+	await page.getByText('Motd').click();
+	await expect(page.locator('h3', { hasText: 'Message of the day' })).toBeVisible();
+	expect(await page.screenshot()).toMatchSnapshot({ name: 'motd.png' });
 });
