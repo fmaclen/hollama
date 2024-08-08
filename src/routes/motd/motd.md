@@ -19,7 +19,7 @@
 #### Contributions
 
 We welcome contributions from people familiar with **Svelte**, **TypeScript** and **TailwindCSS**.
-If that sounds like, you should read this next: [`CONTRIBUTING.md`](https://github.com/fmaclen/hollama/blob/main/CONTRIBUTING.md)
+If that sounds like you, read this next: [`CONTRIBUTING.md`](https://github.com/fmaclen/hollama/blob/main/CONTRIBUTING.md)
 
 If you want to contribute in a _less_ technical role, such as UI/UX designers or if you are good at prompt engineering, please [reach out](mailto:hello@fernando.is)
 
