@@ -11,7 +11,9 @@
 
 <section class="motd">
 	<div class="motd__container">
-		{@html md.render(data.motd)}
+		{#if data.motd}
+			{@html md.render(data.motd)} <!-- eslint-disable-line svelte/no-at-html-tags -->
+		{/if}
 	</div>
 </section>
 
