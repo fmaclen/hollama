@@ -1,10 +1,13 @@
 <script lang="ts">
+	import Head from '$lib/components/Head.svelte';
 	import MarkdownIt from 'markdown-it/lib/index.mjs';
 
 	export let data: { motd: string };
 
 	const md = new MarkdownIt();
 </script>
+
+<Head title="Message of the day" />
 
 <section class="motd">
 	<div class="motd__container">
