@@ -18,47 +18,47 @@
 	}
 
 	.motd__container {
-		@apply mx-auto my-auto flex flex-col;
+		@apply mx-auto my-auto max-w-prose text-balance;
 	}
 
 	.motd__container :global(h1) {
-		@apply text-4xl font-bold tracking-tight mt-4;
+		@apply my-10 text-4xl font-bold tracking-tight;
 	}
 
 	.motd__container :global(h2) {
-		@apply text-2xl font-bold tracking-tight mt-3;
+		@apply mt-8 text-2xl font-bold tracking-tight;
 	}
 
 	.motd__container :global(h3) {
-		@apply text-xl font-bold  mb-2;
+		@apply my-4 text-2xl font-light;
 	}
 
 	.motd__container :global(h4) {
-		@apply text-lg font-bold mb-2;
+		@apply mt-8 text-lg font-semibold;
 	}
 
 	.motd__container :global(h5) {
-		@apply text-base font-bold mb-1;
+		@apply mt-8 text-base font-bold;
 	}
 
 	.motd__container :global(h6) {
-		@apply text-sm font-bold;
+		@apply mt-8 text-sm font-bold;
 	}
 
 	.motd__container :global(p) {
-		@apply text-base my-4;
+		@apply my-3 text-base;
 	}
 
 	.motd__container :global(ul) {
-		@apply list-disc list-inside my-4;
+		@apply my-4 list-inside list-disc;
 	}
 
 	.motd__container :global(ol) {
-		@apply list-decimal list-inside my-4;
+		@apply my-4 list-inside list-decimal;
 	}
 
 	.motd__container :global(li) {
-		@apply text-base my-1;
+		@apply my-1 text-base;
 	}
 
 	.motd__container :global(blockquote) {
@@ -66,10 +66,18 @@
 	}
 
 	.motd__container :global(code) {
-		@apply text-base font-mono;
+		@apply font-mono text-base;
 	}
 
 	.motd__container :global(pre) {
-		@apply text-base font-mono;
+		@apply font-mono text-base;
+	}
+
+	.motd__container :global(a) {
+		@apply text-accent underline;
+	}
+
+	.motd__container :global(a code) {
+		@apply text-accent;
 	}
 </style>
