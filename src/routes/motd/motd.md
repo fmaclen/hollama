@@ -10,10 +10,10 @@
 
 #### Previously, in Hollama
 
-- **Mobile** friendly
 - **Light & dark** themes
-- Customizable **system prompts**
+- **Mobile** friendly
 - **Code-editor** for prompting
+- Customizable **system prompts**
 - And we are **always tweaking the UI**
 
 #### Contributions
