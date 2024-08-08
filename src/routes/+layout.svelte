@@ -14,7 +14,7 @@
 		['/sessions', 'Sessions'],
 		['/knowledge', 'Knowledge'],
 		['/settings', 'Settings'],
-		['/md', 'Motd']
+		['/motd', 'Motd']
 	];
 
 	$: theme = $settingsStore?.userTheme;
@@ -60,7 +60,7 @@
 					<MessageSquareText class="h-4 w-4" />
 				{:else if href === '/settings'}
 					<Settings2 class="h-4 w-4" />
-				{:else if href === '/md'}
+				{:else if href === '/motd'}
 					<NotebookText class="h-4 w-4" />
 				{/if}
 				{text}
