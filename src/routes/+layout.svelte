@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
 	import { page } from '$app/stores';
-	import { Brain, MessageSquareText, Settings2, Sun, Moon } from 'lucide-svelte';
 	import { Toaster } from 'svelte-sonner';
+	import { Brain, MessageSquareText, Settings2, Sun, Moon, NotebookText } from 'lucide-svelte';
 
 	import '../app.pcss';
 	import { settingsStore } from '$lib/store';
@@ -13,7 +13,8 @@
 	const SITEMAP = [
 		['/sessions', 'Sessions'],
 		['/knowledge', 'Knowledge'],
-		['/settings', 'Settings']
+		['/settings', 'Settings'],
+		['/md', 'Motd']
 	];
 
 	$: theme = $settingsStore?.userTheme;
@@ -59,6 +60,8 @@
 					<MessageSquareText class="h-4 w-4" />
 				{:else if href === '/settings'}
 					<Settings2 class="h-4 w-4" />
+				{:else if href === '/md'}
+					<NotebookText class="h-4 w-4" />
 				{/if}
 				{text}
 			</a>
