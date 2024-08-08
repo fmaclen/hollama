@@ -14,7 +14,7 @@
 		['/sessions', 'Sessions'],
 		['/knowledge', 'Knowledge'],
 		['/settings', 'Settings'],
-		['/motd', 'Motd'],
+		['/motd', 'Motd']
 	];
 
 	$: theme = $settingsStore?.userTheme;
@@ -95,8 +95,8 @@
 	}
 
 	.layout__aside {
-		@apply flex flex-row w-full gap-x-2 px-2;
-		@apply lg:flex lg:flex-col lg:w-max;
+		@apply flex w-full flex-row gap-x-2 px-2;
+		@apply lg:flex lg:w-max lg:flex-col;
 	}
 
 	.layout__logo {
@@ -111,9 +111,9 @@
 
 	.layout__button,
 	.layout__a {
-		@apply flex flex-col w-auto flex-grow gap-x-2 gap-y-0.5 py-3 text-xs font-medium text-muted transition-colors duration-150 items-center;
+		@apply flex w-auto flex-grow flex-col items-center gap-x-2 gap-y-0.5 py-3 text-xs font-medium text-muted transition-colors duration-150;
 		@apply sm:text-sm;
-		@apply lg:flex-row lg:items-center lg:gap-4 lg:px-2 lg:flex-grow-0;
+		@apply lg:flex-grow-0 lg:flex-row lg:items-center lg:gap-4 lg:px-2;
 		@apply hover:text-active;
 	}
 
