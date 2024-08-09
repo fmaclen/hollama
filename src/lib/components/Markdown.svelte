@@ -96,7 +96,7 @@
 
 	.markdown :global(p) {
 		@apply my-3 text-sm;
-		@apply lg:text-base;
+		@apply md:text-base;
 	}
 
 	.markdown :global(ul),
@@ -142,8 +142,9 @@
 	}
 
 	.markdown :global(pre code) {
-		@apply block bg-neutral-50/50 p-4 pr-12 text-base text-xs;
-		@apply dark:bg-neutral-50 dark:invert;
+		@apply block bg-neutral-50/50 p-4 pr-12 text-base text-xs text-neutral-700;
+		@apply md:text-sm;
+		@apply dark:invert;
 	}
 
 	.markdown :global(a:has(code)) {
