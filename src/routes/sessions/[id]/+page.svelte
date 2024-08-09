@@ -4,6 +4,7 @@
 	import { writable } from 'svelte/store';
 	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
+	import { beforeNavigate } from '$app/navigation';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
@@ -49,6 +50,7 @@
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
+	let ollamaInstance: Ollama | null = null;
 
 	const shouldConfirmDeletion = writable(false);
 
@@ -133,8 +135,8 @@
 		try {
 			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
 
-			const ollama = new Ollama({ host: $settingsStore.ollamaServer });
-			const response = await ollama.chat({
+			ollamaInstance = new Ollama({ host: $settingsStore.ollamaServer });
+			const response = await ollamaInstance.chat({
 				model: payload.model,
 				messages: payload.messages,
 				stream: true
@@ -169,14 +171,6 @@
 		}
 	}
 
-	function resetPrompt() {
-		// Reset the prompt to the last sent message
-		prompt = promptCached;
-		promptCached = '';
-		// Remove the "incomplete" AI response
-		session.messages = session.messages.slice(0, -1);
-	}
-
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.shiftKey) return;
 		if (event.key !== 'Enter') return;
@@ -201,6 +195,32 @@
 		const message: Message = { role: 'system', content };
 		session.messages = [...session.messages, message];
 	}
+
+	function resetPrompt() {
+		// Reset the prompt to the last sent message
+		prompt = promptCached;
+		promptCached = '';
+	}
+
+	function abortOllama() {
+		ollamaInstance?.abort();
+		completion = '';
+		// Remove the "incomplete" AI response
+		session.messages = session.messages.slice(0, -1);
+	}
+
+	beforeNavigate((navigation) => {
+		if (completion) {
+			const userConfirmed = confirm(
+				'Are you sure you want to leave?\nThe completion in progress will stop'
+			);
+			if (userConfirmed) {
+				abortOllama();
+				return;
+			}
+			navigation.cancel();
+		}
+	});
 
 	afterUpdate(() => {
 		if (shouldFocusTextarea && promptTextarea) {
@@ -318,8 +338,9 @@
 									title="Stop response"
 									variant="outline"
 									on:click={() => {
-										abortController.abort();
+										abortOllama();
 										resetPrompt();
+										abortController.abort();
 									}}
 								>
 									<StopCircle class="h-4 w-4" />
