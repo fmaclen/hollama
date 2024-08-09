@@ -61,7 +61,7 @@ const config = {
 					'@apply bg-gradient-to-r from-transparent to-red-50 dark:to-red-900': {}
 				},
 				'.text-link': {
-					'@apply border-b hover:border-b-accent hover:text-accent': {}
+					'@apply underline underline-offset-4 hover:text-accent': {}
 				},
 			});
 		}
