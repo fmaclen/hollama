@@ -59,7 +59,10 @@ const config = {
 				},
 				'.confirm-deletion': {
 					'@apply bg-gradient-to-r from-transparent to-red-50 dark:to-red-900': {}
-				}
+				},
+				'.text-link': {
+					'@apply border-b hover:border-b-accent hover:text-accent': {}
+				},
 			});
 		}
 	]

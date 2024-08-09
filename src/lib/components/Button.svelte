@@ -42,8 +42,7 @@
 		}
 
 		&--link {
-			@apply rounded-none underline underline-offset-4;
-			@apply hover:text-active;
+			@apply text-link rounded-none;
 		}
 
 		&--icon {

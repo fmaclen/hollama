@@ -136,23 +136,6 @@
 			</Button>
 		</div>
 
-		<div class="about">
-			<p class="p"><strong>About</strong></p>
-			<p class="p">
-				<strong>Hollama</strong> is a minimalistic web interface for
-				<Button variant="link" href="https://github.com/jmorganca/ollama/" target="_blank">
-					Ollama
-				</Button>
-				servers. Code is available on
-				<Button variant="link" href="https://github.com/fmaclen/hollama" target="_blank">
-					Github
-				</Button>
-			</p>
-			<p class="p">
-				Made by
-				<Button variant="link" href="https://fernando.is" target="_blank">@fmaclen</Button>
-			</p>
-		</div>
 		<div class="version">
 			<p class="p">
 				<strong>Version</strong>

@@ -83,11 +83,10 @@
 	}
 
 	.motd__container :global(a) {
-		@apply border-b text-accent;
-		@apply hover:border-b-accent;
+		@apply text-link;
 	}
 
 	.motd__container :global(a code) {
-		@apply text-accent;
+		@apply text-inherit;
 	}
 </style>
