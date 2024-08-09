@@ -42,8 +42,8 @@
 
 <div class="markdown">
 	<!--
-		HACK: `{#if markdown}` is needed for the eslint-disable comment to not get
-		re-formatted on auto-formatting.
+		HACK: `{#if markdown}` is needed to prevent the `eslint-disable` comment from
+		getting formatted on auto-formatting.
 	-->
 	{#if markdown}
 		{@html md.render(markdown)} <!-- eslint-disable-line svelte/no-at-html-tags -->
@@ -140,7 +140,8 @@
 	}
 
 	.markdown :global(code) {
-		@apply rounded-md bg-amber-50 p-1 text-xs text-orange-600 dark:bg-amber-950 dark:text-orange-500;
+		@apply rounded-md bg-amber-50 p-1 text-xs text-orange-600;
+		@apply dark:bg-amber-950 dark:text-orange-500;
 		@apply md:text-sm;
 	}
 
