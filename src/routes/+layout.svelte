@@ -124,7 +124,7 @@
 	.layout__a--logo {
 		@apply col-start-3 row-start-1 max-w-max;
 		@apply md:px-4;
-		@apply lg:py-6 lg:px-0;
+		@apply lg:px-0 lg:py-6;
 	}
 
 	.layout__button {
