@@ -2,7 +2,7 @@
 
 ### Message of the day
 
-# Hollama: a simple web interface for [Ollama](https://ollama.ai)
+# Welcome to Hollama: a simple web interface for [Ollama](https://ollama.ai)
 
 #### What's new?
 

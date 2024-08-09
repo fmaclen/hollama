@@ -62,7 +62,7 @@ const config = {
 				},
 				'.text-link': {
 					'@apply underline underline-offset-4 hover:text-accent': {}
-				},
+				}
 			});
 		}
 	]
