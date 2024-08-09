@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
 	import { page } from '$app/stores';
-	import { Brain, MessageSquareText, Settings2, Sun, Moon } from 'lucide-svelte';
 	import { Toaster } from 'svelte-sonner';
+	import { Brain, MessageSquareText, Settings2, Sun, Moon, NotebookText } from 'lucide-svelte';
 
 	import '../app.pcss';
 	import { settingsStore } from '$lib/store';
@@ -13,7 +13,8 @@
 	const SITEMAP = [
 		['/sessions', 'Sessions'],
 		['/knowledge', 'Knowledge'],
-		['/settings', 'Settings']
+		['/settings', 'Settings'],
+		['/motd', 'Motd']
 	];
 
 	$: theme = $settingsStore?.userTheme;
@@ -59,6 +60,8 @@
 					<MessageSquareText class="h-4 w-4" />
 				{:else if href === '/settings'}
 					<Settings2 class="h-4 w-4" />
+				{:else if href === '/motd'}
+					<NotebookText class="h-4 w-4" />
 				{/if}
 				{text}
 			</a>
@@ -92,8 +95,8 @@
 	}
 
 	.layout__aside {
-		@apply grid grid-cols-5 justify-between gap-x-2 px-2;
-		@apply lg:flex lg:flex-col;
+		@apply flex w-full flex-row gap-x-4 px-4;
+		@apply lg:flex lg:w-max lg:flex-col;
 	}
 
 	.layout__logo {
@@ -108,9 +111,9 @@
 
 	.layout__button,
 	.layout__a {
-		@apply flex flex-col items-center gap-x-2 gap-y-0.5 py-3 text-xs font-medium text-muted transition-colors duration-150;
+		@apply flex w-auto flex-grow flex-col items-center gap-x-2 gap-y-0.5 py-3 text-xs font-medium text-muted transition-colors duration-150;
 		@apply sm:text-sm;
-		@apply lg:flex-row lg:items-center lg:gap-4 lg:px-2;
+		@apply lg:flex-grow-0 lg:flex-row lg:items-center lg:gap-4 lg:px-2;
 		@apply hover:text-active;
 	}
 
@@ -119,8 +122,9 @@
 	}
 
 	.layout__a--logo {
-		@apply col-start-3 row-start-1;
-		@apply lg:py-6;
+		@apply col-start-3 row-start-1 max-w-max;
+		@apply md:px-4;
+		@apply lg:px-0 lg:py-6;
 	}
 
 	.layout__button {
