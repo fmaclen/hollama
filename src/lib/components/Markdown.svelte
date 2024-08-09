@@ -51,10 +51,6 @@
 </div>
 
 <style lang="postcss">
-	.markdown {
-		@apply text-balance;
-	}
-
 	.markdown :global(> *:first-child) {
 		@apply mt-0;
 	}
