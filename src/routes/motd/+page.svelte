@@ -27,11 +27,11 @@
 	}
 
 	.motd__container :global(h1) {
-		@apply my-10 text-4xl font-bold tracking-tight;
+		@apply my-10 text-4xl font-semibold tracking-tight;
 	}
 
 	.motd__container :global(h2) {
-		@apply mt-8 text-2xl font-bold tracking-tight;
+		@apply mt-8 text-2xl font-semibold tracking-tight;
 	}
 
 	.motd__container :global(h3) {
@@ -43,11 +43,11 @@
 	}
 
 	.motd__container :global(h5) {
-		@apply mt-8 text-base font-bold;
+		@apply mt-8 text-base font-semibold;
 	}
 
 	.motd__container :global(h6) {
-		@apply mt-8 text-sm font-bold;
+		@apply mt-8 text-sm font-semibold;
 	}
 
 	.motd__container :global(p) {
@@ -78,8 +78,13 @@
 		@apply font-mono text-base;
 	}
 
+	.motd__container :global(strong) {
+		@apply font-semibold;
+	}
+
 	.motd__container :global(a) {
-		@apply text-accent underline;
+		@apply border-b text-accent;
+		@apply hover:border-b-accent;
 	}
 
 	.motd__container :global(a code) {
