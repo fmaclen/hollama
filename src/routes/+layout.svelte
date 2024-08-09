@@ -95,7 +95,7 @@
 	}
 
 	.layout__aside {
-		@apply flex w-full flex-row gap-x-2 px-2;
+		@apply flex w-full flex-row gap-x-4 px-4;
 		@apply lg:flex lg:w-max lg:flex-col;
 	}
 
@@ -123,7 +123,8 @@
 
 	.layout__a--logo {
 		@apply col-start-3 row-start-1 max-w-max;
-		@apply lg:py-6;
+		@apply md:px-4;
+		@apply lg:py-6 lg:px-0;
 	}
 
 	.layout__button {
