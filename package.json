@@ -38,6 +38,7 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
 		"highlight.js": "^11.9.0",
+		"i18next": "^23.12.2",
 		"lucide-svelte": "^0.372.0",
 		"markdown-it": "^14.1.0",
 		"ollama": "^0.5.6",
