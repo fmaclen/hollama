@@ -1,9 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import MarkdownIt from 'markdown-it';
-	import hljs from 'highlight.js';
-	import 'highlight.js/styles/github.min.css';
-
 	import { type Message } from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
@@ -11,47 +6,16 @@
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import { Brain, RefreshCw } from 'lucide-svelte';
+	import Markdown from '$lib/components/Markdown.svelte';
 
 	export let message: Message;
 	export let retryIndex: number | undefined = undefined;
 	export let handleRetry: ((index: number) => void) | undefined = undefined;
-	let articleElement: HTMLElement;
 
-	const CODE_SNIPPET_ID = 'code-snippet';
 	const isUserRole = message.role === 'user';
-
-	function renderCodeSnippet(code: string) {
-		return `<pre id="${CODE_SNIPPET_ID}"><code class="hljs">${code}</code></pre>`;
-	}
-
-	const md: MarkdownIt = new MarkdownIt({
-		highlight: function (str, lang) {
-			if (lang && hljs.getLanguage(lang)) {
-				try {
-					return renderCodeSnippet(
-						hljs.highlight(str, { language: lang, ignoreIllegals: true }).value
-					);
-				} catch (error) {
-					console.error('Error in renderCodeSnippet:', error);
-				}
-			}
-
-			return renderCodeSnippet(md.utils.escapeHtml(str));
-		}
-	});
-
-	onMount(() => {
-		const preElements = articleElement.querySelectorAll(`pre#${CODE_SNIPPET_ID}`);
-
-		preElements.forEach((preElement) => {
-			const codeElement = preElement.querySelector('code');
-			if (codeElement)
-				new ButtonCopy({ target: preElement, props: { content: codeElement.innerText } });
-		});
-	});
 </script>
 
-<article class="article article--{message.role}" bind:this={articleElement}>
+<article class="article article--{message.role}">
 	<nav class="article__nav">
 		<div data-testid="session-role" class="article__role">
 			<Badge>
@@ -88,7 +52,7 @@
 				<Brain class="-mr-1 ml-2 h-4 w-4" />
 			</Button>
 		{:else if message.content}
-			{@html md.render(message.content)} <!-- eslint-disable-line svelte/no-at-html-tags -->
+			<Markdown markdown={message.content} />
 		{/if}
 	</div>
 </article>
@@ -125,85 +89,5 @@
 
 	.article__role {
 		@apply text-center text-xs font-bold uppercase leading-7;
-	}
-
-	.markdown {
-		@apply mx-auto w-full text-sm;
-		@apply md:text-base;
-
-		:global(a) {
-			@apply underline underline-offset-4 hover:text-active;
-		}
-
-		:global(> *:not(:first-child)) {
-			@apply mt-4;
-		}
-
-		:global(> *:not(:last-child)) {
-			@apply mb-4;
-		}
-
-		:global(code) {
-			@apply rounded-md text-xs;
-			@apply md:text-sm;
-		}
-
-		:global(pre) {
-			@apply relative mb-4 mt-4 overflow-auto rounded-md border border-shade-2;
-			@apply first:mt-0;
-		}
-
-		:global(pre code) {
-			@apply bg-neutral-50/50 p-4 pr-12 text-xs;
-			@apply dark:bg-neutral-50 dark:invert;
-		}
-
-		:global(pre > .copy-button) {
-			@apply absolute right-2 top-2 rounded-md bg-shade-1 opacity-0;
-		}
-
-		:global(pre:hover > .copy-button) {
-			@apply opacity-100;
-		}
-
-		:global(li > code),
-		:global(p > code) {
-			@apply bg-amber-50 p-1 text-orange-600 dark:bg-amber-950 dark:text-orange-500;
-		}
-
-		:global(ol),
-		:global(ul) {
-			@apply mx-8 flex list-outside flex-col gap-y-1;
-		}
-
-		:global(ol) {
-			@apply list-decimal;
-		}
-
-		:global(ul) {
-			@apply list-disc;
-		}
-
-		:global(h1) {
-			@apply text-3xl font-semibold tracking-tight;
-		}
-
-		:global(strong) {
-			@apply font-semibold;
-		}
-
-		:global(h2) {
-			@apply text-2xl font-semibold tracking-tight;
-		}
-
-		:global(h3) {
-			@apply text-xl font-semibold tracking-tight;
-		}
-
-		:global(h4),
-		:global(h5),
-		:global(h5) {
-			@apply text-lg font-semibold;
-		}
 	}
 </style>

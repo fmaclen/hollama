@@ -33,7 +33,7 @@
 		"date-fns": "^3.6.0",
 		"dotenv": "^16.4.5",
 		"electron": "^31.3.1",
-		"electron-builder": "^24.13.3",
+		"electron-builder": "^25.0.3",
 		"eslint": "^8.56.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
