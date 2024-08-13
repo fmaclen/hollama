@@ -51,6 +51,7 @@
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
 	let ollamaInstance: Ollama | null = null;
+	let isWaitingForResponse = false;
 
 	const shouldConfirmDeletion = writable(false);
 
@@ -84,6 +85,8 @@
 
 		// Reset the prompt editor to its default state
 		isPromptFullscreen = false;
+
+		isWaitingForResponse = true;
 
 		let knowledgeContext: Message | null = null;
 		if (knowledge) {
@@ -143,6 +146,7 @@
 			});
 
 			for await (const part of response) {
+				if (isWaitingForResponse) isWaitingForResponse = false;
 				completion += part.message.content;
 				await scrollToBottom();
 			}
@@ -209,7 +213,16 @@
 		session.messages = session.messages.slice(0, -1);
 	}
 
+	function showAbortError() {
+		toast.error("Can't stop completion until the first response from Ollama is received");
+	}
+
 	beforeNavigate((navigation) => {
+		if (isWaitingForResponse) {
+			showAbortError();
+			navigation.cancel();
+			return;
+		}
 		if (completion) {
 			const userConfirmed = confirm(
 				'Are you sure you want to leave?\nThe completion in progress will stop'
@@ -338,6 +351,10 @@
 									title="Stop response"
 									variant="outline"
 									on:click={() => {
+										if (isWaitingForResponse) {
+											showAbortError();
+											return;
+										}
 										abortOllama();
 										resetPrompt();
 										abortController.abort();
