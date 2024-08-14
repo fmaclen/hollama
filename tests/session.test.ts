@@ -546,6 +546,86 @@ test.describe('Session', () => {
 		);
 	});
 
+	test('handles abort and navigation during completion', async ({ page }) => {
+		const aiMessage = page.locator('article', { hasText: 'Assistant' });
+		const errorMessage = page.getByText(
+			"Can't stop completion until the first response from Ollama is received"
+		);
+
+		async function setupAndRunPrompt() {
+			// Setup
+			await page.goto('/');
+			await mockTagsResponse(page);
+			await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+			await page.getByText('Sessions', { exact: true }).click();
+			await page.getByTestId('new-session').click();
+
+			// Submit prompt
+			await promptTextarea.fill('Test prompt');
+			await page.getByText('Run').click();
+		}
+
+		// Mock a slow response
+		await page.route('**/api/chat', async (route) => {
+			await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate pending state
+			await route.fulfill({ status: 200, body: '{"message": {"content": "Loading..."}}' });
+		});
+
+		await setupAndRunPrompt();
+
+		// Click abort button and expect it to show error message
+		await page.getByTitle('Stop response').click();
+		await expect(errorMessage).toBeVisible();
+
+		// Refresh the page to clean the error message
+		await page.reload();
+		await setupAndRunPrompt();
+
+		// Try to navigate away
+		const currentUrl = page.url();
+		await page.getByText('Knowledge', { exact: true }).click();
+		await expect(errorMessage).toBeVisible();
+		expect(page.url()).toBe(currentUrl);
+
+		// Mock completion start
+		await page.route('**/api/chat', async (route) => {
+			const encoder = new TextEncoder();
+			const readable = new ReadableStream({
+				start(controller) {
+					controller.enqueue(encoder.encode('{"message": {"content": "Starting response..."}}\n'));
+					// Keep the stream open
+				}
+			});
+			// @ts-ignore
+			await route.fulfill({ status: 200, body: readable });
+		});
+
+		// Refresh the page to clean the error message
+		await page.reload();
+		await setupAndRunPrompt();
+
+		// Check that abort button now does not show error message
+		await page.getByTitle('Stop response').click();
+		await expect(aiMessage).toContainText('Starting response...');
+		await expect(promptTextarea).toHaveValue('Test prompt');
+		await expect(errorMessage).not.toBeVisible();
+
+		// Try to navigate away and confirm
+		page.on('dialog', (dialog) => dialog.accept());
+		await page.getByText('Knowledge', { exact: true }).click();
+		expect(page.url()).toContain('/knowledge');
+
+		// Mock completion response
+		await page.route('**/api/chat', async (route) => {
+			await route.fulfill({ status: 200, body: JSON.stringify(MOCK_SESSION_1_RESPONSE_1) });
+		});
+
+		await setupAndRunPrompt();
+
+		await expect(page.getByTitle('Stop response')).not.toBeVisible();
+		await expect(aiMessage).toContainText(MOCK_SESSION_1_RESPONSE_1.message.content);
+	});
+
 	test('ai completion can be retried', async ({ page }) => {
 		await page.goto('/');
 		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
