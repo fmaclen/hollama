@@ -1,15 +1,30 @@
 <script lang="ts">
-	import { ChevronDown } from 'lucide-svelte';
+	import Select from 'svelte-select';
 	import Field from './Field.svelte';
 
 	export let name: string;
 	export let label: string;
 	export let disabled: boolean | undefined = false;
 	export let options: { value: string; option: string }[] = [];
-	export let value: string | undefined = undefined;
+	export let value: string | null = null;
 </script>
 
 <Field {name} {disabled}>
+	<svelte:fragment slot="label">{label}</svelte:fragment>
+	<div class="select-container">
+		<!-- TODO fix styles -->
+		<Select
+			id={name}
+			containerStyles={'background-color: transparent; border: none;'}
+			{disabled}
+			bind:value
+			items={options.map((option) => option.value)}
+			showChevron={true}
+		/>
+	</div>
+</Field>
+
+<!-- <Field {name} {disabled}>
 	<svelte:fragment slot="label">{label}</svelte:fragment>
 	<div class="select-container">
 		<select id={name} class="select" {disabled} bind:value>
@@ -20,14 +35,14 @@
 		</select>
 		<ChevronDown class="bg-base -ml-2 mb-2 mr-2 h-4 w-4" />
 	</div>
-</Field>
+</Field> -->
 
 <style lang="postcss">
 	.select-container {
 		@apply flex items-center;
 	}
 
-	.select {
+	/* .select {
 		@apply base-input cursor-pointer appearance-none;
-	}
+	} */
 </style>
