@@ -107,6 +107,7 @@
 			stream: true
 		};
 
+		await scrollToBottom(true); // Force scroll after submitting prompt
 		await handleCompletion(payload);
 	}
 
@@ -184,8 +185,8 @@
 		handleSubmit();
 	}
 
-	async function scrollToBottom() {
-		if (!messageWindow || userScrolledUp) return;
+	async function scrollToBottom(shouldForceScroll = false) {
+		if (!shouldForceScroll && (!messageWindow || userScrolledUp)) return;
 		await tick();
 		messageWindow.scrollTop = messageWindow.scrollHeight;
 	}
