@@ -35,6 +35,7 @@
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import Head from '$lib/components/Head.svelte';
+	import type { BeforeNavigate } from '@sveltejs/kit';
 
 	export let data: PageData;
 
@@ -43,7 +44,6 @@
 	let knowledge: Knowledge | null;
 	let session: Session;
 	let completion: string;
-	let abortController: AbortController;
 	let prompt: string;
 	let promptCached: string;
 	let promptTextarea: HTMLTextAreaElement;
@@ -85,8 +85,6 @@
 
 		// Reset the prompt editor to its default state
 		isPromptFullscreen = false;
-
-		isWaitingForResponse = true;
 
 		let knowledgeContext: Message | null = null;
 		if (knowledge) {
@@ -132,21 +130,23 @@
 	}
 
 	async function handleCompletion(payload: { model: string; messages: Message[] }) {
-		abortController = new AbortController();
 		completion = '';
 
 		try {
 			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
 
 			ollamaInstance = new Ollama({ host: $settingsStore.ollamaServer });
+
+			isWaitingForResponse = true;
+
 			const response = await ollamaInstance.chat({
 				model: payload.model,
 				messages: payload.messages,
 				stream: true
 			});
+			isWaitingForResponse = false;
 
 			for await (const part of response) {
-				if (isWaitingForResponse) isWaitingForResponse = false;
 				completion += part.message.content;
 				await scrollToBottom();
 			}
@@ -206,33 +206,31 @@
 		promptCached = '';
 	}
 
-	function abortOllama() {
+	function stopResponse(navigation?: BeforeNavigate) {
+		if (isWaitingForResponse) {
+			toast.warning(
+				"Can't stop completion until the first response from Ollama is received, please wait..."
+			);
+			navigation?.cancel();
+			return;
+		}
+
+		resetPrompt();
 		ollamaInstance?.abort();
 		completion = '';
-		// Remove the "incomplete" AI response
-		session.messages = session.messages.slice(0, -1);
-	}
-
-	function showAbortError() {
-		toast.error("Can't stop completion until the first response from Ollama is received");
+		session.messages = session.messages.slice(0, -1); // Remove the "incomplete" AI response
 	}
 
 	beforeNavigate((navigation) => {
-		if (isWaitingForResponse) {
-			showAbortError();
+		if (!completion) return;
+		const userConfirmed = confirm(
+			'Are you sure you want to leave?\nThe completion in progress will stop'
+		);
+		if (!userConfirmed) {
 			navigation.cancel();
 			return;
 		}
-		if (completion) {
-			const userConfirmed = confirm(
-				'Are you sure you want to leave?\nThe completion in progress will stop'
-			);
-			if (userConfirmed) {
-				abortOllama();
-				return;
-			}
-			navigation.cancel();
-		}
+		stopResponse(navigation);
 	});
 
 	afterUpdate(() => {
@@ -347,19 +345,7 @@
 							</ButtonSubmit>
 
 							{#if isLastMessageFromUser}
-								<Button
-									title="Stop response"
-									variant="outline"
-									on:click={() => {
-										if (isWaitingForResponse) {
-											showAbortError();
-											return;
-										}
-										abortOllama();
-										resetPrompt();
-										abortController.abort();
-									}}
-								>
+								<Button title="Stop response" variant="outline" on:click={() => stopResponse()}>
 									<StopCircle class="h-4 w-4" />
 								</Button>
 							{/if}
