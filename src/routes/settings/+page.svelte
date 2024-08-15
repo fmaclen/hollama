@@ -11,6 +11,8 @@
 	import { ollamaTags, type OllamaTagResponse } from '$lib/ollama';
 	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
 	import Head from '$lib/components/Head.svelte';
+	import FieldWithNav from '$lib/components/FieldWithNav.svelte';
+	import { CloudDownload } from 'lucide-svelte';
 
 	export let ollamaURL: URL | null = null;
 
@@ -20,6 +22,7 @@
 	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
 	let ollamaModel = $settingsStore?.ollamaModel || '';
 	let ollamaTagResponse: OllamaTagResponse | null = null;
+	let ollamaPullModel: string | undefined;
 
 	$: settingsStore.update((settings) => ({
 		...settings,
@@ -120,7 +123,30 @@
 					{/if}
 				</svelte:fragment>
 			</FieldInput>
+
 			<FieldSelectModel />
+
+			<FieldInput
+				name="model"
+				label="Pull model"
+				placeholder="e.g. llama3.1"
+				bind:value={ollamaPullModel}
+				disabled={serverStatus === 'disconnected'}
+			>
+				<svelte:fragment slot="nav">
+					<Button aria-label="Download model" class="h-full text-muted" disabled={!ollamaPullModel}>
+						<CloudDownload class="h-4 w-4" />
+					</Button>
+				</svelte:fragment>
+				<svelte:fragment slot="help">
+					<div class="field-help">
+						<p class="p">
+							Download models from
+							<a href="https://ollama.com/library" target="_blank"> Ollama's library </a>
+						</p>
+					</div>
+				</svelte:fragment>
+			</FieldInput>
 		</Fieldset>
 
 		<div class="about">
@@ -181,5 +207,9 @@
 
 	.field-help {
 		@apply my-2 flex flex-col gap-y-3 px-0.5 text-muted;
+	}
+
+	a {
+		@apply text-link;
 	}
 </style>

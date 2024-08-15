@@ -30,3 +30,7 @@ export async function ollamaTags() {
 
 	return response.json() as Promise<OllamaTagResponse>;
 }
+
+export async function pullModel(model: OllamaModel) {
+	// TODO
+}

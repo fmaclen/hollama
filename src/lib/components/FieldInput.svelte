@@ -8,7 +8,7 @@
 	export let value: string | undefined = undefined;
 </script>
 
-<Field {name}>
+<Field {name} hasNav={$$slots.nav} {disabled}>
 	<svelte:fragment slot="label">
 		{label}
 
@@ -20,6 +20,10 @@
 	</svelte:fragment>
 
 	<input class="field-input" id={name} {disabled} {placeholder} bind:value on:keyup />
+
+	<svelte:fragment slot="nav">
+		<slot name="nav" />
+	</svelte:fragment>
 
 	<svelte:fragment slot="help">
 		<slot name="help" />
