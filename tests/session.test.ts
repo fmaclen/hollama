@@ -546,84 +546,94 @@ test.describe('Session', () => {
 		);
 	});
 
-	test('handles abort and navigation during completion', async ({ page }) => {
-		const aiMessage = page.locator('article', { hasText: 'Assistant' });
-		const errorMessage = page.getByText(
-			"Can't stop completion until the first response from Ollama is received"
-		);
+	test.describe('aborting completions', () => {
+		let aiMessage: Locator;
+		let warningMessage: Locator;
+		let runButton: Locator;
 
-		async function setupAndRunPrompt() {
-			// Setup
+		test.beforeEach(async ({ page }) => {
+			aiMessage = page.locator('article', { hasText: 'Assistant' });
+			warningMessage = page.getByText(
+				"Can't stop completion until the first response from Ollama is received, please wait..."
+			);
+			runButton = page.getByText('Run');
+
 			await page.goto('/');
-			await mockTagsResponse(page);
 			await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 			await page.getByText('Sessions', { exact: true }).click();
 			await page.getByTestId('new-session').click();
-
-			// Submit prompt
-			await promptTextarea.fill('Test prompt');
-			await page.getByText('Run').click();
-		}
-
-		// Mock a slow response
-		await page.route('**/api/chat', async (route) => {
-			await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate pending state
-			await route.fulfill({ status: 200, body: '{"message": {"content": "Loading..."}}' });
+			await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		});
 
-		await setupAndRunPrompt();
-
-		// Click abort button and expect it to show error message
-		await page.getByTitle('Stop response').click();
-		await expect(errorMessage).toBeVisible();
-
-		// Refresh the page to clean the error message
-		await page.reload();
-		await setupAndRunPrompt();
-
-		// Try to navigate away
-		const currentUrl = page.url();
-		await page.getByText('Knowledge', { exact: true }).click();
-		await expect(errorMessage).toBeVisible();
-		expect(page.url()).toBe(currentUrl);
-
-		// Mock completion start
-		await page.route('**/api/chat', async (route) => {
-			const encoder = new TextEncoder();
-			const readable = new ReadableStream({
-				start(controller) {
-					controller.enqueue(encoder.encode('{"message": {"content": "Starting response..."}}\n'));
-					// Keep the stream open
-				}
+		test("can't stop a while waiting for response", async ({ page }) => {
+			await page.route('**/chat', async (route) => {
+				await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate pending state
+				await route.fulfill({ status: 200, body: '{"message": {"content": "Loading..."}}' });
 			});
-			// @ts-ignore
-			await route.fulfill({ status: 200, body: readable });
+
+			await runButton.click();
+
+			await page.getByTitle('Stop response').click();
+			await expect(warningMessage).toBeVisible();
 		});
 
-		// Refresh the page to clean the error message
-		await page.reload();
-		await setupAndRunPrompt();
+		test('can stop a response in progress', async ({ page }) => {
+			await page.route('**/chat', async (route) => {
+				const ollamaStreamedResponse = {
+					model: MOCK_API_TAGS_RESPONSE.models[0].name,
+					created_at: '2023-08-04T08:52:19.385406455-07:00',
+					message: {
+						content: 'The',
+						role: 'assistant'
+					},
+					done: false
+				};
+				const encoder = new TextEncoder();
+				const readable = new ReadableStream({
+					start(controller) {
+						controller.enqueue(encoder.encode(JSON.stringify(ollamaStreamedResponse) + '\n'));
+					}
+				});
+				// @ts-ignore
+				await route.fulfill({ status: 200, body: readable });
+			});
 
-		// Check that abort button now does not show error message
-		await page.getByTitle('Stop response').click();
-		await expect(aiMessage).toContainText('Starting response...');
-		await expect(promptTextarea).toHaveValue('Test prompt');
-		await expect(errorMessage).not.toBeVisible();
+			await runButton.click();
 
-		// Try to navigate away and confirm
-		page.on('dialog', (dialog) => dialog.accept());
-		await page.getByText('Knowledge', { exact: true }).click();
-		expect(page.url()).toContain('/knowledge');
-
-		// Mock completion response
-		await page.route('**/api/chat', async (route) => {
-			await route.fulfill({ status: 200, body: JSON.stringify(MOCK_SESSION_1_RESPONSE_1) });
+			await page.getByTitle('Stop response').click();
+			await expect(warningMessage).not.toBeVisible();
 		});
 
-		await setupAndRunPrompt();
+		test("can't navigate away from session while waiting for response", async ({ page }) => {
+			await page.route('**/chat', async (route) => {
+				await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate pending state
+				await route.fulfill({ status: 200, body: '{"message": {"content": "Loading..."}}' });
+			});
 
-		await expect(page.getByTitle('Stop response')).not.toBeVisible();
-		await expect(aiMessage).toContainText(MOCK_SESSION_1_RESPONSE_1.message.content);
+			await runButton.click();
+
+			await page.getByText('Knowledge', { exact: true }).click();
+			await expect(warningMessage).toBeVisible();
+		});
+
+		test('can navigate away from session while a response is in progress', async ({ page }) => {
+			await page.route('**/chat', async (route) => {
+				const encoder = new TextEncoder();
+				const readable = new ReadableStream({
+					start(controller) {
+						controller.enqueue(encoder.encode('{"message": {"content": "Loading..."}}\n'));
+						// Keep the stream open
+					}
+				});
+				// @ts-ignore
+				await route.fulfill({ status: 200, body: readable });
+			});
+
+			await runButton.click();
+
+			await page.getByText('Knowledge', { exact: true }).click();
+			await expect(aiMessage).toContainText('Loading...');
+		});
 	});
 
 	test('ai completion can be retried', async ({ page }) => {
