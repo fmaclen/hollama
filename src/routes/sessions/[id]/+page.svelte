@@ -226,11 +226,11 @@
 		const userConfirmed = confirm(
 			'Are you sure you want to leave?\nThe completion in progress will stop'
 		);
-		if (!userConfirmed) {
-			navigation.cancel();
+		if (userConfirmed) {
+			stopResponse(navigation);
 			return;
 		}
-		stopResponse(navigation);
+		navigation.cancel();
 	});
 
 	afterUpdate(() => {
