@@ -1,9 +1,8 @@
 import type { ChatResponse } from 'ollama/browser';
 import type { Knowledge } from '$lib/knowledge';
-import type { OllamaTagResponse } from '$lib/ollama';
 import type { Locator, Page, Route } from '@playwright/test';
 
-export const MOCK_API_TAGS_RESPONSE: OllamaTagResponse = {
+export const MOCK_API_TAGS_RESPONSE = {
 	models: [
 		{
 			name: 'gemma:7b',
@@ -192,4 +191,29 @@ export function textEditorLocator(page: Page, label: string | RegExp | undefined
 export async function submitWithKeyboardShortcut(page: Page) {
 	const modKey = process.platform === 'darwin' ? 'Meta' : 'Control';
 	await page.keyboard.press(`${modKey}+Enter`);
+}
+
+export async function mockStreamedCompletionResponse(page: Page, response: ChatResponse) {
+	await page.route('**/api/chat', async (route) => {
+		// Delay the first chunk to simulate loading
+		const delay = (delayInms: number) => {
+			return new Promise((resolve) => setTimeout(resolve, delayInms));
+		};
+		await delay(1000);
+
+		const chunks = response.message.content.split(' ');
+		for (const chunk of chunks) {
+			await route.fulfill({
+				status: 200,
+				contentType: 'text/event-stream',
+				body: JSON.stringify({ ...response, message: { content: chunk + ' ' } })
+			});
+			await page.waitForTimeout(50); // Simulate delay between chunks
+		}
+		await route.fulfill({
+			status: 200,
+			contentType: 'text/event-stream',
+			body: JSON.stringify({ ...response, done: true })
+		});
+	});
 }
