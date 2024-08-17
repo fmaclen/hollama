@@ -2,7 +2,7 @@
 	import type { ListResponse } from 'ollama/browser';
 	import { onMount } from 'svelte';
 	import { version } from '$app/environment';
-	
+
 	import { ollamaTags } from '$lib/ollama';
 	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
 
