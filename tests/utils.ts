@@ -196,8 +196,8 @@ export async function submitWithKeyboardShortcut(page: Page) {
 export async function mockStreamedCompletionResponse(page: Page, response: ChatResponse) {
 	await page.route('**/api/chat', async (route) => {
 		// Delay the first chunk to simulate loading
-		const delay = (delayInms: number) => {
-			return new Promise((resolve) => setTimeout(resolve, delayInms));
+		const delay = (ms: number) => {
+			return new Promise((resolve) => setTimeout(resolve, ms));
 		};
 		await delay(1000);
 

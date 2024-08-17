@@ -548,63 +548,6 @@ test.describe('Session', () => {
 		);
 	});
 
-	test('can navigate out of session during completion', async ({ page }) => {
-		const runButton = page.getByText('Run');
-
-		let dialogHandler: (dialog: Dialog) => Promise<void>;
-		page.on('dialog', async (dialog) => await dialogHandler(dialog));
-
-		await page.goto('/');
-		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
-		await page.getByText('Sessions', { exact: true }).click();
-		await page.getByTestId('new-session').click();
-
-		// Start a streamed completion
-		await mockStreamedCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
-		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
-		await runButton.click();
-
-		// Wait for the completion to start
-		await expect(page.getByText('...')).toBeVisible();
-
-		// Set up dialog handler to cancel
-		dialogHandler = async (dialog) => {
-			expect(dialog.message()).toContain('Are you sure you want to leave?');
-			await dialog.dismiss();
-		};
-
-		// Attempt to navigate away
-		await page.getByText('Settings', { exact: true }).click();
-
-		// Check that we're still on the session page
-		await expect(page.getByTestId('session-id')).toBeVisible();
-
-		// Start another streamed completion
-		await mockStreamedCompletionResponse(page, MOCK_SESSION_1_RESPONSE_2);
-		await promptTextarea.fill('Another test prompt');
-		await runButton.click();
-
-		// Wait for the completion to start
-		await expect(page.getByText('...')).toBeVisible();
-
-		// Set up dialog handler to confirm
-		dialogHandler = async (dialog) => {
-			expect(dialog.message()).toContain('Are you sure you want to leave?');
-			await dialog.accept();
-		};
-
-		// Attempt to navigate away again
-		await page.getByText('Settings', { exact: true }).click();
-
-		// Check that we've navigated to the settings page
-		expect(page.url()).toContain('/settings');
-
-		// Check that the completion has stopped
-		await page.goto('/sessions');
-		const sessionsCount = await page.locator('.session__history').count();
-		expect(sessionsCount).toBe(0);
-	});
-
 	test('ai completion can be retried', async ({ page }) => {
 		await page.goto('/');
 		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -692,5 +635,62 @@ test.describe('Session', () => {
 
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(page.getByText('Run')).toBeDisabled();
+	});
+
+	test('can navigate out of session during completion', async ({ page }) => {
+		const runButton = page.getByText('Run');
+
+		let dialogHandler: (dialog: Dialog) => Promise<void>;
+		page.on('dialog', async (dialog) => await dialogHandler(dialog));
+
+		await page.goto('/');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		// Start a streamed completion
+		await mockStreamedCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await runButton.click();
+
+		// Wait for the completion to start
+		await expect(page.getByText('...')).toBeVisible();
+
+		// Set up dialog handler to cancel
+		dialogHandler = async (dialog) => {
+			expect(dialog.message()).toContain('Are you sure you want to leave?');
+			await dialog.dismiss();
+		};
+
+		// Attempt to navigate away
+		await page.getByText('Settings', { exact: true }).click();
+
+		// Check that we're still on the session page
+		await expect(page.getByTestId('session-id')).toBeVisible();
+
+		// Start another streamed completion
+		await mockStreamedCompletionResponse(page, MOCK_SESSION_1_RESPONSE_2);
+		await promptTextarea.fill('Another test prompt');
+		await runButton.click();
+
+		// Wait for the completion to start
+		await expect(page.getByText('...')).toBeVisible();
+
+		// Set up dialog handler to confirm
+		dialogHandler = async (dialog) => {
+			expect(dialog.message()).toContain('Are you sure you want to leave?');
+			await dialog.accept();
+		};
+
+		// Attempt to navigate away again
+		await page.getByText('Settings', { exact: true }).click();
+
+		// Check that we've navigated to the settings page
+		expect(page.url()).toContain('/settings');
+
+		// Check that the completion has stopped
+		await page.goto('/sessions');
+		const sessionsCount = await page.locator('.session__history').count();
+		expect(sessionsCount).toBe(0);
 	});
 });
