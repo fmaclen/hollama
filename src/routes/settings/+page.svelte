@@ -2,6 +2,8 @@
 	import { onMount } from 'svelte';
 	import { version } from '$app/environment';
 	import { CloudDownload } from 'lucide-svelte';
+	import { toast } from 'svelte-sonner';
+	import { type ErrorResponse, type ProgressResponse, type StatusResponse } from 'ollama/browser';
 
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -10,7 +12,7 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import Head from '$lib/components/Head.svelte';
 
-	import { ollamaTags, type OllamaTagResponse } from '$lib/ollama';
+	import { ollamaPull, ollamaTags, type OllamaTagResponse } from '$lib/ollama';
 	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
 
 	export let ollamaURL: URL | null = null;
@@ -21,7 +23,8 @@
 	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
 	let ollamaModel = $settingsStore?.ollamaModel || '';
 	let ollamaTagResponse: OllamaTagResponse | null = null;
-	let ollamaPullModel: string | undefined;
+	let modelTag: string | undefined;
+	let isPullInProgress = false;
 
 	$: settingsStore.update((settings) => ({
 		...settings,
@@ -38,6 +41,60 @@
 			ollamaTagResponse = null;
 			serverStatus = 'disconnected';
 		}
+	}
+
+	async function pullModel() {
+		if (!modelTag) return;
+		isPullInProgress = true;
+		const abortController = new AbortController();
+		const toastId = toast.message('Pulling model', { description: modelTag });
+
+		try {
+			await ollamaPull(
+				{ model: modelTag, stream: true },
+				abortController.signal,
+				(response: ProgressResponse | StatusResponse | ErrorResponse) => {
+					if ('status' in response && response.status === 'success') {
+						toast.success('Success', {
+							id: toastId,
+							description: `${modelTag} was downloaded`
+						});
+						modelTag = '';
+						return;
+					}
+
+					if ('error' in response) {
+						toast.error('Error', { id: toastId, description: response.error });
+						return;
+					}
+
+					if ('completed' in response && 'total' in response) {
+						const progress = (response.completed / response.total) * 100;
+						toast.loading(response.status, {
+							id: toastId,
+							description: `${progress.toFixed(0)}%`
+						});
+					}
+				}
+			);
+			await getModelsList();
+		} catch (error) {
+			const typedError = error instanceof Error ? error : new Error(String(error));
+
+			toast.error(
+				typedError.message === 'Failed to fetch'
+					? "Couldn't connect to Ollama server"
+					: typedError.message,
+				{
+					id: toastId,
+					description: ''
+				}
+			);
+			abortController.abort();
+			ollamaTagResponse = null;
+			serverStatus = 'disconnected';
+		}
+		isPullInProgress = false;
 	}
 
 	function deleteStorage(item: StorageKey): void {
@@ -128,20 +185,25 @@
 			<FieldInput
 				name="model"
 				label="Pull model"
-				placeholder="e.g. llama3.1"
-				bind:value={ollamaPullModel}
-				disabled={serverStatus === 'disconnected'}
+				placeholder="Model tag (e.g. llama3.1)"
+				bind:value={modelTag}
+				disabled={isPullInProgress || serverStatus === 'disconnected'}
 			>
 				<svelte:fragment slot="nav">
-					<Button aria-label="Download model" class="h-full text-muted" disabled={!ollamaPullModel}>
+					<Button
+						aria-label="Download model"
+						class="h-full text-muted"
+						disabled={!modelTag || isPullInProgress || serverStatus === 'disconnected'}
+						on:click={pullModel}
+					>
 						<CloudDownload class="h-4 w-4" />
 					</Button>
 				</svelte:fragment>
 				<svelte:fragment slot="help">
 					<div class="field-help">
 						<p class="p">
-							Download models from
-							<a href="https://ollama.com/library" target="_blank"> Ollama's library </a>
+							Browse the list of available models in
+							<a href="https://ollama.com/library" target="_blank">Ollama's library</a>
 						</p>
 					</div>
 				</svelte:fragment>
