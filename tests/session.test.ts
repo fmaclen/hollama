@@ -405,7 +405,7 @@ test.describe('Session', () => {
 		page
 	}) => {
 		const sendButton = page.getByText('Run');
-		const stopButton = page.getByTitle('Stop response');
+		const stopButton = page.getByTitle('Stop completion');
 		const userMessage = page.locator('article', { hasText: 'You' });
 		const aiMessage = page.locator('article', { hasText: 'Assistant' });
 		const sessionMetadata = page.getByTestId('session-metadata');
