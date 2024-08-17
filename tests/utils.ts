@@ -193,7 +193,11 @@ export async function submitWithKeyboardShortcut(page: Page) {
 	await page.keyboard.press(`${modKey}+Enter`);
 }
 
-export async function mockStreamedCompletionResponse(page: Page, response: ChatResponse) {
+export async function mockStreamedCompletionResponse(
+	page: Page,
+	response: ChatResponse,
+	abortAfterChunks = 1
+) {
 	await page.route('**/api/chat', async (route) => {
 		// Delay the first chunk to simulate loading
 		const delay = (ms: number) => {
@@ -202,7 +206,9 @@ export async function mockStreamedCompletionResponse(page: Page, response: ChatR
 		await delay(1000);
 
 		const chunks = response.message.content.split(' ');
-		for (const chunk of chunks) {
+		for (let i = 0; i < chunks.length; i++) {
+			if (i >= abortAfterChunks) break;
+			const chunk = chunks[i];
 			await route.fulfill({
 				status: 200,
 				contentType: 'text/event-stream',
