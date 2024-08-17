@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Ollama } from 'ollama/browser';
+	import { Ollama, type ChatResponse } from 'ollama/browser';
 	import { afterUpdate, tick } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
@@ -8,7 +8,7 @@
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
-	import { ollamaTags } from '$lib/ollama';
+	import { ollamaChat, ollamaTags } from '$lib/ollama';
 	import {
 		saveSession,
 		type Message,
@@ -35,7 +35,6 @@
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import Head from '$lib/components/Head.svelte';
-	import type { BeforeNavigate } from '@sveltejs/kit';
 
 	export let data: PageData;
 
@@ -44,6 +43,7 @@
 	let knowledge: Knowledge | null;
 	let session: Session;
 	let completion: string;
+	let abortController: AbortController;
 	let prompt: string;
 	let promptCached: string;
 	let promptTextarea: HTMLTextAreaElement;
@@ -131,25 +131,32 @@
 	}
 
 	async function handleCompletion(payload: { model: string; messages: Message[] }) {
+		abortController = new AbortController();
 		completion = '';
 
 		try {
 			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
 
-			ollamaInstance = new Ollama({ host: $settingsStore.ollamaServer });
+			try {
+				const response = await ollamaChat(payload, abortController.signal);
+				if (!response.body) throw new Error('Ollama response is missing body');
+				const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 
-			isWaitingForResponse = true;
-
-			const response = await ollamaInstance.chat({
-				model: payload.model,
-				messages: payload.messages,
-				stream: true
-			});
-			isWaitingForResponse = false;
-
-			for await (const part of response) {
-				completion += part.message.content;
-				await scrollToBottom();
+				while (true) {
+					const { value, done } = await reader.read();
+					if (done) break;
+					if (!response.ok && value) throw new Error(JSON.parse(value).error);
+					if (!value) continue;
+					const chatResponses = value.split('\n').filter((line) => line);
+					for (const chatResponse of chatResponses) {
+						const { message } = JSON.parse(chatResponse) as ChatResponse;
+						completion += message.content;
+						await scrollToBottom();
+					}
+				}
+			} catch (error: any) {
+				if (error.name === 'AbortError') return; // User aborted the request
+				handleError(error);
 			}
 
 			// After the completion save the session
@@ -207,17 +214,9 @@
 		promptCached = '';
 	}
 
-	function stopResponse(navigation?: BeforeNavigate) {
-		if (isWaitingForResponse) {
-			toast.warning(
-				"Can't stop completion until the first response from Ollama is received, please wait..."
-			);
-			navigation?.cancel();
-			return;
-		}
-
+	function stopResponse() {
+		abortController.abort();
 		resetPrompt();
-		ollamaInstance?.abort();
 		completion = '';
 		session.messages = session.messages.slice(0, -1); // Remove the "incomplete" AI response
 	}
@@ -228,7 +227,7 @@
 			'Are you sure you want to leave?\nThe completion in progress will stop'
 		);
 		if (userConfirmed) {
-			stopResponse(navigation);
+			stopResponse();
 			return;
 		}
 		navigation.cancel();
