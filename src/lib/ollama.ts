@@ -1,25 +1,46 @@
 import { get } from 'svelte/store';
 import { settingsStore } from '$lib/store';
+import type { ChatRequest, ChatResponse, ListResponse } from 'ollama/browser';
 
-export type OllamaModel = {
-	name: string;
-	model: string;
-	modified_at: string;
-	size: number;
-	digest: string;
-	details: {
-		parent_model: string;
-		format: string;
-		family: string;
-		families: string[] | null;
-		parameter_size: string;
-		quantization_level: string;
-	};
-};
+export async function ollamaChat(
+  payload: ChatRequest, 
+  abortSignal: AbortSignal, 
+  onChunk: (content: string) => void
+) {
+  const settings = get(settingsStore);
+  if (!settings) throw new Error('No Ollama server specified');
 
-export type OllamaTagResponse = {
-	models: OllamaModel[];
-};
+  const response = await fetch(`${settings.ollamaServer}/api/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/event-stream' },
+    body: JSON.stringify(payload),
+    signal: abortSignal
+  });
+
+  if (!response.body) throw new Error('Ollama response is missing body');
+
+  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+  let isCompletionDone = false;
+
+  while (!isCompletionDone) {
+    const { value, done } = await reader.read();
+
+    if (done) {
+      isCompletionDone = true;
+      break;
+    }
+
+    if (!response.ok && value) throw new Error(JSON.parse(value).error);
+    if (!value) continue;
+
+    const chatResponses = value.split('\n').filter((line) => line);
+
+    for (const chatResponse of chatResponses) {
+      const { message } = JSON.parse(chatResponse) as ChatResponse;
+      onChunk(message.content);
+    }
+  }
+}
 
 export async function ollamaTags() {
 	const settings = get(settingsStore);
@@ -28,5 +49,5 @@ export async function ollamaTags() {
 	const response = await fetch(`${settings.ollamaServer}/api/tags`);
 	if (!response.ok) throw new Error('Failed to fetch Ollama tags');
 
-	return response.json() as Promise<OllamaTagResponse>;
+	return response.json() as Promise<ListResponse>;
 }

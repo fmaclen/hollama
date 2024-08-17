@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { Ollama } from 'ollama/browser';
 	import { afterUpdate, tick } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { Brain, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import { beforeNavigate } from '$app/navigation';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
-	import { ollamaTags } from '$lib/ollama';
+	import { ollamaChat, ollamaTags } from '$lib/ollama';
 	import {
 		saveSession,
 		type Message,
@@ -35,7 +34,6 @@
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import Head from '$lib/components/Head.svelte';
-	import type { BeforeNavigate } from '@sveltejs/kit';
 
 	export let data: PageData;
 
@@ -44,20 +42,18 @@
 	let knowledge: Knowledge | null;
 	let session: Session;
 	let completion: string;
+	let abortController: AbortController;
 	let prompt: string;
-	let promptCached: string;
 	let promptTextarea: HTMLTextAreaElement;
+	let isCompletionInProgress = false;
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
-	let ollamaInstance: Ollama | null = null;
-	let isWaitingForResponse = false;
 
 	const shouldConfirmDeletion = writable(false);
 
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
-	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
 	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
@@ -98,8 +94,6 @@
 		}
 
 		const message: Message = { role: 'user', content: prompt };
-		promptCached = prompt;
-		prompt = '';
 		session.messages = knowledgeContext
 			? [knowledgeContext, ...session.messages, message]
 			: [...session.messages, message];
@@ -131,26 +125,18 @@
 	}
 
 	async function handleCompletion(payload: { model: string; messages: Message[] }) {
+		abortController = new AbortController();
+		isCompletionInProgress = true;
+		prompt = ''; // Reset the prompt form field
 		completion = '';
 
 		try {
 			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
 
-			ollamaInstance = new Ollama({ host: $settingsStore.ollamaServer });
-
-			isWaitingForResponse = true;
-
-			const response = await ollamaInstance.chat({
-				model: payload.model,
-				messages: payload.messages,
-				stream: true
-			});
-			isWaitingForResponse = false;
-
-			for await (const part of response) {
-				completion += part.message.content;
+			await ollamaChat(payload, abortController.signal, async (chunk) => {
+				completion += chunk;
 				await scrollToBottom();
-			}
+			});
 
 			// After the completion save the session
 			const message: Message = { role: 'assistant', content: completion };
@@ -166,8 +152,8 @@
 
 			// Final housekeeping
 			completion = '';
-			promptCached = '';
 			shouldFocusTextarea = true;
+			isCompletionInProgress = false;
 			await scrollToBottom();
 		} catch (error) {
 			const typedError = error instanceof Error ? error : new Error(String(error));
@@ -201,34 +187,21 @@
 		session.messages = [...session.messages, message];
 	}
 
-	function resetPrompt() {
-		// Reset the prompt to the last sent message
-		prompt = promptCached;
-		promptCached = '';
-	}
-
-	function stopResponse(navigation?: BeforeNavigate) {
-		if (isWaitingForResponse) {
-			toast.warning(
-				"Can't stop completion until the first response from Ollama is received, please wait..."
-			);
-			navigation?.cancel();
-			return;
-		}
-
-		resetPrompt();
-		ollamaInstance?.abort();
+	function stopCompletion() {
+		prompt = session.messages[session.messages.length - 1].content; // Reset the prompt to the last sent message
+		abortController.abort();
 		completion = '';
+		isCompletionInProgress = false;
 		session.messages = session.messages.slice(0, -1); // Remove the "incomplete" AI response
 	}
 
 	beforeNavigate((navigation) => {
-		if (!completion) return;
+		if (!isCompletionInProgress) return;
 		const userConfirmed = confirm(
 			'Are you sure you want to leave?\nThe completion in progress will stop'
 		);
 		if (userConfirmed) {
-			stopResponse(navigation);
+			stopCompletion();
 			return;
 		}
 		navigation.cancel();
@@ -278,7 +251,7 @@
 					{/key}
 				{/each}
 
-				{#if isLastMessageFromUser}
+				{#if isCompletionInProgress}
 					<Article message={{ role: 'assistant', content: completion || '...' }} />
 				{/if}
 			</div>
@@ -345,9 +318,16 @@
 								Run
 							</ButtonSubmit>
 
-							{#if isLastMessageFromUser}
-								<Button title="Stop response" variant="outline" on:click={() => stopResponse()}>
-									<StopCircle class="h-4 w-4" />
+							{#if isCompletionInProgress}
+								<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
+									<div class="prompt-editor__stop">
+										<span class="prompt-editor__stop-icon">
+											<StopCircle class=" h-4 w-4" />
+										</span>
+										<span class="prompt-editor__loading-icon">
+											<LoaderCircle class="prompt-editor__loading-icon h-4 w-4 animate-spin" />
+										</span>
+									</div>
 								</Button>
 							{/if}
 						</nav>
@@ -410,6 +390,33 @@
 	}
 
 	.prompt-editor__toolbar {
-		@apply flex items-center gap-x-2;
+		@apply flex items-stretch gap-x-2;
+	}
+
+	.prompt-editor__stop {
+		@apply relative -mx-3 -my-2 h-9 w-9;
+	}
+
+	.prompt-editor__stop:hover {
+		.prompt-editor__stop-icon {
+			@apply opacity-100;
+		}
+
+		.prompt-editor__loading-icon {
+			@apply opacity-0;
+		}
+	}
+
+	.prompt-editor__stop-icon,
+	.prompt-editor__loading-icon {
+		@apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
+	}
+
+	.prompt-editor__stop-icon {
+		@apply opacity-0;
+	}
+
+	.prompt-editor__loading-icon {
+		@apply opacity-100;
 	}
 </style>

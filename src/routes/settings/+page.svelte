@@ -1,15 +1,16 @@
 <script lang="ts">
+	import type { ListResponse } from 'ollama/browser';
 	import { onMount } from 'svelte';
 	import { version } from '$app/environment';
+	
+	import { ollamaTags } from '$lib/ollama';
+	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
 
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
-
-	import { ollamaTags, type OllamaTagResponse } from '$lib/ollama';
-	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
 	import Head from '$lib/components/Head.svelte';
 
 	export let ollamaURL: URL | null = null;
@@ -19,7 +20,7 @@
 
 	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
 	let ollamaModel = $settingsStore?.ollamaModel || '';
-	let ollamaTagResponse: OllamaTagResponse | null = null;
+	let ollamaTagResponse: ListResponse | null = null;
 
 	$: settingsStore.update((settings) => ({
 		...settings,

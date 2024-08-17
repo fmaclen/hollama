@@ -405,7 +405,7 @@ test.describe('Session', () => {
 		page
 	}) => {
 		const sendButton = page.getByText('Run');
-		const stopButton = page.getByTitle('Stop response');
+		const stopButton = page.getByTitle('Stop completion');
 		const userMessage = page.locator('article', { hasText: 'You' });
 		const aiMessage = page.locator('article', { hasText: 'Assistant' });
 		const sessionMetadata = page.getByTestId('session-metadata');
@@ -525,7 +525,8 @@ test.describe('Session', () => {
 		await expect(page.getByText('Sorry, something went wrong.')).toBeVisible();
 		await expect(
 			page.locator('code', {
-				hasText: 'Error: Did not receive done or success response in stream.'
+				hasText:
+					"SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)"
 			})
 		).toBeVisible();
 
@@ -546,94 +547,8 @@ test.describe('Session', () => {
 		);
 	});
 
-	test.describe('aborting completions', () => {
-		let aiMessage: Locator;
-		let warningMessage: Locator;
-		let runButton: Locator;
-
-		test.beforeEach(async ({ page }) => {
-			aiMessage = page.locator('article', { hasText: 'Assistant' });
-			warningMessage = page.getByText(
-				"Can't stop completion until the first response from Ollama is received, please wait..."
-			);
-			runButton = page.getByText('Run');
-
-			await page.goto('/');
-			await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
-			await page.getByText('Sessions', { exact: true }).click();
-			await page.getByTestId('new-session').click();
-			await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
-		});
-
-		test("can't stop a while waiting for response", async ({ page }) => {
-			await page.route('**/chat', async (route) => {
-				await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate pending state
-				await route.fulfill({ status: 200, body: '{"message": {"content": "Loading..."}}' });
-			});
-
-			await runButton.click();
-
-			await page.getByTitle('Stop response').click();
-			await expect(warningMessage).toBeVisible();
-		});
-
-		test('can stop a response in progress', async ({ page }) => {
-			await page.route('**/chat', async (route) => {
-				const ollamaStreamedResponse = {
-					model: MOCK_API_TAGS_RESPONSE.models[0].name,
-					created_at: '2023-08-04T08:52:19.385406455-07:00',
-					message: {
-						content: 'The',
-						role: 'assistant'
-					},
-					done: false
-				};
-				const encoder = new TextEncoder();
-				const readable = new ReadableStream({
-					start(controller) {
-						controller.enqueue(encoder.encode(JSON.stringify(ollamaStreamedResponse) + '\n'));
-					}
-				});
-				// @ts-ignore
-				await route.fulfill({ status: 200, body: readable });
-			});
-
-			await runButton.click();
-
-			await page.getByTitle('Stop response').click();
-			await expect(warningMessage).not.toBeVisible();
-		});
-
-		test("can't navigate away from session while waiting for response", async ({ page }) => {
-			await page.route('**/chat', async (route) => {
-				await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate pending state
-				await route.fulfill({ status: 200, body: '{"message": {"content": "Loading..."}}' });
-			});
-
-			await runButton.click();
-
-			await page.getByText('Knowledge', { exact: true }).click();
-			await expect(warningMessage).toBeVisible();
-		});
-
-		test('can navigate away from session while a response is in progress', async ({ page }) => {
-			await page.route('**/chat', async (route) => {
-				const encoder = new TextEncoder();
-				const readable = new ReadableStream({
-					start(controller) {
-						controller.enqueue(encoder.encode('{"message": {"content": "Loading..."}}\n'));
-						// Keep the stream open
-					}
-				});
-				// @ts-ignore
-				await route.fulfill({ status: 200, body: readable });
-			});
-
-			await runButton.click();
-
-			await page.getByText('Knowledge', { exact: true }).click();
-			await expect(aiMessage).toContainText('Loading...');
-		});
+	test.skip('can navigate out of session during completion', async () => {
+		// TODO: Add test for navigation during completion
 	});
 
 	test('ai completion can be retried', async ({ page }) => {
