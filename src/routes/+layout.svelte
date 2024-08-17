@@ -6,6 +6,7 @@
 
 	import '../app.pcss';
 	import { settingsStore } from '$lib/store';
+	import i18n from '$lib/i18n';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 
@@ -63,17 +64,17 @@
 				{:else if href === '/motd'}
 					<NotebookText class="h-4 w-4" />
 				{/if}
-				{text}
+				{$i18n.t(`nav.${text.toLowerCase()}`)}
 			</a>
 		{/each}
 
 		<button class="layout__button" on:click={toggleTheme}>
 			{#if theme === 'light'}
 				<Moon class="h-4 w-4" />
-				Dark
+				{$i18n.t('nav.theme.dark')}
 			{:else}
 				<Sun class="h-4 w-4" />
-				Light
+				{$i18n.t('nav.theme.light')}
 			{/if}
 		</button>
 	</aside>
