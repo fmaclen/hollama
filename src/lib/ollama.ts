@@ -1,26 +1,6 @@
 import { get } from 'svelte/store';
 import { settingsStore } from '$lib/store';
-import type { ChatRequest } from 'ollama/browser';
-
-export type OllamaModel = {
-	name: string;
-	model: string;
-	modified_at: string;
-	size: number;
-	digest: string;
-	details: {
-		parent_model: string;
-		format: string;
-		family: string;
-		families: string[] | null;
-		parameter_size: string;
-		quantization_level: string;
-	};
-};
-
-export type OllamaTagResponse = {
-	models: OllamaModel[];
-};
+import type { ChatRequest, ListResponse } from 'ollama/browser';
 
 export async function ollamaChat(payload: ChatRequest, abortSignal: AbortSignal) {
 	const settings = get(settingsStore);
@@ -41,5 +21,5 @@ export async function ollamaTags() {
 	const response = await fetch(`${settings.ollamaServer}/api/tags`);
 	if (!response.ok) throw new Error('Failed to fetch Ollama tags');
 
-	return response.json() as Promise<OllamaTagResponse>;
+	return response.json() as Promise<ListResponse>;
 }
