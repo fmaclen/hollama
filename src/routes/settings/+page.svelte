@@ -1,17 +1,17 @@
 <script lang="ts">
+	import type { ListResponse } from 'ollama/browser';
 	import { onMount } from 'svelte';
 	import { version } from '$app/environment';
+	
+	import { ollamaTags } from '$lib/ollama';
+	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
 
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
-
-	import { ollamaTags } from '$lib/ollama';
-	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
 	import Head from '$lib/components/Head.svelte';
-	import type { ListResponse } from 'ollama/browser';
 
 	export let ollamaURL: URL | null = null;
 
