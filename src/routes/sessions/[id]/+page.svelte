@@ -390,6 +390,6 @@
 	}
 
 	.prompt-editor__toolbar {
-		@apply flex items-center gap-x-2;
+		@apply flex items-stretch gap-x-2;
 	}
 </style>
