@@ -45,7 +45,6 @@
 	let completion: string;
 	let abortController: AbortController;
 	let prompt: string;
-	let promptCached: string;
 	let promptTextarea: HTMLTextAreaElement;
 	let isCompletionInProgress = false;
 	let isPromptFullscreen = false;
@@ -129,7 +128,6 @@
 	async function handleCompletion(payload: { model: string; messages: Message[] }) {
 		abortController = new AbortController();
 		isCompletionInProgress = true;
-		promptCached = payload.messages[payload.messages.length - 1].content; // Cache the last user prompt
 		prompt = ''; // Reset the prompt form field
 		completion = '';
 
@@ -155,7 +153,6 @@
 
 			// Final housekeeping
 			completion = '';
-			promptCached = '';
 			shouldFocusTextarea = true;
 			isCompletionInProgress = false;
 			await scrollToBottom();
@@ -192,9 +189,8 @@
 	}
 
 	function stopCompletion() {
-		prompt = promptCached; // Reset the prompt to the last sent message
+		prompt = session.messages[session.messages.length - 1].content; // Reset the prompt to the last sent message
 		abortController.abort();
-		promptCached = '';
 		completion = '';
 		isCompletionInProgress = false;
 		session.messages = session.messages.slice(0, -1); // Remove the "incomplete" AI response
