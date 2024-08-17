@@ -2,7 +2,6 @@ import { get } from 'svelte/store';
 import { settingsStore } from '$lib/store';
 import type {
 	ErrorResponse,
-	ListResponse,
 	ProgressResponse,
 	PullRequest,
 	StatusResponse
