@@ -135,27 +135,10 @@
 		try {
 			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
 
-			const response = await ollamaChat(payload, abortController.signal);
-			if (!response.body) throw new Error('Ollama response is missing body');
-
-			const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
-
-			let isDone = false;
-			while (!isDone) {
-				const { value, done } = await reader.read();
-				if (done) {
-					isDone = true;
-					break;
-				}
-				if (!response.ok && value) throw new Error(JSON.parse(value).error);
-				if (!value) continue;
-				const chatResponses = value.split('\n').filter((line) => line);
-				for (const chatResponse of chatResponses) {
-					const { message } = JSON.parse(chatResponse) as ChatResponse;
-					completion += message.content;
-					await scrollToBottom();
-				}
-			}
+			await ollamaChat(payload, abortController.signal, async (chunk) => {
+				completion += chunk;
+				await scrollToBottom();
+			});
 
 			// After the completion save the session
 			const message: Message = { role: 'assistant', content: completion };
