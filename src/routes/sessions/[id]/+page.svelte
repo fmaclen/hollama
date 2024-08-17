@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Ollama, type ChatResponse } from 'ollama/browser';
+	import type { ChatResponse } from 'ollama/browser';
 	import { afterUpdate, tick } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
@@ -50,8 +50,6 @@
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
-	let ollamaInstance: Ollama | null = null;
-	let isWaitingForResponse = false;
 
 	const shouldConfirmDeletion = writable(false);
 
@@ -137,26 +135,26 @@
 		try {
 			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
 
-			try {
-				const response = await ollamaChat(payload, abortController.signal);
-				if (!response.body) throw new Error('Ollama response is missing body');
-				const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+			const response = await ollamaChat(payload, abortController.signal);
+			if (!response.body) throw new Error('Ollama response is missing body');
 
-				while (true) {
-					const { value, done } = await reader.read();
-					if (done) break;
-					if (!response.ok && value) throw new Error(JSON.parse(value).error);
-					if (!value) continue;
-					const chatResponses = value.split('\n').filter((line) => line);
-					for (const chatResponse of chatResponses) {
-						const { message } = JSON.parse(chatResponse) as ChatResponse;
-						completion += message.content;
-						await scrollToBottom();
-					}
+			const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+
+			let isDone = false;
+			while (!isDone) {
+				const { value, done } = await reader.read();
+				if (done) {
+					isDone = true;
+					break;
 				}
-			} catch (error: any) {
-				if (error.name === 'AbortError') return; // User aborted the request
-				handleError(error);
+				if (!response.ok && value) throw new Error(JSON.parse(value).error);
+				if (!value) continue;
+				const chatResponses = value.split('\n').filter((line) => line);
+				for (const chatResponse of chatResponses) {
+					const { message } = JSON.parse(chatResponse) as ChatResponse;
+					completion += message.content;
+					await scrollToBottom();
+				}
 			}
 
 			// After the completion save the session

@@ -525,7 +525,8 @@ test.describe('Session', () => {
 		await expect(page.getByText('Sorry, something went wrong.')).toBeVisible();
 		await expect(
 			page.locator('code', {
-				hasText: 'Error: Did not receive done or success response in stream.'
+				hasText:
+					"SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)"
 			})
 		).toBeVisible();
 
@@ -546,7 +547,7 @@ test.describe('Session', () => {
 		);
 	});
 
-	test.skip('navigation during completion', () => {
+	test.skip('can navigate out of session during completion', async () => {
 		// TODO: Add test for navigation during completion
 	});
 
