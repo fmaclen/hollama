@@ -1,6 +1,12 @@
 import { get } from 'svelte/store';
 import { settingsStore } from '$lib/store';
-import type { ListResponse, ErrorResponse, ProgressResponse, PullRequest, StatusResponse } from 'ollama/browser';
+import type {
+	ListResponse,
+	ErrorResponse,
+	ProgressResponse,
+	PullRequest,
+	StatusResponse
+} from 'ollama/browser';
 
 function getServerFromSettings() {
 	const settings = get(settingsStore);

@@ -109,7 +109,7 @@ test('a model can be pulled from the ollama library', async ({ page }) => {
 	await modelTagInput.fill('llama3.1');
 	await expect(downloadButton).toBeEnabled();
 
-	await page.route('**/api/pull', route => {
+	await page.route('**/api/pull', (route) => {
 		setTimeout(() => route.fulfill({ json: { status: 'pulling model' } }), 1000);
 	});
 	await downloadButton.click();
@@ -122,21 +122,24 @@ test('a model can be pulled from the ollama library', async ({ page }) => {
 		status: 'pulling 5fd4e1793450',
 		completed: 25,
 		total: 50,
-		digest: "sha256:5fd4e179345020dd97359b0b4fd6ae20c3f918d6b8ed8cda7d855f92561c7ea7"
+		digest: 'sha256:5fd4e179345020dd97359b0b4fd6ae20c3f918d6b8ed8cda7d855f92561c7ea7'
 	};
-	await page.route('**/api/pull', route => route.fulfill({ json: progressResponse }));
+	await page.route('**/api/pull', (route) => route.fulfill({ json: progressResponse }));
 	await downloadButton.click();
 	await expect(page.getByText('pulling 5fd4e1793450', { exact: false })).toBeVisible();
 	await expect(page.getByText('50%', { exact: false })).toBeVisible();
 
 	const errorResponse: ErrorResponse = { error: 'pull model manifest: file does not exist' };
-	await page.route('**/api/pull', route => route.fulfill({ json: errorResponse }));
+	await page.route('**/api/pull', (route) => route.fulfill({ json: errorResponse }));
 	await downloadButton.click();
 	await expect(page.getByText('Error', { exact: false })).toBeVisible();
-	await expect(page.getByText('pull model manifest: file does not exist', { exact: false })).toBeVisible();
+	await expect(
+		page.getByText('pull model manifest: file does not exist', { exact: false })
+	).toBeVisible();
 
 	const successResponse: StatusResponse = { status: 'success' };
-	await page.route('**/api/pull', route => route.fulfill({ json: successResponse })); await downloadButton.click();
+	await page.route('**/api/pull', (route) => route.fulfill({ json: successResponse }));
+	await downloadButton.click();
 	await expect(page.getByText('Success', { exact: false })).toBeVisible();
 	await expect(page.getByText('llama3.1 was downloaded', { exact: false })).toBeVisible();
 	await expect(modelTagInput).toHaveValue('');
