@@ -198,7 +198,7 @@ test.describe('Session', () => {
 			'What does the fox say?'
 		);
 		expect(await page.getByTestId('session-item').first().textContent()).toContain(
-			'openhermes2.5-mistral:latest'
+			MOCK_API_TAGS_RESPONSE.models[1].name
 		);
 		expect(await page.getByTestId('session-item').last().textContent()).toContain(
 			'Who would win in a fight between Emma Watson and Jessica Alba?'
