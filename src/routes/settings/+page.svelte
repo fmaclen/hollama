@@ -194,6 +194,7 @@
 					<Button
 						aria-label="Download model"
 						class="h-full text-muted"
+						isLoading={isPullInProgress}
 						disabled={!modelTag || isPullInProgress || serverStatus === 'disconnected'}
 						on:click={pullModel}
 					>
