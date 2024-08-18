@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { ErrorResponse, ListResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
+	import type {
+		ErrorResponse,
+		ListResponse,
+		ProgressResponse,
+		StatusResponse
+	} from 'ollama/browser';
 	import { toast } from 'svelte-sonner';
 	import { CloudDownload } from 'lucide-svelte';
 
@@ -187,7 +192,9 @@
 			<FieldHelp>
 				<P>
 					Browse the list of available models in
-					<Button href="https://ollama.com/library" variant="link" target="_blank">Ollama's library</Button>
+					<Button href="https://ollama.com/library" variant="link" target="_blank">
+						Ollama's library
+					</Button>
 				</P>
 			</FieldHelp>
 		</svelte:fragment>
