@@ -105,15 +105,18 @@ test('a model can be pulled from the ollama library', async ({ page }) => {
 
 	await page.goto('/settings');
 	await expect(downloadButton).toBeDisabled();
+	await expect(downloadButton).not.toHaveClass(/button--is-loading/);
 
 	await modelTagInput.fill('llama3.1');
 	await expect(downloadButton).toBeEnabled();
+	await expect(downloadButton).not.toHaveClass(/button--is-loading/);
 
 	await page.route('**/api/pull', (route) => {
 		setTimeout(() => route.fulfill({ json: { status: 'pulling model' } }), 1000);
 	});
 	await downloadButton.click();
 	await expect(downloadButton).toBeDisabled();
+	await expect(downloadButton).toHaveClass(/button--is-loading/);
 	await expect(modelTagInput).toBeDisabled();
 	await expect(page.getByText('Pulling model', { exact: false })).toBeVisible();
 	await expect(downloadButton).not.toBeDisabled();
