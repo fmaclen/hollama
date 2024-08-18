@@ -22,8 +22,7 @@ export async function ollamaChat(
 	abortSignal: AbortSignal,
 	onChunk: (content: string) => void
 ) {
-	const ollamaServer = getServerFromSettings();
-	const response = await fetch(`${ollamaServer}/api/chat`, {
+	const response = await fetch(`${getServerFromSettings()}/api/chat`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'text/event-stream' },
 		body: JSON.stringify(payload),
@@ -56,8 +55,7 @@ export async function ollamaChat(
 }
 
 export async function ollamaTags() {
-	const ollamaServer = getServerFromSettings();
-	const response = await fetch(`${ollamaServer}/api/tags`);
+	const response = await fetch(`${getServerFromSettings()}/api/tags`);
 	if (!response.ok) throw new Error('Failed to fetch Ollama tags');
 
 	const data: ListResponse | undefined = await response.json();
@@ -80,10 +78,7 @@ export async function ollamaPull(
 	payload: PullRequest,
 	onChunk: (progress: ProgressResponse | StatusResponse | ErrorResponse) => void
 ) {
-	const settings = get(settingsStore);
-	if (!settings) throw new Error('No Ollama server specified');
-
-	const response = await fetch(`${settings.ollamaServer}/api/pull`, {
+	const response = await fetch(`${getServerFromSettings()}/api/pull`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(payload)
