@@ -269,24 +269,24 @@
 						{#if isNewSession}
 							<div class="prompt-editor__project">
 								<FieldSelectModel />
-								<div class="prompt-editor__knowledge">
-									<FieldSelect
-										label="System prompt"
-										name="knowledge"
-										disabled={!$knowledgeStore}
-										options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
-										bind:value={knowledgeId}
-									/>
-
-									<Button
-										aria-label="New knowledge"
-										variant="outline"
-										href={generateNewUrl(Sitemap.KNOWLEDGE)}
-										class="h-full text-muted"
-									>
-										<Brain class="h-4 w-4" />
-									</Button>
-								</div>
+								<FieldSelect
+									label="System prompt"
+									name="knowledge"
+									disabled={!$knowledgeStore}
+									options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
+									bind:value={knowledgeId}
+								>
+									<svelte:fragment slot="nav">
+										<Button
+											aria-label="New knowledge"
+											variant="outline"
+											href={generateNewUrl(Sitemap.KNOWLEDGE)}
+											class="h-full text-muted"
+										>
+											<Brain class="h-4 w-4" />
+										</Button>
+									</svelte:fragment>
+								</FieldSelect>
 							</div>
 						{/if}
 
@@ -363,11 +363,6 @@
 
 	.prompt-editor__project {
 		@apply grid grid-cols-[1fr,1fr] items-end gap-x-3;
-	}
-
-	.prompt-editor__knowledge {
-		@apply grid grid-cols-[auto,max-content] items-end gap-x-2;
-		@apply lg:gap-x-2;
 	}
 
 	.prompt-editor--fullscreen {

@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { LoaderCircle } from 'lucide-svelte';
+
 	let className: string | undefined = undefined;
 	export { className as class };
 	export let variant: 'default' | 'outline' | 'link' | 'icon' | undefined = 'default';
 	export let href: string | undefined = undefined;
+	export let isLoading: boolean | undefined = false;
 </script>
 
 {#if href}
@@ -18,7 +21,16 @@
 		<slot />
 	</a>
 {:else}
-	<button {...$$restProps} class="button button--{variant} {className}" type="button" on:click>
+	<button
+		{...$$restProps}
+		class="button button--{variant} {className}"
+		class:button--is-loading={isLoading}
+		type="button"
+		on:click
+	>
+		<span class="button__icon">
+			<LoaderCircle class="h-4 w-4 animate-spin" />
+		</span>
 		<slot />
 	</button>
 {/if}
@@ -50,5 +62,23 @@
 			@apply hover:text-base;
 			@apply active:text-active;
 		}
+	}
+
+	/* Loading state */
+
+	:not(.button--is-loading) .button__icon {
+		@apply hidden;
+	}
+
+	.button--is-loading {
+		@apply relative;
+
+		.button__icon {
+			@apply flex;
+		}
+	}
+
+	.button__icon {
+		@apply absolute inset-0 flex items-center justify-center bg-shade-2;
 	}
 </style>

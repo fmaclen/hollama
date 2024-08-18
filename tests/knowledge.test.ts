@@ -77,6 +77,7 @@ test('creates and edits knowledge', async ({ page }) => {
 test('can delete knowledge from the header and sidebar', async ({ page }) => {
 	await page.goto('/');
 	await page.getByText('Knowledge', { exact: true }).click();
+	await expect(page.getByText('Create new knowlege or choose one from the list')).toBeVisible();
 	expect(await page.getByTestId('knowledge-item').count()).toBe(0);
 
 	await seedKnowledgeAndReload(page);
