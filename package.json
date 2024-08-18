@@ -40,7 +40,7 @@
 		"highlight.js": "^11.9.0",
 		"lucide-svelte": "^0.372.0",
 		"markdown-it": "^14.1.0",
-		"ollama": "^0.5.6",
+		"ollama": "^0.5.8",
 		"postcss": "^8.4.32",
 		"postcss-import": "^16.1.0",
 		"postcss-load-config": "^5.0.2",

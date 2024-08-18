@@ -1,14 +1,28 @@
-import type { ChatResponse } from 'ollama/browser';
+import type { ChatResponse, ListResponse } from 'ollama/browser';
 import type { Knowledge } from '$lib/knowledge';
-import type { OllamaTagResponse } from '$lib/ollama';
 import type { Locator, Page, Route } from '@playwright/test';
 
-export const MOCK_API_TAGS_RESPONSE: OllamaTagResponse = {
+export const MOCK_API_TAGS_RESPONSE: ListResponse = {
 	models: [
 		{
+			name: 'TheBloke/CodeLlama-70B-Python-AWQ',
+			modified_at: new Date('2023-12-01T10:06:18.679361519-05:00'),
+			size: 4108928240,
+			digest: 'ca4cd4e8a562465d7cf0512fc4d4dff3407f07800b01c9a6ee9dd107001704b9',
+			details: {
+				parent_model: '',
+				format: 'gguf',
+				family: 'llama',
+				families: [],
+				parameter_size: '70B',
+				quantization_level: 'Q4_0'
+			},
+			expires_at: new Date(),
+			size_vram: 4108928240
+		},
+		{
 			name: 'gemma:7b',
-			model: 'gemma:7b',
-			modified_at: '2024-04-08T21:41:35.217983842-04:00"',
+			modified_at: new Date('2024-04-08T21:41:35.217983842-04:00'),
 			size: 5011853225,
 			digest: 'a72c7f4d0a15522df81486d13ce432c79e191bda2558d024fbad4362c4f7cbf8',
 			details: {
@@ -18,22 +32,25 @@ export const MOCK_API_TAGS_RESPONSE: OllamaTagResponse = {
 				families: ['gemma'],
 				parameter_size: '9B',
 				quantization_level: 'Q4_0'
-			}
+			},
+			expires_at: new Date(),
+			size_vram: 5011853225
 		},
 		{
 			name: 'openhermes2.5-mistral:latest',
-			model: 'openhermes2.5-mistral:latest',
-			modified_at: '2023-12-01T10:06:18.679361519-05:00',
+			modified_at: new Date('2023-12-01T10:06:18.679361519-05:00'),
 			size: 4108928240,
 			digest: 'ca4cd4e8a562465d7cf0512fc4d4dff3407f07800b01c9a6ee9dd107001704b9',
 			details: {
 				parent_model: '',
 				format: 'gguf',
 				family: 'llama',
-				families: null,
+				families: [],
 				parameter_size: '7B',
 				quantization_level: 'Q4_0'
-			}
+			},
+			expires_at: new Date(),
+			size_vram: 4108928240
 		}
 	]
 };
