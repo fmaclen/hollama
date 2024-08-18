@@ -210,34 +210,3 @@ export async function submitWithKeyboardShortcut(page: Page) {
 	const modKey = process.platform === 'darwin' ? 'Meta' : 'Control';
 	await page.keyboard.press(`${modKey}+Enter`);
 }
-
-export async function mockStreamedCompletionResponse(
-	page: Page,
-	response: ChatResponse,
-	abortAfterChunks = 1
-) {
-	await page.route('**/api/chat', async (route) => {
-		// Delay the first chunk to simulate loading
-		const delay = (ms: number) => {
-			return new Promise((resolve) => setTimeout(resolve, ms));
-		};
-		await delay(1000);
-
-		const chunks = response.message.content.split(' ');
-		for (let i = 0; i < chunks.length; i++) {
-			if (i >= abortAfterChunks) break;
-			const chunk = chunks[i];
-			await route.fulfill({
-				status: 200,
-				contentType: 'text/event-stream',
-				body: JSON.stringify({ ...response, message: { content: chunk + ' ' } })
-			});
-			await page.waitForTimeout(50); // Simulate delay between chunks
-		}
-		await route.fulfill({
-			status: 200,
-			contentType: 'text/event-stream',
-			body: JSON.stringify({ ...response, done: true })
-		});
-	});
-}

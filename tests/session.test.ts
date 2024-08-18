@@ -9,8 +9,7 @@ import {
 	mockCompletionResponse,
 	mockTagsResponse,
 	textEditorLocator,
-	submitWithKeyboardShortcut,
-	mockStreamedCompletionResponse
+	submitWithKeyboardShortcut
 } from './utils';
 
 test.describe('Session', () => {
@@ -649,7 +648,7 @@ test.describe('Session', () => {
 		await page.getByTestId('new-session').click();
 
 		// Start a streamed completion
-		await mockStreamedCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.route('**/chat', () => {});
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await runButton.click();
 
@@ -658,7 +657,9 @@ test.describe('Session', () => {
 
 		// Set up dialog handler to cancel
 		dialogHandler = async (dialog) => {
-			expect(dialog.message()).toContain('Are you sure you want to leave?');
+			expect(dialog.message()).toContain(
+				'Are you sure you want to leave?\nThe completion in progress will stop'
+			);
 			await dialog.dismiss();
 		};
 
@@ -669,7 +670,6 @@ test.describe('Session', () => {
 		await expect(page.getByTestId('session-id')).toBeVisible();
 
 		// Start another streamed completion
-		await mockStreamedCompletionResponse(page, MOCK_SESSION_1_RESPONSE_2);
 		await promptTextarea.fill('Another test prompt');
 		await runButton.click();
 
@@ -678,7 +678,9 @@ test.describe('Session', () => {
 
 		// Set up dialog handler to confirm
 		dialogHandler = async (dialog) => {
-			expect(dialog.message()).toContain('Are you sure you want to leave?');
+			expect(dialog.message()).toContain(
+				'Are you sure you want to leave?\nThe completion in progress will stop'
+			);
 			await dialog.accept();
 		};
 
