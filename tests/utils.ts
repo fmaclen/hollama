@@ -6,18 +6,18 @@ import type { Locator, Page, Route } from '@playwright/test';
 export const MOCK_API_TAGS_RESPONSE: OllamaTagResponse = {
 	models: [
 		{
-			name: "TheBloke/CodeLlama-70B-Python-AWQ",
-			model: "TheBloke/CodeLlama-70B-Python-AWQ",
-			modified_at: "2023-12-01T10:06:18.679361519-05:00",
+			name: 'TheBloke/CodeLlama-70B-Python-AWQ',
+			model: 'TheBloke/CodeLlama-70B-Python-AWQ',
+			modified_at: '2023-12-01T10:06:18.679361519-05:00',
 			size: 4108928240,
-			digest: "ca4cd4e8a562465d7cf0512fc4d4dff3407f07800b01c9a6ee9dd107001704b9",
+			digest: 'ca4cd4e8a562465d7cf0512fc4d4dff3407f07800b01c9a6ee9dd107001704b9',
 			details: {
-				parent_model: "",
-				format: "gguf",
-				family: "llama",
+				parent_model: '',
+				format: 'gguf',
+				family: 'llama',
 				families: null,
-				parameter_size: "70B",
-				quantization_level: "Q4_0"
+				parameter_size: '70B',
+				quantization_level: 'Q4_0'
 			}
 		},
 		{
