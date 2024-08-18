@@ -1,13 +1,25 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1, chooseModelFromSettings, mockCompletionResponse, mockTagsResponse, seedKnowledgeAndReload, submitWithKeyboardShortcut, textEditorLocator } from './utils';
+import {
+	MOCK_API_TAGS_RESPONSE,
+	MOCK_KNOWLEDGE,
+	MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1,
+	chooseModelFromSettings,
+	mockCompletionResponse,
+	mockTagsResponse,
+	seedKnowledgeAndReload,
+	submitWithKeyboardShortcut,
+	textEditorLocator
+} from './utils';
 
 test('creates and edits knowledge', async ({ page }) => {
 	const timestamp = page.getByTestId('knowledge-metadata');
 	const fieldName = page.getByLabel('Name');
 	const fieldContent = textEditorLocator(page, 'Content');
-	const buttonSave = page.getByText('Save');
+	const buttonSave = page.locator('button', { hasText: 'Save' });
 	const noKnowledgeMessage = page.getByText('No knowledge');
-	const mockedKnowledgeInSidebar = page.locator('.section-list', { hasText: MOCK_KNOWLEDGE[0].name });
+	const mockedKnowledgeInSidebar = page.locator('.section-list', {
+		hasText: MOCK_KNOWLEDGE[0].name
+	});
 
 	await page.goto('/');
 	await page.getByText('Knowledge', { exact: true }).click();
@@ -43,11 +55,17 @@ test('creates and edits knowledge', async ({ page }) => {
 	await expect(buttonSave).not.toBeDisabled();
 	await expect(noKnowledgeMessage).toBeVisible();
 	await expect(mockedKnowledgeInSidebar).not.toBeVisible();
+	await expect(
+		page.locator('ol[data-sonner-toaster] li', { hasText: 'Knowledge saved' })
+	).not.toBeVisible();
 
 	await fieldContent.focus();
 	await submitWithKeyboardShortcut(page);
 	await expect(mockedKnowledgeInSidebar).toBeVisible();
 	await expect(noKnowledgeMessage).not.toBeVisible();
+	await expect(
+		page.locator('ol[data-sonner-toaster] li', { hasText: 'Knowledge saved' })
+	).toBeVisible();
 
 	// Edit knowledge
 	await fieldName.fill("Wally's chabot");
@@ -79,10 +97,14 @@ test('can delete knowledge from the header and sidebar', async ({ page }) => {
 	expect(await page.getByTestId('knowledge-item').count()).toBe(0);
 });
 
-test('knowledge cannot be used as a system prompt in a session after deletion', async ({ page }) => {
+test('knowledge cannot be used as a system prompt in a session after deletion', async ({
+	page
+}) => {
 	const timestamp = page.getByTestId('knowledge-metadata');
 	const noKnowledgeMessage = page.getByText('No knowledge');
-	const noKnowledgeSelectedMessage = page.getByText('Create new knowlege or choose one from the list');
+	const noKnowledgeSelectedMessage = page.getByText(
+		'Create new knowlege or choose one from the list'
+	);
 	const knowledgeItems = page.getByTestId('knowledge-item');
 	const systemPromptSelect = page.getByLabel('System prompt');
 
@@ -145,7 +167,7 @@ test('all knowledge can be deleted', async ({ page }) => {
 	await expect(page.getByText('No knowledge')).toBeVisible();
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
 	expect(await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'))).toBe('null');
-})
+});
 
 test('can use knowledge as system prompt in the session', async ({ page }) => {
 	const sessionArticle = page.locator('.session__articles .article');
@@ -169,47 +191,68 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 
 	// Check the request includes the knowledge as a system prompt when submitting the form
 	let requestPostData: string | null = null;
-	page.on('request', request => {
-		if (request.url().includes('/api/generate')) requestPostData = request.postData();
+	page.on('request', (request) => {
+		if (request.url().includes('/api/chat')) requestPostData = request.postData();
 	});
 
 	await page.getByText('Run').click();
-	expect(requestPostData).toContain(JSON.stringify({
-		model: MOCK_API_TAGS_RESPONSE.models[0].name,
-		prompt: 'What is this about?',
-		system: MOCK_KNOWLEDGE[0].content,
-	}));
+	expect(requestPostData).toContain(
+		JSON.stringify({
+			model: MOCK_API_TAGS_RESPONSE.models[0].name,
+			messages: [
+				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
+				{ role: 'user', content: 'What is this about?' }
+			],
+			stream: true
+		})
+	);
 	expect(await sessionArticle.count()).toBe(3);
 	expect(await sessionArticle.first().textContent()).toContain(MOCK_KNOWLEDGE[0].name);
 	expect(await sessionArticle.nth(1).textContent()).toContain('What is this about?');
-	expect(await sessionArticle.last().textContent()).toContain(MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.response);
+	expect(await sessionArticle.last().textContent()).toContain(
+		MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.message.content
+	);
 	await expect(knowledgeId).not.toBeVisible();
 
 	// Retrying the ai completion should include the system prompt
 	await mockCompletionResponse(page, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1);
 	await page.getByTitle('Retry').click();
-	expect(requestPostData).toContain(JSON.stringify({
-		model: MOCK_API_TAGS_RESPONSE.models[0].name,
-		prompt: 'What is this about?',
-		system: MOCK_KNOWLEDGE[0].content,
-	}));
+	expect(requestPostData).toContain(
+		JSON.stringify({
+			model: MOCK_API_TAGS_RESPONSE.models[0].name,
+			messages: [
+				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
+				{ role: 'user', content: 'What is this about?' }
+			],
+			stream: true
+		})
+	);
 	expect(await sessionArticle.count()).toBe(3);
 	expect(await sessionArticle.first().textContent()).toContain(MOCK_KNOWLEDGE[0].name);
 	expect(await sessionArticle.nth(1).textContent()).toContain('What is this about?');
-	expect(await sessionArticle.last().textContent()).toContain(MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.response);
+	expect(await sessionArticle.last().textContent()).toContain(
+		MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.message.content
+	);
 
 	// Check subsequent requests don't include the knowledge as a system prompt
-	page.on('request', request => {
-		if (request.url().includes('/api/generate')) requestPostData = request.postData();
+	page.on('request', (request) => {
+		if (request.url().includes('/api/chat')) requestPostData = request.postData();
 	});
 
 	await page.locator('.prompt-editor__textarea').fill('Gotcha, thanks for the clarification');
 	await page.getByText('Run').click();
-	expect(requestPostData).toContain(JSON.stringify({
-		model: MOCK_API_TAGS_RESPONSE.models[0].name,
-		context: [123, 4567, 890],
-		prompt: 'Gotcha, thanks for the clarification'
-	}));
+	expect(requestPostData).toContain(
+		JSON.stringify({
+			model: MOCK_API_TAGS_RESPONSE.models[0].name,
+			messages: [
+				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
+				{ role: 'user', content: 'What is this about?' },
+				{ role: 'assistant', content: MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.message.content },
+				{ role: 'user', content: 'Gotcha, thanks for the clarification' }
+			],
+			stream: true
+		})
+	);
 	expect(await sessionArticle.count()).toBe(5);
 
 	// Can click on the knowledge to see it in the knowledge view

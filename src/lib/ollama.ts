@@ -1,26 +1,5 @@
-import { get } from "svelte/store";
-import { settingsStore } from "$lib/store";
-
-export type OllamaCompletionRequest = {
-	prompt: string;
-	model: string;
-	context?: number[];
-	system?: string;
-}
-
-export type OllamaCompletionResponse = {
-	model: string;
-	created_at: string;
-	response: string;
-	done: boolean;
-	context: number[];
-	total_duration: number;
-	load_duration: number;
-	prompt_eval_count: number;
-	prompt_eval_duration: number;
-	eval_count: number;
-	eval_duration: number;
-}
+import { get } from 'svelte/store';
+import { settingsStore } from '$lib/store';
 
 export type OllamaModel = {
 	name: string;
@@ -42,14 +21,25 @@ export type OllamaTagResponse = {
 	models: OllamaModel[];
 };
 
-export async function ollamaGenerate(payload: OllamaCompletionRequest, abortSignal: AbortSignal) {
+export async function ollamaTags() {
 	const settings = get(settingsStore);
 	if (!settings) throw new Error('No Ollama server specified');
 
-	return await fetch(`${settings.ollamaServer}/api/generate`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'text/event-stream' },
-		body: JSON.stringify(payload),
-		signal: abortSignal
+	const response = await fetch(`${settings.ollamaServer}/api/tags`);
+	if (!response.ok) throw new Error('Failed to fetch Ollama tags');
+
+	const data: OllamaTagResponse | undefined = await response.json();
+	if (!data || !Array.isArray(data.models)) {
+		throw new Error('Failed to parse Ollama tags', { cause: data });
+	}
+
+	// Sort alphabetically
+	data.models = data.models.sort((a, b) => {
+		const nameA = a.model;
+		const nameB = b.model;
+
+		return nameA.localeCompare(nameB, undefined, { sensitivity: 'base' }); // compare ignoring case and accents
 	});
+
+	return data;
 }

@@ -4,35 +4,38 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 
 ### Features
 
-- Large prompt fields with code editor features
-- Markdown parsing w/syntax highlighting
-- Easily copy markdown as raw text
+- Large prompt fields
+- Markdown rendering with syntax highlighting
+- Code editor features
 - Customizable system prompts
-- Saves all changes on your browser's `localStorage`
-- Desktop & mobile friendly layout
+- Copy code snippets, messages or entire sessions
+- Retry completions
+- Stores data locally on your browser
+- Responsive layout
 - Light & dark themes
-- Retryable completions
-- Streams completions
 
-### Live demo
+### Get started
 
-> [!TIP]
-> The latest version of **Hollama** is available at: [https://hollama.fernando.is](https://hollama.fernando.is)
-
-No sign up is required and data is _100% stored locally on your browser_.
+- ⚡️ [Live demo](https://hollama.fernando.is)
+  - _No sign-up required_
+- 🖥️ Download for [macOS, Windows & Linux](https://github.com/fmaclen/hollama/releases)
+- 🐳 [Self-hosting](#self-host-docker) with Docker
+- 🐞 [Contribute](CONTRIBUTING.md)
 
 > ![session](tests/docs.test.ts-snapshots/session.png)
-> ![knowledge](tests/docs.test.ts-snapshots/knowledge.png)
-> ![session-new](tests/docs.test.ts-snapshots/session-new.png)
-> ![settings](tests/docs.test.ts-snapshots/settings.png)
 
+> ![knowledge](tests/docs.test.ts-snapshots/knowledge.png)
+
+> ![session-new](tests/docs.test.ts-snapshots/session-new.png)
+
+> ![settings](tests/docs.test.ts-snapshots/settings.png)
 
 ### Self-host (Docker)
 
 To host your own Hollama server, [install Docker](https://www.docker.com/products/docker-desktop/) and run the command below in your favorite terminal:
 
 ```shell
-docker run --rm -d -p 4173:4173 ghcr.io/fmaclen/hollama:latest 
+docker run --rm -d -p 4173:4173 ghcr.io/fmaclen/hollama:latest
 ```
 
 Then visit [http://localhost:4173](http://localhost:4173).
@@ -44,24 +47,3 @@ If you are using the publicly hosted version or your Docker server is on a separ
 ```bash
 OLLAMA_ORIGINS=https://hollama.fernando.is ollama serve
 ```
-
-## Developing
-
-Install dependencies with `npm install`, start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.

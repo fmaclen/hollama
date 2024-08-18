@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { toast } from 'svelte-sonner';
 	import { writable } from 'svelte/store';
 	import { afterNavigate } from '$app/navigation';
 	import type { PageData } from './$types';
@@ -29,6 +30,7 @@
 		if (!name || !content) return;
 		saveKnowledge({ id: data.id, name, content, updatedAt: getUpdatedAtDate() });
 		knowledge = loadKnowledge(data.id);
+		toast.success('Knowledge saved');
 	}
 
 	afterNavigate(() => {
@@ -69,7 +71,7 @@
 	</Fieldset>
 </div>
 
-<style lang="scss">
+<style lang="postcss">
 	.knowledge {
 		@apply flex h-full w-full flex-col overflow-hidden;
 	}

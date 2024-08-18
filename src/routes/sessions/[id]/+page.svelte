@@ -1,15 +1,13 @@
 <script lang="ts">
+	import { Ollama } from 'ollama/browser';
 	import { afterUpdate, tick } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { toast } from 'svelte-sonner';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
-	import {
-		ollamaGenerate,
-		type OllamaCompletionRequest,
-		type OllamaCompletionResponse
-	} from '$lib/ollama';
+	import { ollamaTags } from '$lib/ollama';
 	import {
 		saveSession,
 		type Message,
@@ -48,19 +46,36 @@
 	let prompt: string;
 	let promptCached: string;
 	let promptTextarea: HTMLTextAreaElement;
-	let tokenizedContext: number[];
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
+	let userScrolledUp = false;
 
 	const shouldConfirmDeletion = writable(false);
 
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
 	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
-	$: session && scrollToBottom();
-	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
+	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
+	$: if (messageWindow) messageWindow.addEventListener('scroll', handleScroll);
+	$: if (data.id) handleSessionChange();
+
+	async function handleSessionChange() {
+		if (!$settingsStore) return;
+		try {
+			$settingsStore.ollamaModels = (await ollamaTags()).models;
+		} catch {
+			$settingsStore.ollamaModels = [];
+			toast.warning("Can't connect to Ollama server");
+		}
+		scrollToBottom();
+	}
+
+	function handleScroll() {
+		const { scrollTop, scrollHeight, clientHeight } = messageWindow;
+		userScrolledUp = scrollTop + clientHeight < scrollHeight;
+	}
 
 	async function handleSubmit() {
 		if (!prompt) return;
@@ -72,8 +87,10 @@
 		if (knowledge) {
 			knowledgeContext = {
 				role: 'system',
-				knowledge,
-				content: ''
+				// Ollama only needs the content of the knowledge
+				content: knowledge.content,
+				// But we include the entire knowledge object to use the metadata in the UI
+				knowledge
 			};
 		}
 
@@ -84,14 +101,13 @@
 			? [knowledgeContext, ...session.messages, message]
 			: [...session.messages, message];
 
-		const previousAiResponse = session.messages[session.messages.length - 2];
 		let payload = {
 			model: session.model,
-			context: previousAiResponse?.context,
-			prompt: session.messages[session.messages.length - 1].content,
-			system: previousAiResponse?.knowledge?.content
+			messages: session.messages,
+			stream: true
 		};
 
+		await scrollToBottom(true); // Force scroll after submitting prompt
 		await handleCompletion(payload);
 	}
 
@@ -100,76 +116,58 @@
 		session.messages = session.messages.slice(0, index);
 
 		const mostRecentUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
-		const mostRecentSystemMessage = session.messages.filter((m) => m.role === 'system').at(-1);
 		if (!mostRecentUserMessage) throw new Error('No user message to retry');
 
 		let payload = {
 			model: session.model,
-			context: session.messages[index - 2]?.context, // Last AI response
-			prompt: mostRecentUserMessage.content,
-			system: mostRecentSystemMessage?.knowledge?.content
+			messages: session.messages,
+			stream: true
 		};
 
 		await handleCompletion(payload);
 	}
 
-	async function handleCompletion(payload: OllamaCompletionRequest) {
+	async function handleCompletion(payload: { model: string; messages: Message[] }) {
 		abortController = new AbortController();
 		completion = '';
-		tokenizedContext = [];
 
 		try {
-			const ollama = await ollamaGenerate(payload, abortController.signal);
+			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
 
-			if (ollama && ollama.body) {
-				const reader = ollama.body.pipeThrough(new TextDecoderStream()).getReader();
+			const ollama = new Ollama({ host: $settingsStore.ollamaServer });
+			const response = await ollama.chat({
+				model: payload.model,
+				messages: payload.messages,
+				stream: true
+			});
 
-				while (true) {
-					const { value, done } = await reader.read();
-
-					if (!ollama.ok && value) throw new Error(JSON.parse(value).error);
-
-					if (done) {
-						if (!tokenizedContext) throw new Error('Ollama response is missing context');
-						handleCompletionDone(completion, tokenizedContext);
-						break;
-					}
-
-					if (!value) continue;
-
-					const jsonLines = value.split('\n').filter((line) => line);
-					for (const line of jsonLines) {
-						const { response, context } = JSON.parse(line) as OllamaCompletionResponse;
-						completion += response;
-						tokenizedContext = context;
-					}
-				}
+			for await (const part of response) {
+				completion += part.message.content;
+				await scrollToBottom();
 			}
-		} catch (error: any) {
-			if (error.name === 'AbortError') return; // User aborted the request
-			handleError(error);
+
+			// After the completion save the session
+			const message: Message = { role: 'assistant', content: completion };
+			session.messages = [...session.messages, message];
+			session.updatedAt = new Date().toISOString();
+
+			if (knowledge) {
+				session.knowledge = knowledge;
+				knowledgeId = '';
+			}
+
+			saveSession({ ...session });
+
+			// Final housekeeping
+			completion = '';
+			promptCached = '';
+			shouldFocusTextarea = true;
+			await scrollToBottom();
+		} catch (error) {
+			const typedError = error instanceof Error ? error : new Error(String(error));
+			if (typedError.name === 'AbortError') return; // User aborted the request
+			handleError(typedError);
 		}
-	}
-
-	async function handleCompletionDone(completion: string, context: number[]) {
-		abortController = new AbortController();
-
-		const message: Message = { role: 'ai', content: completion, context };
-		session.messages = [...session.messages, message];
-		session.updatedAt = new Date().toISOString();
-
-		if (knowledge) {
-			session.knowledge = knowledge;
-
-			// Now that we used the knowledge, we no longer need an `id`
-			// This will prevent `knowledge` from being used again
-			knowledgeId = '';
-		}
-
-		completion = '';
-		promptCached = '';
-		shouldFocusTextarea = true;
-		saveSession({ ...session });
 	}
 
 	function resetPrompt() {
@@ -187,8 +185,8 @@
 		handleSubmit();
 	}
 
-	async function scrollToBottom() {
-		if (!messageWindow) return;
+	async function scrollToBottom(shouldForceScroll = false) {
+		if (!shouldForceScroll && (!messageWindow || userScrolledUp)) return;
 		await tick();
 		messageWindow.scrollTop = messageWindow.scrollHeight;
 	}
@@ -197,8 +195,6 @@
 		let content: string;
 		if (error.message === 'Failed to fetch') {
 			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
-		} else if (error.name === 'SyntaxError') {
-			content = `Sorry, this session is _likely_ exceeding the context window of \`${session.model}\`\n\`\`\`\n${error.name}: ${error.message}\n\`\`\``;
 		} else {
 			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
 		}
@@ -245,14 +241,14 @@
 					{#key message.role}
 						<Article
 							{message}
-							retryIndex={['ai', 'system'].includes(message.role) ? i : undefined}
+							retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
 							{handleRetry}
 						/>
 					{/key}
 				{/each}
 
 				{#if isLastMessageFromUser}
-					<Article message={{ role: 'ai', content: completion || '...' }} />
+					<Article message={{ role: 'assistant', content: completion || '...' }} />
 				{/if}
 			</div>
 
@@ -267,7 +263,7 @@
 				<div class="prompt-editor__form">
 					<Fieldset isFullscreen={isPromptFullscreen}>
 						{#if isNewSession}
-							<div class="prompt-editor__tools">
+							<div class="prompt-editor__project">
 								<FieldSelectModel />
 								<div class="prompt-editor__knowledge">
 									<FieldSelect
@@ -282,6 +278,7 @@
 										aria-label="New knowledge"
 										variant="outline"
 										href={generateNewUrl(Sitemap.KNOWLEDGE)}
+										class="h-full text-muted"
 									>
 										<Brain class="h-4 w-4" />
 									</Button>
@@ -294,10 +291,10 @@
 								<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
 							{:else}
 								<Field name="prompt">
-									<svelte:fragment slot="label">Prompt</svelte:fragment>
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
+										placeholder="Write literally anything"
 										bind:this={promptTextarea}
 										bind:value={prompt}
 										on:keydown={handleKeyDown}
@@ -306,26 +303,30 @@
 							{/if}
 						{/key}
 
-						<div class="flex w-full">
-							<ButtonSubmit {handleSubmit} hasMetaKey={isPromptFullscreen} disabled={!prompt}>
+						<nav class="prompt-editor__toolbar">
+							<ButtonSubmit
+								{handleSubmit}
+								hasMetaKey={isPromptFullscreen}
+								disabled={!prompt ||
+									!$settingsStore?.ollamaModels.length ||
+									!$settingsStore?.ollamaModel}
+							>
 								Run
 							</ButtonSubmit>
 
 							{#if isLastMessageFromUser}
-								<div class="ml-2">
-									<Button
-										title="Stop response"
-										variant="outline"
-										on:click={() => {
-											abortController.abort();
-											resetPrompt();
-										}}
-									>
-										<StopCircle class="h-4 w-4" />
-									</Button>
-								</div>
+								<Button
+									title="Stop response"
+									variant="outline"
+									on:click={() => {
+										abortController.abort();
+										resetPrompt();
+									}}
+								>
+									<StopCircle class="h-4 w-4" />
+								</Button>
 							{/if}
-						</div>
+						</nav>
 					</Fieldset>
 				</div>
 			</div>
@@ -333,9 +334,7 @@
 	{/key}
 </div>
 
-<style lang="scss">
-	@import '$lib/mixins.scss';
-
+<style lang="postcss">
 	.session {
 		@apply flex h-full w-full flex-col overflow-y-auto;
 	}
@@ -358,12 +357,12 @@
 		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
 	}
 
-	.prompt-editor__tools {
-		@apply grid grid-cols-[1fr,1fr] items-end gap-x-4;
+	.prompt-editor__project {
+		@apply grid grid-cols-[1fr,1fr] items-end gap-x-3;
 	}
 
 	.prompt-editor__knowledge {
-		@apply grid grid-cols-[auto,max-content] items-end gap-x-1;
+		@apply grid grid-cols-[auto,max-content] items-end gap-x-2;
 		@apply lg:gap-x-2;
 	}
 
@@ -382,8 +381,11 @@
 	}
 
 	.prompt-editor__textarea {
-		@include base-input;
-		@apply min-h-16;
+		@apply base-input min-h-16 resize-none scroll-p-2 px-3 py-2;
 		@apply md:min-h-20;
+	}
+
+	.prompt-editor__toolbar {
+		@apply flex items-center gap-x-2;
 	}
 </style>

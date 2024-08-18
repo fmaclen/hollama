@@ -34,7 +34,12 @@
 
 <div class="delete-button" class:delete--confirm-deletion={$shouldConfirmDeletion}>
 	{#if $shouldConfirmDeletion}
-		<Button variant="icon" class="delete-button__confirm" on:click={deleteRecord} title="Confirm deletion">
+		<Button
+			variant="icon"
+			class="delete-button__confirm"
+			on:click={deleteRecord}
+			title="Confirm deletion"
+		>
 			<Check class="h-4 w-4" />
 		</Button>
 
@@ -58,7 +63,7 @@
 	{/if}
 </div>
 
-<style lang="scss">
+<style lang="postcss">
 	.delete-button {
 		@apply flex h-full flex-row;
 	}

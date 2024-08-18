@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import { generateStorageId } from "$lib/utils";
-	import { Sitemap } from "$lib/sitemap";
-	import { generateNewUrl } from "./ButtonNew";
-	import Button from "./Button.svelte";
+	import { onMount } from 'svelte';
+	import { generateStorageId } from '$lib/utils';
+	import { Sitemap } from '$lib/sitemap';
+	import { generateNewUrl } from './ButtonNew';
+	import Button from './Button.svelte';
 
 	export let sitemap: Sitemap;
 	let newId: string;
