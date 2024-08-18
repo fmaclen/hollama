@@ -112,7 +112,7 @@ export const MOCK_SESSION_2_RESPONSE_1: ChatResponse = {
 
 export async function chooseModelFromSettings(page: Page, modelName: string) {
 	await page.getByText('Settings', { exact: true }).click();
-	await page.getByLabel('Model').selectOption(modelName);
+	await page.getByLabel('Available models').selectOption(modelName);
 }
 
 export async function mockTagsResponse(page: Page) {

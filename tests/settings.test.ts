@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('displays model list and updates settings store', async ({ page }) => {
-	const modelSelect = page.getByLabel('Model');
+	const modelSelect = page.getByLabel('Available models');
 
 	await page.goto('/');
 
@@ -47,7 +47,7 @@ test('handles server status updates correctly', async ({ page }) => {
 });
 
 test('settings can be deleted', async ({ page }) => {
-	const modelSelect = page.getByLabel('Model');
+	const modelSelect = page.getByLabel('Available models');
 
 	await page.goto('/');
 	await expect(modelSelect).toHaveValue('');
