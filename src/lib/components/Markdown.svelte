@@ -69,7 +69,7 @@
 	}
 
 	.markdown :global(h1) {
-		@apply my-10 text-4xl font-bold;
+		@apply my-10 max-w-[22ch] text-4xl font-bold;
 	}
 
 	.markdown :global(h2) {

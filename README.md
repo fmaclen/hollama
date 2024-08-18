@@ -13,6 +13,7 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 - Stores data locally on your browser
 - Responsive layout
 - Light & dark themes
+- Download [Ollama models](https://ollama.ai/models) directly from the UI
 
 ### Get started
 
