@@ -14,7 +14,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"electron": "electron .",
-		"electron:build": "cross-env ADAPTER=electron-node vite build && electron-builder"
+		"electron:build": "cross-env PUBLIC_ADAPTER=electron-node vite build && electron-builder"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.43.0",
