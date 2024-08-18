@@ -183,7 +183,7 @@
 			<FieldSelectModel />
 
 			<FieldInput
-				name="model"
+				name="pull-model"
 				label="Pull model"
 				placeholder="Model tag (e.g. llama3.1)"
 				bind:value={modelTag}
