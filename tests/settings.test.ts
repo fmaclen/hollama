@@ -14,6 +14,7 @@ test('displays model list and updates settings store', async ({ page }) => {
 	// Check if the model list contains the expected models
 	await expect(modelSelect).toContainText(MOCK_API_TAGS_RESPONSE.models[0].name);
 	await expect(modelSelect).toContainText(MOCK_API_TAGS_RESPONSE.models[1].name);
+	await expect(modelSelect).toContainText(MOCK_API_TAGS_RESPONSE.models[2].name);
 
 	await modelSelect.selectOption(MOCK_API_TAGS_RESPONSE.models[1].name);
 
@@ -21,7 +22,13 @@ test('displays model list and updates settings store', async ({ page }) => {
 	const localStorageValue = await page.evaluate(() =>
 		window.localStorage.getItem('hollama-settings')
 	);
-	expect(localStorageValue).toContain(`"ollamaModel":"${MOCK_API_TAGS_RESPONSE.models[1].name}"`);
+	if (!localStorageValue) throw new Error('No local storage value');
+	const parsedLocalStorageValue = JSON.parse(localStorageValue);
+	expect(parsedLocalStorageValue.ollamaModel).toBe(MOCK_API_TAGS_RESPONSE.models[1].name);
+	// Check that the models are sorted alphabetically (excluding 3rd party repositories)
+	expect(parsedLocalStorageValue.ollamaModels[0].name).toBe(MOCK_API_TAGS_RESPONSE.models[1].name);
+	expect(parsedLocalStorageValue.ollamaModels[1].name).toBe(MOCK_API_TAGS_RESPONSE.models[2].name);
+	expect(parsedLocalStorageValue.ollamaModels[2].name).toBe(MOCK_API_TAGS_RESPONSE.models[0].name);
 });
 
 test('handles server status updates correctly', async ({ page }) => {

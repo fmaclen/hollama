@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ListResponse } from 'ollama/browser';
 	import { onMount } from 'svelte';
 	import { version } from '$app/environment';
 	import { CloudDownload } from 'lucide-svelte';
@@ -12,7 +13,7 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import Head from '$lib/components/Head.svelte';
 
-	import { ollamaPull, ollamaTags, type OllamaTagResponse } from '$lib/ollama';
+	import { ollamaPull, ollamaTags } from '$lib/ollama';
 	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
 
 	export let ollamaURL: URL | null = null;
@@ -22,7 +23,7 @@
 
 	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
 	let ollamaModel = $settingsStore?.ollamaModel || '';
-	let ollamaTagResponse: OllamaTagResponse | null = null;
+	let ollamaTagResponse: ListResponse | null = null;
 	let modelTag: string | undefined;
 	let isPullInProgress = false;
 
