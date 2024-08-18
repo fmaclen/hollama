@@ -8,9 +8,10 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
 
-	import { ollamaTags, type OllamaTagResponse } from '$lib/ollama';
+	import { ollamaTags } from '$lib/ollama';
 	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
 	import Head from '$lib/components/Head.svelte';
+	import type { ListResponse } from 'ollama/browser';
 
 	export let ollamaURL: URL | null = null;
 
@@ -19,7 +20,7 @@
 
 	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
 	let ollamaModel = $settingsStore?.ollamaModel || '';
-	let ollamaTagResponse: OllamaTagResponse | null = null;
+	let ollamaTagResponse: ListResponse | null = null;
 
 	$: settingsStore.update((settings) => ({
 		...settings,
