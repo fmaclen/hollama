@@ -31,7 +31,7 @@ export const loadSession = (id: string): Session => {
 	}
 
 	if (!session) {
-		// Get the Available models
+		// Get the current model
 		const model = get(settingsStore)?.ollamaModel || '';
 
 		// Create a new session
