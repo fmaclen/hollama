@@ -1,12 +1,13 @@
 import { expect, test } from '@playwright/test';
 import { MOCK_API_TAGS_RESPONSE, mockTagsResponse } from './utils';
+import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
 });
 
 test('displays model list and updates settings store', async ({ page }) => {
-	const modelSelect = page.getByLabel('Model');
+	const modelSelect = page.getByLabel('Available models');
 
 	await page.goto('/');
 
@@ -54,7 +55,7 @@ test('handles server status updates correctly', async ({ page }) => {
 });
 
 test('settings can be deleted', async ({ page }) => {
-	const modelSelect = page.getByLabel('Model');
+	const modelSelect = page.getByLabel('Available models');
 
 	await page.goto('/');
 	await expect(modelSelect).toHaveValue('');
@@ -96,4 +97,55 @@ test('settings can be deleted', async ({ page }) => {
 	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(localStorageValue).toContain('"ollamaServer":"http://localhost:11434"');
 	expect(localStorageValue).toContain('"ollamaModel":""');
+});
+
+test('a model can be pulled from the ollama library', async ({ page }) => {
+	const downloadButton = page.getByRole('button', { name: 'Download model' });
+	const modelTagInput = page.getByLabel('Pull model');
+
+	await page.goto('/settings');
+	await expect(downloadButton).toBeDisabled();
+	await expect(downloadButton).not.toHaveClass(/button--is-loading/);
+
+	await modelTagInput.fill('llama3.1');
+	await expect(downloadButton).toBeEnabled();
+	await expect(downloadButton).not.toHaveClass(/button--is-loading/);
+
+	await page.route('**/api/pull', (route) => {
+		setTimeout(() => route.fulfill({ json: { status: 'pulling model' } }), 1000);
+	});
+	await downloadButton.click();
+	await expect(downloadButton).toBeDisabled();
+	await expect(downloadButton).toHaveClass(/button--is-loading/);
+	await expect(modelTagInput).toBeDisabled();
+	await expect(page.getByText('Pulling model', { exact: false })).toBeVisible();
+	await expect(downloadButton).not.toBeDisabled();
+
+	const progressResponse: ProgressResponse = {
+		status: 'pulling 5fd4e1793450',
+		completed: 25,
+		total: 50,
+		digest: 'sha256:5fd4e179345020dd97359b0b4fd6ae20c3f918d6b8ed8cda7d855f92561c7ea7'
+	};
+	await page.route('**/api/pull', (route) => route.fulfill({ json: progressResponse }));
+	await downloadButton.click();
+	await expect(page.getByText('pulling 5fd4e1793450', { exact: false })).toBeVisible();
+	await expect(page.getByText('50%', { exact: false })).toBeVisible();
+
+	const errorResponse: ErrorResponse = { error: 'pull model manifest: file does not exist' };
+	await page.route('**/api/pull', (route) => route.fulfill({ json: errorResponse }));
+	await downloadButton.click();
+	await expect(page.getByText('Error', { exact: false })).toBeVisible();
+	await expect(
+		page.getByText('pull model manifest: file does not exist', { exact: false })
+	).toBeVisible();
+
+	const successResponse: StatusResponse = { status: 'success' };
+	await page.route('**/api/pull', (route) => route.fulfill({ json: successResponse }));
+	await downloadButton.click();
+	await expect(page.getByText('Success', { exact: false })).toBeVisible();
+	await expect(page.getByText('llama3.1 was downloaded', { exact: false })).toBeVisible();
+	await expect(modelTagInput).toHaveValue('');
+	await expect(downloadButton).toBeDisabled();
+	await expect(modelTagInput).not.toBeDisabled();
 });

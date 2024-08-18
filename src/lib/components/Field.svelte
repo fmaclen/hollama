@@ -2,9 +2,10 @@
 	export let name: string;
 	export let disabled: boolean | undefined = false;
 	export let isTextEditor: boolean | undefined = false;
+	export let hasNav: boolean | undefined = false;
 </script>
 
-<div class="field" class:field--text-editor={isTextEditor}>
+<div class="field" class:field--text-editor={isTextEditor} class:field--with-nav={hasNav}>
 	<div
 		class="field__container"
 		class:field__container--text-editor={isTextEditor}
@@ -19,12 +20,17 @@
 		<slot />
 	</div>
 
+	<slot name="nav" />
 	<slot name="help" />
 </div>
 
 <style lang="postcss">
 	.field {
 		@apply flex flex-col;
+
+		&--with-nav {
+			@apply grid grid-cols-[auto,max-content] items-end gap-x-2;
+		}
 	}
 
 	.field__container {
