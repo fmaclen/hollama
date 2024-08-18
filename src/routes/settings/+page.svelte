@@ -1,10 +1,14 @@
 <script lang="ts">
-	import type { ListResponse } from 'ollama/browser';
 	import { onMount } from 'svelte';
 	import { version } from '$app/environment';
 	import { CloudDownload } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
-	import { type ErrorResponse, type ProgressResponse, type StatusResponse } from 'ollama/browser';
+	import type {
+		ListResponse,
+		ErrorResponse,
+		ProgressResponse,
+		StatusResponse
+	} from 'ollama/browser';
 
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -47,13 +51,11 @@
 	async function pullModel() {
 		if (!modelTag) return;
 		isPullInProgress = true;
-		const abortController = new AbortController();
 		const toastId = toast.message('Pulling model', { description: modelTag });
 
 		try {
 			await ollamaPull(
 				{ model: modelTag, stream: true },
-				abortController.signal,
 				(response: ProgressResponse | StatusResponse | ErrorResponse) => {
 					if ('status' in response && response.status === 'success') {
 						toast.success('Success', {
@@ -91,7 +93,6 @@
 					description: ''
 				}
 			);
-			abortController.abort();
 			ollamaTagResponse = null;
 			serverStatus = 'disconnected';
 		}

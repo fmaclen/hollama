@@ -38,7 +38,6 @@ export async function ollamaTags() {
 
 export async function ollamaPull(
 	payload: PullRequest,
-	abortSignal: AbortSignal,
 	onChunk: (progress: ProgressResponse | StatusResponse | ErrorResponse) => void
 ) {
 	const settings = get(settingsStore);
@@ -47,8 +46,7 @@ export async function ollamaPull(
 	const response = await fetch(`${settings.ollamaServer}/api/pull`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(payload),
-		signal: abortSignal
+		body: JSON.stringify(payload)
 	});
 
 	if (!response.body) throw new Error('Ollama response is missing body');
