@@ -54,12 +54,14 @@
 		}
 
 		// Then we get the latest version from the GitHub releases API
-		const githubServerResponse = await fetch(GITHUB_RELEASES_API);
-		if (githubServerResponse.ok) {
-			const response = await githubServerResponse.json();
-			latestVersion = response[0]?.tag_name;
-		} else {
-			isError = true;
+		if (!canRefreshToUpdate) {
+			const githubServerResponse = await fetch(GITHUB_RELEASES_API);
+			if (githubServerResponse.ok) {
+				const response = await githubServerResponse.json();
+				latestVersion = response[0]?.tag_name;
+			} else {
+				isError = true;
+			}
 		}
 
 		isCheckingForUpdates = false;
