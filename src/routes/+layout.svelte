@@ -21,13 +21,7 @@
 	$: theme = $settingsStore?.userTheme;
 
 	onMount(() => {
-		if (!$settingsStore) return;
-
-		// TODO: fetch this from the server `/api/metadata`
-		$settingsStore.isDocker = env.PUBLIC_ADAPTER === 'docker-node';
-		$settingsStore.isDesktop = env.PUBLIC_ADAPTER === 'electron-node';
-
-		if (!browser || theme) return;
+		if (!$settingsStore || !browser || theme) return;
 		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 			? 'dark'
 			: 'light';

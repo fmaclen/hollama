@@ -43,6 +43,8 @@
 		if (hollamaServerResponse.ok) {
 			const response = await hollamaServerResponse.json();
 			latestVersion = response?.currentVersion;
+			$settingsStore.isDesktop = response?.isDesktop;
+			$settingsStore.isDocker = response?.isDocker;
 
 			if (latestVersion) {
 				canRefreshToUpdate = semver.lt(version.replace('-dev', ''), latestVersion);
