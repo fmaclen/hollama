@@ -54,7 +54,7 @@
 		}
 
 		&--link {
-			@apply text-link inline rounded-none;
+			@apply text-link inline rounded-none px-1;
 		}
 
 		&--link[target='_blank']:after {
