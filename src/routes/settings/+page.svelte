@@ -10,15 +10,15 @@
 		StatusResponse
 	} from 'ollama/browser';
 
+	import { ollamaPull, ollamaTags } from '$lib/ollama';
+	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
+
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import Head from '$lib/components/Head.svelte';
-
-	import { ollamaPull, ollamaTags } from '$lib/ollama';
-	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
 
 	export let ollamaURL: URL | null = null;
 

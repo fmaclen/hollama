@@ -1,4 +1,4 @@
-import { expect, test, type Locator } from '@playwright/test';
+import { expect, test, type Dialog, type Locator } from '@playwright/test';
 import {
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_SESSION_1_RESPONSE_1,
@@ -405,7 +405,7 @@ test.describe('Session', () => {
 		page
 	}) => {
 		const sendButton = page.getByText('Run');
-		const stopButton = page.getByTitle('Stop response');
+		const stopButton = page.getByTitle('Stop completion');
 		const userMessage = page.locator('article', { hasText: 'You' });
 		const aiMessage = page.locator('article', { hasText: 'Assistant' });
 		const sessionMetadata = page.getByTestId('session-metadata');
@@ -525,7 +525,8 @@ test.describe('Session', () => {
 		await expect(page.getByText('Sorry, something went wrong.')).toBeVisible();
 		await expect(
 			page.locator('code', {
-				hasText: 'Error: Did not receive done or success response in stream.'
+				hasText:
+					"SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)"
 			})
 		).toBeVisible();
 
@@ -633,5 +634,65 @@ test.describe('Session', () => {
 
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(page.getByText('Run')).toBeDisabled();
+	});
+
+	test('can navigate out of session during completion', async ({ page }) => {
+		const runButton = page.getByText('Run');
+
+		let dialogHandler: (dialog: Dialog) => Promise<void>;
+		page.on('dialog', async (dialog) => await dialogHandler(dialog));
+
+		await page.goto('/');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		// Start a streamed completion
+		await page.route('**/chat', () => {});
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await runButton.click();
+
+		// Wait for the completion to start
+		await expect(page.getByText('...')).toBeVisible();
+
+		// Set up dialog handler to cancel
+		dialogHandler = async (dialog) => {
+			expect(dialog.message()).toContain(
+				'Are you sure you want to leave?\nThe completion in progress will stop'
+			);
+			await dialog.dismiss();
+		};
+
+		// Attempt to navigate away
+		await page.getByText('Settings', { exact: true }).click();
+
+		// Check that we're still on the session page
+		await expect(page.getByTestId('session-id')).toBeVisible();
+
+		// Start another streamed completion
+		await promptTextarea.fill('Another test prompt');
+		await runButton.click();
+
+		// Wait for the completion to start
+		await expect(page.getByText('...')).toBeVisible();
+
+		// Set up dialog handler to confirm
+		dialogHandler = async (dialog) => {
+			expect(dialog.message()).toContain(
+				'Are you sure you want to leave?\nThe completion in progress will stop'
+			);
+			await dialog.accept();
+		};
+
+		// Attempt to navigate away again
+		await page.getByText('Settings', { exact: true }).click();
+
+		// Check that we've navigated to the settings page
+		expect(page.url()).toContain('/settings');
+
+		// Check that the completion has stopped
+		await page.goto('/sessions');
+		const sessionsCount = await page.locator('.session__history').count();
+		expect(sessionsCount).toBe(0);
 	});
 });
