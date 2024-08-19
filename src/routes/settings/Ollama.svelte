@@ -141,8 +141,9 @@
 							target="_blank"
 						>
 							see docs
-						</Button>. Also check no browser extensions are blocking the connection.
+						</Button>
 					</P>
+					<P>Also check no browser extensions are blocking the connection.</P>
 					{#if ollamaURL.protocol === 'https:'}
 						<P>
 							If trying to connect to an Ollama server that is not available on
