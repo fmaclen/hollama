@@ -19,18 +19,18 @@
 	const ONE_WEEK_IN_SECONDS = 604800;
 
 	const isDesktop = env.PUBLIC_ADAPTER === 'electron-node';
-	const isDocker = env.PUBLIC_ADAPTER === 'docker-node';
+	const isDocker = env.PUBLIC_ADAPTER !== 'docker-node';
 
 	let latestVersion: string | null = null;
 	let isCurrentVersionLatest = false;
 	let isCheckingForUpdates = false;
 
-	async function checkForUpdates() {
+	async function checkForUpdates(isUserInitiated = false) {
 		const oneWeekAgoInSeconds = getUnixTime(new Date()) - ONE_WEEK_IN_SECONDS;
 
 		if (!$settingsStore) return;
 		if (!$settingsStore.lastUpdateCheck) $settingsStore.lastUpdateCheck = oneWeekAgoInSeconds - 1;
-		if ($settingsStore.lastUpdateCheck > oneWeekAgoInSeconds) return;
+		if (!isUserInitiated && $settingsStore.lastUpdateCheck > oneWeekAgoInSeconds) return;
 
 		isCheckingForUpdates = true;
 		toast.loading('Checking for updates');
@@ -62,45 +62,43 @@
 
 <Fieldset>
 	<P><strong>Current version</strong></P>
-		
 
 	{#if !isCheckingForUpdates}
-		<div class="flex gap-x-4">
-			<Button variant="ghost" href={GITHUB_RELEASES_URL} target="_blank">
+		<div class="flex gap-x-2">
+			<a href={GITHUB_RELEASES_URL} target="_blank" class="flex items-stretch gap-x-2">
 				<Badge>0.10.2</Badge>
-			</Button>
-			<FieldHelp>
-				{#if isCurrentVersionLatest}
-					<P>
-						You are on the latest version.
-						<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
-							Earlier versions
-						</Button>
-					</P>
-				{:else if !isCurrentVersionLatest && latestVersion}
-					<P>
-						A new version is available.
-						{#if isDesktop}
-							<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
-								Download {latestVersion}
-							</Button>
-						{:else if isDocker}
-							<Button variant="link" href={DOCKER_INSTRUCTIONS_URL} target="_blank">
-								Update to {latestVersion}
-							</Button>
-						{:else}
-							<Button variant="link" on:click={() => window.location.reload()}>
-								Refresh to update
-							</Button>
-						{/if}
-					</P>
-				{:else}
-					<P>
-						Couldn't check for updates automatically.
-						<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Releases</Button>
-					</P>
-				{/if}
-			</FieldHelp>
+			</a>
+			<Button variant="outline" on:click={() => checkForUpdates(true)}>Check for updates</Button>
 		</div>
+		<FieldHelp>
+			{#if isCurrentVersionLatest}
+				<P>
+					You are on the latest version.
+					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
+						Earlier versions
+					</Button>
+				</P>
+			{:else if !isCurrentVersionLatest && latestVersion}
+				<P>
+					A new version is available: {latestVersion}.
+					{#if isDesktop}
+						<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Download</Button>
+					{:else if isDocker}
+						<Button variant="link" href={DOCKER_INSTRUCTIONS_URL} target="_blank">
+							How to update Docker image?
+						</Button>
+					{:else}
+						<Button variant="link" on:click={() => window.location.reload()}>
+							Refresh to update
+						</Button>
+					{/if}
+				</P>
+			{:else}
+				<P>
+					Couldn't check for updates automatically.
+					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Releases</Button>
+				</P>
+			{/if}
+		</FieldHelp>
 	{/if}
 </Fieldset>
