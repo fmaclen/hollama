@@ -96,7 +96,7 @@
 			{:else}
 				<P>
 					Couldn't check for updates automatically.
-					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Releases</Button>
+					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Go to releases</Button>
 				</P>
 			{/if}
 		</FieldHelp>
