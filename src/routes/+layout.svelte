@@ -1,13 +1,14 @@
 <script lang="ts">
-	import { env } from '$env/dynamic/public';
-	import { page } from '$app/stores';
 	import { Toaster } from 'svelte-sonner';
+	import { onMount } from 'svelte';
 	import { Brain, MessageSquareText, Settings2, Sun, Moon, NotebookText } from 'lucide-svelte';
 
-	import '../app.pcss';
-	import { settingsStore } from '$lib/store';
-	import { onMount } from 'svelte';
+	import { env } from '$env/dynamic/public';
 	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
+
+	import { settingsStore } from '$lib/store';
+	import '../app.pcss';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
@@ -20,7 +21,13 @@
 	$: theme = $settingsStore?.userTheme;
 
 	onMount(() => {
-		if (!$settingsStore || !browser || theme) return;
+		if (!$settingsStore) return;
+
+		// TODO: fetch this from the server `/api/metadata`
+		$settingsStore.isDocker = env.PUBLIC_ADAPTER === 'docker-node';
+		$settingsStore.isDesktop = env.PUBLIC_ADAPTER === 'electron-node';
+
+		if (!browser || theme) return;
 		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 			? 'dark'
 			: 'light';

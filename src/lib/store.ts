@@ -45,6 +45,8 @@ export interface Settings {
 	ollamaModel: string | null;
 	ollamaModels: ModelResponse[];
 	userTheme?: 'light' | 'dark';
+	isDocker?: boolean;
+	isDesktop?: boolean;
 	lastUpdateCheck?: number;
 }
 

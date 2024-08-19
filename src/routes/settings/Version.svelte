@@ -18,13 +18,11 @@
 	const DOCKER_INSTRUCTIONS_URL = 'https://github.com/fmaclen/hollama/blob/main/docs/docker.md';
 	const ONE_WEEK_IN_SECONDS = 604800;
 
-	const isDesktop = env.PUBLIC_ADAPTER === 'electron-node';
-	const isDocker = env.PUBLIC_ADAPTER === 'docker-node';
-
-	let latestVersion: string | null = null;
+	let latestVersion: string | undefined;
+	let canRefreshToUpdate = false;
 	let isCurrentVersionLatest = false;
-	let isCheckingForUpdates = false;
 	let isError = false;
+	let isCheckingForUpdates = false;
 
 	async function checkForUpdates(isUserInitiated = false) {
 		const oneWeekAgoInSeconds = getUnixTime(new Date()) - ONE_WEEK_IN_SECONDS;
@@ -33,34 +31,40 @@
 		if (!$settingsStore.lastUpdateCheck) $settingsStore.lastUpdateCheck = oneWeekAgoInSeconds - 1;
 		if (!isUserInitiated && $settingsStore.lastUpdateCheck > oneWeekAgoInSeconds) return;
 
+		latestVersion = undefined;
+		canRefreshToUpdate = false;
+		isCurrentVersionLatest = false;
+		isError = false;
 		isCheckingForUpdates = true;
 
-		// First we get the latest version from the GitHub releases API
-		const githubServerResponse = await fetch(GITHUB_RELEASES_API);
-		if (githubServerResponse.ok) {
-			const response = await githubServerResponse.json();
-			latestVersion = response[0]?.tag_name;
-		}
+		// First we check if the current Hollama server has already been updated so we can
+		// prompt the user to refresh the page.
+		const hollamaServerResponse = await fetch(`http://localhost:5173/api/metadata`);
+		if (hollamaServerResponse.ok) {
+			const response = await hollamaServerResponse.json();
+			latestVersion = response?.currentVersion;
 
-		// If we didn't get a response from the GitHub releases API, we check if the
-		// current Hollama server has already been updated so we can prompt the user
-		// to refresh the page.
-		if (!latestVersion) {
-			const hollamaServerResponse = await fetch(`http://localhost:5173/api/metadata`);
-
-			if (hollamaServerResponse.ok) {
-				const response = await hollamaServerResponse.json();
-				latestVersion = response?.currentVersion;
+			if (latestVersion) {
+				canRefreshToUpdate = semver.lt(version.replace('-dev', ''), latestVersion);
 			} else {
 				isError = true;
 			}
 		}
 
+		// Then we get the latest version from the GitHub releases API
+		const githubServerResponse = await fetch(GITHUB_RELEASES_API);
+		if (githubServerResponse.ok) {
+			const response = await githubServerResponse.json();
+			latestVersion = response[0]?.tag_name;
+		} else {
+			isError = true;
+		}
+
 		isCheckingForUpdates = false;
 		$settingsStore.lastUpdateCheck = getUnixTime(new Date());
 
-		if (!latestVersion) return;
-		isCurrentVersionLatest = semver.lt(latestVersion, version.replace('-dev', ''));
+		if (latestVersion)
+			isCurrentVersionLatest = semver.lt(latestVersion, version.replace('-dev', ''));
 	}
 
 	onMount(() => {
@@ -84,51 +88,43 @@
 		</div>
 
 		<FieldHelp>
-			{#if !isCheckingForUpdates}
-				{#if isCurrentVersionLatest}
-					<P>
-						You are on the latest version.
-						<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
-							Release history
-						</Button>
-					</P>
-				{:else if latestVersion}
-					<P>
-						A newer version <Badge>{latestVersion}</Badge> is available.
-						{#if isDesktop}
-							<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
-								Go to downloads
-							</Button>
-						{:else if isDocker}
-							<Button variant="link" href={DOCKER_INSTRUCTIONS_URL} target="_blank">
-								How to update Docker image?
-							</Button>
-						{:else}
-							<Button variant="link" on:click={() => window.location.reload()}>
-								Refresh to update
-							</Button>
-						{/if}
-					</P>
-				{/if}
-
-				{#if $settingsStore?.lastUpdateCheck && !latestVersion}
-					<P>
-						Last update check
-						<Badge>
-							{new Date($settingsStore.lastUpdateCheck * 1000).toLocaleString()}
-						</Badge>
-					</P>
-				{/if}
-			{:else}
+			{#if isCheckingForUpdates}
+				<P>Checking for updates...</P>
+			{:else if isCurrentVersionLatest}
 				<P>
-					Checking for updates...
+					You are on the latest version.
+					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Release history</Button>
 				</P>
-			{/if}
-
-			{#if isError}
+			{:else if latestVersion}
+				<P>
+					A newer version <Badge>{latestVersion}</Badge> is available.
+					{#if canRefreshToUpdate}
+						<Button variant="link" on:click={() => window.location.reload()}>
+							Refresh to update
+						</Button>
+					{:else if $settingsStore?.isDocker}
+						<Button variant="link" href={DOCKER_INSTRUCTIONS_URL} target="_blank">
+							How to update Docker image?
+						</Button>
+					{:else}
+						<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
+							Go to downloads
+						</Button>
+					{/if}
+				</P>
+			{:else if isError}
 				<P>
 					Couldn't check for updates automatically.
 					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Go to releases</Button>
+				</P>
+			{/if}
+
+			{#if !isCheckingForUpdates && !latestVersion && $settingsStore?.lastUpdateCheck}
+				<P>
+					Last update check
+					<Badge>
+						{new Date($settingsStore.lastUpdateCheck * 1000).toLocaleString()}
+					</Badge>
 				</P>
 			{/if}
 		</FieldHelp>
