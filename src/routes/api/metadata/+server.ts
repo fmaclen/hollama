@@ -3,9 +3,9 @@ import { version } from '$app/environment';
 import { env } from '$env/dynamic/public';
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET({ request }) {
+export async function GET() {
 	return json({
-		version,
+		currentVersion: version,
 		isDesktop: env.PUBLIC_ADAPTER === 'electron-node',
 		isDocker: env.PUBLIC_ADAPTER === 'docker-node'
 	});

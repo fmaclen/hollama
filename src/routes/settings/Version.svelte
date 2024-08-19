@@ -1,63 +1,91 @@
 <script lang="ts">
+	import semver from 'semver';
+	import { onMount } from 'svelte';
+	import { getUnixTime } from 'date-fns';
 	import { toast } from 'svelte-sonner';
+	import { env } from '$env/dynamic/public';
 	import { version } from '$app/environment';
 
+	import { settingsStore } from '$lib/store';
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
 
-	const releasesUrl = 'https://github.com/fmaclen/hollama/releases';
-	const dockerInstructionsUrl = 'https://github.com/fmaclen/hollama/blob/main/docs/docker.md';
+	const GITHUB_RELEASES_API = 'https://api.github.com/repos/fmaclen/hollama/releases';
+	const GITHUB_RELEASES_URL = 'https://github.com/fmaclen/hollama/releases';
+	const DOCKER_INSTRUCTIONS_URL = 'https://github.com/fmaclen/hollama/blob/main/docs/docker.md';
+	const ONE_WEEK_IN_SECONDS = 604800;
+
+	const isDesktop = env.PUBLIC_ADAPTER === 'electron-node';
+	const isDocker = env.PUBLIC_ADAPTER === 'docker-node';
 
 	let latestVersion: string | null = null;
-	let isCurrentVersionLatest = true;
+	let isCurrentVersionLatest = false;
 	let isCheckingForUpdates = false;
-	let isError = true;
 
-	let isDesktop = false;
-	let isDocker = false;
-	// let isDesktop = ADAPTER === 'electron-node';
-	// let isDocker = ADAPTER === 'docker-node';
+	async function checkForUpdates() {
+		const oneWeekAgoInSeconds = getUnixTime(new Date()) - ONE_WEEK_IN_SECONDS;
 
-	$: if (isCheckingForUpdates) toast.loading('Checking for updates');
+		if (!$settingsStore) return;
+		if (!$settingsStore.lastUpdateCheck) $settingsStore.lastUpdateCheck = oneWeekAgoInSeconds - 1;
+		if ($settingsStore.lastUpdateCheck > oneWeekAgoInSeconds) return;
+
+		isCheckingForUpdates = true;
+		toast.loading('Checking for updates');
+
+		try {
+			const githubRelease = await (await fetch(GITHUB_RELEASES_API)).json();
+			latestVersion = githubRelease[0]?.tag_name;
+
+			if (!latestVersion) {
+				const thisHollamaServer = await (await fetch(`http://localhost:5173/api/metadata`)).json();
+				latestVersion = thisHollamaServer?.currentVersion;
+			}
+		} catch (error) {
+			console.error(error);
+		}
+
+		if (!latestVersion) return;
+		isCurrentVersionLatest = semver.lt(latestVersion, version.replace('-dev', ''));
+		$settingsStore.lastUpdateCheck = getUnixTime(new Date());
+		isCheckingForUpdates = false;
+	}
+
+	$: console.log('isCurrentVersionLatest', isCurrentVersionLatest);
+
+	onMount(() => {
+		checkForUpdates();
+	});
 </script>
 
 <Fieldset>
-	<P>
-		<strong>Current version</strong>
-		<Button variant="icon" href={releasesUrl} target="_blank">
-			<Badge>{version}</Badge>
-		</Button>
-	</P>
-	{#if isCheckingForUpdates}
-		<P>
-			Couldn't check for updates automatically.
-			<Button variant="link" href={releasesUrl} target="_blank">Releases</Button>
-		</P>
-	{:else}
+	<P><strong>Current version</strong></P>
+		
+
+	{#if !isCheckingForUpdates}
 		<div class="flex gap-x-4">
+			<Button variant="ghost" href={GITHUB_RELEASES_URL} target="_blank">
+				<Badge>0.10.2</Badge>
+			</Button>
 			<FieldHelp>
-				{#if isError}
-					<P>
-						Couldn't check for updates automatically.
-						<Button variant="link" href={releasesUrl} target="_blank">Releases</Button>
-					</P>
-				{:else if isCurrentVersionLatest}
+				{#if isCurrentVersionLatest}
 					<P>
 						You are on the latest version.
-						<Button variant="link" href={releasesUrl} target="_blank">Earlier versions</Button>
+						<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
+							Earlier versions
+						</Button>
 					</P>
 				{:else if !isCurrentVersionLatest && latestVersion}
 					<P>
 						A new version is available.
 						{#if isDesktop}
-							<Button variant="link" href={releasesUrl} target="_blank">
+							<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
 								Download {latestVersion}
 							</Button>
 						{:else if isDocker}
-							<Button variant="link" href={dockerInstructionsUrl} target="_blank">
+							<Button variant="link" href={DOCKER_INSTRUCTIONS_URL} target="_blank">
 								Update to {latestVersion}
 							</Button>
 						{:else}
@@ -65,6 +93,11 @@
 								Refresh to update
 							</Button>
 						{/if}
+					</P>
+				{:else}
+					<P>
+						Couldn't check for updates automatically.
+						<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Releases</Button>
 					</P>
 				{/if}
 			</FieldHelp>

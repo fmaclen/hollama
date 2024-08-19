@@ -14,11 +14,11 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
+	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import P from '$lib/components/P.svelte';
 
 	import { settingsStore } from '$lib/store';
 	import { ollamaPull, ollamaTags } from '$lib/ollama';
-	import FieldHelp from '$lib/components/FieldHelp.svelte';
 
 	let ollamaURL: URL | null = null;
 

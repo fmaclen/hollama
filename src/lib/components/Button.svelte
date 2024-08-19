@@ -3,7 +3,7 @@
 
 	let className: string | undefined = undefined;
 	export { className as class };
-	export let variant: 'default' | 'outline' | 'link' | 'icon' | undefined = 'default';
+	export let variant: 'default' | 'outline' | 'link' | 'icon' | 'ghost' | undefined = 'default';
 	export let href: string | undefined = undefined;
 	export let isLoading: boolean | undefined = false;
 </script>
