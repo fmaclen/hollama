@@ -2,8 +2,6 @@
 	import semver from 'semver';
 	import { onMount } from 'svelte';
 	import { getUnixTime } from 'date-fns';
-	import { toast } from 'svelte-sonner';
-	import { env } from '$env/dynamic/public';
 	import { version } from '$app/environment';
 
 	import { settingsStore } from '$lib/store';
