@@ -28,6 +28,7 @@ i18next.init({
 					cantConnectToOllama: "Can't connect to Ollama server",
 					stopResponse: 'Stop response',
 					systemPrompt: 'System prompt',
+					goToKnowledge: 'Go to knowledge',
 					writePromptToStart: 'Write a prompt to start a new session',
 					ollamaConnectionError: "Couldn't connect to Ollama. Is the [server running](/settings)?",
 					genericError: 'Sorry, something went wrong.\n```\n${{error}}\n```',

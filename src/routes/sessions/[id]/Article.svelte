@@ -47,7 +47,7 @@
 			<Button
 				variant="outline"
 				href={generateNewUrl(Sitemap.KNOWLEDGE, message.knowledge.id)}
-				aria-label={$i18n.t('common.goToKnowledge')}
+				aria-label={$i18n.t('sessions.goToKnowledge')}
 			>
 				{message.knowledge.name}
 				<Brain class="-mr-1 ml-2 h-4 w-4" />

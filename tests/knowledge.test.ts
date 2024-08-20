@@ -31,7 +31,7 @@ test('creates and edits knowledge', async ({ page }) => {
 	await expect(timestamp).not.toBeVisible();
 
 	// Create knowledge
-	await page.getByText('New knowledge').click();
+	await page.getByText('New knowledge', { exact: true }).click();
 	await expect(
 		page.getByText('Create new knowledge or choose one from the list')
 	).not.toBeVisible();
@@ -275,7 +275,7 @@ test('can use shortcut to create knowledge from session', async ({ page }) => {
 	await expect(sessionId).toBeVisible();
 	await expect(knowledgeId).not.toBeVisible();
 
-	await page.getByLabel('New knowledge').click();
+	await page.getByLabel('New knowledge', { exact: true }).click();
 	await expect(sessionId).not.toBeVisible();
 	await expect(knowledgeId).toBeVisible();
 });
