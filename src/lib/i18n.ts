@@ -48,7 +48,7 @@ i18next.init({
 				settings: {
 					pageTitle: 'Settings',
 					server: 'Server',
-					model: 'Model',
+					availableModels: 'Model',
 					disconnected: 'disconnected',
 					connected: 'connected',
 					dangerZone: 'Danger zone',
