@@ -124,7 +124,7 @@
 	});
 </script>
 
-<Head title="Settings" />
+<Head title={$i18n.t('settings.pageTitle')} />
 <section class="settings">
 	<div class="settings__container">
 		<Fieldset>

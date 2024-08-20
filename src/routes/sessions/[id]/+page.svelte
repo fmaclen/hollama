@@ -282,7 +282,7 @@
 								>
 									<svelte:fragment slot="nav">
 										<Button
-											aria-label={$i18n.t('knowledge.newKnowledge')}
+											aria-label={$i18n.t('knowledge.new')}
 											variant="outline"
 											href={generateNewUrl(Sitemap.KNOWLEDGE)}
 											class="h-full text-muted"
