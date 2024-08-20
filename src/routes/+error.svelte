@@ -1,16 +1,17 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
+	import i18n from '$lib/i18n';
 </script>
 
 {#if $page.status === 404}
 	<EmptyMessage>
 		<strong>Error {$page.status}</strong>
-		— The page you are looking for does not exist.</EmptyMessage
+		— {$i18n.t('error.notFound')}</EmptyMessage
 	>
 {:else if $page.status !== 200}
 	<EmptyMessage>
 		<strong>Error {$page.status}</strong>
-		— There was an internal server error. Please try again later.</EmptyMessage
+		— {$i18n.t('error.internalServerError')}</EmptyMessage
 	>
 {/if}

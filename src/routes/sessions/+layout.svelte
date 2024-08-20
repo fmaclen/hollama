@@ -6,6 +6,7 @@
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
+	import i18n from '$lib/i18n';
 </script>
 
 <RobotsNoIndex />
@@ -22,7 +23,7 @@
 				/>
 			{/each}
 		{:else}
-			<EmptyMessage>No sessions</EmptyMessage>
+			<EmptyMessage>{$i18n.t('sessions.empty')}</EmptyMessage>
 		{/if}
 	</svelte:fragment>
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import i18n from '$lib/i18n';
 	import { settingsStore } from '$lib/store';
 	import FieldSelect from './FieldSelect.svelte';
 
@@ -9,7 +10,7 @@
 </script>
 
 <FieldSelect
-	label="Model"
+	label={$i18n.t('settings.model')}
 	name="model"
 	options={$settingsStore?.ollamaModels.map((m) => ({ value: m.name, option: m.name }))}
 	disabled={disabled || !$settingsStore?.ollamaModels.length}

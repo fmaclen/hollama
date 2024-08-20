@@ -7,6 +7,7 @@
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
+	import i18n from '$lib/i18n';
 
 	import { ollamaTags, type OllamaTagResponse } from '$lib/ollama';
 	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
@@ -69,14 +70,14 @@
 			<p class="p"><strong>Ollama</strong></p>
 			<FieldInput
 				name="server"
-				label="Server"
+				label={$i18n.t('settings.server')}
 				placeholder={DETAULT_OLLAMA_SERVER}
 				bind:value={ollamaServer}
 				on:keyup={getModelsList}
 			>
 				<svelte:fragment slot="status">
 					<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
-						{serverStatus}
+						{$i18n.t(`settings.${serverStatus}`)}
 					</Badge>
 				</svelte:fragment>
 
@@ -124,21 +125,21 @@
 		</Fieldset>
 
 		<div class="about">
-			<p class="p"><strong>Danger zone</strong></p>
+			<p class="p"><strong>{$i18n.t('settings.dangerZone')}</strong></p>
 			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSessions)}>
-				Delete all sessions
+				{$i18n.t('settings.deleteAllSessions')}
 			</Button>
 			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaKnowledge)}>
-				Delete all knowledge
+				{$i18n.t('settings.deleteAllKnowledge')}
 			</Button>
 			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSettings)}>
-				Delete server settings
+				{$i18n.t('settings.deleteServerSettings')}
 			</Button>
 		</div>
 
 		<div class="version">
 			<p class="p">
-				<strong>Version</strong>
+				<strong>{$i18n.t('settings.version')}</strong>
 				<Button variant="icon" href="https://github.com/fmaclen/hollama/releases" target="_blank">
 					<Badge>{version}</Badge>
 				</Button>

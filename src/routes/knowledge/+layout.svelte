@@ -6,6 +6,7 @@
 	import { Sitemap } from '$lib/sitemap';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import { formatTimestampToNow } from '$lib/utils';
+	import i18n from '$lib/i18n';
 </script>
 
 <RobotsNoIndex />
@@ -22,7 +23,7 @@
 				/>
 			{/each}
 		{:else}
-			<EmptyMessage>No knowledge</EmptyMessage>
+			<EmptyMessage>{$i18n.t('knowledge.empty')}</EmptyMessage>
 		{/if}
 	</svelte:fragment>
 

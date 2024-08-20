@@ -16,6 +16,7 @@
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import Head from '$lib/components/Head.svelte';
+	import i18n from '$lib/i18n';
 
 	export let data: PageData;
 
@@ -30,7 +31,7 @@
 		if (!name || !content) return;
 		saveKnowledge({ id: data.id, name, content, updatedAt: getUpdatedAtDate() });
 		knowledge = loadKnowledge(data.id);
-		toast.success('Knowledge saved');
+		toast.success($i18n.t('knowledge.knowledgeSaved'));
 	}
 
 	afterNavigate(() => {
@@ -40,17 +41,22 @@
 	});
 </script>
 
-<Head title={[knowledge.name ? knowledge.name : 'New knowledge', 'Knowledge']} />
+<Head
+	title={[
+		knowledge.name ? knowledge.name : $i18n.t('knowledge.new'),
+		$i18n.t('knowledge.pageTitle')
+	]}
+/>
 <div class="knowledge">
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="knowledge-id" class="text-sm font-bold leading-none">
-			Knowledge
+			{$i18n.t('knowledge.knowledge')}
 			<Button variant="link" href={`/knowledge/${knowledge.id}`}>
 				#{knowledge.id}
 			</Button>
 		</p>
 		<Metadata dataTestid="knowledge-metadata">
-			{isNewKnowledge ? 'New knowledge' : formatTimestampToNow(knowledge.updatedAt)}
+			{isNewKnowledge ? $i18n.t('knowledge.new') : formatTimestampToNow(knowledge.updatedAt)}
 		</Metadata>
 
 		<svelte:fragment slot="nav">
@@ -61,13 +67,15 @@
 	</Header>
 
 	<Fieldset isFullscreen={true}>
-		<FieldInput name="name" label="Name" bind:value={name} />
+		<FieldInput name="name" label={$i18n.t('knowledge.name')} bind:value={name} />
 
 		{#key knowledge}
-			<FieldTextEditor label="Content" {handleSubmit} bind:value={content} />
+			<FieldTextEditor label={$i18n.t('knowledge.content')} {handleSubmit} bind:value={content} />
 		{/key}
 
-		<ButtonSubmit hasMetaKey={true} {handleSubmit} disabled={!name || !content}>Save</ButtonSubmit>
+		<ButtonSubmit hasMetaKey={true} {handleSubmit} disabled={!name || !content}>
+			{$i18n.t('knowledge.save')}
+		</ButtonSubmit>
 	</Fieldset>
 </div>
 

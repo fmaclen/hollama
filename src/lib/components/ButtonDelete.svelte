@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Sitemap } from '$lib/sitemap';
+	import i18n from '$lib/i18n';
 	import { Check, Trash2, X } from 'lucide-svelte';
 	import type { Writable } from 'svelte/store';
 	import { knowledgeStore, sessionsStore, deleteStoreItem } from '$lib/store';
@@ -38,7 +39,7 @@
 			variant="icon"
 			class="delete-button__confirm"
 			on:click={deleteRecord}
-			title="Confirm deletion"
+			title={$i18n.t('common.confirmDeletion')}
 		>
 			<Check class="h-4 w-4" />
 		</Button>
@@ -47,7 +48,7 @@
 			variant="icon"
 			class="delete__cancel"
 			on:click={() => updateConfirmDeletion(false)}
-			title="Dismiss"
+			title={$i18n.t('common.dismiss')}
 		>
 			<X class="h-4 w-4" />
 		</Button>
@@ -56,7 +57,9 @@
 			variant="icon"
 			class="delete__trash"
 			on:click={() => updateConfirmDeletion(true)}
-			title="Delete {sitemap === Sitemap.KNOWLEDGE ? 'knowledge' : 'session'}"
+			title={sitemap === Sitemap.KNOWLEDGE
+				? $i18n.t('knowledge.delete')
+				: $i18n.t('sessions.delete')}
 		>
 			<Trash2 class="h-4 w-4" />
 		</Button>
