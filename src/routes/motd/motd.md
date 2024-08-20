@@ -1,4 +1,4 @@
-`2024-8-9`
+`2024-8-18`
 
 ### Message of the day
 
@@ -7,6 +7,7 @@
 #### What's new?
 
 - **Desktop app** is now available for [Windows, macOS & Linux](https://github.com/fmaclen/hollama/releases)
+- **Download** [Ollama models](https://ollama.ai/models) directly from the [Settings](/settings) page
 
 #### Previously, in Hollama
 

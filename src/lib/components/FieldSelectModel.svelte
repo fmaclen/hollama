@@ -10,7 +10,7 @@
 </script>
 
 <FieldSelect
-	label={$i18n.t('settings.model')}
+	label={$i18n.t('settings.availableModels')}
 	name="model"
 	options={$settingsStore?.ollamaModels.map((m) => ({ value: m.name, option: m.name }))}
 	disabled={disabled || !$settingsStore?.ollamaModels.length}

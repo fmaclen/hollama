@@ -45,7 +45,7 @@
 	{/if}
 </svelte:head>
 
-<Toaster richColors={true} />
+<Toaster richColors={true} position="top-center" />
 
 <div class="layout">
 	<aside class="layout__aside">
