@@ -64,17 +64,17 @@
 				{:else if href === '/motd'}
 					<NotebookText class="h-4 w-4" />
 				{/if}
-				{$i18n.t(`nav.${text.toLowerCase()}`)}
+				{$i18n.t(`sidebar.${text.toLowerCase()}`)}
 			</a>
 		{/each}
 
 		<button class="layout__button" on:click={toggleTheme}>
 			{#if theme === 'light'}
 				<Moon class="h-4 w-4" />
-				{$i18n.t('nav.theme.dark')}
+				{$i18n.t('sidebar.theme.dark')}
 			{:else}
 				<Sun class="h-4 w-4" />
-				{$i18n.t('nav.theme.light')}
+				{$i18n.t('sidebar.theme.light')}
 			{/if}
 		</button>
 	</aside>

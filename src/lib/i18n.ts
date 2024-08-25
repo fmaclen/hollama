@@ -6,7 +6,7 @@ i18next.init({
 	resources: {
 		en: {
 			translation: {
-				nav: {
+				sidebar: {
 					sessions: 'Sessions',
 					knowledge: 'Knowledge',
 					settings: 'Settings',
