@@ -39,7 +39,7 @@
 			variant="icon"
 			class="delete-button__confirm"
 			on:click={deleteRecord}
-			title={$i18n.t('common.confirmDeletion')}
+			title={$i18n.t('confirmDeletion')}
 		>
 			<Check class="h-4 w-4" />
 		</Button>
@@ -48,7 +48,7 @@
 			variant="icon"
 			class="delete__cancel"
 			on:click={() => updateConfirmDeletion(false)}
-			title={$i18n.t('common.dismiss')}
+			title={$i18n.t('dismiss')}
 		>
 			<X class="h-4 w-4" />
 		</Button>

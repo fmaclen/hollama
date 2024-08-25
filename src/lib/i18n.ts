@@ -65,15 +65,13 @@ i18next.init({
 					notFound: 'The page you are looking for does not exist.',
 					internalServerError: 'There was an internal server error. Please try again later.'
 				},
-				common: {
-					copy: 'Copy',
-					retry: 'Retry',
-					confirmDeletion: 'Confirm deletion',
-					dismiss: 'Dismiss',
-					you: 'You',
-					assistant: 'Assistant',
-					system: 'System'
-				}
+				copy: 'Copy',
+				retry: 'Retry',
+				confirmDeletion: 'Confirm deletion',
+				dismiss: 'Dismiss',
+				you: 'You',
+				assistant: 'Assistant',
+				system: 'System'
 			}
 		}
 	},

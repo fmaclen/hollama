@@ -21,16 +21,16 @@
 		<div data-testid="session-role" class="article__role">
 			<Badge>
 				{#if isUserRole}
-					{$i18n.t('common.you')}
+					{$i18n.t('you')}
 				{:else}
-					{$i18n.t(`common.${message.role}`)}
+					{$i18n.t(`${message.role}`)}
 				{/if}
 			</Badge>
 		</div>
 		<div class="article__interactive">
 			{#if retryIndex}
 				<Button
-					title={$i18n.t('common.retry')}
+					title={$i18n.t('retry')}
 					variant="icon"
 					id="retry-index-{retryIndex}"
 					on:click={() => handleRetry && handleRetry(retryIndex)}

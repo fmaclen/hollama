@@ -11,7 +11,7 @@
 </script>
 
 <div class="copy-button">
-	<Button title={$i18n.t('common.copy')} variant="icon" on:click={copyContent}>
+	<Button title={$i18n.t('copy')} variant="icon" on:click={copyContent}>
 		<Files class="h-4 w-4" />
 	</Button>
 </div>
