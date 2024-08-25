@@ -7,7 +7,7 @@
 	export let data: { motd: string };
 </script>
 
-<Head title={$i18n.t('motd.pageTitle')} />
+<Head title={$i18n.t('motd')} />
 
 <section class="motd">
 	<div class="motd__container">
