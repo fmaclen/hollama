@@ -25,14 +25,10 @@ i18next.init({
 					delete: 'Delete session',
 					noSessionChosen: 'Create a new session or choose an existing one from the list',
 					promptPlaceholder: 'Write literally anything',
-					cantConnectToOllama: "Can't connect to Ollama server",
 					stopResponse: 'Stop response',
 					systemPrompt: 'System prompt',
 					goToKnowledge: 'Go to knowledge',
-					writePromptToStart: 'Write a prompt to start a new session',
-					ollamaConnectionError: "Couldn't connect to Ollama. Is the [server running](/settings)?",
-					genericError: 'Sorry, something went wrong.\n```\n${{error}}\n```',
-					somethingWentWrong: 'Sorry, something went wrong.'
+					writePromptToStart: 'Write a prompt to start a new session'
 				},
 				knowledge: {
 					pageTitle: 'Knowledge',
@@ -60,8 +56,12 @@ i18next.init({
 				},
 				motd: 'Message of the day',
 				error: {
+					genericError: 'Sorry, something went wrong.\n```\n${{error}}\n```',
+					somethingWentWrong: 'Sorry, something went wrong.',
 					notFound: 'The page you are looking for does not exist.',
-					internalServerError: 'There was an internal server error. Please try again later.'
+					internalServerError: 'There was an internal server error. Please try again later.',
+					cantConnectToOllamaServer: "Can't connect to Ollama server",
+					ollamaConnectionError: "Couldn't connect to Ollama. Is the [server running](/settings)?"
 				},
 				copy: 'Copy',
 				retry: 'Retry',

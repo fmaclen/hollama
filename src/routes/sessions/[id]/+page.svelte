@@ -67,7 +67,7 @@
 			$settingsStore.ollamaModels = (await ollamaTags()).models;
 		} catch {
 			$settingsStore.ollamaModels = [];
-			toast.warning($i18n.t('sessions.cantConnectToOllama'));
+			toast.warning($i18n.t('errors.cantConnectToOllamaServer'));
 		}
 		scrollToBottom();
 	}
@@ -178,8 +178,8 @@
 
 	function handleError(error: Error) {
 		let content: string;
-		if (error.message === 'Failed to fetch') content = $i18n.t('sessions.ollamaConnectionError');
-		else content = $i18n.t('sessions.genericError', { error });
+		if (error.message === 'Failed to fetch') content = $i18n.t('errors.ollamaConnectionError');
+		else content = $i18n.t('errors.genericError', { error });
 
 		const message: Message = { role: 'system', content };
 		session.messages = [...session.messages, message];
