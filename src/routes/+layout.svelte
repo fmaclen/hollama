@@ -8,7 +8,9 @@
 	import { page } from '$app/stores';
 
 	import { settingsStore } from '$lib/store';
+	import { getHollamaServerMetadata } from '$lib/utils';
 	import '../app.pcss';
+	import { onNavigate } from '$app/navigation';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
@@ -20,8 +22,15 @@
 
 	$: theme = $settingsStore?.userTheme;
 
-	onMount(() => {
-		if (!$settingsStore || !browser || theme) return;
+	onNavigate(() => {
+		console.log('should check for updates');
+	});
+
+	onMount(async () => {
+		if (!$settingsStore) return;
+		await getHollamaServerMetadata();
+
+		if (!browser || theme) return;
 		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 			? 'dark'
 			: 'light';

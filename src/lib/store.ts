@@ -4,6 +4,7 @@ import { writable } from 'svelte/store';
 import type { Session } from '$lib/sessions';
 import type { Knowledge } from './knowledge';
 
+// TODO: ADD A WAY TO SET DEFAULT VALUES
 function createLocalStorageStore<T>(key: string, initialValue: T | null = null) {
 	const localStorageValue: string | null = browser ? window.localStorage.getItem(key) : null;
 	let value: T | null = initialValue;
@@ -44,11 +45,12 @@ export interface Settings {
 	ollamaServer: string | null;
 	ollamaModel: string | null;
 	ollamaModels: ModelResponse[];
-	userTheme?: 'light' | 'dark';
-	isDocker?: boolean;
-	isDesktop?: boolean;
-	shouldAutoCheckForUpdates?: boolean;
-	lastUpdateCheck?: number;
+	isDocker: boolean;
+	isDesktop: boolean;
+	currentVersion: string;
+	lastUpdateCheck: number | null;
+	autoCheckForUpdates: boolean;
+	userTheme: 'light' | 'dark';
 }
 
 export enum StorageKey {
