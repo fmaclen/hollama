@@ -4,5 +4,5 @@
 	import i18n from '$lib/i18n';
 </script>
 
-<Head title={$i18n.t('knowledge.pageTitle')} />
-<EmptyMessage>{$i18n.t('knowledge.noKnowledgeChosen')}</EmptyMessage>
+<Head title={$i18n.t('knowledge', { count: 0 })} />
+<EmptyMessage>{$i18n.t('knowledgePage.noKnowledgeChosen')}</EmptyMessage>

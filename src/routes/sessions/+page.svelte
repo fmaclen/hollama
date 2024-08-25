@@ -4,5 +4,5 @@
 	import i18n from '$lib/i18n';
 </script>
 
-<Head title={$i18n.t('sessions.pageTitle')} />
-<Empty>{$i18n.t('sessions.noSessionChosen')}</Empty>
+<Head title={$i18n.t('session', { count: 0 })} />
+<Empty>{$i18n.t('sessionsPage.noSessionChosen')}</Empty>

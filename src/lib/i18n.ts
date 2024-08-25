@@ -6,6 +6,12 @@ i18next.init({
 	resources: {
 		en: {
 			translation: {
+				session_one: 'Session',
+				session_other: 'Sessions',
+				knowledge_one: 'Knowledge',
+				knowledge_other: 'Knowledge',
+				settings: 'Settings',
+				motd: 'Message of the day',
 				sidebar: {
 					sessions: 'Sessions',
 					knowledge: 'Knowledge',
@@ -13,11 +19,9 @@ i18next.init({
 					motd: 'Motd',
 					theme: { dark: 'Dark', light: 'Light' }
 				},
-				sessions: {
-					pageTitle: 'Sessions',
+				sessionsPage: {
 					new: 'New session',
 					empty: 'No sessions',
-					session: 'Session',
 					name: 'Name',
 					content: 'Content',
 					prompt: 'Prompt',
@@ -30,11 +34,9 @@ i18next.init({
 					goToKnowledge: 'Go to knowledge',
 					writePromptToStart: 'Write a prompt to start a new session'
 				},
-				knowledge: {
-					pageTitle: 'Knowledge',
+				knowledgePage: {
 					new: 'New knowledge',
 					empty: 'No knowledge',
-					knowledge: 'Knowledge',
 					name: 'Name',
 					content: 'Content',
 					save: 'Save',
@@ -42,8 +44,7 @@ i18next.init({
 					knowledgeSaved: 'Knowledge saved',
 					noKnowledgeChosen: 'Create new knowledge or choose one from the list'
 				},
-				settings: {
-					pageTitle: 'Settings',
+				settingsPage: {
 					server: 'Server',
 					availableModels: 'Available models',
 					disconnected: 'disconnected',
@@ -54,22 +55,21 @@ i18next.init({
 					deleteServerSettings: 'Delete server settings',
 					version: 'Version'
 				},
-				motd: 'Message of the day',
-				error: {
-					genericError: 'Sorry, something went wrong.\n```\n${{error}}\n```',
-					somethingWentWrong: 'Sorry, something went wrong.',
-					notFound: 'The page you are looking for does not exist.',
-					internalServerError: 'There was an internal server error. Please try again later.',
-					cantConnectToOllamaServer: "Can't connect to Ollama server",
-					ollamaConnectionError: "Couldn't connect to Ollama. Is the [server running](/settings)?"
-				},
 				copy: 'Copy',
 				retry: 'Retry',
 				confirmDeletion: 'Confirm deletion',
 				dismiss: 'Dismiss',
 				you: 'You',
 				assistant: 'Assistant',
-				system: 'System'
+				system: 'System',
+				errors: {
+					genericError: 'Sorry, something went wrong.\n```\n${{error}}\n```',
+					somethingWentWrong: 'Sorry, something went wrong.',
+					notFound: 'The page you are looking for does not exist.',
+					internalServerError: 'There was an internal server error. Please try again later.',
+					cantConnectToOllamaServer: "Can't connect to Ollama server",
+					ollamaConnectionError: "Couldn't connect to Ollama. Is the [server running](/settings)?"
+				}
 			}
 		}
 	},

@@ -216,17 +216,17 @@
 <div class="session">
 	<Head
 		title={[
-			isNewSession ? $i18n.t('sessions.new') : getSessionTitle(session),
-			$i18n.t('sessions.pageTitle')
+			isNewSession ? $i18n.t('sessionsPage.new') : getSessionTitle(session),
+			$i18n.t('session', { count: 0 })
 		]}
 	/>
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
-			{$i18n.t('sessions.session')}
+			{$i18n.t('session', { count: 1 })}
 			<Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
 		</p>
 		<Metadata dataTestid="session-metadata">
-			{isNewSession ? $i18n.t('sessions.new') : formatSessionMetadata(session)}
+			{isNewSession ? $i18n.t('sessionsPage.new') : formatSessionMetadata(session)}
 		</Metadata>
 
 		<svelte:fragment slot="nav">
@@ -242,7 +242,7 @@
 		<div class="session__history" bind:this={messageWindow}>
 			<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
 				{#if isNewSession}
-					<EmptyMessage>{$i18n.t('sessions.writePromptToStart')}</EmptyMessage>
+					<EmptyMessage>{$i18n.t('sessionsPage.writePromptToStart')}</EmptyMessage>
 				{/if}
 
 				{#each session.messages as message, i (session.id + i)}
@@ -274,7 +274,7 @@
 							<div class="prompt-editor__project">
 								<FieldSelectModel />
 								<FieldSelect
-									label={$i18n.t('sessions.systemPrompt')}
+									label={$i18n.t('sessionsPage.systemPrompt')}
 									name="knowledge"
 									disabled={!$knowledgeStore}
 									options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
@@ -282,7 +282,7 @@
 								>
 									<svelte:fragment slot="nav">
 										<Button
-											aria-label={$i18n.t('knowledge.new')}
+											aria-label={$i18n.t('knowledgePage.new')}
 											variant="outline"
 											href={generateNewUrl(Sitemap.KNOWLEDGE)}
 											class="h-full text-muted"
@@ -297,7 +297,7 @@
 						{#key session}
 							{#if isPromptFullscreen}
 								<FieldTextEditor
-									label={$i18n.t('sessions.prompt')}
+									label={$i18n.t('sessionsPage.prompt')}
 									{handleSubmit}
 									bind:value={prompt}
 								/>
@@ -306,7 +306,7 @@
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
-										placeholder={$i18n.t('sessions.promptPlaceholder')}
+										placeholder={$i18n.t('sessionsPage.promptPlaceholder')}
 										bind:this={promptTextarea}
 										bind:value={prompt}
 										on:keydown={handleKeyDown}
@@ -323,7 +323,7 @@
 									!$settingsStore?.ollamaModels.length ||
 									!$settingsStore?.ollamaModel}
 							>
-								{$i18n.t('sessions.run')}
+								{$i18n.t('sessionsPage.run')}
 							</ButtonSubmit>
 
 							{#if isCompletionInProgress}

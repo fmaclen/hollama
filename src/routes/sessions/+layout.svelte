@@ -23,7 +23,7 @@
 				/>
 			{/each}
 		{:else}
-			<EmptyMessage>{$i18n.t('sessions.empty')}</EmptyMessage>
+			<EmptyMessage>{$i18n.t('sessionsPage.empty')}</EmptyMessage>
 		{/if}
 	</svelte:fragment>
 

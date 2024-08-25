@@ -124,21 +124,21 @@
 	});
 </script>
 
-<Head title={$i18n.t('settings.pageTitle')} />
+<Head title={$i18n.t('settings')} />
 <section class="settings">
 	<div class="settings__container">
 		<Fieldset>
 			<p class="p"><strong>Ollama</strong></p>
 			<FieldInput
 				name="server"
-				label={$i18n.t('settings.server')}
+				label={$i18n.t('settingsPage.server')}
 				placeholder={DETAULT_OLLAMA_SERVER}
 				bind:value={ollamaServer}
 				on:keyup={getModelsList}
 			>
 				<svelte:fragment slot="status">
 					<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
-						{$i18n.t(`settings.${serverStatus}`)}
+						{$i18n.t(`settingsPage.${serverStatus}`)}
 					</Badge>
 				</svelte:fragment>
 
@@ -215,21 +215,21 @@
 		</Fieldset>
 
 		<div class="about">
-			<p class="p"><strong>{$i18n.t('settings.dangerZone')}</strong></p>
+			<p class="p"><strong>{$i18n.t('settingsPage.dangerZone')}</strong></p>
 			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSessions)}>
-				{$i18n.t('settings.deleteAllSessions')}
+				{$i18n.t('settingsPage.deleteAllSessions')}
 			</Button>
 			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaKnowledge)}>
-				{$i18n.t('settings.deleteAllKnowledge')}
+				{$i18n.t('settingsPage.deleteAllKnowledge')}
 			</Button>
 			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSettings)}>
-				{$i18n.t('settings.deleteServerSettings')}
+				{$i18n.t('settingsPage.deleteServerSettings')}
 			</Button>
 		</div>
 
 		<div class="version">
 			<p class="p">
-				<strong>{$i18n.t('settings.version')}</strong>
+				<strong>{$i18n.t('settingsPage.version')}</strong>
 				<Button variant="icon" href="https://github.com/fmaclen/hollama/releases" target="_blank">
 					<Badge>{version}</Badge>
 				</Button>
