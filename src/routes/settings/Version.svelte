@@ -37,7 +37,7 @@
 
 		// First we check if the current Hollama server has already been updated so we can
 		// prompt the user to refresh the page.
-		const hollamaServerResponse = await fetch(`http://localhost:5173/api/metadata`);
+		const hollamaServerResponse = await fetch(`/api/metadata`);
 		if (hollamaServerResponse.ok) {
 			const response = await hollamaServerResponse.json();
 			latestVersion = response?.currentVersion;
