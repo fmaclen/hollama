@@ -78,15 +78,26 @@
 	<P><strong>Current version</strong></P>
 
 	<div class="field-version">
-		<div class="field-version__check">
-			<a href={GITHUB_RELEASES_URL} target="_blank" class="flex items-stretch gap-x-2">
-				<Badge>{version}</Badge>
-			</a>
+		<div class="field-version__updates">
+			<Badge>{version}</Badge>
+
+			{#if $settingsStore}
+				<label class="field-version__label">
+					<input
+						type="checkbox"
+						bind:checked={$settingsStore.shouldAutoCheckForUpdates}
+						class="field-version__checkbox"
+					/>
+					Automatically check for updates
+				</label>
+			{/if}
 			<Button
 				variant="outline"
 				disabled={isCheckingForUpdates}
-				on:click={() => checkForUpdates(true)}>Check for updates</Button
+				on:click={() => checkForUpdates(true)}
 			>
+				Check now
+			</Button>
 		</div>
 
 		<FieldHelp>
@@ -99,7 +110,7 @@
 				</P>
 			{:else if latestVersion}
 				<P>
-					A newer version <Badge>{latestVersion}</Badge> is available.
+					A newer version is available <Badge>{latestVersion}</Badge>
 					{#if canRefreshToUpdate}
 						<Button variant="link" on:click={() => window.location.reload()}>
 							Refresh to update
@@ -138,7 +149,16 @@
 		@apply flex flex-col;
 	}
 
-	.field-version__check {
+	.field-version__updates {
 		@apply flex items-stretch gap-x-2;
+	}
+
+	.field-version__label {
+		@apply inline-flex flex-grow items-center gap-x-2 rounded-md border border-shade-4 px-3 py-2 text-sm;
+		@apply hover:border-shade-6 hover:text-active;
+	}
+
+	.field-version__checkbox {
+		@apply accent-accent;
 	}
 </style>

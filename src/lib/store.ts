@@ -47,6 +47,7 @@ export interface Settings {
 	userTheme?: 'light' | 'dark';
 	isDocker?: boolean;
 	isDesktop?: boolean;
+	shouldAutoCheckForUpdates?: boolean;
 	lastUpdateCheck?: number;
 }
 
