@@ -58,9 +58,7 @@ i18next.init({
 					deleteServerSettings: 'Delete server settings',
 					version: 'Version'
 				},
-				motd: {
-					pageTitle: 'Message of the day'
-				},
+				motd: 'Message of the day',
 				error: {
 					notFound: 'The page you are looking for does not exist.',
 					internalServerError: 'There was an internal server error. Please try again later.'
