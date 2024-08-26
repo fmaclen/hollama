@@ -172,7 +172,7 @@
 	async function scrollToBottom(shouldForceScroll = false) {
 		if (!shouldForceScroll && (!messageWindow || userScrolledUp)) return;
 		await tick();
-		messageWindow.scrollTop = messageWindow.scrollHeight;
+		requestAnimationFrame(() => (messageWindow.scrollTop = messageWindow.scrollHeight));
 	}
 
 	function handleError(error: Error) {
