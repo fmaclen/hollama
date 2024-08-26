@@ -12,10 +12,10 @@
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
-		['/sessions', 'Sessions'],
-		['/knowledge', 'Knowledge'],
-		['/settings', 'Settings'],
-		['/motd', 'Motd']
+		['/sessions', 'sessions'],
+		['/knowledge', 'knowledge'],
+		['/settings', 'settings'],
+		['/motd', 'motd']
 	];
 
 	$: theme = $settingsStore?.userTheme;
@@ -64,17 +64,17 @@
 				{:else if href === '/motd'}
 					<NotebookText class="h-4 w-4" />
 				{/if}
-				{$i18n.t(`sidebar.${text.toLowerCase()}`)}
+				{$i18n.t(text, { count: 0 })}
 			</a>
 		{/each}
 
 		<button class="layout__button" on:click={toggleTheme}>
 			{#if theme === 'light'}
 				<Moon class="h-4 w-4" />
-				{$i18n.t('sidebar.theme.dark')}
+				{$i18n.t('theme.dark')}
 			{:else}
 				<Sun class="h-4 w-4" />
-				{$i18n.t('sidebar.theme.light')}
+				{$i18n.t('theme.light')}
 			{/if}
 		</button>
 	</aside>

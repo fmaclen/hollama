@@ -217,12 +217,12 @@
 	<Head
 		title={[
 			isNewSession ? $i18n.t('sessionsPage.new') : getSessionTitle(session),
-			$i18n.t('session', { count: 0 })
+			$i18n.t('sessions', { count: 0 })
 		]}
 	/>
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
-			{$i18n.t('session', { count: 1 })}
+			{$i18n.t('sessions', { count: 1 })}
 			<Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
 		</p>
 		<Metadata dataTestid="session-metadata">

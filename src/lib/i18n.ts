@@ -6,19 +6,21 @@ i18next.init({
 	resources: {
 		en: {
 			translation: {
-				session_one: 'Session',
-				session_other: 'Sessions',
+				sessions_one: 'Session',
+				sessions_other: 'Sessions',
 				knowledge_one: 'Knowledge',
 				knowledge_other: 'Knowledge',
 				settings: 'Settings',
-				motd: 'Message of the day',
-				sidebar: {
-					sessions: 'Sessions',
-					knowledge: 'Knowledge',
-					settings: 'Settings',
-					motd: 'Motd',
-					theme: { dark: 'Dark', light: 'Light' }
-				},
+				motd: 'Motd',
+				messageOfTheDay: 'Message of the day',
+				theme: { dark: 'Dark', light: 'Light' },
+				copy: 'Copy',
+				retry: 'Retry',
+				confirmDeletion: 'Confirm deletion',
+				dismiss: 'Dismiss',
+				you: 'You',
+				assistant: 'Assistant',
+				system: 'System',
 				sessionsPage: {
 					new: 'New session',
 					empty: 'No sessions',
@@ -55,13 +57,6 @@ i18next.init({
 					deleteServerSettings: 'Delete server settings',
 					version: 'Version'
 				},
-				copy: 'Copy',
-				retry: 'Retry',
-				confirmDeletion: 'Confirm deletion',
-				dismiss: 'Dismiss',
-				you: 'You',
-				assistant: 'Assistant',
-				system: 'System',
 				errors: {
 					genericError: 'Sorry, something went wrong.\n```\n${{error}}\n```',
 					somethingWentWrong: 'Sorry, something went wrong.',

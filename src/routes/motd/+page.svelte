@@ -7,7 +7,7 @@
 	export let data: { motd: string };
 </script>
 
-<Head title={$i18n.t('motd')} />
+<Head title={$i18n.t('messageOfTheDay')} />
 
 <section class="motd">
 	<div class="motd__container">

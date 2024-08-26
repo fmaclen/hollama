@@ -26,7 +26,7 @@
 			class="section-list-item__a"
 			data-testid={isSession ? 'session-item' : 'knowledge-item'}
 			aria-label={(isSession
-				? $i18n.t('session', { count: 1 })
+				? $i18n.t('sessions', { count: 1 })
 				: $i18n.t('knowledge', { count: 1 })) + `: ${id}`}
 			href={`/${sitemap}/${id}`}
 		>
