@@ -82,6 +82,5 @@ export async function checkForUpdates(isUserInitiated = false): Promise<UpdateSt
 	}
 
 	settings.lastUpdateCheck = getUnixTime(new Date());
-	debugger;
 	return updateStatus;
 }

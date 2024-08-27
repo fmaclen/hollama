@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { version } from '$app/environment';
 
 	import { settingsStore } from '$lib/store';
@@ -20,15 +19,9 @@
 	async function handleUpdateCheck(isUserInitiated = false) {
 		isCheckingForUpdates = true;
 		updateStatus = await checkForUpdates(isUserInitiated);
-		debugger;
 		if (!updateStatus) couldntCheckForUpdates = true;
 		isCheckingForUpdates = false;
 	}
-
-	onMount(async () => {
-		if (!$settingsStore || !($settingsStore.autoCheckForUpdates === false))
-			await handleUpdateCheck();
-	});
 </script>
 
 <Fieldset>

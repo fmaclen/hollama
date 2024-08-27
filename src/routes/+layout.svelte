@@ -8,7 +8,7 @@
 	import { page } from '$app/stores';
 
 	import { settingsStore } from '$lib/store';
-	import { getHollamaServerMetadata } from '$lib/utils';
+	import { checkForUpdates, getHollamaServerMetadata } from '$lib/utils';
 	import '../app.pcss';
 	import { onNavigate } from '$app/navigation';
 
@@ -23,7 +23,7 @@
 	$: theme = $settingsStore?.userTheme;
 
 	onNavigate(() => {
-		console.log('should check for updates');
+		if (!$settingsStore || !($settingsStore.autoCheckForUpdates === false)) checkForUpdates();
 	});
 
 	onMount(async () => {
@@ -63,7 +63,7 @@
 		</a>
 
 		{#each SITEMAP as [href, text]}
-			<a class={`layout__a ${pathname.includes(href) ? 'layout__a--active' : ''}`} {href}>
+			<a class="layout__a" class:layout__a--active={pathname.includes(href)} {href}>
 				{#if href === '/knowledge'}
 					<Brain class="h-4 w-4" />
 				{:else if href === '/sessions'}
@@ -112,11 +112,6 @@
 	.layout__logo {
 		@apply max-h-8 min-w-8;
 		@apply lg:max-h-10 lg:min-w-10;
-	}
-
-	.layout__homepage {
-		@apply col-start-3 row-start-1 flex items-center;
-		@apply lg:py-4;
 	}
 
 	.layout__button,
