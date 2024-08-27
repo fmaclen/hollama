@@ -21,6 +21,10 @@ i18next.init({
 				you: 'You',
 				assistant: 'Assistant',
 				system: 'System',
+				success: 'Success',
+				error: 'Error',
+				pullingModel: 'Pulling model',
+				modelWasDownloaded: '{{model}} was downloaded',
 				sessionsPage: {
 					new: 'New session',
 					empty: 'No sessions',
@@ -57,12 +61,18 @@ i18next.init({
 					deleteServerSettings: 'Delete server settings',
 					version: 'Version'
 				},
+				dialogs: {
+					areYouSureYouWantToLeave:
+						'Are you sure you want to leave?\nThe completion in progress will stop',
+					areYouSureYouWantToDeleteAll: 'Are you sure you want to delete all {{type}}?'
+				},
 				errors: {
 					genericError: 'Sorry, something went wrong.\n```\n${{error}}\n```',
 					somethingWentWrong: 'Sorry, something went wrong.',
 					notFound: 'The page you are looking for does not exist.',
 					internalServerError: 'There was an internal server error. Please try again later.',
 					cantConnectToOllamaServer: "Can't connect to Ollama server",
+					couldntConnectToOllamaServer: "Couldn't connect to Ollama server",
 					ollamaConnectionError: "Couldn't connect to Ollama. Is the [server running](/settings)?"
 				}
 			}

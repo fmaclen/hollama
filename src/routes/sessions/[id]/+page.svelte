@@ -195,9 +195,7 @@
 
 	beforeNavigate((navigation) => {
 		if (!isCompletionInProgress) return;
-		const userConfirmed = confirm(
-			'Are you sure you want to leave?\nThe completion in progress will stop'
-		);
+		const userConfirmed = confirm($i18n.t('dialogs.areYouSureYouWantToLeave'));
 		if (userConfirmed) {
 			stopCompletion();
 			return;

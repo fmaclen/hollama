@@ -52,23 +52,23 @@
 	async function pullModel() {
 		if (!modelTag) return;
 		isPullInProgress = true;
-		const toastId = toast.message('Pulling model', { description: modelTag });
+		const toastId = toast.message($i18n.t('pullingModel'), { description: modelTag });
 
 		try {
 			await ollamaPull(
 				{ model: modelTag, stream: true },
 				(response: ProgressResponse | StatusResponse | ErrorResponse) => {
 					if ('status' in response && response.status === 'success') {
-						toast.success('Success', {
+						toast.success($i18n.t('success'), {
 							id: toastId,
-							description: `${modelTag} was downloaded`
+							description: $i18n.t('modelWasDownloaded', { model: modelTag })
 						});
 						modelTag = '';
 						return;
 					}
 
 					if ('error' in response) {
-						toast.error('Error', { id: toastId, description: response.error });
+						toast.error($i18n.t('error'), { id: toastId, description: response.error });
 						return;
 					}
 
@@ -87,7 +87,7 @@
 
 			toast.error(
 				typedError.message === 'Failed to fetch'
-					? "Couldn't connect to Ollama server"
+					? $i18n.t('errors.couldntConnectToOllamaServer')
 					: typedError.message,
 				{
 					id: toastId,
@@ -103,7 +103,9 @@
 	function deleteStorage(item: StorageKey): void {
 		if (
 			confirm(
-				`Are you sure you want to delete all ${item.replace(`${LOCAL_STORAGE_PREFIX}-`, '')}?`
+				$i18n.t('dialogs.areYouSureYouWantToDeleteAll', {
+					type: item.replace(`${LOCAL_STORAGE_PREFIX}-`, '')
+				})
 			)
 		) {
 			localStorage.removeItem(item);
