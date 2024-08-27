@@ -53,13 +53,26 @@ i18next.init({
 				settingsPage: {
 					server: 'Server',
 					availableModels: 'Available models',
+					pullModel: 'Pull model',
+					pullModelPlaceholder: 'Model tag (e.g. llama3.1)',
+					downloadModel: 'Download model',
 					disconnected: 'disconnected',
 					connected: 'connected',
 					dangerZone: 'Danger zone',
 					deleteAllSessions: 'Delete all sessions',
 					deleteAllKnowledge: 'Delete all knowledge',
 					deleteServerSettings: 'Delete server settings',
-					version: 'Version'
+					version: 'Version',
+					allowConnections: 'Change your server settings to allow connections from',
+					seeDocs: 'see docs',
+					checkBrowserExtensions: 'Also check no browser extensions are blocking the connection',
+					tryingToConnectNotLocalhost:
+						'If you want to connect to an Ollama server that is not available on localhost or 127.0.0.1 you will need to',
+					createTunnel: 'create a tunnel',
+					or: 'or',
+					allowMixedContent: 'allow mixed content',
+					browseModels: 'Browse the list of available models in',
+					ollamaLibrary: "Ollama's library"
 				},
 				dialogs: {
 					areYouSureYouWantToLeave:

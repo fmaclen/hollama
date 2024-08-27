@@ -148,36 +148,32 @@
 					{#if ollamaURL && serverStatus === 'disconnected'}
 						<div class="field-help">
 							<p class="p">
-								Needs to allow connections from
-								<Badge capitalize={false}>{ollamaURL.origin}</Badge>
-								in
-								<Badge capitalize={false}>OLLAMA_ORIGINS</Badge>,
+								{$i18n.t('settingsPage.allowConnections')}
+								<Badge capitalize={false}>{ollamaURL.origin}</Badge>,
 								<Button
 									variant="link"
 									href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
 									target="_blank"
 								>
-									see docs
-								</Button>. Also check no browser extensions are blocking the connection.
+									{$i18n.t('settingsPage.seeDocs')}
+								</Button>. {$i18n.t('settingsPage.checkBrowserExtensions')}.
 							</p>
 							{#if ollamaURL.protocol === 'https:'}
 								<p class="p">
-									If trying to connect to an Ollama server that is not available on
-									<code class="code">localhost</code> or <code class="code">127.0.0.1</code> you
-									will need to
+									{$i18n.t('settingsPage.tryingToConnectNotLocalhost')}
 									<a
 										href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
 										target="_blank"
 									>
-										create a tunnel
+										{$i18n.t('settingsPage.createTunnel')}
 									</a>
-									to your server or
+									{$i18n.t('settingsPage.or')}
 									<a
 										href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
 										target="_blank"
 									>
-										allow mixed content
-									</a> in this browser's site settings.
+										{$i18n.t('settingsPage.allowMixedContent')}
+									</a>.
 								</p>
 							{/if}
 						</div>
@@ -189,14 +185,14 @@
 
 			<FieldInput
 				name="pull-model"
-				label="Pull model"
-				placeholder="Model tag (e.g. llama3.1)"
+				label={$i18n.t('settingsPage.pullModel')}
+				placeholder={$i18n.t('settingsPage.pullModelPlaceholder')}
 				bind:value={modelTag}
 				disabled={isPullInProgress || serverStatus === 'disconnected'}
 			>
 				<svelte:fragment slot="nav">
 					<Button
-						aria-label="Download model"
+						aria-label={$i18n.t('settingsPage.downloadModel')}
 						class="h-full text-muted"
 						isLoading={isPullInProgress}
 						disabled={!modelTag || isPullInProgress || serverStatus === 'disconnected'}
@@ -208,8 +204,10 @@
 				<svelte:fragment slot="help">
 					<div class="field-help">
 						<p class="p">
-							Browse the list of available models in
-							<a href="https://ollama.com/library" target="_blank">Ollama's library</a>
+							{$i18n.t('settingsPage.browseModels')}
+							<a href="https://ollama.com/library" target="_blank"
+								>{$i18n.t('settingsPage.ollamaLibrary')}</a
+							>
 						</p>
 					</div>
 				</svelte:fragment>
