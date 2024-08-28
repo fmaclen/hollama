@@ -3,14 +3,12 @@
 
 	import { settingsStore } from '$lib/store';
 	import { checkForUpdates, type UpdateStatus } from '$lib/updates';
+	import { GITHUB_RELEASES_URL } from '$lib/github';
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
-
-	const GITHUB_RELEASES_URL = 'https://github.com/fmaclen/hollama/releases';
-	const DOCKER_INSTRUCTIONS_URL = 'https://github.com/fmaclen/hollama/blob/main/docs/docker.md';
 
 	let updateStatus: UpdateStatus | null;
 	let couldntCheckForUpdates = false;
