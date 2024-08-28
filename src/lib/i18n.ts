@@ -67,7 +67,7 @@ i18next.init({
 					seeDocs: 'see docs',
 					checkBrowserExtensions: 'Also check no browser extensions are blocking the connection',
 					tryingToConnectNotLocalhost:
-						'If you want to connect to an Ollama server that is not available on localhost or 127.0.0.1 you will need to',
+						'If you want to connect to an Ollama server that is not available on <code class="code">localhost</code> or <code class="code">127.0.0.1</code> you will need to',
 					createTunnel: 'create a tunnel',
 					or: 'or',
 					allowMixedContent: 'allow mixed content',
