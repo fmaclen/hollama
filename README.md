@@ -23,8 +23,6 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 - 🐳 [Self-hosting](SELF_HOSTING.md) with Docker
 - 🐞 [Contribute](CONTRIBUTING.md)
 
----
-
 > ![session](tests/docs.test.ts-snapshots/session.png)
 
 > ![knowledge](tests/docs.test.ts-snapshots/knowledge.png)
