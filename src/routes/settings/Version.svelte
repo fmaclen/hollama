@@ -2,7 +2,7 @@
 	import { version } from '$app/environment';
 
 	import { settingsStore } from '$lib/store';
-	import { checkForUpdates, type UpdateStatus } from '$lib/updates';
+	import { checkForUpdates, updateStatusStore } from '$lib/updates';
 	import { GITHUB_RELEASES_URL } from '$lib/github';
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -10,16 +10,7 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
 
-	let updateStatus: UpdateStatus | null;
-	let couldntCheckForUpdates = false;
-	let isCheckingForUpdates = false;
-
-	async function handleUpdateCheck(isUserInitiated = false) {
-		isCheckingForUpdates = true;
-		updateStatus = await checkForUpdates(isUserInitiated);
-		if (!updateStatus) couldntCheckForUpdates = true;
-		isCheckingForUpdates = false;
-	}
+	$: $updateStatusStore.showNotificationBadge = false;
 </script>
 
 <Fieldset>
@@ -40,26 +31,26 @@
 
 			<Button
 				variant="outline"
-				disabled={isCheckingForUpdates}
-				on:click={() => handleUpdateCheck(true)}
+				disabled={$updateStatusStore.isCheckingForUpdates}
+				on:click={async () => await checkForUpdates(true)}
 			>
 				Check now
 			</Button>
 		</div>
 
 		<FieldHelp>
-			{#if isCheckingForUpdates}
+			{#if $updateStatusStore.isCheckingForUpdates}
 				<P>Checking for updates...</P>
-			{:else if updateStatus?.isCurrentVersionLatest}
+			{:else if $updateStatusStore.isCurrentVersionLatest}
 				<P>
 					You are on the latest version.
 					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Release history</Button>
 				</P>
-			{:else if updateStatus?.latestVersion}
+			{:else if $updateStatusStore.latestVersion}
 				<P>
 					A newer version is available
-					<Badge variant="warning">{updateStatus?.latestVersion}</Badge>
-					{#if updateStatus?.canRefreshToUpdate}
+					<Badge variant="warning">{$updateStatusStore.latestVersion}</Badge>
+					{#if $updateStatusStore.canRefreshToUpdate}
 						<Button variant="link" on:click={() => window.location.reload()}>
 							Refresh to update
 						</Button>
@@ -77,14 +68,14 @@
 						</Button>
 					{/if}
 				</P>
-			{:else if couldntCheckForUpdates}
+			{:else if $updateStatusStore.couldntCheckForUpdates}
 				<P>
 					Couldn't check for updates automatically.
 					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Go to releases</Button>
 				</P>
 			{/if}
 
-			{#if !isCheckingForUpdates && !updateStatus?.latestVersion && $settingsStore.lastUpdateCheck}
+			{#if !$updateStatusStore.isCheckingForUpdates && !$updateStatusStore.latestVersion && $settingsStore.lastUpdateCheck}
 				<P>
 					Last update check
 					<Badge>

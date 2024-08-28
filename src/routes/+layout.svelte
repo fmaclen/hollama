@@ -9,7 +9,7 @@
 	import { page } from '$app/stores';
 
 	import { settingsStore } from '$lib/store';
-	import { checkForUpdates } from '$lib/updates';
+	import { updateStatusStore, checkForUpdates } from '$lib/updates';
 	import '../app.pcss';
 
 	$: pathname = $page.url.pathname;
@@ -22,8 +22,8 @@
 
 	$: theme = $settingsStore.userTheme;
 
-	onNavigate(() => {
-		if (!($settingsStore.autoCheckForUpdates === false)) checkForUpdates();
+	onNavigate(async () => {
+		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
 	});
 
 	onMount(async () => {
@@ -60,7 +60,12 @@
 		</a>
 
 		{#each SITEMAP as [href, text]}
-			<a class="layout__a" class:layout__a--active={pathname.includes(href)} {href}>
+			<a
+				class="layout__a"
+				class:layout__a--active={pathname.includes(href)}
+				class:layout__a--badge={href == '/settings' && !$updateStatusStore.showNotificationBadge}
+				{href}
+			>
 				{#if href === '/knowledge'}
 					<Brain class="h-4 w-4" />
 				{:else if href === '/sessions'}
@@ -127,6 +132,16 @@
 		@apply col-start-3 row-start-1 max-w-max;
 		@apply md:px-4;
 		@apply lg:px-0 lg:py-6;
+	}
+
+	.layout__a--badge {
+		@apply relative;
+	}
+	.layout__a--badge::before {
+		content: '';
+		@apply absolute h-2 w-2 rounded-full bg-warning;
+		@apply left-1/2 top-2 translate-x-2;
+		@apply lg:left-0 lg:top-1/2 lg:-translate-x-3 lg:-translate-y-1/2;
 	}
 
 	.layout__button {
