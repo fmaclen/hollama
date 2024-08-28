@@ -12,7 +12,7 @@
 	const GITHUB_RELEASES_URL = 'https://github.com/fmaclen/hollama/releases';
 	const DOCKER_INSTRUCTIONS_URL = 'https://github.com/fmaclen/hollama/blob/main/docs/docker.md';
 
-	let updateStatus: UpdateStatus | void;
+	let updateStatus: UpdateStatus | null;
 	let couldntCheckForUpdates = false;
 	let isCheckingForUpdates = false;
 
@@ -68,7 +68,11 @@
 							Refresh to update
 						</Button>
 					{:else if $settingsStore.hollamaServerMetadata.isDocker}
-						<Button variant="link" href={DOCKER_INSTRUCTIONS_URL} target="_blank">
+						<Button
+							variant="link"
+							href="https://github.com/fmaclen/hollama/blob/main/SELF_HOSTING.md#updating-to-the-latest-version"
+							target="_blank"
+						>
 							How to update Docker container?
 						</Button>
 					{:else}

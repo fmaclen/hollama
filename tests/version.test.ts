@@ -80,7 +80,7 @@ test('handles Desktop environment correctly', async ({ page }) => {
 	await expect(page.getByText('Go to downloads')).toBeVisible();
 });
 
-test.skip('displays error message when unable to check for updates', async ({ page }) => {
+test('displays error message when unable to check for updates', async ({ page }) => {
 	await page.route(GITHUB_RELEASES_API, (route) => route.abort('failed'));
 	await page.goto('/settings');
 	const checkNowButton = page.getByRole('button', { name: 'Check now' });

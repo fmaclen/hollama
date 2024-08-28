@@ -17,26 +17,28 @@ export interface UpdateStatus {
 	latestVersion: string;
 }
 
-export async function checkForUpdates(isUserInitiated = false): Promise<UpdateStatus | void> {
+export async function checkForUpdates(isUserInitiated = false): Promise<UpdateStatus | null> {
 	let settings = get(settingsStore);
-	if (!settings) return;
-
 	if (!(settings.autoCheckForUpdates === false)) settings.autoCheckForUpdates = true;
 
 	// If the user hasn't initiated the check, we check if the last update check was made more than a week ago.
 	const oneWeekAgoInSeconds = getUnixTime(new Date()) - ONE_WEEK_IN_SECONDS;
 	if (!settings.lastUpdateCheck) settings.lastUpdateCheck = oneWeekAgoInSeconds - 1;
-	if (!isUserInitiated && settings.lastUpdateCheck > oneWeekAgoInSeconds) return;
+	if (!isUserInitiated && settings.lastUpdateCheck > oneWeekAgoInSeconds) return null;
 
 	// The server may have been already updated, so we need to fetch the metadata again.
 	//
 	// HACK: We don't HAVE TO fetch the metadata from a server endpoint,
 	// we only do it this way because it allows us to mock the response in tests.
-	const hollamaServerResponse = await fetch(HOLLAMA_SERVER_METADATA_ENDPOINT);
-	if (hollamaServerResponse.ok) {
-		const response = (await hollamaServerResponse.json()) as HollamaServerMetadata;
-		settings.hollamaServerMetadata = response;
+	let hollamaServerResponse: Response;
+	try {
+		hollamaServerResponse = await fetch(HOLLAMA_SERVER_METADATA_ENDPOINT);
+	} catch (_) {
+		console.error('Failed to fetch Hollama server metadata');
+		return null;
 	}
+	const response = (await hollamaServerResponse.json()) as HollamaServerMetadata;
+	settings.hollamaServerMetadata = response;
 
 	const updateStatus = {
 		canRefreshToUpdate: semver.lt(
@@ -50,12 +52,17 @@ export async function checkForUpdates(isUserInitiated = false): Promise<UpdateSt
 	if (updateStatus.canRefreshToUpdate) {
 		updateStatus.isCurrentVersionLatest = false;
 	} else {
-		const githubServerResponse = await fetch(GITHUB_RELEASES_API);
-		if (!githubServerResponse.ok) return;
+		let githubServerResponse: Response;
+		try {
+			githubServerResponse = await fetch(GITHUB_RELEASES_API);
+		} catch (_) {
+			console.error('Failed to fetch GitHub releases');
+			return null;
+		}
 
 		const response = await githubServerResponse.json();
 		const latestVersion = response[0]?.tag_name;
-		if (!latestVersion) return;
+		if (!latestVersion) return null;
 
 		updateStatus.latestVersion = latestVersion;
 		updateStatus.isCurrentVersionLatest = semver.lt(
