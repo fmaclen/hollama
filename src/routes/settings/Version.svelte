@@ -66,7 +66,7 @@
 						<Button variant="link" on:click={() => window.location.reload()}>
 							Refresh to update
 						</Button>
-					{:else if $settingsStore?.isDocker}
+					{:else if $settingsStore.hollamaServerMetadata.isDocker}
 						<Button variant="link" href={DOCKER_INSTRUCTIONS_URL} target="_blank">
 							How to update Docker container?
 						</Button>
@@ -83,7 +83,7 @@
 				</P>
 			{/if}
 
-			{#if !isCheckingForUpdates && !updateStatus?.latestVersion && $settingsStore?.lastUpdateCheck}
+			{#if !isCheckingForUpdates && !updateStatus?.latestVersion && $settingsStore.lastUpdateCheck}
 				<P>
 					Last update check
 					<Badge>
