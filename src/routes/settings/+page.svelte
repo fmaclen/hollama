@@ -160,6 +160,7 @@
 							</p>
 							{#if ollamaURL.protocol === 'https:'}
 								<p class="p">
+									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 									{@html $i18n.t('settingsPage.tryingToConnectNotLocalhost')}
 									<a
 										href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
