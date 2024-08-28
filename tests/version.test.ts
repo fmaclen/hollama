@@ -81,13 +81,11 @@ test('handles Desktop environment correctly', async ({ page }) => {
 });
 
 test.skip('displays error message when unable to check for updates', async ({ page }) => {
-	await page.route(GITHUB_RELEASES_API, (route) =>
-		route.abort('failed')
-	);
+	await page.route(GITHUB_RELEASES_API, (route) => route.abort('failed'));
 	await page.goto('/settings');
 	const checkNowButton = page.getByRole('button', { name: 'Check now' });
 	await checkNowButton.click();
-	await expect(page.getByText('Couldn\'t check for updates automatically.')).toBeVisible();
+	await expect(page.getByText("Couldn't check for updates automatically.")).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Go to releases' })).toBeVisible();
 });
 
@@ -102,9 +100,7 @@ test.skip('update check on navigation when auto-update is enabled', async ({ pag
 
 	// Check it toggles the local storage setting
 	await autoUpdateCheckbox.click();
-	localStorageValue = await page.evaluate(() =>
-		window.localStorage.getItem('hollama-settings')
-	);
+	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(autoUpdateCheckbox).not.toBeChecked();
 	expect(localStorageValue).toContain('"autoCheckForUpdates":true');
 

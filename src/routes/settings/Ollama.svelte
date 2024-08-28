@@ -121,7 +121,9 @@
 		on:keyup={getModelsList}
 	>
 		<svelte:fragment slot="status">
-			<Badge variant={$settingsStore.ollamaServerStatus === 'disconnected' ? 'warning' : 'positive'}>
+			<Badge
+				variant={$settingsStore.ollamaServerStatus === 'disconnected' ? 'warning' : 'positive'}
+			>
 				{$settingsStore.ollamaServerStatus}
 			</Badge>
 		</svelte:fragment>
@@ -182,7 +184,9 @@
 				aria-label="Download model"
 				class="h-full text-muted"
 				isLoading={isPullInProgress}
-				disabled={!modelTag || isPullInProgress || $settingsStore.ollamaServerStatus === 'disconnected'}
+				disabled={!modelTag ||
+					isPullInProgress ||
+					$settingsStore.ollamaServerStatus === 'disconnected'}
 				on:click={pullModel}
 			>
 				<CloudDownload class="h-4 w-4" />

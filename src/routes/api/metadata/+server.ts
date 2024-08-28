@@ -13,6 +13,6 @@ export async function GET() {
 	return json({
 		currentVersion: version,
 		isDesktop: env.PUBLIC_ADAPTER === 'electron-node',
-		isDocker: env.PUBLIC_ADAPTER === 'docker-node',
+		isDocker: env.PUBLIC_ADAPTER === 'docker-node'
 	} as HollamaServerMetadata);
 }

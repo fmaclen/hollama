@@ -22,14 +22,14 @@ const HOLLAMA_SERVER_METADATA_ENDPOINT = '/api/metadata';
 
 // Updates the $settingsStore with the latest metadata from the server
 export async function getHollamaServerMetadata() {
-	let settings = get(settingsStore);
+	const settings = get(settingsStore);
 	if (!settings) throw new Error('Settings not found');
 
 	// HACK: We don't HAVE TO fetch the metadata from a server endpoint,
 	// we only do it this way because it allows us to mock the response in tests.
 	const hollamaServerResponse = await fetch(HOLLAMA_SERVER_METADATA_ENDPOINT);
 	if (hollamaServerResponse.ok) {
-		const response = await hollamaServerResponse.json() as HollamaServerMetadata;
+		const response = (await hollamaServerResponse.json()) as HollamaServerMetadata;
 		settings.hollamaServerMetadata = response;
 	}
 
@@ -61,14 +61,16 @@ export async function checkForUpdates(isUserInitiated = false): Promise<UpdateSt
 	if (!settings.hollamaServerMetadata.currentVersion) throw new Error('Settings not found');
 
 	const updateStatus = {
-		canRefreshToUpdate: semver.lt(version.replace(DEVELOPMENT_VERSION_SUFFIX, ''), settings.hollamaServerMetadata.currentVersion),
+		canRefreshToUpdate: semver.lt(
+			version.replace(DEVELOPMENT_VERSION_SUFFIX, ''),
+			settings.hollamaServerMetadata.currentVersion
+		),
 		isCurrentVersionLatest: true,
-		latestVersion: settings.hollamaServerMetadata.currentVersion,
-	}
+		latestVersion: settings.hollamaServerMetadata.currentVersion
+	};
 
 	if (updateStatus.canRefreshToUpdate) {
-		updateStatus.isCurrentVersionLatest = false
-
+		updateStatus.isCurrentVersionLatest = false;
 	} else {
 		const githubServerResponse = await fetch(GITHUB_RELEASES_API);
 		if (!githubServerResponse.ok) return;
@@ -78,7 +80,10 @@ export async function checkForUpdates(isUserInitiated = false): Promise<UpdateSt
 		if (!latestVersion) return;
 
 		updateStatus.latestVersion = latestVersion;
-		updateStatus.isCurrentVersionLatest = semver.lt(latestVersion, settings.hollamaServerMetadata.currentVersion.replace(DEVELOPMENT_VERSION_SUFFIX, ''))
+		updateStatus.isCurrentVersionLatest = semver.lt(
+			latestVersion,
+			settings.hollamaServerMetadata.currentVersion.replace(DEVELOPMENT_VERSION_SUFFIX, '')
+		);
 	}
 
 	settings.lastUpdateCheck = getUnixTime(new Date());

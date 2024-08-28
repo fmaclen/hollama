@@ -61,7 +61,8 @@
 				</P>
 			{:else if updateStatus?.latestVersion}
 				<P>
-					A newer version is available <Badge variant="warning">{updateStatus?.latestVersion}</Badge>
+					A newer version is available
+					<Badge variant="warning">{updateStatus?.latestVersion}</Badge>
 					{#if updateStatus?.canRefreshToUpdate}
 						<Button variant="link" on:click={() => window.location.reload()}>
 							Refresh to update

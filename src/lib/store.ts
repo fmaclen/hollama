@@ -69,10 +69,13 @@ const defaultSettings: Settings = {
 	hollamaServerMetadata: {
 		currentVersion: version,
 		isDesktop: env.PUBLIC_ADAPTER === 'electron-node',
-		isDocker: env.PUBLIC_ADAPTER === 'docker-node',
+		isDocker: env.PUBLIC_ADAPTER === 'docker-node'
 	}
 };
 
-export const settingsStore = createLocalStorageStore<Settings>(StorageKey.HollamaSettings, defaultSettings);
+export const settingsStore = createLocalStorageStore<Settings>(
+	StorageKey.HollamaSettings,
+	defaultSettings
+);
 export const sessionsStore = createLocalStorageStore<Session[]>(StorageKey.HollamaSessions, []);
 export const knowledgeStore = createLocalStorageStore<Knowledge[]>(StorageKey.HollamaKnowledge, []);
