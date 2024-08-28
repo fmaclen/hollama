@@ -1,29 +1,29 @@
 import type { ModelResponse } from 'ollama/browser';
-import { browser } from '$app/environment';
+import { browser, version } from '$app/environment';
 import { writable } from 'svelte/store';
 import type { Session } from '$lib/sessions';
 import type { Knowledge } from './knowledge';
+import { env } from '$env/dynamic/public';
 
-// TODO: ADD A WAY TO SET DEFAULT VALUES
-function createLocalStorageStore<T>(key: string, initialValue: T | null = null) {
-	const localStorageValue: string | null = browser ? window.localStorage.getItem(key) : null;
-	let value: T | null = initialValue;
-	const store = writable<T | null>(initialValue);
+function createLocalStorageStore<T>(key: string, defaultValue: T) {
+	const initialValue: T = browser
+		? JSON.parse(localStorage.getItem(key) || 'null') || defaultValue
+		: defaultValue;
 
-	// Read existing value from localStorage
-	if (localStorageValue) {
-		value = JSON.parse(localStorageValue);
-		store.set(value);
-	}
+	const store = writable<T>(initialValue);
 
-	// Write value to localStorage
-	store.subscribe((newValue) => {
+	store.subscribe((value) => {
 		if (browser) {
-			window.localStorage.setItem(key, JSON.stringify(newValue));
+			localStorage.setItem(key, JSON.stringify(value));
 		}
 	});
 
-	return store;
+	return {
+		...store,
+		reset: () => {
+			store.set(defaultValue);
+		}
+	};
 }
 
 export function sortStore<T extends { updatedAt?: string }>(store: T[]) {
@@ -59,6 +59,18 @@ export enum StorageKey {
 	HollamaKnowledge = `${LOCAL_STORAGE_PREFIX}-knowledge`
 }
 
-export const settingsStore = createLocalStorageStore<Settings>(StorageKey.HollamaSettings);
-export const sessionsStore = createLocalStorageStore<Session[]>(StorageKey.HollamaSessions);
-export const knowledgeStore = createLocalStorageStore<Knowledge[]>(StorageKey.HollamaKnowledge);
+const defaultSettings: Settings = {
+	ollamaServer: 'http://localhost:11434',
+	ollamaModel: null,
+	ollamaModels: [],
+	currentVersion: version,
+	isDesktop: env.PUBLIC_ADAPTER === 'electron-node',
+	isDocker: env.PUBLIC_ADAPTER === 'docker-node',
+	lastUpdateCheck: null,
+	autoCheckForUpdates: true,
+	userTheme: 'light'
+};
+
+export const settingsStore = createLocalStorageStore<Settings>(StorageKey.HollamaSettings, defaultSettings);
+export const sessionsStore = createLocalStorageStore<Session[]>(StorageKey.HollamaSessions, []);
+export const knowledgeStore = createLocalStorageStore<Knowledge[]>(StorageKey.HollamaKnowledge, []);
