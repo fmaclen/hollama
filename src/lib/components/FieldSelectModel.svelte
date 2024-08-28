@@ -5,7 +5,7 @@
 	export let disabled: boolean = false;
 
 	let value: string = $settingsStore.ollamaModel || '';
-	$: if ($settingsStore) $settingsStore.ollamaModel = value;
+	$: $settingsStore.ollamaModel = value;
 </script>
 
 <FieldSelect

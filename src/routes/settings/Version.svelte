@@ -29,16 +29,14 @@
 		<div class="field-version__updates">
 			<Badge>{version}</Badge>
 
-			{#if $settingsStore}
-				<label class="field-version__label">
-					<input
-						type="checkbox"
-						bind:checked={$settingsStore.autoCheckForUpdates}
-						class="field-version__checkbox"
-					/>
-					Automatically check for updates
-				</label>
-			{/if}
+			<label class="field-version__label">
+				<input
+					type="checkbox"
+					bind:checked={$settingsStore.autoCheckForUpdates}
+					class="field-version__checkbox"
+				/>
+				Automatically check for updates
+			</label>
 
 			<Button
 				variant="outline"

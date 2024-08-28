@@ -61,7 +61,6 @@
 	$: if (data.id) handleSessionChange();
 
 	async function handleSessionChange() {
-		if (!$settingsStore) return;
 		try {
 			$settingsStore.ollamaModels = (await ollamaTags()).models;
 		} catch {
@@ -131,8 +130,6 @@
 		completion = '';
 
 		try {
-			if (!$settingsStore.ollamaServer) throw Error('Ollama server not configured');
-
 			await ollamaChat(payload, abortController.signal, async (chunk) => {
 				completion += chunk;
 				await scrollToBottom();

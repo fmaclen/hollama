@@ -16,7 +16,7 @@
 	let editorValue: string;
 
 	// Re-render text editor when theme changes
-	$: if (container && $settingsStore.userTheme) renderTextEditor();
+	$: if (container) renderTextEditor();
 
 	// REF https://thememirror.net/create
 	const hollamaThemeLight = createTheme({

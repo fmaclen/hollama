@@ -23,11 +23,11 @@
 	$: theme = $settingsStore.userTheme;
 
 	onNavigate(() => {
-		if (!$settingsStore || !($settingsStore.autoCheckForUpdates === false)) checkForUpdates();
+		if (!($settingsStore.autoCheckForUpdates === false)) checkForUpdates();
 	});
 
 	onMount(async () => {
-		if (!$settingsStore || !browser || theme) return;
+		if (!browser || theme) return;
 		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 			? 'dark'
 			: 'light';
@@ -36,7 +36,7 @@
 	function toggleTheme() {
 		theme = theme === 'light' ? 'dark' : 'light';
 		document.documentElement.setAttribute('data-color-theme', theme);
-		if ($settingsStore) $settingsStore.userTheme = theme;
+		$settingsStore.userTheme = theme;
 	}
 </script>
 
