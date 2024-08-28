@@ -4,6 +4,7 @@ import { get } from 'svelte/store';
 import { version } from '$app/environment';
 import { settingsStore } from '$lib/store';
 import type { HollamaServerMetadata } from '../routes/api/metadata/+server';
+import { GITHUB_RELEASES_API } from './github';
 
 export function generateStorageId() {
 	return Math.random().toString(36).substring(2, 8); // E.g. `z7avx9`
@@ -35,7 +36,6 @@ export async function getHollamaServerMetadata() {
 	settingsStore.set(settings);
 }
 
-const GITHUB_RELEASES_API = 'https://api.github.com/repos/fmaclen/hollama/releases';
 const ONE_WEEK_IN_SECONDS = 604800;
 const DEVELOPMENT_VERSION_SUFFIX = '-dev';
 export interface UpdateStatus {
