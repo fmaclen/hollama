@@ -17,7 +17,7 @@
 
 <style lang="postcss">
 	.badge {
-		@apply inline-flex max-w-max items-center rounded-md px-2.5 py-0.5 font-mono text-xs;
+		@apply inline-flex max-w-max items-center rounded-md px-2 py-0.5 font-mono text-xs;
 		line-height: 1em;
 
 		&--default {

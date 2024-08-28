@@ -9,7 +9,7 @@
 	import { page } from '$app/stores';
 
 	import { settingsStore } from '$lib/store';
-	import { checkForUpdates } from '$lib/utils';
+	import { checkForUpdates } from '$lib/updates';
 	import '../app.pcss';
 
 	$: pathname = $page.url.pathname;
