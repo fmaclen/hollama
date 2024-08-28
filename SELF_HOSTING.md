@@ -24,7 +24,7 @@ docker stop hollama
 
 Then pull the latest version:
 
-```shell	
+```shell
 docker pull ghcr.io/fmaclen/hollama:latest
 ```
 

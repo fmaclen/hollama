@@ -18,7 +18,7 @@ export interface UpdateStatus {
 }
 
 export async function checkForUpdates(isUserInitiated = false): Promise<UpdateStatus | null> {
-	let settings = get(settingsStore);
+	const settings = get(settingsStore);
 	if (!(settings.autoCheckForUpdates === false)) settings.autoCheckForUpdates = true;
 
 	// If the user hasn't initiated the check, we check if the last update check was made more than a week ago.
