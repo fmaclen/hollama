@@ -1,11 +1,13 @@
 <script lang="ts">
+	import i18n from '$lib/i18n';
+
 	import Head from '$lib/components/Head.svelte';
 	import Markdown from '$lib/components/Markdown.svelte';
 
 	export let data: { motd: string };
 </script>
 
-<Head title="Message of the day" />
+<Head title={$i18n.t('messageOfTheDay')} />
 
 <section class="motd">
 	<div class="motd__container">

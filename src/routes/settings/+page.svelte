@@ -12,6 +12,7 @@
 
 	import { ollamaPull, ollamaTags } from '$lib/ollama';
 	import { LOCAL_STORAGE_PREFIX, settingsStore, StorageKey } from '$lib/store';
+	import i18n from '$lib/i18n';
 
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -51,23 +52,23 @@
 	async function pullModel() {
 		if (!modelTag) return;
 		isPullInProgress = true;
-		const toastId = toast.message('Pulling model', { description: modelTag });
+		const toastId = toast.message($i18n.t('pullingModel'), { description: modelTag });
 
 		try {
 			await ollamaPull(
 				{ model: modelTag, stream: true },
 				(response: ProgressResponse | StatusResponse | ErrorResponse) => {
 					if ('status' in response && response.status === 'success') {
-						toast.success('Success', {
+						toast.success($i18n.t('success'), {
 							id: toastId,
-							description: `${modelTag} was downloaded`
+							description: $i18n.t('modelWasDownloaded', { model: modelTag })
 						});
 						modelTag = '';
 						return;
 					}
 
 					if ('error' in response) {
-						toast.error('Error', { id: toastId, description: response.error });
+						toast.error($i18n.t('error'), { id: toastId, description: response.error });
 						return;
 					}
 
@@ -86,7 +87,7 @@
 
 			toast.error(
 				typedError.message === 'Failed to fetch'
-					? "Couldn't connect to Ollama server"
+					? $i18n.t('errors.couldntConnectToOllamaServer')
 					: typedError.message,
 				{
 					id: toastId,
@@ -102,7 +103,9 @@
 	function deleteStorage(item: StorageKey): void {
 		if (
 			confirm(
-				`Are you sure you want to delete all ${item.replace(`${LOCAL_STORAGE_PREFIX}-`, '')}?`
+				$i18n.t('dialogs.areYouSureYouWantToDeleteAll', {
+					type: item.replace(`${LOCAL_STORAGE_PREFIX}-`, '')
+				})
 			)
 		) {
 			localStorage.removeItem(item);
@@ -123,21 +126,21 @@
 	});
 </script>
 
-<Head title="Settings" />
+<Head title={$i18n.t('settings')} />
 <section class="settings">
 	<div class="settings__container">
 		<Fieldset>
 			<p class="p"><strong>Ollama</strong></p>
 			<FieldInput
 				name="server"
-				label="Server"
+				label={$i18n.t('settingsPage.server')}
 				placeholder={DETAULT_OLLAMA_SERVER}
 				bind:value={ollamaServer}
 				on:keyup={getModelsList}
 			>
 				<svelte:fragment slot="status">
 					<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
-						{serverStatus}
+						{$i18n.t(`settingsPage.${serverStatus}`)}
 					</Badge>
 				</svelte:fragment>
 
@@ -145,36 +148,33 @@
 					{#if ollamaURL && serverStatus === 'disconnected'}
 						<div class="field-help">
 							<p class="p">
-								Needs to allow connections from
-								<Badge capitalize={false}>{ollamaURL.origin}</Badge>
-								in
-								<Badge capitalize={false}>OLLAMA_ORIGINS</Badge>,
+								{$i18n.t('settingsPage.allowConnections')}
+								<Badge capitalize={false}>{ollamaURL.origin}</Badge>,
 								<Button
 									variant="link"
 									href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
 									target="_blank"
 								>
-									see docs
-								</Button>. Also check no browser extensions are blocking the connection.
+									{$i18n.t('settingsPage.seeDocs')}
+								</Button>. {$i18n.t('settingsPage.checkBrowserExtensions')}.
 							</p>
 							{#if ollamaURL.protocol === 'https:'}
 								<p class="p">
-									If trying to connect to an Ollama server that is not available on
-									<code class="code">localhost</code> or <code class="code">127.0.0.1</code> you
-									will need to
+									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+									{@html $i18n.t('settingsPage.tryingToConnectNotLocalhost')}
 									<a
 										href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
 										target="_blank"
 									>
-										create a tunnel
+										{$i18n.t('settingsPage.createTunnel')}
 									</a>
-									to your server or
+									{$i18n.t('settingsPage.or')}
 									<a
 										href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
 										target="_blank"
 									>
-										allow mixed content
-									</a> in this browser's site settings.
+										{$i18n.t('settingsPage.allowMixedContent')}
+									</a>.
 								</p>
 							{/if}
 						</div>
@@ -186,14 +186,14 @@
 
 			<FieldInput
 				name="pull-model"
-				label="Pull model"
-				placeholder="Model tag (e.g. llama3.1)"
+				label={$i18n.t('settingsPage.pullModel')}
+				placeholder={$i18n.t('settingsPage.pullModelPlaceholder')}
 				bind:value={modelTag}
 				disabled={isPullInProgress || serverStatus === 'disconnected'}
 			>
 				<svelte:fragment slot="nav">
 					<Button
-						aria-label="Download model"
+						aria-label={$i18n.t('settingsPage.downloadModel')}
 						class="h-full text-muted"
 						isLoading={isPullInProgress}
 						disabled={!modelTag || isPullInProgress || serverStatus === 'disconnected'}
@@ -205,8 +205,10 @@
 				<svelte:fragment slot="help">
 					<div class="field-help">
 						<p class="p">
-							Browse the list of available models in
-							<a href="https://ollama.com/library" target="_blank">Ollama's library</a>
+							{$i18n.t('settingsPage.browseModels')}
+							<a href="https://ollama.com/library" target="_blank"
+								>{$i18n.t('settingsPage.ollamaLibrary')}</a
+							>
 						</p>
 					</div>
 				</svelte:fragment>
@@ -214,21 +216,21 @@
 		</Fieldset>
 
 		<div class="about">
-			<p class="p"><strong>Danger zone</strong></p>
+			<p class="p"><strong>{$i18n.t('settingsPage.dangerZone')}</strong></p>
 			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSessions)}>
-				Delete all sessions
+				{$i18n.t('settingsPage.deleteAllSessions')}
 			</Button>
 			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaKnowledge)}>
-				Delete all knowledge
+				{$i18n.t('settingsPage.deleteAllKnowledge')}
 			</Button>
 			<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSettings)}>
-				Delete server settings
+				{$i18n.t('settingsPage.deleteServerSettings')}
 			</Button>
 		</div>
 
 		<div class="version">
 			<p class="p">
-				<strong>Version</strong>
+				<strong>{$i18n.t('settingsPage.version')}</strong>
 				<Button variant="icon" href="https://github.com/fmaclen/hollama/releases" target="_blank">
 					<Badge>{version}</Badge>
 				</Button>

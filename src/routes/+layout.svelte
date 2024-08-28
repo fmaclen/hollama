@@ -6,15 +6,16 @@
 
 	import '../app.pcss';
 	import { settingsStore } from '$lib/store';
+	import i18n from '$lib/i18n';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
-		['/sessions', 'Sessions'],
-		['/knowledge', 'Knowledge'],
-		['/settings', 'Settings'],
-		['/motd', 'Motd']
+		['/sessions', 'sessions'],
+		['/knowledge', 'knowledge'],
+		['/settings', 'settings'],
+		['/motd', 'motd']
 	];
 
 	$: theme = $settingsStore?.userTheme;
@@ -63,17 +64,17 @@
 				{:else if href === '/motd'}
 					<NotebookText class="h-4 w-4" />
 				{/if}
-				{text}
+				{$i18n.t(text, { count: 0 })}
 			</a>
 		{/each}
 
 		<button class="layout__button" on:click={toggleTheme}>
 			{#if theme === 'light'}
 				<Moon class="h-4 w-4" />
-				Dark
+				{$i18n.t('theme.dark')}
 			{:else}
 				<Sun class="h-4 w-4" />
-				Light
+				{$i18n.t('theme.light')}
 			{/if}
 		</button>
 	</aside>
