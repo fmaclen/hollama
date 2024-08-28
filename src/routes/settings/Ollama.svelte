@@ -24,8 +24,8 @@
 
 	const DETAULT_OLLAMA_SERVER = 'http://localhost:11434';
 
-	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
-	let ollamaModel = $settingsStore?.ollamaModel || '';
+	let ollamaServer = $settingsStore.ollamaServer || DETAULT_OLLAMA_SERVER;
+	let ollamaModel = $settingsStore.ollamaModel || '';
 	let ollamaTagResponse: ListResponse | null = null;
 	let modelTag: string | undefined;
 	let isPullInProgress = false;

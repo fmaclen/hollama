@@ -20,7 +20,7 @@
 		['/motd', 'Motd']
 	];
 
-	$: theme = $settingsStore?.userTheme;
+	$: theme = $settingsStore.userTheme;
 
 	onNavigate(() => {
 		if (!$settingsStore || !($settingsStore.autoCheckForUpdates === false)) checkForUpdates();

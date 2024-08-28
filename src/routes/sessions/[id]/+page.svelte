@@ -57,7 +57,7 @@
 	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
-	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
+	$: if ($settingsStore.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: if (messageWindow) messageWindow.addEventListener('scroll', handleScroll);
 	$: if (data.id) handleSessionChange();
 
@@ -132,7 +132,7 @@
 		completion = '';
 
 		try {
-			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
+			if (!$settingsStore.ollamaServer) throw Error('Ollama server not configured');
 
 			const ollama = new Ollama({ host: $settingsStore.ollamaServer });
 			const response = await ollama.chat({

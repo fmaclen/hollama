@@ -4,14 +4,14 @@
 
 	export let disabled: boolean = false;
 
-	let value: string = $settingsStore?.ollamaModel || '';
+	let value: string = $settingsStore.ollamaModel || '';
 	$: if ($settingsStore) $settingsStore.ollamaModel = value;
 </script>
 
 <FieldSelect
 	label="Available models"
 	name="model"
-	options={$settingsStore?.ollamaModels.map((m) => ({ value: m.name, option: m.name }))}
-	disabled={disabled || !$settingsStore?.ollamaModels.length}
+	options={$settingsStore.ollamaModels.map((m) => ({ value: m.name, option: m.name }))}
+	disabled={disabled || !$settingsStore.ollamaModels.length}
 	bind:value
 />
