@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { MOCK_API_TAGS_RESPONSE, mockTagsResponse } from './utils';
-import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
+import type { ErrorResponse, ModelResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
@@ -55,24 +55,12 @@ test('handles server status updates correctly', async ({ page }) => {
 });
 
 test('settings can be deleted', async ({ page }) => {
-	const modelSelect = page.getByLabel('Available models');
-
 	await page.goto('/');
+	const modelSelect = page.getByLabel('Available models');
 	await expect(modelSelect).toHaveValue('');
 
-	// Stage the settings store with a model
-	await page.evaluate(
-		(modelName: string) =>
-			window.localStorage.setItem(
-				'hollama-settings',
-				JSON.stringify({
-					ollamaServer: 'http://localhost:3000',
-					ollamaModel: modelName
-				})
-			),
-		MOCK_API_TAGS_RESPONSE.models[1].name
-	);
-
+	await page.getByLabel('Server').fill('http://localhost:3000');
+	await page.getByLabel('Available models').selectOption(MOCK_API_TAGS_RESPONSE.models[1].name);
 	await page.reload();
 	await expect(page.getByLabel('Server')).toHaveValue('http://localhost:3000');
 	await expect(modelSelect).toHaveValue(MOCK_API_TAGS_RESPONSE.models[1].name);

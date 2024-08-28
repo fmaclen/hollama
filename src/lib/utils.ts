@@ -30,7 +30,7 @@ export async function getHollamaServerMetadata() {
 	const hollamaServerResponse = await fetch(HOLLAMA_SERVER_METADATA_ENDPOINT);
 	if (hollamaServerResponse.ok) {
 		const response = await hollamaServerResponse.json() as HollamaServerMetadata;
-		settings = { ...settings, ...response };
+		settings.hollamaServerMetadata = response;
 	}
 
 	settingsStore.set(settings);
@@ -58,12 +58,12 @@ export async function checkForUpdates(isUserInitiated = false): Promise<UpdateSt
 	// The server may have been already updated, so we need to fetch the metadata again.
 	await getHollamaServerMetadata();
 	settings = get(settingsStore);
-	if (!settings?.currentVersion) throw new Error('Settings not found');
+	if (!settings.hollamaServerMetadata.currentVersion) throw new Error('Settings not found');
 
 	const updateStatus = {
-		canRefreshToUpdate: semver.lt(version.replace(DEVELOPMENT_VERSION_SUFFIX, ''), settings.currentVersion),
+		canRefreshToUpdate: semver.lt(version.replace(DEVELOPMENT_VERSION_SUFFIX, ''), settings.hollamaServerMetadata.currentVersion),
 		isCurrentVersionLatest: true,
-		latestVersion: settings.currentVersion,
+		latestVersion: settings.hollamaServerMetadata.currentVersion,
 	}
 
 	if (updateStatus.canRefreshToUpdate) {
@@ -78,7 +78,7 @@ export async function checkForUpdates(isUserInitiated = false): Promise<UpdateSt
 		if (!latestVersion) return;
 
 		updateStatus.latestVersion = latestVersion;
-		updateStatus.isCurrentVersionLatest = semver.lt(latestVersion, settings.currentVersion.replace(DEVELOPMENT_VERSION_SUFFIX, ''))
+		updateStatus.isCurrentVersionLatest = semver.lt(latestVersion, settings.hollamaServerMetadata.currentVersion.replace(DEVELOPMENT_VERSION_SUFFIX, ''))
 	}
 
 	settings.lastUpdateCheck = getUnixTime(new Date());

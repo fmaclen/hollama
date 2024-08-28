@@ -4,13 +4,13 @@
 	import { Brain, MessageSquareText, Settings2, Sun, Moon, NotebookText } from 'lucide-svelte';
 
 	import { env } from '$env/dynamic/public';
+	import { onNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 
 	import { settingsStore } from '$lib/store';
-	import { checkForUpdates, getHollamaServerMetadata } from '$lib/utils';
+	import { checkForUpdates } from '$lib/utils';
 	import '../app.pcss';
-	import { onNavigate } from '$app/navigation';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
@@ -27,10 +27,7 @@
 	});
 
 	onMount(async () => {
-		if (!$settingsStore) return;
-		await getHollamaServerMetadata();
-
-		if (!browser || theme) return;
+		if (!$settingsStore || !browser || theme) return;
 		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 			? 'dark'
 			: 'light';
