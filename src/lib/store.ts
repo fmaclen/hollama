@@ -40,6 +40,11 @@ export function deleteStoreItem<T extends { id: string }>(store: T[], id: string
 }
 
 export const LOCAL_STORAGE_PREFIX = 'hollama';
+export enum StorageKey {
+	HollamaSettings = `${LOCAL_STORAGE_PREFIX}-settings`,
+	HollamaSessions = `${LOCAL_STORAGE_PREFIX}-sessions`,
+	HollamaKnowledge = `${LOCAL_STORAGE_PREFIX}-knowledge`
+}
 
 export interface Settings {
 	ollamaServer: string | null;
@@ -53,12 +58,6 @@ export interface Settings {
 	userTheme: 'light' | 'dark';
 }
 
-export enum StorageKey {
-	HollamaSettings = `${LOCAL_STORAGE_PREFIX}-settings`,
-	HollamaSessions = `${LOCAL_STORAGE_PREFIX}-sessions`,
-	HollamaKnowledge = `${LOCAL_STORAGE_PREFIX}-knowledge`
-}
-
 const defaultSettings: Settings = {
 	ollamaServer: 'http://localhost:11434',
 	ollamaModel: null,
@@ -67,7 +66,7 @@ const defaultSettings: Settings = {
 	isDesktop: env.PUBLIC_ADAPTER === 'electron-node',
 	isDocker: env.PUBLIC_ADAPTER === 'docker-node',
 	lastUpdateCheck: null,
-	autoCheckForUpdates: true,
+	autoCheckForUpdates: false,
 	userTheme: 'light'
 };
 

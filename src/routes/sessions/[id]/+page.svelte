@@ -268,7 +268,7 @@
 								<FieldSelect
 									label="System prompt"
 									name="knowledge"
-									disabled={!$knowledgeStore}
+									disabled={$knowledgeStore.length === 0}
 									options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
 									bind:value={knowledgeId}
 								>
