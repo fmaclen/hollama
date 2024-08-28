@@ -50,6 +50,7 @@ export interface Settings {
 	ollamaServer: string | null;
 	ollamaModel: string | null;
 	ollamaModels: ModelResponse[];
+	ollamaServerStatus: 'connected' | 'disconnected';
 	isDocker: boolean;
 	isDesktop: boolean;
 	currentVersion: string;
@@ -62,6 +63,7 @@ const defaultSettings: Settings = {
 	ollamaServer: 'http://localhost:11434',
 	ollamaModel: null,
 	ollamaModels: [],
+	ollamaServerStatus: 'disconnected',
 	currentVersion: version,
 	isDesktop: env.PUBLIC_ADAPTER === 'electron-node',
 	isDocker: env.PUBLIC_ADAPTER === 'docker-node',

@@ -23,7 +23,6 @@
 	let ollamaURL: URL | null = null;
 
 	const DETAULT_OLLAMA_SERVER = 'http://localhost:11434';
-	let serverStatus: 'connected' | 'disconnected' = 'connected';
 
 	let ollamaServer = $settingsStore?.ollamaServer || DETAULT_OLLAMA_SERVER;
 	let ollamaModel = $settingsStore?.ollamaModel || '';
@@ -41,10 +40,10 @@
 	async function getModelsList(): Promise<void> {
 		try {
 			ollamaTagResponse = await ollamaTags();
-			serverStatus = 'connected';
+			$settingsStore.ollamaServerStatus = 'connected';
 		} catch {
 			ollamaTagResponse = null;
-			serverStatus = 'disconnected';
+			$settingsStore.ollamaServerStatus = 'disconnected';
 		}
 	}
 
@@ -94,7 +93,7 @@
 				}
 			);
 			ollamaTagResponse = null;
-			serverStatus = 'disconnected';
+			$settingsStore.ollamaServerStatus = 'disconnected';
 		}
 		isPullInProgress = false;
 	}
@@ -122,13 +121,13 @@
 		on:keyup={getModelsList}
 	>
 		<svelte:fragment slot="status">
-			<Badge variant={serverStatus === 'disconnected' ? 'warning' : 'positive'}>
-				{serverStatus}
+			<Badge variant={$settingsStore.ollamaServerStatus === 'disconnected' ? 'warning' : 'positive'}>
+				{$settingsStore.ollamaServerStatus}
 			</Badge>
 		</svelte:fragment>
 
 		<svelte:fragment slot="help">
-			{#if ollamaURL && serverStatus === 'disconnected'}
+			{#if ollamaURL && $settingsStore.ollamaServerStatus === 'disconnected'}
 				<FieldHelp>
 					<P>
 						Needs to allow connections from
@@ -176,14 +175,14 @@
 		label="Pull model"
 		placeholder="Model tag (e.g. llama3.1)"
 		bind:value={modelTag}
-		disabled={isPullInProgress || serverStatus === 'disconnected'}
+		disabled={isPullInProgress || $settingsStore.ollamaServerStatus === 'disconnected'}
 	>
 		<svelte:fragment slot="nav">
 			<Button
 				aria-label="Download model"
 				class="h-full text-muted"
 				isLoading={isPullInProgress}
-				disabled={!modelTag || isPullInProgress || serverStatus === 'disconnected'}
+				disabled={!modelTag || isPullInProgress || $settingsStore.ollamaServerStatus === 'disconnected'}
 				on:click={pullModel}
 			>
 				<CloudDownload class="h-4 w-4" />

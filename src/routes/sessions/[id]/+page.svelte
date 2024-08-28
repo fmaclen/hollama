@@ -308,8 +308,9 @@
 								{handleSubmit}
 								hasMetaKey={isPromptFullscreen}
 								disabled={!prompt ||
-									!$settingsStore?.ollamaModels.length ||
-									!$settingsStore?.ollamaModel}
+									$settingsStore.ollamaServerStatus === 'disconnected' ||
+									!$settingsStore.ollamaModels.length ||
+									!$settingsStore.ollamaModel}
 							>
 								Run
 							</ButtonSubmit>

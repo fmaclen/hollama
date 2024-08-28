@@ -321,7 +321,7 @@ test.describe('Session', () => {
 		await page.getByText('Sessions', { exact: true }).click();
 		await expect(page.getByText('No sessions')).toBeVisible();
 		await expect(page.getByTestId('session-item')).toHaveCount(0);
-		expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe('null');
+		expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe('[]');
 	});
 
 	test('can copy the raw text of a message or code snippets to clipboard', async ({ page }) => {
