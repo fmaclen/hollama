@@ -313,7 +313,7 @@
 								hasMetaKey={isPromptFullscreen}
 								disabled={!prompt ||
 									$settingsStore.ollamaServerStatus === 'disconnected' ||
-									!$settingsStore.ollamaModels.length ||
+									$settingsStore.ollamaModels.length === 0 ||
 									!$settingsStore.ollamaModel}
 							>
 								Run
