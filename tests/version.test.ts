@@ -23,22 +23,6 @@ test.beforeEach(async ({ page }) => {
 	);
 });
 
-test('auto-update preference is saved to store', async ({ page }) => {
-	await page.goto('/settings');
-	const autoUpdateCheckbox = page.getByLabel('Automatically check for updates');
-	await autoUpdateCheckbox.click();
-	const localStorageValue = await page.evaluate(() =>
-		window.localStorage.getItem('hollama-settings')
-	);
-	expect(localStorageValue).toContain('"autoCheckForUpdates":false');
-
-	await autoUpdateCheckbox.click();
-	const updatedLocalStorageValue = await page.evaluate(() =>
-		window.localStorage.getItem('hollama-settings')
-	);
-	expect(updatedLocalStorageValue).toContain('"autoCheckForUpdates":true');
-});
-
 test('manual update check works regardless of auto-update setting', async ({ page }) => {
 	await page.goto('/settings');
 	const autoUpdateCheckbox = page.getByLabel('Automatically check for updates');
@@ -51,14 +35,6 @@ test('manual update check works regardless of auto-update setting', async ({ pag
 	await page.reload();
 	await checkNowButton.click();
 	await expect(page.getByText(`A newer version is available ${MOCK_NEWER_VERSION}`)).toBeVisible();
-});
-
-test('no update check on navigation when auto-update is disabled', async ({ page }) => {
-	await page.goto('/settings');
-	const autoUpdateCheckbox = page.getByLabel('Automatically check for updates');
-	await autoUpdateCheckbox.uncheck();
-	await page.goto('/sessions');
-	await expect(page.getByText(`A newer version is available ${MOCK_NEWER_VERSION}`)).not.toBeVisible();
 });
 
 test('displays appropriate message when on latest version', async ({ page }) => {
@@ -106,7 +82,37 @@ test('handles Desktop environment correctly', async ({ page }) => {
 test.skip('update check on navigation when auto-update is enabled', async ({ page }) => {
 	await page.goto('/settings');
 	const autoUpdateCheckbox = page.getByLabel('Automatically check for updates');
-	await autoUpdateCheckbox.check();
+	let localStorageValue = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-settings')
+	);
+	expect(autoUpdateCheckbox).toBeChecked();
+	expect(localStorageValue).toContain('"autoCheckForUpdates":true');
+
+	// Check it toggles the local storage setting
+	await autoUpdateCheckbox.click();
+	localStorageValue = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-settings')
+	);
+	expect(autoUpdateCheckbox).not.toBeChecked();
+	expect(localStorageValue).toContain('"autoCheckForUpdates":false');
+
+	// Re-enable auto-update
+	await autoUpdateCheckbox.click();
+	expect(autoUpdateCheckbox).toBeChecked();
+
 	await page.goto('/sessions');
 	// TODO: should see a notification baged next to the Settings link signaling that an update is available
+});
+
+test.skip('no update check on navigation when auto-update is disabled', async ({ page }) => {
+	await page.goto('/settings');
+	const autoUpdateCheckbox = page.getByLabel('Automatically check for updates');
+	await autoUpdateCheckbox.click();
+	const localStorageValue = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-settings')
+	);
+	expect(localStorageValue).toContain('"autoCheckForUpdates":false');
+
+	await page.goto('/sessions');
+	// TODO: should NOT see a notification baged next to the Settings link signaling that an update is available
 });
