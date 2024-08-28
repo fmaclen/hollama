@@ -23,6 +23,8 @@
 	$: theme = $settingsStore.userTheme;
 
 	onNavigate(async () => {
+		if (!($settingsStore.autoCheckForUpdates === false)) console.warn("\nNAVIGATE — $settingsStore", $settingsStore)
+		if (!($settingsStore.autoCheckForUpdates === false)) console.warn("\nNAVIGATE — $updateStatusStore", $updateStatusStore)
 		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
 	});
 
@@ -63,7 +65,7 @@
 			<a
 				class="layout__a"
 				class:layout__a--active={pathname.includes(href)}
-				class:layout__a--badge={href == '/settings' && !$updateStatusStore.showNotificationBadge}
+				class:layout__a--badge={href == '/settings' && $updateStatusStore.showNotificationBadge}
 				{href}
 			>
 				{#if href === '/knowledge'}

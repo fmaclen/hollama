@@ -5,24 +5,24 @@ import { GITHUB_RELEASES_API } from '$lib/github';
 const currentVersion = process.env.npm_package_version;
 const MOCK_NEWER_VERSION = '999.0.0';
 
-test.beforeEach(async ({ page }) => {
-	await mockTagsResponse(page);
-	await page.route('**/api/metadata', (route) =>
-		route.fulfill({
-			json: {
-				currentVersion: currentVersion,
-				isDesktop: false,
-				isDocker: false
-			}
-		})
-	);
+// test.beforeEach(async ({ page }) => {
+// 	await mockTagsResponse(page);
+// 	await page.route('**/api/metadata', (route) =>
+// 		route.fulfill({
+// 			json: {
+// 				currentVersion: currentVersion,
+// 				isDesktop: false,
+// 				isDocker: false
+// 			}
+// 		})
+// 	);
 
-	await page.route(GITHUB_RELEASES_API, (route) =>
-		route.fulfill({
-			json: [{ tag_name: MOCK_NEWER_VERSION }]
-		})
-	);
-});
+// 	await page.route(GITHUB_RELEASES_API, (route) =>
+// 		route.fulfill({
+// 			json: [{ tag_name: MOCK_NEWER_VERSION }]
+// 		})
+// 	);
+// });
 
 test('manual update check works regardless of auto-update setting', async ({ page }) => {
 	await page.goto('/settings');
@@ -89,7 +89,17 @@ test('displays error message when unable to check for updates', async ({ page })
 	await expect(page.getByRole('link', { name: 'Go to releases' })).toBeVisible();
 });
 
-test.skip('update check on navigation when auto-update is enabled', async ({ page }) => {
+test('update check on navigation when auto-update is enabled', async ({ page }) => {
+	await page.route('**/api/metadata', (route) =>
+		route.fulfill({
+			json: {
+				currentVersion: currentVersion,
+				isDesktop: true,
+				isDocker: false
+			}
+		})
+	);
+
 	await page.goto('/settings');
 	const autoUpdateCheckbox = page.getByLabel('Automatically check for updates');
 	let localStorageValue = await page.evaluate(() =>
@@ -97,18 +107,40 @@ test.skip('update check on navigation when auto-update is enabled', async ({ pag
 	);
 	expect(autoUpdateCheckbox).not.toBeChecked();
 	expect(localStorageValue).toContain('"autoCheckForUpdates":false');
-
+	// console.warn("\nTEST START NAVIGATE", localStorageValue)
+	
 	// Check it toggles the local storage setting
 	await autoUpdateCheckbox.click();
 	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
-	expect(autoUpdateCheckbox).not.toBeChecked();
+	expect(autoUpdateCheckbox).toBeChecked();
 	expect(localStorageValue).toContain('"autoCheckForUpdates":true');
+	
+	// console.warn("\nCHECKED BOX", localStorageValue)
+	const settingsLink = page.locator('.layout__a', { hasText: 'Settings' });
+	await expect(settingsLink).not.toHaveClass(/ layout__a--badge/);
 
-	await page.goto('/sessions');
-	// TODO: should see a notification baged next to the Settings link signaling that an update is available
+	await page.route('**/api/metadata', (route) =>
+		route.fulfill({
+			json: {
+				currentVersion: MOCK_NEWER_VERSION,
+				isDesktop: true,
+				isDocker: false
+			}
+		})
+	);
+
+	// console.warn("\nABOUT TO NAVIGATE", localStorageValue)
+	await page.locator('.layout__a', { hasText: 'Sessions' }).click();
+	await page.locator('.layout__a', { hasText: 'Knowledge' }).click();
+	await page.locator('.layout__a', { hasText: 'Motd' }).click();
+	// await expect(page.getByText('Create a new session or choose an existing one from the list')).toBeVisible();
+	await expect(settingsLink).toHaveClass(/ layout__a--badge/);
+
+	await settingsLink.click();
+	await expect(settingsLink).not.toHaveClass(/ layout__a--badge/);
 });
 
-test.skip('no update check on navigation when auto-update is disabled', async ({ page }) => {
+test('no update check on navigation when auto-update is disabled', async ({ page }) => {
 	await page.goto('/settings');
 	const localStorageValue = await page.evaluate(() =>
 		window.localStorage.getItem('hollama-settings')

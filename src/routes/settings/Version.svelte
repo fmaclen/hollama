@@ -10,7 +10,7 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
 
-	$: $updateStatusStore.showNotificationBadge = false;
+	$: if ($updateStatusStore) $updateStatusStore.showNotificationBadge = false;
 </script>
 
 <Fieldset>
@@ -41,6 +41,11 @@
 		<FieldHelp>
 			{#if $updateStatusStore.isCheckingForUpdates}
 				<P>Checking for updates...</P>
+			{:else if $updateStatusStore.couldntCheckForUpdates}
+				<P>
+					Couldn't check for updates automatically.
+					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Go to releases</Button>
+				</P>
 			{:else if $updateStatusStore.isCurrentVersionLatest}
 				<P>
 					You are on the latest version.
@@ -67,11 +72,6 @@
 							Go to downloads
 						</Button>
 					{/if}
-				</P>
-			{:else if $updateStatusStore.couldntCheckForUpdates}
-				<P>
-					Couldn't check for updates automatically.
-					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Go to releases</Button>
 				</P>
 			{/if}
 

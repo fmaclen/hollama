@@ -38,52 +38,63 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 	if (!settings.lastUpdateCheck) settings.lastUpdateCheck = oneWeekAgoInSeconds - 1;
 	if (!isUserInitiated && settings.lastUpdateCheck > oneWeekAgoInSeconds) return;
 
+	const updateStatus = get(updateStatusStore);
+	updateStatus.isCheckingForUpdates = true; // TODO needs a test
+
 	// The server may have been already updated, so we need to fetch the metadata again.
 	//
 	// HACK: We don't HAVE TO fetch the metadata from a server endpoint,
 	// we only do it this way because it allows us to mock the response in tests.
 	let hollamaServerResponse: Response;
+
 	try {
 		hollamaServerResponse = await fetch(HOLLAMA_SERVER_METADATA_ENDPOINT);
+		const response = (await hollamaServerResponse.json()) as HollamaServerMetadata;
+		settings.hollamaServerMetadata = response;
 	} catch (_) {
 		console.error('Failed to fetch Hollama server metadata');
-		return;
+		updateStatus.couldntCheckForUpdates = true;
 	}
-	const response = (await hollamaServerResponse.json()) as HollamaServerMetadata;
-	settings.hollamaServerMetadata = response;
 
 	// Update the status store
-	const updateStatus = get(updateStatusStore);
 	updateStatus.canRefreshToUpdate = semver.lt(
 		version.replace(DEVELOPMENT_VERSION_SUFFIX, ''),
 		settings.hollamaServerMetadata.currentVersion
 	);
 	updateStatus.isCurrentVersionLatest = !updateStatus.canRefreshToUpdate;
 	updateStatus.latestVersion = settings.hollamaServerMetadata.currentVersion;
+	updateStatus.showNotificationBadge = !updateStatus.isCurrentVersionLatest && updateStatus.latestVersion !== '';
+
+	console.warn("\nCHECK FOR UPDATES — updateStatus", updateStatus)
 
 	if (updateStatus.canRefreshToUpdate) {
 		updateStatusStore.set(updateStatus);
+		updateStatus.isCheckingForUpdates = false;
+
 	} else {
 		let githubServerResponse: Response;
+
 		try {
 			githubServerResponse = await fetch(GITHUB_RELEASES_API);
+			const response = await githubServerResponse.json();
+			if (response[0]?.tag_name && response[0].tag_name !== '') updateStatus.latestVersion = response[0].tag_name;
 		} catch (_) {
 			console.error('Failed to fetch GitHub releases');
-			return;
+			updateStatus.couldntCheckForUpdates = true;
 		}
 
-		const response = await githubServerResponse.json();
-		const latestVersion = response[0]?.tag_name;
-		if (!latestVersion) return;
-
-		updateStatus.latestVersion = latestVersion;
 		updateStatus.isCurrentVersionLatest = semver.lt(
-			latestVersion,
+			updateStatus.latestVersion,
 			settings.hollamaServerMetadata.currentVersion.replace(DEVELOPMENT_VERSION_SUFFIX, '')
 		);
 		updateStatus.showNotificationBadge = !updateStatus.isCurrentVersionLatest;
+		updateStatus.isCheckingForUpdates = false;
 		updateStatusStore.set(updateStatus);
+
+		console.warn("\nCHECK FOR UPDATES — updateStatus", updateStatus)
 	}
 
-	settings.lastUpdateCheck = getUnixTime(new Date());
+	// Update the settings store
+	settings.lastUpdateCheck = getUnixTime(new Date()); // TODO: needs a test
+	settingsStore.set(settings);
 }
