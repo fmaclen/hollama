@@ -29,11 +29,11 @@
 	}
 
 	.section__aside {
-		@apply flex h-full min-w-80 flex-col overflow-y-auto border-r overflow-scrollbar;
+		@apply overflow-scrollbar flex h-full min-w-80 flex-col overflow-y-auto border-r;
 	}
 
 	.section__content {
-		@apply flex h-full flex-col overflow-y-auto bg-shade-1 overflow-scrollbar;
+		@apply overflow-scrollbar flex h-full flex-col overflow-y-auto bg-shade-1;
 	}
 
 	.section--index {
