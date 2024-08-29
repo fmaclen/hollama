@@ -139,8 +139,7 @@
 	}
 	.layout__a--badge::before {
 		content: '';
-		@apply absolute h-2 w-2 rounded-full bg-warning;
-		@apply left-1/2 top-2 translate-x-2;
+		@apply absolute h-2 w-2 rounded-full bg-warning left-1/2 top-2 translate-x-2;
 		@apply lg:left-0 lg:top-1/2 lg:-translate-x-3 lg:-translate-y-1/2;
 	}
 
