@@ -1,10 +1,13 @@
 import { expect, test } from '@playwright/test';
 import { GITHUB_RELEASES_API } from '$lib/github';
+import { mockTagsResponse } from './utils';
 
 const currentVersion = process.env.npm_package_version;
 const MOCK_NEWER_VERSION = '999.0.0';
 
 test.beforeEach(async ({ page }) => {
+	await mockTagsResponse(page);
+
 	// NOTE: This is an intentionally broken response from the Github releases API
 	// to ensure we don't hit the real API.
 	// Every test should mock it's own response based on the test's needs.
@@ -93,7 +96,7 @@ test('displays error message when unable to check for updates', async ({ page })
 	await expect(page.getByRole('link', { name: 'Go to releases' })).toBeVisible();
 });
 
-test.skip('update check on navigation when auto-update is enabled', async ({ page }) => {
+test('update check on navigation when auto-update is enabled', async ({ page }) => {
 	await page.route('**/api/metadata', (route) =>
 		route.fulfill({
 			json: {
@@ -119,11 +122,8 @@ test.skip('update check on navigation when auto-update is enabled', async ({ pag
 	// Check it toggles the local storage setting
 	await autoUpdateCheckbox.click();
 	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
-	expect(autoUpdateCheckbox).toBeChecked();
+	await expect(autoUpdateCheckbox).toBeChecked();
 	expect(localStorageValue).toContain('"autoCheckForUpdates":true');
-
-	const settingsLink = page.locator('.layout__a', { hasText: 'Settings' });
-	await expect(settingsLink).not.toHaveClass(/ layout__a--badge/);
 
 	await page.route('**/api/metadata', (route) =>
 		route.fulfill({
@@ -135,21 +135,70 @@ test.skip('update check on navigation when auto-update is enabled', async ({ pag
 		})
 	);
 
-	await page.locator('.layout__a', { hasText: 'Sessions' }).click();
+	// HACK: Due to weird Playwright behavior (likely a race condition), we can't
+	// we can't use a click event to navigate to the knowledge page, so we have to
+	// use a page.goto() which refreshes the page. Then we can click on another section.
+	await page.goto('/knowledge');
+	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
+	expect(localStorageValue).toContain('"autoCheckForUpdates":true');
+	expect(localStorageValue).toContain('"lastUpdateCheck":null');
+	await expect(autoUpdateCheckbox).not.toBeVisible();
+
+	const settingsLink = page.locator('.layout__a', { hasText: 'Settings' });
+	await expect(settingsLink).not.toHaveClass(/ layout__a--badge/);
+
+	await page.locator('.layout__a', { hasText: 'Motd' }).click();
+	await expect(autoUpdateCheckbox).not.toBeVisible();
 	await expect(settingsLink).toHaveClass(/ layout__a--badge/);
+	await expect(page.getByText('A newer version is available')).not.toBeVisible();
+
+	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
+	expect(localStorageValue).not.toContain('"lastUpdateCheck":null');
 
 	await settingsLink.click();
+	expect(autoUpdateCheckbox).toBeVisible();
 	await expect(settingsLink).not.toHaveClass(/ layout__a--badge/);
+	await expect(page.getByText('A newer version is available')).toBeVisible();
+	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 });
 
-test.skip('no update check on navigation when auto-update is disabled', async ({ page }) => {
-	await page.goto('/settings');
-	const localStorageValue = await page.evaluate(() =>
+test('no update check on navigation when auto-update is disabled', async ({ page }) => {
+	await page.route('**/api/metadata', (route) =>
+		route.fulfill({
+			json: {
+				currentVersion: currentVersion,
+				isDesktop: true,
+				isDocker: false
+			}
+		})
+	);
+
+	await page.route(GITHUB_RELEASES_API, (route) =>
+		route.fulfill({ json: [{ tag_name: MOCK_NEWER_VERSION }] })
+	);
+
+	await page.goto('/sessions');
+	let localStorageValue = await page.evaluate(() =>
 		window.localStorage.getItem('hollama-settings')
 	);
 	expect(localStorageValue).toContain('"autoCheckForUpdates":false');
-	await expect(page.getByLabel('Automatically check for updates')).not.toBeChecked();
+	expect(localStorageValue).toContain('"lastUpdateCheck":null');
 
-	await page.goto('/sessions');
-	// TODO: should NOT see a notification baged next to the Settings link signaling that an update is available
+	const settingsLink = page.locator('.layout__a', { hasText: 'Settings' });
+	await expect(settingsLink).not.toHaveClass(/ layout__a--badge/);
+
+	await page.locator('.layout__a', { hasText: 'Knowledge' }).click();
+	await expect(settingsLink).not.toHaveClass(/ layout__a--badge/);
+
+	await settingsLink.click();
+	await expect(page.getByLabel('Automatically check for updates')).not.toBeChecked();
+	await expect(page.getByText('A newer version is available')).not.toBeVisible();
+
+	// Confirmm that there was an update available
+	await page.getByText('Check now').click();
+	await expect(page.getByText('A newer version is available')).toBeVisible();
+
+	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
+	expect(localStorageValue).toContain('"autoCheckForUpdates":false');
+	expect(localStorageValue).not.toContain('"lastUpdateCheck":null');
 });
