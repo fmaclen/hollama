@@ -1,4 +1,5 @@
 <script lang="ts">
+	import i18n from '$lib/i18n';
 	import { Files } from 'lucide-svelte';
 	import Button from './Button.svelte';
 
@@ -10,7 +11,7 @@
 </script>
 
 <div class="copy-button">
-	<Button title="Copy" variant="icon" on:click={copyContent}>
+	<Button title={$i18n.t('copy')} variant="icon" on:click={copyContent}>
 		<Files class="h-4 w-4" />
 	</Button>
 </div>

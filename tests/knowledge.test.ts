@@ -24,15 +24,17 @@ test('creates and edits knowledge', async ({ page }) => {
 	await page.goto('/');
 	await page.getByText('Knowledge', { exact: true }).click();
 	await expect(noKnowledgeMessage).toBeVisible();
-	await expect(page.getByText('Create new knowlege or choose one from the list')).toBeVisible();
+	await expect(page.getByText('Create new knowledge or choose one from the list')).toBeVisible();
 	await expect(fieldName).not.toBeVisible();
 	await expect(fieldContent).not.toBeVisible();
 	await expect(buttonSave).not.toBeVisible();
 	await expect(timestamp).not.toBeVisible();
 
 	// Create knowledge
-	await page.getByText('New knowledge').click();
-	await expect(page.getByText('Create new knowlege or choose one from the list')).not.toBeVisible();
+	await page.getByText('New knowledge', { exact: true }).click();
+	await expect(
+		page.getByText('Create new knowledge or choose one from the list')
+	).not.toBeVisible();
 	await expect(timestamp).toHaveText('New knowledge');
 	await expect(fieldName).toBeVisible();
 	await expect(fieldContent).toBeVisible();
@@ -77,7 +79,7 @@ test('creates and edits knowledge', async ({ page }) => {
 test('can delete knowledge from the header and sidebar', async ({ page }) => {
 	await page.goto('/');
 	await page.getByText('Knowledge', { exact: true }).click();
-	await expect(page.getByText('Create new knowlege or choose one from the list')).toBeVisible();
+	await expect(page.getByText('Create new knowledge or choose one from the list')).toBeVisible();
 	expect(await page.getByTestId('knowledge-item').count()).toBe(0);
 
 	await seedKnowledgeAndReload(page);
@@ -104,7 +106,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	const timestamp = page.getByTestId('knowledge-metadata');
 	const noKnowledgeMessage = page.getByText('No knowledge');
 	const noKnowledgeSelectedMessage = page.getByText(
-		'Create new knowlege or choose one from the list'
+		'Create new knowledge or choose one from the list'
 	);
 	const knowledgeItems = page.getByTestId('knowledge-item');
 	const systemPromptSelect = page.getByLabel('System prompt');
@@ -120,7 +122,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	await expect(timestamp).not.toBeVisible();
 	await expect(knowledgeItems).toHaveCount(MOCK_KNOWLEDGE.length);
 
-	// Check the knowlege is available in the session
+	// Check the knowledge is available in the session
 	await page.getByText('Sessions').click();
 	await page.getByTestId('new-session').click();
 	await expect(systemPromptSelect).toContainText(MOCK_KNOWLEDGE[0].name);
@@ -131,7 +133,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	await expect(noKnowledgeSelectedMessage).not.toBeVisible();
 	await expect(timestamp).toBeVisible();
 
-	// Delete the knowlege
+	// Delete the knowledge
 	await page.locator('header').getByTitle('Delete knowledge').click();
 	await page.getByTitle('Confirm deletion').click();
 	await expect(knowledgeItems).toHaveCount(MOCK_KNOWLEDGE.length - 1);
@@ -263,7 +265,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	await expect(page.getByText('What is this about?')).not.toBeVisible();
 });
 
-test('can use shortcut to create knowlege from session', async ({ page }) => {
+test('can use shortcut to create knowledge from session', async ({ page }) => {
 	const sessionId = page.getByTestId('session-id');
 	const knowledgeId = page.getByTestId('knowledge-id');
 
@@ -273,7 +275,7 @@ test('can use shortcut to create knowlege from session', async ({ page }) => {
 	await expect(sessionId).toBeVisible();
 	await expect(knowledgeId).not.toBeVisible();
 
-	await page.getByLabel('New knowledge').click();
+	await page.getByLabel('New knowledge', { exact: true }).click();
 	await expect(sessionId).not.toBeVisible();
 	await expect(knowledgeId).toBeVisible();
 });

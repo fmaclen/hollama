@@ -18,6 +18,7 @@
 	} from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
+	import i18n from '$lib/i18n';
 	import type { PageData } from './$types';
 
 	import Button from '$lib/components/Button.svelte';
@@ -65,7 +66,7 @@
 			$settingsStore.ollamaModels = (await ollamaTags()).models;
 		} catch {
 			$settingsStore.ollamaModels = [];
-			toast.warning("Can't connect to Ollama server");
+			toast.warning($i18n.t('errors.cantConnectToOllamaServer'));
 		}
 		scrollToBottom();
 	}
@@ -174,11 +175,8 @@
 
 	function handleError(error: Error) {
 		let content: string;
-		if (error.message === 'Failed to fetch') {
-			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
-		} else {
-			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
-		}
+		if (error.message === 'Failed to fetch') content = $i18n.t('errors.ollamaConnectionError');
+		else content = $i18n.t('errors.genericError', { error });
 
 		const message: Message = { role: 'system', content };
 		session.messages = [...session.messages, message];
@@ -194,9 +192,7 @@
 
 	beforeNavigate((navigation) => {
 		if (!isCompletionInProgress) return;
-		const userConfirmed = confirm(
-			'Are you sure you want to leave?\nThe completion in progress will stop'
-		);
+		const userConfirmed = confirm($i18n.t('dialogs.areYouSureYouWantToLeave'));
 		if (userConfirmed) {
 			stopCompletion();
 			return;
@@ -213,13 +209,19 @@
 </script>
 
 <div class="session">
-	<Head title={[isNewSession ? 'New session' : getSessionTitle(session), 'Sessions']} />
+	<Head
+		title={[
+			isNewSession ? $i18n.t('sessionsPage.new') : getSessionTitle(session),
+			$i18n.t('sessions', { count: 0 })
+		]}
+	/>
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
-			Session <Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
+			{$i18n.t('sessions', { count: 1 })}
+			<Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
 		</p>
 		<Metadata dataTestid="session-metadata">
-			{isNewSession ? 'New session' : formatSessionMetadata(session)}
+			{isNewSession ? $i18n.t('sessionsPage.new') : formatSessionMetadata(session)}
 		</Metadata>
 
 		<svelte:fragment slot="nav">
@@ -235,7 +237,7 @@
 		<div class="session__history" bind:this={messageWindow}>
 			<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
 				{#if isNewSession}
-					<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
+					<EmptyMessage>{$i18n.t('sessionsPage.writePromptToStart')}</EmptyMessage>
 				{/if}
 
 				{#each session.messages as message, i (session.id + i)}
@@ -267,7 +269,7 @@
 							<div class="prompt-editor__project">
 								<FieldSelectModel />
 								<FieldSelect
-									label="System prompt"
+									label={$i18n.t('sessionsPage.systemPrompt')}
 									name="knowledge"
 									disabled={$knowledgeStore.length === 0}
 									options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
@@ -275,7 +277,7 @@
 								>
 									<svelte:fragment slot="nav">
 										<Button
-											aria-label="New knowledge"
+											aria-label={$i18n.t('knowledgePage.new')}
 											variant="outline"
 											href={generateNewUrl(Sitemap.KNOWLEDGE)}
 											class="h-full text-muted"
@@ -289,13 +291,17 @@
 
 						{#key session}
 							{#if isPromptFullscreen}
-								<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
+								<FieldTextEditor
+									label={$i18n.t('sessionsPage.prompt')}
+									{handleSubmit}
+									bind:value={prompt}
+								/>
 							{:else}
 								<Field name="prompt">
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
-										placeholder="Write literally anything"
+										placeholder={$i18n.t('sessionsPage.promptPlaceholder')}
 										bind:this={promptTextarea}
 										bind:value={prompt}
 										on:keydown={handleKeyDown}
@@ -313,7 +319,7 @@
 									$settingsStore.ollamaModels.length === 0 ||
 									!$settingsStore.ollamaModel}
 							>
-								Run
+								{$i18n.t('sessionsPage.run')}
 							</ButtonSubmit>
 
 							{#if isCompletionInProgress}

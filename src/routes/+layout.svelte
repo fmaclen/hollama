@@ -3,21 +3,22 @@
 	import { onMount } from 'svelte';
 	import { Brain, MessageSquareText, Settings2, Sun, Moon, NotebookText } from 'lucide-svelte';
 
+	import '../app.pcss';
+
+	import i18n from '$lib/i18n';
 	import { env } from '$env/dynamic/public';
 	import { onNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-
 	import { settingsStore } from '$lib/store';
 	import { updateStatusStore, checkForUpdates } from '$lib/updates';
-	import '../app.pcss';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
-		['/sessions', 'Sessions'],
-		['/knowledge', 'Knowledge'],
-		['/settings', 'Settings'],
-		['/motd', 'Motd']
+		['/sessions', 'sessions'],
+		['/knowledge', 'knowledge'],
+		['/settings', 'settings'],
+		['/motd', 'motd']
 	];
 
 	$: theme = $settingsStore.userTheme;
@@ -63,7 +64,7 @@
 			<a
 				class="layout__a"
 				class:layout__a--active={pathname.includes(href)}
-				class:layout__a--badge={href == '/settings' && $updateStatusStore.showNotificationBadge}
+				class:layout__a--badge={text === 'settings' && $updateStatusStore.showNotificationBadge}
 				{href}
 			>
 				{#if href === '/knowledge'}
@@ -75,17 +76,17 @@
 				{:else if href === '/motd'}
 					<NotebookText class="h-4 w-4" />
 				{/if}
-				{text}
+				{$i18n.t(text, { count: 0 })}
 			</a>
 		{/each}
 
 		<button class="layout__button" on:click={toggleTheme}>
 			{#if theme === 'light'}
 				<Moon class="h-4 w-4" />
-				Dark
+				{$i18n.t('theme.dark')}
 			{:else}
 				<Sun class="h-4 w-4" />
-				Light
+				{$i18n.t('theme.light')}
 			{/if}
 		</button>
 	</aside>
