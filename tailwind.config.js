@@ -62,6 +62,9 @@ const config = {
 				},
 				'.text-link': {
 					'@apply underline underline-offset-4 hover:text-accent': {}
+				},
+				'.overflow-scrollbar': {
+					'@apply scrollbar scrollbar-track-transparent scrollbar-thumb-neutral-950/10 dark:scrollbar-thumb-neutral-100/10' : {}
 				}
 			});
 		},
