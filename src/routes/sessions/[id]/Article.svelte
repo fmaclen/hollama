@@ -12,6 +12,7 @@
 	export let message: Message;
 	export let retryIndex: number | undefined = undefined;
 	export let handleRetry: ((index: number) => void) | undefined = undefined;
+	export let handleEditMessage: ((message: Message) => void) | undefined = undefined;
 
 	const isUserRole = message.role === 'user';
 </script>
@@ -39,7 +40,11 @@
 				</Button>
 			{/if}
 			{#if isUserRole}
-				<Button title={$i18n.t('edit')} variant="icon">
+				<Button
+					title={$i18n.t('edit')}
+					variant="icon"
+					on:click={() => handleEditMessage && handleEditMessage(message)}
+				>
 					<Pencil class="h-4 w-4" />
 				</Button>
 			{/if}

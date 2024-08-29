@@ -47,6 +47,7 @@
 	let prompt: string;
 	let promptTextarea: HTMLTextAreaElement;
 	let isCompletionInProgress = false;
+	let messageIndexToEdit: number | null = null;
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
@@ -163,11 +164,33 @@
 		}
 	}
 
+	async function handleSubmitEditMessage() {
+		if (!prompt || messageIndexToEdit === null) return;
+
+		session.messages[messageIndexToEdit].content = prompt;
+
+		// Remove all messages after the edited message
+		session.messages = session.messages.slice(0, messageIndexToEdit + 1);
+
+		let payload = { model: session.model, messages: session.messages, stream: true };
+		await handleCompletion(payload);
+
+		messageIndexToEdit = null;
+		prompt = '';
+	}
+
+	function handleEditMessage(message: Message) {
+		messageIndexToEdit = session.messages.findIndex((m) => m === message);
+		prompt = message.content;
+		promptTextarea.focus();
+	}
+
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.shiftKey) return;
 		if (event.key !== 'Enter') return;
 		event.preventDefault();
-		handleSubmit();
+		if (messageIndexToEdit !== null) handleSubmitEditMessage();
+		else handleSubmit();
 	}
 
 	async function scrollToBottom(shouldForceScroll = false) {
@@ -249,6 +272,7 @@
 							{message}
 							retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
 							{handleRetry}
+							{handleEditMessage}
 						/>
 					{/key}
 				{/each}
@@ -296,7 +320,9 @@
 							{#if isPromptFullscreen}
 								<FieldTextEditor
 									label={$i18n.t('sessionsPage.prompt')}
-									{handleSubmit}
+									handleSubmit={messageIndexToEdit !== null
+										? handleSubmitEditMessage
+										: handleSubmit}
 									bind:value={prompt}
 								/>
 							{:else}
@@ -314,14 +340,27 @@
 						{/key}
 
 						<nav class="prompt-editor__toolbar">
+							{#if messageIndexToEdit !== null}
+								<Button
+									variant="outline"
+									on:click={() => {
+										prompt = '';
+										messageIndexToEdit = null;
+									}}
+								>
+									{$i18n.t('cancel')}
+								</Button>
+							{/if}
 							<ButtonSubmit
-								{handleSubmit}
+								handleSubmit={messageIndexToEdit !== null ? handleSubmitEditMessage : handleSubmit}
 								hasMetaKey={isPromptFullscreen}
 								disabled={!prompt ||
 									!$settingsStore?.ollamaModels.length ||
 									!$settingsStore?.ollamaModel}
 							>
-								{$i18n.t('sessionsPage.run')}
+								{$i18n.t(
+									messageIndexToEdit !== null ? 'sessionsPage.saveAndRun' : 'sessionsPage.run'
+								)}
 							</ButtonSubmit>
 
 							{#if isCompletionInProgress}
