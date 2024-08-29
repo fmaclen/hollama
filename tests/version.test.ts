@@ -5,14 +5,10 @@ const currentVersion = process.env.npm_package_version;
 const MOCK_NEWER_VERSION = '999.0.0';
 
 test.beforeEach(async ({ page }) => {
-	// NOTE:
-	// Every test should mock the Github releases API response
-	// to ensure we don't hit the real API in the tests.
-	await page.route(GITHUB_RELEASES_API, (route) =>
-		route.fulfill({
-			json: [{ tag_name: MOCK_NEWER_VERSION }]
-		})
-	);
+	// NOTE: This is an intentionally broken response from the Github releases API
+	// to ensure we don't hit the real API.
+	// Every test should mock it's own response based on the test's needs.
+	await page.route(GITHUB_RELEASES_API, (route) => route.fulfill());
 });
 
 test('manual update check works regardless of auto-update setting', async ({ page }) => {
@@ -57,6 +53,10 @@ test('handles Docker environment correctly', async ({ page }) => {
 		})
 	);
 
+	await page.route(GITHUB_RELEASES_API, (route) =>
+		route.fulfill({ json: [{ tag_name: MOCK_NEWER_VERSION }] })
+	);
+
 	await page.goto('/settings');
 	const checkNowButton = page.getByRole('button', { name: 'Check now' });
 	await checkNowButton.click();
@@ -72,6 +72,10 @@ test('handles Desktop environment correctly', async ({ page }) => {
 				isDocker: false
 			}
 		})
+	);
+
+	await page.route(GITHUB_RELEASES_API, (route) =>
+		route.fulfill({ json: [{ tag_name: MOCK_NEWER_VERSION }] })
 	);
 
 	await page.goto('/settings');
@@ -100,6 +104,10 @@ test.skip('update check on navigation when auto-update is enabled', async ({ pag
 		})
 	);
 
+	await page.route(GITHUB_RELEASES_API, (route) =>
+		route.fulfill({ json: [{ tag_name: currentVersion }] })
+	);
+
 	await page.goto('/settings');
 	const autoUpdateCheckbox = page.getByLabel('Automatically check for updates');
 	let localStorageValue = await page.evaluate(() =>
@@ -107,13 +115,13 @@ test.skip('update check on navigation when auto-update is enabled', async ({ pag
 	);
 	expect(autoUpdateCheckbox).not.toBeChecked();
 	expect(localStorageValue).toContain('"autoCheckForUpdates":false');
-	
+
 	// Check it toggles the local storage setting
 	await autoUpdateCheckbox.click();
 	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(autoUpdateCheckbox).toBeChecked();
 	expect(localStorageValue).toContain('"autoCheckForUpdates":true');
-	
+
 	const settingsLink = page.locator('.layout__a', { hasText: 'Settings' });
 	await expect(settingsLink).not.toHaveClass(/ layout__a--badge/);
 
