@@ -10,6 +10,7 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
 
+	// If this component is mounted, we always reset the sidebar notification badge to `false`
 	$: if ($updateStatusStore) $updateStatusStore.showNotificationBadge = false;
 </script>
 
@@ -72,15 +73,6 @@
 							Go to downloads
 						</Button>
 					{/if}
-				</P>
-			{/if}
-
-			{#if !$updateStatusStore.isCheckingForUpdates && !$updateStatusStore.latestVersion && $settingsStore.lastUpdateCheck}
-				<P>
-					Last update check
-					<Badge>
-						{new Date($settingsStore.lastUpdateCheck * 1000).toLocaleString()}
-					</Badge>
 				</P>
 			{/if}
 		</FieldHelp>

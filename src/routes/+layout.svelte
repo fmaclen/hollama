@@ -23,8 +23,6 @@
 	$: theme = $settingsStore.userTheme;
 
 	onNavigate(async () => {
-		if (!($settingsStore.autoCheckForUpdates === false)) console.warn("\nNAVIGATE — $settingsStore", $settingsStore)
-		if (!($settingsStore.autoCheckForUpdates === false)) console.warn("\nNAVIGATE — $updateStatusStore", $updateStatusStore)
 		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
 	});
 
