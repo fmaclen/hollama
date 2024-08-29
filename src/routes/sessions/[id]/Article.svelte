@@ -6,7 +6,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import Badge from '$lib/components/Badge.svelte';
-	import { Brain, RefreshCw } from 'lucide-svelte';
+	import { Brain, Pencil, RefreshCw } from 'lucide-svelte';
 	import Markdown from '$lib/components/Markdown.svelte';
 
 	export let message: Message;
@@ -36,6 +36,11 @@
 					on:click={() => handleRetry && handleRetry(retryIndex)}
 				>
 					<RefreshCw class="h-4 w-4" />
+				</Button>
+			{/if}
+			{#if isUserRole}
+				<Button title={$i18n.t('edit')} variant="icon">
+					<Pencil class="h-4 w-4" />
 				</Button>
 			{/if}
 			<ButtonCopy content={message.content} />

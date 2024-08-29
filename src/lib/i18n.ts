@@ -15,6 +15,7 @@ i18next.init({
 				messageOfTheDay: 'Message of the day',
 				theme: { dark: 'Dark', light: 'Light' },
 				copy: 'Copy',
+				edit: 'Edit',
 				retry: 'Retry',
 				confirmDeletion: 'Confirm deletion',
 				dismiss: 'Dismiss',
