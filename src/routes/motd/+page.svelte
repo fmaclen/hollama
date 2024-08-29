@@ -17,7 +17,7 @@
 
 <style lang="postcss">
 	.motd {
-		@apply base-section flex border-spacing-1 flex-col bg-shade-1 p-8;
+		@apply base-section flex border-spacing-1 flex-col bg-shade-1 scrollbar scrollbar-thumb-[#242424] scrollbar-track-[#4d4d4d] p-8;
 	}
 
 	.motd__container {

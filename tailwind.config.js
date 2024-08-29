@@ -64,7 +64,8 @@ const config = {
 					'@apply underline underline-offset-4 hover:text-accent': {}
 				}
 			});
-		}
+		},
+		require('tailwind-scrollbar')
 	]
 };
 
