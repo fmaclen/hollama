@@ -24,6 +24,7 @@
 	$: theme = $settingsStore.userTheme;
 
 	onNavigate(async () => {
+		// Check for updates whenever the user follows a link (if auto-check is enabled)
 		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
 	});
 
@@ -64,7 +65,8 @@
 			<a
 				class="layout__a"
 				class:layout__a--active={pathname.includes(href)}
-				class:layout__a--badge={text === 'settings' && $updateStatusStore.showNotificationBadge}
+				class:layout__a--notification={text === 'settings' &&
+					$updateStatusStore.showSidebarNotification}
 				{href}
 			>
 				{#if href === '/knowledge'}
@@ -135,10 +137,10 @@
 		@apply lg:px-0 lg:py-6;
 	}
 
-	.layout__a--badge {
+	.layout__a--notification {
 		@apply relative;
 	}
-	.layout__a--badge::before {
+	.layout__a--notification::before {
 		content: '';
 		@apply absolute left-1/2 top-2 h-2 w-2 translate-x-2 rounded-full bg-warning;
 		@apply lg:left-0 lg:top-1/2 lg:-translate-x-3 lg:-translate-y-1/2;

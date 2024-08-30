@@ -145,20 +145,20 @@ test('update check on navigation when auto-update is enabled', async ({ page }) 
 	await expect(autoUpdateCheckbox).not.toBeVisible();
 
 	const settingsLink = page.locator('.layout__a', { hasText: 'Settings' });
-	await expect(settingsLink).not.toHaveClass(/ layout__a--badge/);
+	await expect(settingsLink).not.toHaveClass(/ layout__a--notification/);
 
 	await page.locator('.layout__a', { hasText: 'Motd' }).click();
 	await expect(autoUpdateCheckbox).not.toBeVisible();
-	await expect(settingsLink).toHaveClass(/ layout__a--badge/);
+	await expect(settingsLink).toHaveClass(/ layout__a--notification/);
 	await expect(page.getByText('A newer version is available')).not.toBeVisible();
 
 	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(localStorageValue).not.toContain('"lastUpdateCheck":null');
 
 	await settingsLink.click();
-	expect(autoUpdateCheckbox).toBeVisible();
-	await expect(settingsLink).not.toHaveClass(/ layout__a--badge/);
 	await expect(page.getByText('A newer version is available')).toBeVisible();
+	await expect(settingsLink).not.toHaveClass(/ layout__a--notification/);
+	await expect(autoUpdateCheckbox).toBeVisible();
 	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 });
 
@@ -185,10 +185,10 @@ test('no update check on navigation when auto-update is disabled', async ({ page
 	expect(localStorageValue).toContain('"lastUpdateCheck":null');
 
 	const settingsLink = page.locator('.layout__a', { hasText: 'Settings' });
-	await expect(settingsLink).not.toHaveClass(/ layout__a--badge/);
+	await expect(settingsLink).not.toHaveClass(/ layout__a--notification/);
 
 	await page.locator('.layout__a', { hasText: 'Knowledge' }).click();
-	await expect(settingsLink).not.toHaveClass(/ layout__a--badge/);
+	await expect(settingsLink).not.toHaveClass(/ layout__a--notification/);
 
 	await settingsLink.click();
 	await expect(page.getByLabel('Automatically check for updates')).not.toBeChecked();

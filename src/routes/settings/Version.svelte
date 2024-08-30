@@ -11,8 +11,8 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
 
-	// If this component is mounted, we always reset the sidebar notification badge to `false`
-	$: if ($updateStatusStore) $updateStatusStore.showNotificationBadge = false;
+	// If this component is mounted we don't want the sidebar notification badge to be visible
+	$: if ($updateStatusStore) $updateStatusStore.showSidebarNotification = false;
 </script>
 
 <Fieldset>
