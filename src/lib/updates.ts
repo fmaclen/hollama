@@ -60,8 +60,8 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 
 	try {
 		hollamaMetadata = await fetch(HOLLAMA_METADATA_ENDPOINT);
-		const response = (await hollamaMetadata.json()) as HollamaMetadata;
-		settings.hollamaMetadata = response;
+		const metadata = (await hollamaMetadata.json()) as HollamaMetadata;
+		settings.hollamaMetadata = metadata;
 	} catch (_) {
 		console.error('Failed to fetch Hollama server metadata');
 		updateStatus.couldntCheckForUpdates = true;
@@ -83,9 +83,9 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 
 		try {
 			githubReleases = await fetch(GITHUB_RELEASES_API);
-			const response = await githubReleases.json();
-			if (response[0]?.tag_name && response[0].tag_name !== '')
-				updateStatus.latestVersion = response[0].tag_name;
+			const releases = await githubReleases.json();
+			if (releases[0]?.tag_name && releases[0].tag_name !== '')
+				updateStatus.latestVersion = releases[0].tag_name;
 		} catch (_) {
 			console.error('Failed to fetch GitHub releases');
 			updateStatus.couldntCheckForUpdates = true;
