@@ -1,4 +1,5 @@
 <script lang="ts">
+	import i18n from '$lib/i18n';
 	import Button from '$lib/components/Button.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
@@ -7,7 +8,9 @@
 	function deleteStorage(item: StorageKey): void {
 		if (
 			confirm(
-				`Are you sure you want to delete all ${item.replace(`${LOCAL_STORAGE_PREFIX}-`, '')}?`
+				$i18n.t('dialogs.areYouSureYouWantToDeleteAll', {
+					type: item.replace(`${LOCAL_STORAGE_PREFIX}-`, '')
+				})
 			)
 		) {
 			localStorage.removeItem(item);
@@ -17,14 +20,14 @@
 </script>
 
 <Fieldset>
-	<P><strong>Danger zone</strong></P>
+	<P><strong>{$i18n.t('settingsPage.dangerZone')}</strong></P>
 	<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSessions)}>
-		Delete all sessions
+		{$i18n.t('settingsPage.deleteAllSessions')}
 	</Button>
 	<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaKnowledge)}>
-		Delete all knowledge
+		{$i18n.t('settingsPage.deleteAllKnowledge')}
 	</Button>
 	<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSettings)}>
-		Delete server settings
+		{$i18n.t('settingsPage.deleteAllSettings')}
 	</Button>
 </Fieldset>

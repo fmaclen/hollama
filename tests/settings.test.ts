@@ -54,7 +54,7 @@ test('handles server status updates correctly', async ({ page }) => {
 	await expect(page.getByText('disconnected')).toHaveClass(/badge--warning/);
 });
 
-test('settings can be deleted', async ({ page }) => {
+test('deletes all settings and resets to default values', async ({ page }) => {
 	await page.goto('/');
 	const modelSelect = page.getByLabel('Available models');
 	await expect(modelSelect).toHaveValue('');
@@ -74,7 +74,7 @@ test('settings can be deleted', async ({ page }) => {
 
 	// Click the delete button
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete server settings?'));
-	await page.getByText('Delete server settings').click();
+	await page.getByText('Delete all settings').click();
 
 	// Wait for page reload
 	await page.waitForFunction(() => {

@@ -72,7 +72,7 @@ i18next.init({
 					dangerZone: 'Danger zone',
 					deleteAllSessions: 'Delete all sessions',
 					deleteAllKnowledge: 'Delete all knowledge',
-					deleteServerSettings: 'Delete server settings',
+					deleteAllSettings: 'Delete all settings',
 					version: 'Version',
 					allowConnections: 'Change your server settings to allow connections from',
 					seeDocs: 'See docs',
