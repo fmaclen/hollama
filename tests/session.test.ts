@@ -521,6 +521,56 @@ test.describe('Session', () => {
 		await expect(cancelButton).not.toBeVisible();
 	});
 
+	test('can edit the first message and the next get removed', async ({ page }) => {
+		const messagesCount = page.locator('.article');
+		await page.goto('/');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+		await expect(
+			page.getByText(
+				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+			)
+		).toBeVisible();
+		expect(await messagesCount.count()).toBe(2);
+
+		await promptTextarea.fill(
+			'Who would win in a fight between Scarlett Johansson and Jessica Alba?'
+		);
+		await page.getByText('Run').click();
+
+		expect(
+			await page
+				.getByText(
+					'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+				)
+				.count()
+		).toBe(2);
+
+		expect(await messagesCount.count()).toBe(4);
+
+		await page.locator('.article', { hasText: 'You' }).first().hover();
+		await page.locator('.article', { hasText: 'You' }).first().getByTitle('Edit').click();
+		await textEditorLocator(page, 'Prompt').fill('Hello world!');
+		await page.getByText('Save & run').click();
+
+		expect(
+			await page
+				.getByText(
+					'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+				)
+				.count()
+		).toBe(1);
+
+		await expect(page.getByText('Who would win in a fight between')).not.toBeVisible();
+
+		expect(await messagesCount.count()).toBe(2);
+	});
+
 	test('handles errors when generating completion response and retries', async ({ page }) => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
