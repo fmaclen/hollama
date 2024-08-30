@@ -29,7 +29,7 @@ i18next.init({
 				automatcallyCheckForUpdates: 'Automatically check for updates',
 				checkNow: 'Check now',
 				checkingForUpdates: 'Checking for updates...',
-				couldntCheckForUpdates: 'Couldn\'t check for updates automatically',
+				couldntCheckForUpdates: "Couldn't check for updates automatically",
 				isCurrentVersionLatest: 'You are on the latest version',
 				isLatestVersion: 'A newer version is available',
 				refreshToUpdate: 'Refresh to update',

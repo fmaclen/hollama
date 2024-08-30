@@ -1,6 +1,6 @@
 <script lang="ts">
 	import i18n from '$lib/i18n';
-	
+
 	import { version } from '$app/environment';
 	import { settingsStore } from '$lib/store';
 	import { checkForUpdates, updateStatusStore } from '$lib/updates';
