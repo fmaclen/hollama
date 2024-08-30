@@ -18,15 +18,15 @@
 <style lang="postcss">
 	.badge {
 		&--positive {
-			@apply bg-positive-muted text-positive border-transparent;
+			@apply border-transparent bg-positive-muted text-positive;
 		}
 
 		&--warning {
-			@apply bg-warning-muted text-warning border-transparent;
+			@apply border-transparent bg-warning-muted text-warning;
 		}
 
 		&--negative {
-			@apply bg-negative-muted text-negative border-transparent;
+			@apply border-transparent bg-negative-muted text-negative;
 		}
 	}
 </style>
