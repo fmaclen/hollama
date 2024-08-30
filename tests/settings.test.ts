@@ -54,25 +54,13 @@ test('handles server status updates correctly', async ({ page }) => {
 	await expect(page.getByText('disconnected')).toHaveClass(/badge--warning/);
 });
 
-test('settings can be deleted', async ({ page }) => {
-	const modelSelect = page.getByLabel('Available models');
-
+test('deletes all settings and resets to default values', async ({ page }) => {
 	await page.goto('/');
+	const modelSelect = page.getByLabel('Available models');
 	await expect(modelSelect).toHaveValue('');
 
-	// Stage the settings store with a model
-	await page.evaluate(
-		(modelName: string) =>
-			window.localStorage.setItem(
-				'hollama-settings',
-				JSON.stringify({
-					ollamaServer: 'http://localhost:3000',
-					ollamaModel: modelName
-				})
-			),
-		MOCK_API_TAGS_RESPONSE.models[1].name
-	);
-
+	await page.getByLabel('Server').fill('http://localhost:3000');
+	await page.getByLabel('Available models').selectOption(MOCK_API_TAGS_RESPONSE.models[1].name);
 	await page.reload();
 	await expect(page.getByLabel('Server')).toHaveValue('http://localhost:3000');
 	await expect(modelSelect).toHaveValue(MOCK_API_TAGS_RESPONSE.models[1].name);
@@ -86,7 +74,7 @@ test('settings can be deleted', async ({ page }) => {
 
 	// Click the delete button
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete server settings?'));
-	await page.getByText('Delete server settings').click();
+	await page.getByText('Delete all settings').click();
 
 	// Wait for page reload
 	await page.waitForFunction(() => {

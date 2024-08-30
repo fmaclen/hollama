@@ -17,8 +17,6 @@
 
 <style lang="postcss">
 	.badge {
-		@apply inline-flex select-none items-center rounded-md px-2.5 py-0.5 font-mono text-xs;
-
 		&--default {
 			@apply border border-shade-3 text-muted;
 		}

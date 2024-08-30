@@ -1,14 +1,17 @@
 <script lang="ts">
-	import { env } from '$env/dynamic/public';
-	import { page } from '$app/stores';
 	import { Toaster } from 'svelte-sonner';
+	import { onMount } from 'svelte';
 	import { Brain, MessageSquareText, Settings2, Sun, Moon, NotebookText } from 'lucide-svelte';
 
 	import '../app.pcss';
-	import { settingsStore } from '$lib/store';
+
 	import i18n from '$lib/i18n';
-	import { onMount } from 'svelte';
+	import { env } from '$env/dynamic/public';
+	import { onNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
+	import { settingsStore } from '$lib/store';
+	import { updateStatusStore, checkForUpdates } from '$lib/updates';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
@@ -18,10 +21,15 @@
 		['/motd', 'motd']
 	];
 
-	$: theme = $settingsStore?.userTheme;
+	$: theme = $settingsStore.userTheme;
+
+	onNavigate(async () => {
+		// Check for updates whenever the user follows a link (if auto-check is enabled)
+		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
+	});
 
 	onMount(() => {
-		if (!$settingsStore || !browser || theme) return;
+		if (!browser || theme) return;
 		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 			? 'dark'
 			: 'light';
@@ -30,7 +38,7 @@
 	function toggleTheme() {
 		theme = theme === 'light' ? 'dark' : 'light';
 		document.documentElement.setAttribute('data-color-theme', theme);
-		if ($settingsStore) $settingsStore.userTheme = theme;
+		$settingsStore.userTheme = theme;
 	}
 </script>
 
@@ -54,7 +62,13 @@
 		</a>
 
 		{#each SITEMAP as [href, text]}
-			<a class={`layout__a ${pathname.includes(href) ? 'layout__a--active' : ''}`} {href}>
+			<a
+				class="layout__a"
+				class:layout__a--active={pathname.includes(href)}
+				class:layout__a--notification={text === 'settings' &&
+					$updateStatusStore.showSidebarNotification}
+				{href}
+			>
 				{#if href === '/knowledge'}
 					<Brain class="h-4 w-4" />
 				{:else if href === '/sessions'}
@@ -105,11 +119,6 @@
 		@apply lg:max-h-10 lg:min-w-10;
 	}
 
-	.layout__homepage {
-		@apply col-start-3 row-start-1 flex items-center;
-		@apply lg:py-4;
-	}
-
 	.layout__button,
 	.layout__a {
 		@apply flex w-auto flex-grow flex-col items-center gap-x-2 gap-y-0.5 py-3 text-xs font-medium text-muted transition-colors duration-150;
@@ -126,6 +135,15 @@
 		@apply col-start-3 row-start-1 max-w-max;
 		@apply md:px-4;
 		@apply lg:px-0 lg:py-6;
+	}
+
+	.layout__a--notification {
+		@apply relative;
+	}
+	.layout__a--notification::before {
+		content: '';
+		@apply absolute left-1/2 top-2 h-2 w-2 translate-x-2 rounded-full bg-warning;
+		@apply lg:left-0 lg:top-1/2 lg:-translate-x-3 lg:-translate-y-1/2;
 	}
 
 	.layout__button {

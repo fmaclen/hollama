@@ -1,4 +1,5 @@
 <script lang="ts">
+	import i18n from '$lib/i18n';
 	import { toast } from 'svelte-sonner';
 	import { writable } from 'svelte/store';
 	import { afterNavigate } from '$app/navigation';
@@ -16,7 +17,6 @@
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import Head from '$lib/components/Head.svelte';
-	import i18n from '$lib/i18n';
 
 	export let data: PageData;
 

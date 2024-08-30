@@ -5,14 +5,14 @@
 
 	export let disabled: boolean = false;
 
-	let value: string = $settingsStore?.ollamaModel || '';
-	$: if ($settingsStore) $settingsStore.ollamaModel = value;
+	let value: string = $settingsStore.ollamaModel || '';
+	$: $settingsStore.ollamaModel = value;
 </script>
 
 <FieldSelect
 	label={$i18n.t('settingsPage.availableModels')}
 	name="model"
-	options={$settingsStore?.ollamaModels.map((m) => ({ value: m.name, option: m.name }))}
-	disabled={disabled || !$settingsStore?.ollamaModels.length}
+	options={$settingsStore.ollamaModels.map((m) => ({ value: m.name, option: m.name }))}
+	disabled={disabled || !$settingsStore.ollamaModels.length}
 	bind:value
 />
