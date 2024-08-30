@@ -169,7 +169,7 @@ test('all knowledge can be deleted', async ({ page }) => {
 	await page.getByText('Knowledge', { exact: true }).click();
 	await expect(page.getByText('No knowledge')).toBeVisible();
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
-	expect(await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'))).toBe('null');
+	expect(await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'))).toBe('[]');
 });
 
 test('can use knowledge as system prompt in the session', async ({ page }) => {

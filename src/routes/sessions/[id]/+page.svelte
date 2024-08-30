@@ -58,12 +58,11 @@
 	$: isNewSession = !session?.messages.length;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
-	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
+	$: if ($settingsStore.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: if (messageWindow) messageWindow.addEventListener('scroll', handleScroll);
 	$: if (data.id) handleSessionChange();
 
 	async function handleSessionChange() {
-		if (!$settingsStore) return;
 		try {
 			$settingsStore.ollamaModels = (await ollamaTags()).models;
 		} catch {
@@ -138,8 +137,6 @@
 		completion = '';
 
 		try {
-			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
-
 			await ollamaChat(payload, abortController.signal, async (chunk) => {
 				completion += chunk;
 				await scrollToBottom();
@@ -288,7 +285,7 @@
 								<FieldSelect
 									label={$i18n.t('sessionsPage.systemPrompt')}
 									name="knowledge"
-									disabled={!$knowledgeStore}
+									disabled={$knowledgeStore.length === 0}
 									options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
 									bind:value={knowledgeId}
 								>
@@ -344,8 +341,9 @@
 								{handleSubmit}
 								hasMetaKey={isPromptFullscreen}
 								disabled={!prompt ||
-									!$settingsStore?.ollamaModels.length ||
-									!$settingsStore?.ollamaModel}
+									$settingsStore.ollamaServerStatus === 'disconnected' ||
+									$settingsStore.ollamaModels.length === 0 ||
+									!$settingsStore.ollamaModel}
 							>
 								{$i18n.t(messageIndexToEdit !== null ? 'saveAndRun' : 'sessionsPage.run')}
 							</ButtonSubmit>

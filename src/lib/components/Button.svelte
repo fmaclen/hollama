@@ -54,7 +54,11 @@
 		}
 
 		&--link {
-			@apply text-link rounded-none;
+			@apply text-link inline rounded-none px-1;
+		}
+
+		&--link[target='_blank']:after {
+			content: ' ↗';
 		}
 
 		&--icon {

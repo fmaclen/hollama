@@ -62,6 +62,9 @@ const config = {
 				},
 				'.text-link': {
 					'@apply underline underline-offset-4 hover:text-accent': {}
+				},
+				'.badge': {
+					'@apply inline-flex max-w-max items-center rounded-md px-2 py-0.5 font-mono text-xs': {}
 				}
 			});
 		}
