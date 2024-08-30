@@ -33,11 +33,13 @@ export const updateStatusStore = writable<UpdateStatus>({
 // to indicate that it's a development version. This function strips the suffix
 // so it can be compared using `semver`
 function isCurrentVersionLatest(currentVersion: string, latestVersion: string): boolean {
-	return currentVersion === latestVersion ||
+	return (
+		currentVersion === latestVersion ||
 		semver.gt(
 			currentVersion.replace(HOLLAMA_DEV_VERSION_SUFFIX, ''),
 			latestVersion.replace(HOLLAMA_DEV_VERSION_SUFFIX, '')
-		);
+		)
+	);
 }
 
 export async function checkForUpdates(isUserInitiated = false): Promise<void> {
@@ -67,10 +69,7 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 
 	// Determine if the server has been updated, and if so, which version is the latest
 	updateStatus.latestVersion = settings.hollamaMetadata.currentVersion;
-	updateStatus.isCurrentVersionLatest = isCurrentVersionLatest(
-		version,
-		updateStatus.latestVersion
-	);
+	updateStatus.isCurrentVersionLatest = isCurrentVersionLatest(version, updateStatus.latestVersion);
 	updateStatus.canRefreshToUpdate = !updateStatus.isCurrentVersionLatest;
 	updateStatus.showSidebarNotification = !updateStatus.isCurrentVersionLatest;
 
