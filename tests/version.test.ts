@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 	await page.route(GITHUB_RELEASES_API, (route) => route.fulfill());
 });
 
-test('manual update check works regardless of auto-update setting', async ({ page }) => {
+test('performs manual update check regardless of auto-update preference', async ({ page }) => {
 	await page.route(GITHUB_RELEASES_API, (route) =>
 		route.fulfill({
 			json: [{ tag_name: MOCK_NEWER_VERSION }]
@@ -34,7 +34,7 @@ test('manual update check works regardless of auto-update setting', async ({ pag
 	await expect(page.getByText(`A newer version is available ${MOCK_NEWER_VERSION}`)).toBeVisible();
 });
 
-test('displays appropriate message when on latest version', async ({ page }) => {
+test('shows "up-to-date" message when on latest version', async ({ page }) => {
 	await page.route(GITHUB_RELEASES_API, (route) =>
 		route.fulfill({ json: [{ tag_name: currentVersion }] })
 	);
@@ -45,7 +45,7 @@ test('displays appropriate message when on latest version', async ({ page }) => 
 	await expect(page.getByText('You are on the latest version')).toBeVisible();
 });
 
-test('handles Docker environment correctly', async ({ page }) => {
+test('displays Docker-specific update instructions in Docker environment', async ({ page }) => {
 	await page.route('**/api/metadata', (route) =>
 		route.fulfill({
 			json: {
@@ -66,7 +66,7 @@ test('handles Docker environment correctly', async ({ page }) => {
 	await expect(page.getByText('How to update Docker container?')).toBeVisible();
 });
 
-test('handles Desktop environment correctly', async ({ page }) => {
+test('shows download link for updates in Desktop environment', async ({ page }) => {
 	await page.route('**/api/metadata', (route) =>
 		route.fulfill({
 			json: {
@@ -87,7 +87,7 @@ test('handles Desktop environment correctly', async ({ page }) => {
 	await expect(page.getByText('Go to downloads')).toBeVisible();
 });
 
-test('displays error message when unable to check for updates', async ({ page }) => {
+test('shows error message when update check fails', async ({ page }) => {
 	await page.route(GITHUB_RELEASES_API, (route) => route.abort('failed'));
 	await page.goto('/settings');
 	const checkNowButton = page.getByRole('button', { name: 'Check now' });
@@ -96,7 +96,7 @@ test('displays error message when unable to check for updates', async ({ page })
 	await expect(page.getByRole('link', { name: 'Go to releases' })).toBeVisible();
 });
 
-test('update check on navigation when auto-update is enabled', async ({ page }) => {
+test('performs automatic update check on navigation when enabled', async ({ page }) => {
 	await page.route('**/api/metadata', (route) =>
 		route.fulfill({
 			json: {
@@ -162,7 +162,7 @@ test('update check on navigation when auto-update is enabled', async ({ page }) 
 	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 });
 
-test('no update check on navigation when auto-update is disabled', async ({ page }) => {
+test('skips automatic update check on navigation when disabled', async ({ page }) => {
 	await page.route('**/api/metadata', (route) =>
 		route.fulfill({
 			json: {
