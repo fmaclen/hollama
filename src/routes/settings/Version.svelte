@@ -1,6 +1,7 @@
 <script lang="ts">
+	import i18n from '$lib/i18n';
+	
 	import { version } from '$app/environment';
-
 	import { settingsStore } from '$lib/store';
 	import { checkForUpdates, updateStatusStore } from '$lib/updates';
 	import { GITHUB_RELEASES_URL } from '$lib/github';
@@ -27,7 +28,7 @@
 					bind:checked={$settingsStore.autoCheckForUpdates}
 					class="field-version__checkbox"
 				/>
-				Automatically check for updates
+				{$i18n.t('automatcallyCheckForUpdates')}
 			</label>
 
 			<Button
@@ -35,30 +36,34 @@
 				disabled={$updateStatusStore.isCheckingForUpdates}
 				on:click={async () => await checkForUpdates(true)}
 			>
-				Check now
+				{$i18n.t('checkNow')}
 			</Button>
 		</div>
 
 		<FieldHelp>
 			{#if $updateStatusStore.isCheckingForUpdates}
-				<P>Checking for updates...</P>
+				<P>{$i18n.t('checkingForUpdates')}</P>
 			{:else if $updateStatusStore.couldntCheckForUpdates}
 				<P>
-					Couldn't check for updates automatically.
-					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Go to releases</Button>
+					{$i18n.t('couldntCheckForUpdates')}
+					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
+						{$i18n.t('goToReleases')}
+					</Button>
 				</P>
 			{:else if $updateStatusStore.isCurrentVersionLatest}
 				<P>
-					You are on the latest version.
-					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">Release history</Button>
+					{$i18n.t('isCurrentVersionLatest')}
+					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
+						{$i18n.t('releaseHistory')}
+					</Button>
 				</P>
 			{:else if $updateStatusStore.latestVersion}
 				<P>
-					A newer version is available
+					{$i18n.t('isLatestVersion')}
 					<Badge variant="warning">{$updateStatusStore.latestVersion}</Badge>
 					{#if $updateStatusStore.canRefreshToUpdate}
 						<Button variant="link" on:click={() => window.location.reload()}>
-							Refresh to update
+							{$i18n.t('refreshToUpdate')}
 						</Button>
 					{:else if $settingsStore.hollamaServerMetadata.isDocker}
 						<Button
@@ -66,11 +71,11 @@
 							href="https://github.com/fmaclen/hollama/blob/main/SELF_HOSTING.md#updating-to-the-latest-version"
 							target="_blank"
 						>
-							How to update Docker container?
+							{$i18n.t('howToUpdateDocker')}
 						</Button>
 					{:else}
 						<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
-							Go to downloads
+							{$i18n.t('goToDownloads')}
 						</Button>
 					{/if}
 				</P>

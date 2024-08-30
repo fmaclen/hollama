@@ -42,7 +42,7 @@ test('displays appropriate message when on latest version', async ({ page }) => 
 	await page.goto('/settings');
 	const checkNowButton = page.getByRole('button', { name: 'Check now' });
 	await checkNowButton.click();
-	await expect(page.getByText('You are on the latest version.')).toBeVisible();
+	await expect(page.getByText('You are on the latest version')).toBeVisible();
 });
 
 test('handles Docker environment correctly', async ({ page }) => {
@@ -92,7 +92,7 @@ test('displays error message when unable to check for updates', async ({ page })
 	await page.goto('/settings');
 	const checkNowButton = page.getByRole('button', { name: 'Check now' });
 	await checkNowButton.click();
-	await expect(page.getByText("Couldn't check for updates automatically.")).toBeVisible();
+	await expect(page.getByText("Couldn't check for updates automatically")).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Go to releases' })).toBeVisible();
 });
 

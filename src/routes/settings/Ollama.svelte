@@ -204,8 +204,3 @@
 		</svelte:fragment>
 	</FieldInput>
 </Fieldset>
-
-<style lang="postcss">
-	.field-help__code {
-	}
-</style>
