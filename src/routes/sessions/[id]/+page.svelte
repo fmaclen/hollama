@@ -79,11 +79,6 @@
 	}
 
 	async function handleSubmitNewMessage() {
-		if (!prompt) return;
-
-		// Reset the prompt editor to its default state
-		isPromptFullscreen = false;
-
 		let knowledgeContext: Message | null = null;
 		if (knowledge) {
 			knowledgeContext = {
@@ -111,7 +106,7 @@
 	}
 
 	async function handleSubmitEditMessage() {
-		if (!prompt || messageIndexToEdit === null) return;
+		if (messageIndexToEdit === null) return;
 
 		session.messages[messageIndexToEdit].content = prompt;
 
@@ -125,7 +120,13 @@
 		prompt = '';
 	}
 
-	$: handleSubmit = messageIndexToEdit !== null ? handleSubmitEditMessage : handleSubmitNewMessage;
+	$: handleSubmit = () => {
+		if (!prompt) return;
+		isPromptFullscreen = false;
+
+		if (messageIndexToEdit !== null) handleSubmitEditMessage();
+		else handleSubmitNewMessage();
+	};
 
 	async function handleRetry(index: number) {
 		// Remove all the messages after the index
@@ -183,6 +184,7 @@
 
 	function handleEditMessage(message: Message) {
 		messageIndexToEdit = session.messages.findIndex((m) => m === message);
+		isPromptFullscreen = true;
 		prompt = message.content;
 		promptTextarea.focus();
 	}
