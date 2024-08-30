@@ -95,14 +95,8 @@
 			? [knowledgeContext, ...session.messages, message]
 			: [...session.messages, message];
 
-		let payload = {
-			model: session.model,
-			messages: session.messages,
-			stream: true
-		};
-
 		await scrollToBottom(true); // Force scroll after submitting prompt
-		await handleCompletion(payload);
+		await handleCompletion({ model: session.model, messages: session.messages });
 	}
 
 	async function handleSubmitEditMessage() {
@@ -113,11 +107,10 @@
 		// Remove all messages after the edited message
 		session.messages = session.messages.slice(0, messageIndexToEdit + 1);
 
-		let payload = { model: session.model, messages: session.messages, stream: true };
-		await handleCompletion(payload);
-
 		messageIndexToEdit = null;
 		prompt = '';
+
+		await handleCompletion({ model: session.model, messages: session.messages });
 	}
 
 	$: handleSubmit = () => {
@@ -135,13 +128,7 @@
 		const mostRecentUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
 		if (!mostRecentUserMessage) throw new Error('No user message to retry');
 
-		let payload = {
-			model: session.model,
-			messages: session.messages,
-			stream: true
-		};
-
-		await handleCompletion(payload);
+		await handleCompletion({ model: session.model, messages: session.messages });
 	}
 
 	async function handleCompletion(payload: { model: string; messages: Message[] }) {
