@@ -482,6 +482,45 @@ test.describe('Session', () => {
 		await expect(promptEditor).not.toHaveClass(/ prompt-editor--fullscreen/);
 	});
 
+	test('can edit the last message sent from user', async ({ page }) => {
+		const editButton = page.getByTitle('Edit');
+		const saveButton = page.getByText('Save & run');
+		const cancelButton = page.getByText('Cancel');
+		const userMessage = page.locator('article', { hasText: 'You' });
+
+		await page.goto('/');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+		await expect(userMessage).toBeVisible();
+		await expect(userMessage).toContainText(
+			'Who would win in a fight between Emma Watson and Jessica Alba?'
+		);
+
+		await editButton.click();
+		await expect(promptTextarea).not.toBeVisible();
+		await expect(textEditorLocator(page, 'Prompt')).toBeVisible();
+		await expect(textEditorLocator(page, 'Prompt')).toHaveText(
+			'Who would win in a fight between Emma Watson and Jessica Alba?'
+		);
+		await expect(saveButton).toBeVisible();
+		await expect(cancelButton).toBeVisible();
+
+		await textEditorLocator(page, 'Prompt').fill(
+			'Who would win in a fight between Scarlett Johansson and Jessica Alba?'
+		);
+		await saveButton.click();
+		await expect(userMessage).toBeVisible();
+		await expect(userMessage).toContainText(
+			'Who would win in a fight between Scarlett Johansson and Jessica Alba?'
+		);
+		await expect(textEditorLocator(page, 'Prompt')).not.toBeVisible();
+		await expect(saveButton).not.toBeVisible();
+		await expect(cancelButton).not.toBeVisible();
+	});
+
 	test('handles errors when generating completion response and retries', async ({ page }) => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
