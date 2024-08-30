@@ -78,7 +78,7 @@
 		userScrolledUp = scrollTop + clientHeight < scrollHeight;
 	}
 
-	async function handleSubmit() {
+	async function handleSubmitNewMessage() {
 		if (!prompt) return;
 
 		// Reset the prompt editor to its default state
@@ -109,6 +109,23 @@
 		await scrollToBottom(true); // Force scroll after submitting prompt
 		await handleCompletion(payload);
 	}
+
+	async function handleSubmitEditMessage() {
+		if (!prompt || messageIndexToEdit === null) return;
+
+		session.messages[messageIndexToEdit].content = prompt;
+
+		// Remove all messages after the edited message
+		session.messages = session.messages.slice(0, messageIndexToEdit + 1);
+
+		let payload = { model: session.model, messages: session.messages, stream: true };
+		await handleCompletion(payload);
+
+		messageIndexToEdit = null;
+		prompt = '';
+	}
+
+	$: handleSubmit = messageIndexToEdit !== null ? handleSubmitEditMessage : handleSubmitNewMessage;
 
 	async function handleRetry(index: number) {
 		// Remove all the messages after the index
@@ -164,21 +181,6 @@
 		}
 	}
 
-	async function handleSubmitEditMessage() {
-		if (!prompt || messageIndexToEdit === null) return;
-
-		session.messages[messageIndexToEdit].content = prompt;
-
-		// Remove all messages after the edited message
-		session.messages = session.messages.slice(0, messageIndexToEdit + 1);
-
-		let payload = { model: session.model, messages: session.messages, stream: true };
-		await handleCompletion(payload);
-
-		messageIndexToEdit = null;
-		prompt = '';
-	}
-
 	function handleEditMessage(message: Message) {
 		messageIndexToEdit = session.messages.findIndex((m) => m === message);
 		prompt = message.content;
@@ -189,8 +191,7 @@
 		if (event.shiftKey) return;
 		if (event.key !== 'Enter') return;
 		event.preventDefault();
-		if (messageIndexToEdit !== null) handleSubmitEditMessage();
-		else handleSubmit();
+		handleSubmit();
 	}
 
 	async function scrollToBottom(shouldForceScroll = false) {
@@ -320,9 +321,7 @@
 							{#if isPromptFullscreen}
 								<FieldTextEditor
 									label={$i18n.t('sessionsPage.prompt')}
-									handleSubmit={messageIndexToEdit !== null
-										? handleSubmitEditMessage
-										: handleSubmit}
+									{handleSubmit}
 									bind:value={prompt}
 								/>
 							{:else}
@@ -352,7 +351,7 @@
 								</Button>
 							{/if}
 							<ButtonSubmit
-								handleSubmit={messageIndexToEdit !== null ? handleSubmitEditMessage : handleSubmit}
+								{handleSubmit}
 								hasMetaKey={isPromptFullscreen}
 								disabled={!prompt ||
 									!$settingsStore?.ollamaModels.length ||
