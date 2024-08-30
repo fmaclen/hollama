@@ -334,6 +334,7 @@
 									on:click={() => {
 										prompt = '';
 										messageIndexToEdit = null;
+										isPromptFullscreen = false;
 									}}
 								>
 									{$i18n.t('cancel')}
@@ -346,9 +347,7 @@
 									!$settingsStore?.ollamaModels.length ||
 									!$settingsStore?.ollamaModel}
 							>
-								{$i18n.t(
-									messageIndexToEdit !== null ? 'sessionsPage.saveAndRun' : 'sessionsPage.run'
-								)}
+								{$i18n.t(messageIndexToEdit !== null ? 'saveAndRun' : 'sessionsPage.run')}
 							</ButtonSubmit>
 
 							{#if isCompletionInProgress}
