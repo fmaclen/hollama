@@ -28,7 +28,7 @@
 		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
 	});
 
-	onMount(async () => {
+	onMount(() => {
 		if (!browser || theme) return;
 		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 			? 'dark'
