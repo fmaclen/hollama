@@ -1,7 +1,7 @@
 <script lang="ts">
 	let className: string | undefined | null = undefined;
 	export let href: string | undefined = undefined;
-	export let variant: 'default' | 'positive' | 'warning' | undefined = 'default';
+	export let variant: 'positive' | 'warning' | undefined = undefined;
 	export { className as class };
 	export let capitalize: boolean = true;
 </script>
@@ -17,20 +17,16 @@
 
 <style lang="postcss">
 	.badge {
-		&--default {
-			@apply border border-shade-3 text-muted;
-		}
-
 		&--positive {
-			@apply bg-positive-muted text-positive;
+			@apply border-transparent bg-positive-muted text-positive;
 		}
 
 		&--warning {
-			@apply bg-warning-muted text-warning;
+			@apply border-transparent bg-warning-muted text-warning;
 		}
 
 		&--negative {
-			@apply bg-negative-muted text-negative;
+			@apply border-transparent bg-negative-muted text-negative;
 		}
 	}
 </style>

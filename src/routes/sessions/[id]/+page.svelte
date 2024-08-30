@@ -47,6 +47,7 @@
 	let prompt: string;
 	let promptTextarea: HTMLTextAreaElement;
 	let isCompletionInProgress = false;
+	let messageIndexToEdit: number | null = null;
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
@@ -76,12 +77,7 @@
 		userScrolledUp = scrollTop + clientHeight < scrollHeight;
 	}
 
-	async function handleSubmit() {
-		if (!prompt) return;
-
-		// Reset the prompt editor to its default state
-		isPromptFullscreen = false;
-
+	async function handleSubmitNewMessage() {
 		let knowledgeContext: Message | null = null;
 		if (knowledge) {
 			knowledgeContext = {
@@ -98,14 +94,30 @@
 			? [knowledgeContext, ...session.messages, message]
 			: [...session.messages, message];
 
-		let payload = {
-			model: session.model,
-			messages: session.messages,
-			stream: true
-		};
-
 		await scrollToBottom(true); // Force scroll after submitting prompt
-		await handleCompletion(payload);
+		await handleCompletion({ model: session.model, messages: session.messages });
+	}
+
+	async function handleSubmitEditMessage() {
+		if (messageIndexToEdit === null) return;
+
+		session.messages[messageIndexToEdit].content = prompt;
+
+		// Remove all messages after the edited message
+		session.messages = session.messages.slice(0, messageIndexToEdit + 1);
+
+		messageIndexToEdit = null;
+		prompt = '';
+
+		await handleCompletion({ model: session.model, messages: session.messages });
+	}
+
+	function handleSubmit() {
+		if (!prompt) return;
+		isPromptFullscreen = false;
+
+		if (messageIndexToEdit !== null) handleSubmitEditMessage();
+		else handleSubmitNewMessage();
 	}
 
 	async function handleRetry(index: number) {
@@ -115,13 +127,7 @@
 		const mostRecentUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
 		if (!mostRecentUserMessage) throw new Error('No user message to retry');
 
-		let payload = {
-			model: session.model,
-			messages: session.messages,
-			stream: true
-		};
-
-		await handleCompletion(payload);
+		await handleCompletion({ model: session.model, messages: session.messages });
 	}
 
 	async function handleCompletion(payload: { model: string; messages: Message[] }) {
@@ -158,6 +164,13 @@
 			if (typedError.name === 'AbortError') return; // User aborted the request
 			handleError(typedError);
 		}
+	}
+
+	function handleEditMessage(message: Message) {
+		messageIndexToEdit = session.messages.findIndex((m) => m === message);
+		isPromptFullscreen = true;
+		prompt = message.content;
+		promptTextarea.focus();
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
@@ -246,6 +259,7 @@
 							{message}
 							retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
 							{handleRetry}
+							{handleEditMessage}
 						/>
 					{/key}
 				{/each}
@@ -311,6 +325,18 @@
 						{/key}
 
 						<nav class="prompt-editor__toolbar">
+							{#if messageIndexToEdit !== null}
+								<Button
+									variant="outline"
+									on:click={() => {
+										prompt = '';
+										messageIndexToEdit = null;
+										isPromptFullscreen = false;
+									}}
+								>
+									{$i18n.t('cancel')}
+								</Button>
+							{/if}
 							<ButtonSubmit
 								{handleSubmit}
 								hasMetaKey={isPromptFullscreen}
@@ -319,7 +345,7 @@
 									$settingsStore.ollamaModels.length === 0 ||
 									!$settingsStore.ollamaModel}
 							>
-								{$i18n.t('sessionsPage.run')}
+								{$i18n.t(messageIndexToEdit !== null ? 'saveAndRun' : 'sessionsPage.run')}
 							</ButtonSubmit>
 
 							{#if isCompletionInProgress}

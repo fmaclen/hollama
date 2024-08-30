@@ -1,4 +1,4 @@
-`2024-8-18`
+`2024-8-30`
 
 ### Message of the day
 
@@ -8,6 +8,7 @@
 
 - **Desktop app** is now available for [Windows, macOS & Linux](https://github.com/fmaclen/hollama/releases)
 - **Download** [Ollama models](https://ollama.ai/models) directly from the [Settings](/settings) page
+- **Editable messages** in [Sessions](/sessions)
 
 #### Previously, in Hollama
 
