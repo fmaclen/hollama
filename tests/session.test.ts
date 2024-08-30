@@ -571,6 +571,48 @@ test.describe('Session', () => {
 		expect(await messagesCount.count()).toBe(2);
 	});
 
+	test('can cancel editing a message sent from user', async ({ page }) => {
+		const editButton = page.getByTitle('Edit');
+		const cancelButton = page.getByText('Cancel');
+		const userMessage = page.locator('article', { hasText: 'You' });
+
+		await page.goto('/');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+
+		await expect(userMessage).toBeVisible();
+		await expect(userMessage).toContainText(
+			'Who would win in a fight between Emma Watson and Jessica Alba?'
+		);
+		await expect(
+			page.getByText(
+				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+			)
+		).toBeVisible();
+
+		await editButton.click();
+		await expect(promptTextarea).not.toBeVisible();
+		await expect(textEditorLocator(page, 'Prompt')).toHaveText(
+			'Who would win in a fight between Emma Watson and Jessica Alba?'
+		);
+		await expect(cancelButton).toBeVisible();
+
+		await textEditorLocator(page, 'Prompt').fill(
+			'Who would win in a fight between Scarlett Johansson and Jessica Alba?'
+		);
+		await cancelButton.click();
+		await expect(userMessage).toBeVisible();
+		await expect(userMessage).toContainText(
+			'Who would win in a fight between Emma Watson and Jessica Alba?'
+		);
+		await expect(promptTextarea).toBeVisible();
+		await expect(promptTextarea).toHaveValue('');
+	});
+
 	test('handles errors when generating completion response and retries', async ({ page }) => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
