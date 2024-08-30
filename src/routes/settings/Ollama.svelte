@@ -154,7 +154,7 @@
 								href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
 								target="_blank"
 							>
-								{$i18n.t('settingsPage.createTunnel')}
+								{$i18n.t('settingsPage.creatingTunnel')}
 							</a>
 							<a
 								href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
