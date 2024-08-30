@@ -113,13 +113,13 @@
 		await handleCompletion({ model: session.model, messages: session.messages });
 	}
 
-	$: handleSubmit = () => {
+	function handleSubmit() {
 		if (!prompt) return;
 		isPromptFullscreen = false;
 
 		if (messageIndexToEdit !== null) handleSubmitEditMessage();
 		else handleSubmitNewMessage();
-	};
+	}
 
 	async function handleRetry(index: number) {
 		// Remove all the messages after the index
