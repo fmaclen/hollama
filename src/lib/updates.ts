@@ -5,7 +5,7 @@ import { get, writable } from 'svelte/store';
 import { version } from '$app/environment';
 import { settingsStore } from '$lib/store';
 import { GITHUB_RELEASES_API } from './github';
-import type { HollamaServerMetadata } from '../routes/api/metadata/+server';
+import type { HollamaMetadata } from '../routes/api/metadata/+server';
 
 const HOLLAMA_SERVER_METADATA_ENDPOINT = '/api/metadata';
 const ONE_WEEK_IN_SECONDS = 604800;
@@ -42,24 +42,21 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 	updateStatus.isCheckingForUpdates = true;
 
 	// The server may have been already updated, so we fetch the latest metadata
-	let hollamaServerResponse: Response;
+	let hollamaMetadata: Response;
 
 	try {
-		hollamaServerResponse = await fetch(HOLLAMA_SERVER_METADATA_ENDPOINT);
-		const response = (await hollamaServerResponse.json()) as HollamaServerMetadata;
-		settings.hollamaServerMetadata = response;
+		hollamaMetadata = await fetch(HOLLAMA_SERVER_METADATA_ENDPOINT);
+		const response = (await hollamaMetadata.json()) as HollamaMetadata;
+		settings.hollamaMetadata = response;
 	} catch (_) {
 		console.error('Failed to fetch Hollama server metadata');
 		updateStatus.couldntCheckForUpdates = true;
 	}
 
 	// Determine if the server has been updated, and if so, which version is the latest
-	updateStatus.canRefreshToUpdate = semver.lt(
-		version,
-		settings.hollamaServerMetadata.currentVersion
-	);
+	updateStatus.canRefreshToUpdate = semver.lt(version, settings.hollamaMetadata.currentVersion);
 	updateStatus.isCurrentVersionLatest = !updateStatus.canRefreshToUpdate;
-	updateStatus.latestVersion = settings.hollamaServerMetadata.currentVersion;
+	updateStatus.latestVersion = settings.hollamaMetadata.currentVersion;
 	updateStatus.showSidebarNotification = !updateStatus.isCurrentVersionLatest;
 
 	if (updateStatus.canRefreshToUpdate) {
@@ -68,11 +65,11 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 		updateStatus.isCheckingForUpdates = false;
 	} else {
 		// The server hasn't been updated, so we check if Github has a newer version
-		let githubServerResponse: Response;
+		let githubReleases: Response;
 
 		try {
-			githubServerResponse = await fetch(GITHUB_RELEASES_API);
-			const response = await githubServerResponse.json();
+			githubReleases = await fetch(GITHUB_RELEASES_API);
+			const response = await githubReleases.json();
 			if (response[0]?.tag_name && response[0].tag_name !== '')
 				updateStatus.latestVersion = response[0].tag_name;
 		} catch (_) {
@@ -82,7 +79,7 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 
 		updateStatus.isCurrentVersionLatest = semver.lt(
 			updateStatus.latestVersion,
-			settings.hollamaServerMetadata.currentVersion
+			settings.hollamaMetadata.currentVersion
 		);
 		updateStatus.showSidebarNotification = !updateStatus.isCurrentVersionLatest;
 		updateStatus.isCheckingForUpdates = false;

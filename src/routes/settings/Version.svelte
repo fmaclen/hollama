@@ -65,7 +65,7 @@
 						<Button variant="link" on:click={() => window.location.reload()}>
 							{$i18n.t('refreshToUpdate')}
 						</Button>
-					{:else if $settingsStore.hollamaServerMetadata.isDocker}
+					{:else if $settingsStore.hollamaMetadata.isDocker}
 						<Button
 							variant="link"
 							href="https://github.com/fmaclen/hollama/blob/main/SELF_HOSTING.md#updating-to-the-latest-version"

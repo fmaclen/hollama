@@ -4,7 +4,7 @@ import { writable } from 'svelte/store';
 import type { Session } from '$lib/sessions';
 import type { Knowledge } from './knowledge';
 import { env } from '$env/dynamic/public';
-import type { HollamaServerMetadata } from '../routes/api/metadata/+server';
+import type { HollamaMetadata } from '../routes/api/metadata/+server';
 
 function createLocalStorageStore<T>(key: string, defaultValue: T) {
 	const initialValue: T = browser
@@ -55,7 +55,7 @@ export interface Settings {
 	lastUpdateCheck: number | null;
 	autoCheckForUpdates: boolean;
 	userTheme: 'light' | 'dark';
-	hollamaServerMetadata: HollamaServerMetadata;
+	hollamaMetadata: HollamaMetadata;
 }
 
 const defaultSettings: Settings = {
@@ -66,7 +66,7 @@ const defaultSettings: Settings = {
 	lastUpdateCheck: null,
 	autoCheckForUpdates: false,
 	userTheme: 'light',
-	hollamaServerMetadata: {
+	hollamaMetadata: {
 		currentVersion: version,
 		isDesktop: env.PUBLIC_ADAPTER === 'electron-node',
 		isDocker: env.PUBLIC_ADAPTER === 'docker-node'
