@@ -40,8 +40,9 @@ test('shows "up-to-date" message when on latest version', async ({ page }) => {
 	);
 
 	await page.goto('/settings');
-	const checkNowButton = page.getByRole('button', { name: 'Check now' });
-	await checkNowButton.click();
+	await expect(page.getByText('You are on the latest version')).not.toBeVisible();
+
+	await page.getByRole('button', { name: 'Check now' }).click();
 	await expect(page.getByText('You are on the latest version')).toBeVisible();
 });
 

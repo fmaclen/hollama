@@ -7,7 +7,8 @@ import { settingsStore } from '$lib/store';
 import { GITHUB_RELEASES_API } from './github';
 import type { HollamaMetadata } from '../routes/api/metadata/+server';
 
-const HOLLAMA_SERVER_METADATA_ENDPOINT = '/api/metadata';
+const HOLLAMA_DEV_VERSION_SUFFIX = '-dev';
+const HOLLAMA_METADATA_ENDPOINT = '/api/metadata';
 const ONE_WEEK_IN_SECONDS = 604800;
 
 export interface UpdateStatus {
@@ -21,19 +22,30 @@ export interface UpdateStatus {
 
 export const updateStatusStore = writable<UpdateStatus>({
 	canRefreshToUpdate: false,
-	isCurrentVersionLatest: true,
+	isCurrentVersionLatest: false,
 	isCheckingForUpdates: false,
 	showSidebarNotification: false,
 	couldntCheckForUpdates: false,
-	latestVersion: version // Default to the current version
+	latestVersion: ''
 });
+
+// In development and test environments we append a '-dev' suffix to the version
+// to indicate that it's a development version. This function strips the suffix
+// so it can be compared using `semver`
+function isCurrentVersionLatest(currentVersion: string, latestVersion: string): boolean {
+	return currentVersion === latestVersion ||
+		semver.gt(
+			currentVersion.replace(HOLLAMA_DEV_VERSION_SUFFIX, ''),
+			latestVersion.replace(HOLLAMA_DEV_VERSION_SUFFIX, '')
+		);
+}
 
 export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 	const settings = get(settingsStore);
 	if (!(settings.autoCheckForUpdates === false)) settings.autoCheckForUpdates = true;
 
 	// If the user hasn't initiated the check we check if the last update check
-	// was made more than a week ago.
+	// was made more than a week ago
 	const oneWeekAgoInSeconds = getUnixTime(new Date()) - ONE_WEEK_IN_SECONDS;
 	if (!settings.lastUpdateCheck) settings.lastUpdateCheck = oneWeekAgoInSeconds - 1;
 	if (!isUserInitiated && settings.lastUpdateCheck > oneWeekAgoInSeconds) return;
@@ -45,7 +57,7 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 	let hollamaMetadata: Response;
 
 	try {
-		hollamaMetadata = await fetch(HOLLAMA_SERVER_METADATA_ENDPOINT);
+		hollamaMetadata = await fetch(HOLLAMA_METADATA_ENDPOINT);
 		const response = (await hollamaMetadata.json()) as HollamaMetadata;
 		settings.hollamaMetadata = response;
 	} catch (_) {
@@ -54,9 +66,12 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 	}
 
 	// Determine if the server has been updated, and if so, which version is the latest
-	updateStatus.canRefreshToUpdate = semver.lt(version, settings.hollamaMetadata.currentVersion);
-	updateStatus.isCurrentVersionLatest = !updateStatus.canRefreshToUpdate;
 	updateStatus.latestVersion = settings.hollamaMetadata.currentVersion;
+	updateStatus.isCurrentVersionLatest = isCurrentVersionLatest(
+		version,
+		updateStatus.latestVersion
+	);
+	updateStatus.canRefreshToUpdate = !updateStatus.isCurrentVersionLatest;
 	updateStatus.showSidebarNotification = !updateStatus.isCurrentVersionLatest;
 
 	if (updateStatus.canRefreshToUpdate) {
@@ -77,9 +92,9 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 			updateStatus.couldntCheckForUpdates = true;
 		}
 
-		updateStatus.isCurrentVersionLatest = semver.lt(
-			updateStatus.latestVersion,
-			settings.hollamaMetadata.currentVersion
+		updateStatus.isCurrentVersionLatest = isCurrentVersionLatest(
+			settings.hollamaMetadata.currentVersion,
+			updateStatus.latestVersion
 		);
 		updateStatus.showSidebarNotification = !updateStatus.isCurrentVersionLatest;
 		updateStatus.isCheckingForUpdates = false;
