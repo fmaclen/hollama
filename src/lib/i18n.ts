@@ -24,6 +24,7 @@ i18next.init({
 				success: 'Success',
 				error: 'Error',
 				pullingModel: 'Pulling model',
+				pullModelPlaceholder: 'Model tag (e.g. llama3.1)',
 				modelWasDownloaded: '{{model}} was downloaded',
 				sessionsPage: {
 					new: 'New session',
@@ -54,7 +55,6 @@ i18next.init({
 					server: 'Server',
 					availableModels: 'Available models',
 					pullModel: 'Pull model',
-					pullModelPlaceholder: 'Model tag (e.g. llama3.1)',
 					downloadModel: 'Download model',
 					disconnected: 'disconnected',
 					connected: 'connected',
@@ -64,14 +64,13 @@ i18next.init({
 					deleteServerSettings: 'Delete server settings',
 					version: 'Version',
 					allowConnections: 'Change your server settings to allow connections from',
-					seeDocs: 'see docs',
+					seeDocs: 'See docs',
 					checkBrowserExtensions: 'Also check no browser extensions are blocking the connection',
 					tryingToConnectNotLocalhost:
-						'If you want to connect to an Ollama server that is not available on <code class="code">localhost</code> or <code class="code">127.0.0.1</code> you will need to',
-					createTunnel: 'create a tunnel',
-					or: 'or',
-					allowMixedContent: 'allow mixed content',
-					browseModels: 'Browse the list of available models in',
+						'If you want to connect to an Ollama server that is not available on <code class="badge">localhost</code> or <code class="badge">127.0.0.1</code> try',
+					createTunnel: 'Create a tunnel',
+					allowMixedContent: 'Allow mixed content',
+					browseModels: 'Browse the list of available models',
 					ollamaLibrary: "Ollama's library"
 				},
 				dialogs: {
