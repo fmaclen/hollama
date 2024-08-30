@@ -9,7 +9,7 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 - Code editor features
 - Customizable system prompts
 - Copy code snippets, messages or entire sessions
-- Retry completions
+- Edit & retry messages
 - Stores data locally on your browser
 - Responsive layout
 - Light & dark themes
