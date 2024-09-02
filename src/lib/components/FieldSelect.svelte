@@ -1,48 +1,94 @@
 <script lang="ts">
-	import Select from 'svelte-select';
+	// HACK: `svelte-select` doesn't have type definitions for the no-styles version
+	// REF https://github.com/rob-balfre/svelte-select/pull/665
+	// @ts-ignore
+	import Select from 'svelte-select/no-styles/Select.svelte';
 	import Field from './Field.svelte';
 
 	export let name: string;
 	export let label: string;
 	export let disabled: boolean | undefined = false;
-	export let options: { value: string; option: string }[] = [];
+	export let items: { value: string; label: string; group?: string }[] = [];
 	export let value: string | null = null;
+
+	function groupBy(item: { value: string; label: string; group?: string }) {
+		return item.group;
+	}
 </script>
 
 <Field {name} {disabled} hasNav={$$slots.nav}>
 	<svelte:fragment slot="label">{label}</svelte:fragment>
-	<div class="select-container">
-		<!-- TODO fix styles -->
-		<Select
-			id={name}
-			containerStyles={'background-color: transparent; border: none;'}
-			{disabled}
-			bind:value
-			items={options.map((option) => option.value)}
-			showChevron={true}
-		/>
-	</div>
+	<Select
+		id={name}
+		{items}
+		{disabled}
+		{groupBy}
+		showChevron={true}
+		bind:value
+	/>
+
+	<svelte:fragment slot="nav">
+		<slot name="nav" />
+	</svelte:fragment>
 </Field>
 
-<!-- <Field {name} {disabled}>
-	<svelte:fragment slot="label">{label}</svelte:fragment>
-	<div class="select-container">
-		<select id={name} class="select" {disabled} bind:value>
-			<option></option>
-			{#each options as { value, option }}
-				<option {value}>{option}</option>
-			{/each}
-		</select>
-		<ChevronDown class="bg-base -ml-2 mb-2 mr-2 h-4 w-4" />
-	</div>
-</Field> -->
 
 <style lang="postcss">
-	.select-container {
-		@apply flex items-center;
+	:global(.svelte-select) {
+		@apply flex;
 	}
 
-	/* .select {
-		@apply base-input cursor-pointer appearance-none;
-	} */
+	:global(.svelte-select .value-container) {
+		@apply relative w-full;
+	}
+
+	:global(.svelte-select .value-container .selected-item) {
+		@apply base-input;
+	}
+
+	:global(.svelte-select .value-container .hide-selected-item) {
+		@apply opacity-0;
+	}
+
+	:global(.svelte-select .value-container input) {
+		@apply base-input absolute inset-0 w-full;
+	}
+
+	:global(.svelte-select .indicators) {
+		@apply flex items-start gap-x-4 px-3 pb-2;
+	}
+
+	:global(.svelte-select .indicators .icon svg) {
+		@apply h-5 w-5 opacity-50;
+	}
+
+	:global(.svelte-select .a11y-text) {
+		@apply hidden;
+	}
+
+	:global(.svelte-select .svelte-select-list) {
+		@apply focused-outline rounded-md border border-shade-4 bg-shade-0 max-h-[33dvh] overflow-y-auto;
+	}
+
+	:global(.svelte-select .list-item) {
+		@apply list-none;
+	}
+
+	:global(.svelte-select .empty) {
+		@apply text-muted w-full;
+	}
+
+	:global(.svelte-select .empty),
+	:global(.svelte-select .item),
+	:global(.svelte-select .group-item) {
+		@apply cursor-pointer px-3 py-1.5;
+	}
+
+	:global(.svelte-select .hover) {
+		@apply bg-shade-1;
+	}
+
+	:global(.svelte-select .list-group-title) {
+		@apply border-b border-shade-2 px-3 py-2 text-xs font-medium text-muted;
+	}
 </style>

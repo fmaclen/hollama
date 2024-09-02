@@ -286,7 +286,7 @@
 									label={$i18n.t('sessionsPage.systemPrompt')}
 									name="knowledge"
 									disabled={$knowledgeStore.length === 0}
-									options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
+									items={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
 									bind:value={knowledgeId}
 								>
 									<svelte:fragment slot="nav">

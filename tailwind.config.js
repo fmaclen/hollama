@@ -51,8 +51,11 @@ const config = {
 		function ({ addComponents }) {
 			addComponents({
 				'.base-input': {
-					'@apply flex w-full outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-transparent px-3 pb-3 placeholder:text-shade-6':
+					'@apply flex w-full outline-none leading-none disabled:cursor-not-allowed disabled:opacity-50 bg-transparent px-3 pb-3 placeholder:text-shade-6':
 						{}
+				},
+				'.focused-outline': {
+					'@apply border-shade-6 outline outline-shade-2': {}
 				},
 				'.base-section': {
 					'@apply h-full w-full overflow-y-auto border-t bg-shade-2 lg:rounded-xl lg:border': {}

@@ -4,15 +4,17 @@
 	import FieldSelect from './FieldSelect.svelte';
 
 	export let disabled: boolean = false;
-
-	let value: string = $settingsStore.ollamaModel || '';
+	let items: { value: string; label: string, group?: string }[] = [];
+	let initialValue: string = $settingsStore.ollamaModel || '';
+	let value: string = initialValue;
 	$: $settingsStore.ollamaModel = value;
+	$: items = $settingsStore.ollamaModels.map((m) => ({ value: m.name, label: m.name }))
 </script>
 
 <FieldSelect
-	label={$i18n.t('settingsPage.availableModels')}
 	name="model"
-	options={$settingsStore.ollamaModels.map((m) => ({ value: m.name, option: m.name }))}
+	label={$i18n.t('settingsPage.availableModels')}
 	disabled={disabled || !$settingsStore.ollamaModels.length}
-	bind:value
+	{items}
+	bind:value={initialValue}
 />

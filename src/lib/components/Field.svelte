@@ -35,7 +35,7 @@
 
 	.field__container {
 		@apply flex w-full flex-col gap-y-1 rounded-md border bg-shade-0 text-sm;
-		@apply focus-within:border-shade-6 focus-within:outline focus-within:outline-shade-2;
+		@apply focus-within:focused-outline;
 
 		&--disabled {
 			@apply bg-shade-1;
