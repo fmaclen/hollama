@@ -2,15 +2,17 @@
 	import { type Message } from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
+	import i18n from '$lib/i18n';
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import Badge from '$lib/components/Badge.svelte';
-	import { Brain, RefreshCw } from 'lucide-svelte';
+	import { Brain, Pencil, RefreshCw } from 'lucide-svelte';
 	import Markdown from '$lib/components/Markdown.svelte';
 
 	export let message: Message;
 	export let retryIndex: number | undefined = undefined;
 	export let handleRetry: ((index: number) => void) | undefined = undefined;
+	export let handleEditMessage: ((message: Message) => void) | undefined = undefined;
 
 	const isUserRole = message.role === 'user';
 </script>
@@ -20,21 +22,30 @@
 		<div data-testid="session-role" class="article__role">
 			<Badge>
 				{#if isUserRole}
-					You
+					{$i18n.t('you')}
 				{:else}
-					{message.role}
+					{$i18n.t(`${message.role}`)}
 				{/if}
 			</Badge>
 		</div>
 		<div class="article__interactive">
 			{#if retryIndex}
 				<Button
-					title="Retry"
+					title={$i18n.t('retry')}
 					variant="icon"
 					id="retry-index-{retryIndex}"
 					on:click={() => handleRetry && handleRetry(retryIndex)}
 				>
 					<RefreshCw class="h-4 w-4" />
+				</Button>
+			{/if}
+			{#if isUserRole}
+				<Button
+					title={$i18n.t('edit')}
+					variant="icon"
+					on:click={() => handleEditMessage && handleEditMessage(message)}
+				>
+					<Pencil class="h-4 w-4" />
 				</Button>
 			{/if}
 			<ButtonCopy content={message.content} />
@@ -46,7 +57,7 @@
 			<Button
 				variant="outline"
 				href={generateNewUrl(Sitemap.KNOWLEDGE, message.knowledge.id)}
-				aria-label="Go to knowledge"
+				aria-label={$i18n.t('sessionsPage.goToKnowledge')}
 			>
 				{message.knowledge.name}
 				<Brain class="-mr-1 ml-2 h-4 w-4" />

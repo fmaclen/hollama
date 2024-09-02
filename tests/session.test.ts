@@ -1,4 +1,4 @@
-import { expect, test, type Locator } from '@playwright/test';
+import { expect, test, type Dialog, type Locator } from '@playwright/test';
 import {
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_SESSION_1_RESPONSE_1,
@@ -197,7 +197,7 @@ test.describe('Session', () => {
 			'What does the fox say?'
 		);
 		expect(await page.getByTestId('session-item').first().textContent()).toContain(
-			'openhermes2.5-mistral:latest'
+			MOCK_API_TAGS_RESPONSE.models[1].name
 		);
 		expect(await page.getByTestId('session-item').last().textContent()).toContain(
 			'Who would win in a fight between Emma Watson and Jessica Alba?'
@@ -321,7 +321,7 @@ test.describe('Session', () => {
 		await page.getByText('Sessions', { exact: true }).click();
 		await expect(page.getByText('No sessions')).toBeVisible();
 		await expect(page.getByTestId('session-item')).toHaveCount(0);
-		expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe('null');
+		expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe('[]');
 	});
 
 	test('can copy the raw text of a message or code snippets to clipboard', async ({ page }) => {
@@ -405,7 +405,7 @@ test.describe('Session', () => {
 		page
 	}) => {
 		const sendButton = page.getByText('Run');
-		const stopButton = page.getByTitle('Stop response');
+		const stopButton = page.getByTitle('Stop completion');
 		const userMessage = page.locator('article', { hasText: 'You' });
 		const aiMessage = page.locator('article', { hasText: 'Assistant' });
 		const sessionMetadata = page.getByTestId('session-metadata');
@@ -482,6 +482,98 @@ test.describe('Session', () => {
 		await expect(promptEditor).not.toHaveClass(/ prompt-editor--fullscreen/);
 	});
 
+	test('can edit the first message and the next get removed', async ({ page }) => {
+		const messagesCount = page.locator('.article');
+		await page.goto('/');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+		await expect(
+			page.getByText(
+				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+			)
+		).toBeVisible();
+		expect(await messagesCount.count()).toBe(2);
+
+		await promptTextarea.fill(
+			'Who would win in a fight between Scarlett Johansson and Jessica Alba?'
+		);
+		await page.getByText('Run').click();
+
+		expect(
+			await page
+				.getByText(
+					'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+				)
+				.count()
+		).toBe(2);
+
+		expect(await messagesCount.count()).toBe(4);
+
+		await page.locator('.article', { hasText: 'You' }).first().hover();
+		await page.locator('.article', { hasText: 'You' }).first().getByTitle('Edit').click();
+		await textEditorLocator(page, 'Prompt').fill('Hello world!');
+		await page.getByText('Save & run').click();
+
+		expect(
+			await page
+				.getByText(
+					'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+				)
+				.count()
+		).toBe(1);
+
+		await expect(page.getByText('Who would win in a fight between')).not.toBeVisible();
+
+		expect(await messagesCount.count()).toBe(2);
+	});
+
+	test('can cancel editing a message sent from user', async ({ page }) => {
+		const editButton = page.getByTitle('Edit');
+		const cancelButton = page.getByText('Cancel');
+		const userMessage = page.locator('article', { hasText: 'You' });
+
+		await page.goto('/');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+
+		await expect(userMessage).toBeVisible();
+		await expect(userMessage).toContainText(
+			'Who would win in a fight between Emma Watson and Jessica Alba?'
+		);
+		await expect(
+			page.getByText(
+				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+			)
+		).toBeVisible();
+
+		await editButton.click();
+		await expect(promptTextarea).not.toBeVisible();
+		await expect(textEditorLocator(page, 'Prompt')).toHaveText(
+			'Who would win in a fight between Emma Watson and Jessica Alba?'
+		);
+		await expect(cancelButton).toBeVisible();
+
+		await textEditorLocator(page, 'Prompt').fill(
+			'Who would win in a fight between Scarlett Johansson and Jessica Alba?'
+		);
+		await cancelButton.click();
+		await expect(userMessage).toBeVisible();
+		await expect(userMessage).toContainText(
+			'Who would win in a fight between Emma Watson and Jessica Alba?'
+		);
+		await expect(promptTextarea).toBeVisible();
+		await expect(promptTextarea).toHaveValue('');
+	});
+
 	test('handles errors when generating completion response and retries', async ({ page }) => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
@@ -525,7 +617,8 @@ test.describe('Session', () => {
 		await expect(page.getByText('Sorry, something went wrong.')).toBeVisible();
 		await expect(
 			page.locator('code', {
-				hasText: 'Error: Did not receive done or success response in stream.'
+				hasText:
+					"SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)"
 			})
 		).toBeVisible();
 
@@ -633,5 +726,65 @@ test.describe('Session', () => {
 
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(page.getByText('Run')).toBeDisabled();
+	});
+
+	test('can navigate out of session during completion', async ({ page }) => {
+		const runButton = page.getByText('Run');
+
+		let dialogHandler: (dialog: Dialog) => Promise<void>;
+		page.on('dialog', async (dialog) => await dialogHandler(dialog));
+
+		await page.goto('/');
+		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		// Start a streamed completion
+		await page.route('**/chat', () => {});
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await runButton.click();
+
+		// Wait for the completion to start
+		await expect(page.getByText('...')).toBeVisible();
+
+		// Set up dialog handler to cancel
+		dialogHandler = async (dialog) => {
+			expect(dialog.message()).toContain(
+				'Are you sure you want to leave?\nThe completion in progress will stop'
+			);
+			await dialog.dismiss();
+		};
+
+		// Attempt to navigate away
+		await page.getByText('Settings', { exact: true }).click();
+
+		// Check that we're still on the session page
+		await expect(page.getByTestId('session-id')).toBeVisible();
+
+		// Start another streamed completion
+		await promptTextarea.fill('Another test prompt');
+		await runButton.click();
+
+		// Wait for the completion to start
+		await expect(page.getByText('...')).toBeVisible();
+
+		// Set up dialog handler to confirm
+		dialogHandler = async (dialog) => {
+			expect(dialog.message()).toContain(
+				'Are you sure you want to leave?\nThe completion in progress will stop'
+			);
+			await dialog.accept();
+		};
+
+		// Attempt to navigate away again
+		await page.getByText('Settings', { exact: true }).click();
+
+		// Check that we've navigated to the settings page
+		expect(page.url()).toContain('/settings');
+
+		// Check that the completion has stopped
+		await page.goto('/sessions');
+		const sessionsCount = await page.locator('.session__history').count();
+		expect(sessionsCount).toBe(0);
 	});
 });

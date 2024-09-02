@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { Ollama } from 'ollama/browser';
 	import { afterUpdate, tick } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { Brain, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { Brain, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
+	import { beforeNavigate } from '$app/navigation';
 
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore, knowledgeStore } from '$lib/store';
-	import { ollamaTags } from '$lib/ollama';
+	import { ollamaChat, ollamaTags } from '$lib/ollama';
 	import {
 		saveSession,
 		type Message,
@@ -18,6 +18,7 @@
 	} from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
+	import i18n from '$lib/i18n';
 	import type { PageData } from './$types';
 
 	import Button from '$lib/components/Button.svelte';
@@ -44,8 +45,9 @@
 	let completion: string;
 	let abortController: AbortController;
 	let prompt: string;
-	let promptCached: string;
 	let promptTextarea: HTMLTextAreaElement;
+	let isCompletionInProgress = false;
+	let messageIndexToEdit: number | null = null;
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
@@ -54,20 +56,18 @@
 
 	$: session = loadSession(data.id);
 	$: isNewSession = !session?.messages.length;
-	$: isLastMessageFromUser = session?.messages[session.messages.length - 1]?.role === 'user';
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
-	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
+	$: if ($settingsStore.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: if (messageWindow) messageWindow.addEventListener('scroll', handleScroll);
 	$: if (data.id) handleSessionChange();
 
 	async function handleSessionChange() {
-		if (!$settingsStore) return;
 		try {
 			$settingsStore.ollamaModels = (await ollamaTags()).models;
 		} catch {
 			$settingsStore.ollamaModels = [];
-			toast.warning("Can't connect to Ollama server");
+			toast.warning($i18n.t('errors.cantConnectToOllamaServer'));
 		}
 		scrollToBottom();
 	}
@@ -77,12 +77,7 @@
 		userScrolledUp = scrollTop + clientHeight < scrollHeight;
 	}
 
-	async function handleSubmit() {
-		if (!prompt) return;
-
-		// Reset the prompt editor to its default state
-		isPromptFullscreen = false;
-
+	async function handleSubmitNewMessage() {
 		let knowledgeContext: Message | null = null;
 		if (knowledge) {
 			knowledgeContext = {
@@ -95,19 +90,34 @@
 		}
 
 		const message: Message = { role: 'user', content: prompt };
-		promptCached = prompt;
-		prompt = '';
 		session.messages = knowledgeContext
 			? [knowledgeContext, ...session.messages, message]
 			: [...session.messages, message];
 
-		let payload = {
-			model: session.model,
-			messages: session.messages,
-			stream: true
-		};
+		await scrollToBottom(true); // Force scroll after submitting prompt
+		await handleCompletion({ model: session.model, messages: session.messages });
+	}
 
-		await handleCompletion(payload);
+	async function handleSubmitEditMessage() {
+		if (messageIndexToEdit === null) return;
+
+		session.messages[messageIndexToEdit].content = prompt;
+
+		// Remove all messages after the edited message
+		session.messages = session.messages.slice(0, messageIndexToEdit + 1);
+
+		messageIndexToEdit = null;
+		prompt = '';
+
+		await handleCompletion({ model: session.model, messages: session.messages });
+	}
+
+	function handleSubmit() {
+		if (!prompt) return;
+		isPromptFullscreen = false;
+
+		if (messageIndexToEdit !== null) handleSubmitEditMessage();
+		else handleSubmitNewMessage();
 	}
 
 	async function handleRetry(index: number) {
@@ -117,33 +127,20 @@
 		const mostRecentUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
 		if (!mostRecentUserMessage) throw new Error('No user message to retry');
 
-		let payload = {
-			model: session.model,
-			messages: session.messages,
-			stream: true
-		};
-
-		await handleCompletion(payload);
+		await handleCompletion({ model: session.model, messages: session.messages });
 	}
 
 	async function handleCompletion(payload: { model: string; messages: Message[] }) {
 		abortController = new AbortController();
+		isCompletionInProgress = true;
+		prompt = ''; // Reset the prompt form field
 		completion = '';
 
 		try {
-			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
-
-			const ollama = new Ollama({ host: $settingsStore.ollamaServer });
-			const response = await ollama.chat({
-				model: payload.model,
-				messages: payload.messages,
-				stream: true
-			});
-
-			for await (const part of response) {
-				completion += part.message.content;
+			await ollamaChat(payload, abortController.signal, async (chunk) => {
+				completion += chunk;
 				await scrollToBottom();
-			}
+			});
 
 			// After the completion save the session
 			const message: Message = { role: 'assistant', content: completion };
@@ -159,8 +156,8 @@
 
 			// Final housekeeping
 			completion = '';
-			promptCached = '';
 			shouldFocusTextarea = true;
+			isCompletionInProgress = false;
 			await scrollToBottom();
 		} catch (error) {
 			const typedError = error instanceof Error ? error : new Error(String(error));
@@ -169,12 +166,11 @@
 		}
 	}
 
-	function resetPrompt() {
-		// Reset the prompt to the last sent message
-		prompt = promptCached;
-		promptCached = '';
-		// Remove the "incomplete" AI response
-		session.messages = session.messages.slice(0, -1);
+	function handleEditMessage(message: Message) {
+		messageIndexToEdit = session.messages.findIndex((m) => m === message);
+		isPromptFullscreen = true;
+		prompt = message.content;
+		promptTextarea.focus();
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
@@ -184,23 +180,38 @@
 		handleSubmit();
 	}
 
-	async function scrollToBottom() {
-		if (!messageWindow || userScrolledUp) return;
+	async function scrollToBottom(shouldForceScroll = false) {
+		if (!shouldForceScroll && (!messageWindow || userScrolledUp)) return;
 		await tick();
-		messageWindow.scrollTop = messageWindow.scrollHeight;
+		requestAnimationFrame(() => (messageWindow.scrollTop = messageWindow.scrollHeight));
 	}
 
 	function handleError(error: Error) {
 		let content: string;
-		if (error.message === 'Failed to fetch') {
-			content = `Couldn't connect to Ollama. Is the [server running](/settings)?`;
-		} else {
-			content = `Sorry, something went wrong.\n\`\`\`\n${error}\n\`\`\``;
-		}
+		if (error.message === 'Failed to fetch') content = $i18n.t('errors.ollamaConnectionError');
+		else content = $i18n.t('errors.genericError', { error });
 
 		const message: Message = { role: 'system', content };
 		session.messages = [...session.messages, message];
 	}
+
+	function stopCompletion() {
+		prompt = session.messages[session.messages.length - 1].content; // Reset the prompt to the last sent message
+		abortController.abort();
+		completion = '';
+		isCompletionInProgress = false;
+		session.messages = session.messages.slice(0, -1); // Remove the "incomplete" AI response
+	}
+
+	beforeNavigate((navigation) => {
+		if (!isCompletionInProgress) return;
+		const userConfirmed = confirm($i18n.t('dialogs.areYouSureYouWantToLeave'));
+		if (userConfirmed) {
+			stopCompletion();
+			return;
+		}
+		navigation.cancel();
+	});
 
 	afterUpdate(() => {
 		if (shouldFocusTextarea && promptTextarea) {
@@ -211,13 +222,19 @@
 </script>
 
 <div class="session">
-	<Head title={[isNewSession ? 'New session' : getSessionTitle(session), 'Sessions']} />
+	<Head
+		title={[
+			isNewSession ? $i18n.t('sessionsPage.new') : getSessionTitle(session),
+			$i18n.t('sessions', { count: 0 })
+		]}
+	/>
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
-			Session <Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
+			{$i18n.t('sessions', { count: 1 })}
+			<Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
 		</p>
 		<Metadata dataTestid="session-metadata">
-			{isNewSession ? 'New session' : formatSessionMetadata(session)}
+			{isNewSession ? $i18n.t('sessionsPage.new') : formatSessionMetadata(session)}
 		</Metadata>
 
 		<svelte:fragment slot="nav">
@@ -233,7 +250,7 @@
 		<div class="session__history" bind:this={messageWindow}>
 			<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
 				{#if isNewSession}
-					<EmptyMessage>Write a prompt to start a new session</EmptyMessage>
+					<EmptyMessage>{$i18n.t('sessionsPage.writePromptToStart')}</EmptyMessage>
 				{/if}
 
 				{#each session.messages as message, i (session.id + i)}
@@ -242,11 +259,12 @@
 							{message}
 							retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
 							{handleRetry}
+							{handleEditMessage}
 						/>
 					{/key}
 				{/each}
 
-				{#if isLastMessageFromUser}
+				{#if isCompletionInProgress}
 					<Article message={{ role: 'assistant', content: completion || '...' }} />
 				{/if}
 			</div>
@@ -264,36 +282,40 @@
 						{#if isNewSession}
 							<div class="prompt-editor__project">
 								<FieldSelectModel />
-								<div class="prompt-editor__knowledge">
-									<FieldSelect
-										label="System prompt"
-										name="knowledge"
-										disabled={!$knowledgeStore}
-										options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
-										bind:value={knowledgeId}
-									/>
-
-									<Button
-										aria-label="New knowledge"
-										variant="outline"
-										href={generateNewUrl(Sitemap.KNOWLEDGE)}
-										class="h-full text-muted"
-									>
-										<Brain class="h-4 w-4" />
-									</Button>
-								</div>
+								<FieldSelect
+									label={$i18n.t('sessionsPage.systemPrompt')}
+									name="knowledge"
+									disabled={$knowledgeStore.length === 0}
+									options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
+									bind:value={knowledgeId}
+								>
+									<svelte:fragment slot="nav">
+										<Button
+											aria-label={$i18n.t('knowledgePage.new')}
+											variant="outline"
+											href={generateNewUrl(Sitemap.KNOWLEDGE)}
+											class="h-full text-muted"
+										>
+											<Brain class="h-4 w-4" />
+										</Button>
+									</svelte:fragment>
+								</FieldSelect>
 							</div>
 						{/if}
 
 						{#key session}
 							{#if isPromptFullscreen}
-								<FieldTextEditor label="Prompt" {handleSubmit} bind:value={prompt} />
+								<FieldTextEditor
+									label={$i18n.t('sessionsPage.prompt')}
+									{handleSubmit}
+									bind:value={prompt}
+								/>
 							{:else}
 								<Field name="prompt">
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
-										placeholder="Write literally anything"
+										placeholder={$i18n.t('sessionsPage.promptPlaceholder')}
 										bind:this={promptTextarea}
 										bind:value={prompt}
 										on:keydown={handleKeyDown}
@@ -303,26 +325,39 @@
 						{/key}
 
 						<nav class="prompt-editor__toolbar">
+							{#if messageIndexToEdit !== null}
+								<Button
+									variant="outline"
+									on:click={() => {
+										prompt = '';
+										messageIndexToEdit = null;
+										isPromptFullscreen = false;
+									}}
+								>
+									{$i18n.t('cancel')}
+								</Button>
+							{/if}
 							<ButtonSubmit
 								{handleSubmit}
 								hasMetaKey={isPromptFullscreen}
 								disabled={!prompt ||
-									!$settingsStore?.ollamaModels.length ||
-									!$settingsStore?.ollamaModel}
+									$settingsStore.ollamaServerStatus === 'disconnected' ||
+									$settingsStore.ollamaModels.length === 0 ||
+									!$settingsStore.ollamaModel}
 							>
-								Run
+								{$i18n.t(messageIndexToEdit !== null ? 'saveAndRun' : 'sessionsPage.run')}
 							</ButtonSubmit>
 
-							{#if isLastMessageFromUser}
-								<Button
-									title="Stop response"
-									variant="outline"
-									on:click={() => {
-										abortController.abort();
-										resetPrompt();
-									}}
-								>
-									<StopCircle class="h-4 w-4" />
+							{#if isCompletionInProgress}
+								<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
+									<div class="prompt-editor__stop">
+										<span class="prompt-editor__stop-icon">
+											<StopCircle class=" h-4 w-4" />
+										</span>
+										<span class="prompt-editor__loading-icon">
+											<LoaderCircle class="prompt-editor__loading-icon h-4 w-4 animate-spin" />
+										</span>
+									</div>
 								</Button>
 							{/if}
 						</nav>
@@ -360,11 +395,6 @@
 		@apply grid grid-cols-[1fr,1fr] items-end gap-x-3;
 	}
 
-	.prompt-editor__knowledge {
-		@apply grid grid-cols-[auto,max-content] items-end gap-x-2;
-		@apply lg:gap-x-2;
-	}
-
 	.prompt-editor--fullscreen {
 		@apply min-h-[60dvh];
 	}
@@ -385,6 +415,33 @@
 	}
 
 	.prompt-editor__toolbar {
-		@apply flex items-center gap-x-2;
+		@apply flex items-stretch gap-x-2;
+	}
+
+	.prompt-editor__stop {
+		@apply relative -mx-3 -my-2 h-9 w-9;
+	}
+
+	.prompt-editor__stop:hover {
+		.prompt-editor__stop-icon {
+			@apply opacity-100;
+		}
+
+		.prompt-editor__loading-icon {
+			@apply opacity-0;
+		}
+	}
+
+	.prompt-editor__stop-icon,
+	.prompt-editor__loading-icon {
+		@apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2;
+	}
+
+	.prompt-editor__stop-icon {
+		@apply opacity-0;
+	}
+
+	.prompt-editor__loading-icon {
+		@apply opacity-100;
 	}
 </style>

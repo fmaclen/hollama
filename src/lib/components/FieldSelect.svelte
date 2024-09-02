@@ -9,7 +9,7 @@
 	export let value: string | null = null;
 </script>
 
-<Field {name} {disabled}>
+<Field {name} {disabled} hasNav={$$slots.nav}>
 	<svelte:fragment slot="label">{label}</svelte:fragment>
 	<div class="select-container">
 		<!-- TODO fix styles -->

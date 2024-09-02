@@ -14,7 +14,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"electron": "electron .",
-		"electron:build": "cross-env ADAPTER=electron-node vite build && electron-builder"
+		"electron:build": "cross-env PUBLIC_ADAPTER=electron-node vite build && electron-builder"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.43.0",
@@ -38,9 +38,10 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
 		"highlight.js": "^11.9.0",
+		"i18next": "^23.12.2",
 		"lucide-svelte": "^0.372.0",
 		"markdown-it": "^14.1.0",
-		"ollama": "^0.5.6",
+		"ollama": "^0.5.8",
 		"postcss": "^8.4.32",
 		"postcss-import": "^16.1.0",
 		"postcss-load-config": "^5.0.2",
@@ -48,9 +49,11 @@
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
 		"prettier-plugin-tailwindcss": "^0.5.9",
+		"semver": "^7.6.3",
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
 		"svelte-select": "^5.8.3",
+		"svelte-i18next": "^2.2.2",
 		"svelte-sonner": "^0.3.27",
 		"tailwindcss": "^3.3.6",
 		"thememirror": "^2.0.1",
