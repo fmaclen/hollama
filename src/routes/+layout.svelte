@@ -85,10 +85,10 @@
 		<button class="layout__button" on:click={toggleTheme}>
 			{#if theme === 'light'}
 				<Moon class="h-4 w-4" />
-				{$i18n.t('theme.dark')}
+				{$i18n.t('dark')}
 			{:else}
 				<Sun class="h-4 w-4" />
-				{$i18n.t('theme.light')}
+				{$i18n.t('light')}
 			{/if}
 		</button>
 	</aside>

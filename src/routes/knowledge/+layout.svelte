@@ -23,7 +23,7 @@
 				/>
 			{/each}
 		{:else}
-			<EmptyMessage>{$i18n.t('knowledgePage.empty')}</EmptyMessage>
+			<EmptyMessage>{$i18n.t('emptyKnowledge')}</EmptyMessage>
 		{/if}
 	</svelte:fragment>
 

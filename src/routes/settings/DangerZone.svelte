@@ -8,7 +8,7 @@
 	function deleteStorage(item: StorageKey): void {
 		if (
 			confirm(
-				$i18n.t('dialogs.areYouSureYouWantToDeleteAll', {
+				$i18n.t('areYouSureYouWantToDeleteAll', {
 					type: item.replace(`${LOCAL_STORAGE_PREFIX}-`, '')
 				})
 			)
@@ -20,14 +20,14 @@
 </script>
 
 <Fieldset>
-	<P><strong>{$i18n.t('settingsPage.dangerZone')}</strong></P>
+	<P><strong>{$i18n.t('dangerZone')}</strong></P>
 	<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSessions)}>
-		{$i18n.t('settingsPage.deleteAllSessions')}
+		{$i18n.t('deleteAllSessions')}
 	</Button>
 	<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaKnowledge)}>
-		{$i18n.t('settingsPage.deleteAllKnowledge')}
+		{$i18n.t('deleteAllKnowledge')}
 	</Button>
 	<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSettings)}>
-		{$i18n.t('settingsPage.deleteAllSettings')}
+		{$i18n.t('deleteAllSettings')}
 	</Button>
 </Fieldset>

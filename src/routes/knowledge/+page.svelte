@@ -5,4 +5,4 @@
 </script>
 
 <Head title={$i18n.t('knowledge', { count: 0 })} />
-<EmptyMessage>{$i18n.t('knowledgePage.noKnowledgeChosen')}</EmptyMessage>
+<EmptyMessage>{$i18n.t('noKnowledgeChosen')}</EmptyMessage>

@@ -67,7 +67,7 @@
 			$settingsStore.ollamaModels = (await ollamaTags()).models;
 		} catch {
 			$settingsStore.ollamaModels = [];
-			toast.warning($i18n.t('errors.cantConnectToOllamaServer'));
+			toast.warning($i18n.t('cantConnectToOllamaServer'));
 		}
 		scrollToBottom();
 	}
@@ -188,8 +188,8 @@
 
 	function handleError(error: Error) {
 		let content: string;
-		if (error.message === 'Failed to fetch') content = $i18n.t('errors.ollamaConnectionError');
-		else content = $i18n.t('errors.genericError', { error });
+		if (error.message === 'Failed to fetch') content = $i18n.t('ollamaConnectionError');
+		else content = $i18n.t('genericError', { error });
 
 		const message: Message = { role: 'system', content };
 		session.messages = [...session.messages, message];
@@ -205,7 +205,7 @@
 
 	beforeNavigate((navigation) => {
 		if (!isCompletionInProgress) return;
-		const userConfirmed = confirm($i18n.t('dialogs.areYouSureYouWantToLeave'));
+		const userConfirmed = confirm($i18n.t('areYouSureYouWantToLeave'));
 		if (userConfirmed) {
 			stopCompletion();
 			return;
@@ -224,7 +224,7 @@
 <div class="session">
 	<Head
 		title={[
-			isNewSession ? $i18n.t('sessionsPage.new') : getSessionTitle(session),
+			isNewSession ? $i18n.t('newSession') : getSessionTitle(session),
 			$i18n.t('sessions', { count: 0 })
 		]}
 	/>
@@ -234,7 +234,7 @@
 			<Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
 		</p>
 		<Metadata dataTestid="session-metadata">
-			{isNewSession ? $i18n.t('sessionsPage.new') : formatSessionMetadata(session)}
+			{isNewSession ? $i18n.t('newSession') : formatSessionMetadata(session)}
 		</Metadata>
 
 		<svelte:fragment slot="nav">
@@ -250,7 +250,7 @@
 		<div class="session__history" bind:this={messageWindow}>
 			<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
 				{#if isNewSession}
-					<EmptyMessage>{$i18n.t('sessionsPage.writePromptToStart')}</EmptyMessage>
+					<EmptyMessage>{$i18n.t('writePromptToStart')}</EmptyMessage>
 				{/if}
 
 				{#each session.messages as message, i (session.id + i)}
@@ -283,7 +283,7 @@
 							<div class="prompt-editor__project">
 								<FieldSelectModel />
 								<FieldSelect
-									label={$i18n.t('sessionsPage.systemPrompt')}
+									label={$i18n.t('systemPrompt')}
 									name="knowledge"
 									disabled={$knowledgeStore.length === 0}
 									options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
@@ -291,7 +291,7 @@
 								>
 									<svelte:fragment slot="nav">
 										<Button
-											aria-label={$i18n.t('knowledgePage.new')}
+											aria-label={$i18n.t('newKnowledge')}
 											variant="outline"
 											href={generateNewUrl(Sitemap.KNOWLEDGE)}
 											class="h-full text-muted"
@@ -305,17 +305,13 @@
 
 						{#key session}
 							{#if isPromptFullscreen}
-								<FieldTextEditor
-									label={$i18n.t('sessionsPage.prompt')}
-									{handleSubmit}
-									bind:value={prompt}
-								/>
+								<FieldTextEditor label={$i18n.t('prompt')} {handleSubmit} bind:value={prompt} />
 							{:else}
 								<Field name="prompt">
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
-										placeholder={$i18n.t('sessionsPage.promptPlaceholder')}
+										placeholder={$i18n.t('promptPlaceholder')}
 										bind:this={promptTextarea}
 										bind:value={prompt}
 										on:keydown={handleKeyDown}
@@ -345,7 +341,7 @@
 									$settingsStore.ollamaModels.length === 0 ||
 									!$settingsStore.ollamaModel}
 							>
-								{$i18n.t(messageIndexToEdit !== null ? 'saveAndRun' : 'sessionsPage.run')}
+								{$i18n.t(messageIndexToEdit !== null ? 'saveAndRun' : 'run')}
 							</ButtonSubmit>
 
 							{#if isCompletionInProgress}

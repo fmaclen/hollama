@@ -7,11 +7,11 @@
 {#if $page.status === 404}
 	<EmptyMessage>
 		<strong>Error {$page.status}</strong>
-		— {$i18n.t('errors.notFound')}
+		— {$i18n.t('notFound')}
 	</EmptyMessage>
 {:else if $page.status !== 200}
 	<EmptyMessage>
 		<strong>Error {$page.status}</strong>
-		— {$i18n.t('errors.internalServerError')}
+		— {$i18n.t('internalServerError')}
 	</EmptyMessage>
 {/if}

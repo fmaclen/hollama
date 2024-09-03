@@ -31,7 +31,7 @@
 		if (!name || !content) return;
 		saveKnowledge({ id: data.id, name, content, updatedAt: getUpdatedAtDate() });
 		knowledge = loadKnowledge(data.id);
-		toast.success($i18n.t('knowledgePage.knowledgeSaved'));
+		toast.success($i18n.t('knowledgeSaved'));
 	}
 
 	afterNavigate(() => {
@@ -43,7 +43,7 @@
 
 <Head
 	title={[
-		knowledge.name ? knowledge.name : $i18n.t('knowledgePage.new'),
+		knowledge.name ? knowledge.name : $i18n.t('newKnowledge'),
 		$i18n.t('knowledge', { count: 0 })
 	]}
 />
@@ -56,7 +56,7 @@
 			</Button>
 		</p>
 		<Metadata dataTestid="knowledge-metadata">
-			{isNewKnowledge ? $i18n.t('knowledgePage.new') : formatTimestampToNow(knowledge.updatedAt)}
+			{isNewKnowledge ? $i18n.t('newKnowledge') : formatTimestampToNow(knowledge.updatedAt)}
 		</Metadata>
 
 		<svelte:fragment slot="nav">
@@ -67,18 +67,14 @@
 	</Header>
 
 	<Fieldset isFullscreen={true}>
-		<FieldInput name="name" label={$i18n.t('knowledgePage.name')} bind:value={name} />
+		<FieldInput name="name" label={$i18n.t('name')} bind:value={name} />
 
 		{#key knowledge}
-			<FieldTextEditor
-				label={$i18n.t('knowledgePage.content')}
-				{handleSubmit}
-				bind:value={content}
-			/>
+			<FieldTextEditor label={$i18n.t('content')} {handleSubmit} bind:value={content} />
 		{/key}
 
 		<ButtonSubmit hasMetaKey={true} {handleSubmit} disabled={!name || !content}>
-			{$i18n.t('knowledgePage.save')}
+			{$i18n.t('save')}
 		</ButtonSubmit>
 	</Fieldset>
 </div>

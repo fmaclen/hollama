@@ -5,4 +5,4 @@
 </script>
 
 <Head title={$i18n.t('sessions', { count: 0 })} />
-<Empty>{$i18n.t('sessionsPage.noSessionChosen')}</Empty>
+<Empty>{$i18n.t('noSessionChosen')}</Empty>

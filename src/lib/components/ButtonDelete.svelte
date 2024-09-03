@@ -57,9 +57,7 @@
 			variant="icon"
 			class="delete__trash"
 			on:click={() => updateConfirmDeletion(true)}
-			title={sitemap === Sitemap.KNOWLEDGE
-				? $i18n.t('knowledgePage.delete')
-				: $i18n.t('sessionsPage.delete')}
+			title={sitemap === Sitemap.KNOWLEDGE ? $i18n.t('deleteKnowledge') : $i18n.t('deleteSession')}
 		>
 			<Trash2 class="h-4 w-4" />
 		</Button>

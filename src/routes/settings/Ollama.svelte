@@ -86,7 +86,7 @@
 
 			toast.error(
 				typedError.message === 'Failed to fetch'
-					? $i18n.t('errors.couldntConnectToOllamaServer')
+					? $i18n.t('couldntConnectToOllamaServer')
 					: typedError.message,
 				{
 					id: toastId,
@@ -125,7 +125,7 @@
 			<Badge
 				variant={$settingsStore.ollamaServerStatus === 'disconnected' ? 'warning' : 'positive'}
 			>
-				{$i18n.t(`settingsPage.${$settingsStore.ollamaServerStatus}`)}
+				{$i18n.t(`${$settingsStore.ollamaServerStatus}`)}
 			</Badge>
 		</svelte:fragment>
 
@@ -133,34 +133,34 @@
 			{#if ollamaURL && $settingsStore.ollamaServerStatus === 'disconnected'}
 				<FieldHelp>
 					<P>
-						{$i18n.t('settingsPage.allowConnections')}
+						{$i18n.t('allowConnections')}
 						<Badge capitalize={false}>{ollamaURL.origin}</Badge>
 						<Button
 							variant="link"
 							href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
 							target="_blank"
 						>
-							{$i18n.t('settingsPage.seeDocs')}
+							{$i18n.t('seeDocs')}
 						</Button>
 					</P>
 					<P>
-						{$i18n.t('settingsPage.checkBrowserExtensions')}
+						{$i18n.t('checkBrowserExtensions')}
 					</P>
 					{#if ollamaURL.protocol === 'https:'}
 						<P>
 							<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-							{@html $i18n.t('settingsPage.tryingToConnectNotLocalhost')}
+							{@html $i18n.t('tryingToConnectNotLocalhost')}
 							<a
 								href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
 								target="_blank"
 							>
-								{$i18n.t('settingsPage.creatingTunnel')}
+								{$i18n.t('creatingTunnel')}
 							</a>
 							<a
 								href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
 								target="_blank"
 							>
-								{$i18n.t('settingsPage.allowMixedContent')}
+								{$i18n.t('allowMixedContent')}
 							</a>.
 						</P>
 					{/if}
@@ -176,8 +176,7 @@
 		label="Pull model"
 		placeholder={$i18n.t('pullModelPlaceholder')}
 		bind:value={modelTag}
-		disabled={isPullInProgress ||
-			$settingsStore.ollamaServerStatus === $i18n.t('settingsPage.disconnected')}
+		disabled={isPullInProgress || $settingsStore.ollamaServerStatus === $i18n.t('disconnected')}
 	>
 		<svelte:fragment slot="nav">
 			<Button
@@ -186,7 +185,7 @@
 				isLoading={isPullInProgress}
 				disabled={!modelTag ||
 					isPullInProgress ||
-					$settingsStore.ollamaServerStatus === $i18n.t('settingsPage.disconnected')}
+					$settingsStore.ollamaServerStatus === $i18n.t('disconnected')}
 				on:click={pullModel}
 			>
 				<CloudDownload class="h-4 w-4" />
@@ -195,9 +194,9 @@
 		<svelte:fragment slot="help">
 			<FieldHelp>
 				<P>
-					{$i18n.t('settingsPage.browseModels')}
+					{$i18n.t('browseModels')}
 					<Button href="https://ollama.com/library" variant="link" target="_blank">
-						{$i18n.t('settingsPage.ollamaLibrary')}
+						{$i18n.t('ollamaLibrary')}
 					</Button>
 				</P>
 			</FieldHelp>

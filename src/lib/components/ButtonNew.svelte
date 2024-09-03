@@ -24,6 +24,6 @@
 		href={generateNewUrl(sitemap, newId)}
 		on:click={setId}
 	>
-		{sitemap === Sitemap.SESSIONS ? $i18n.t('sessionsPage.new') : $i18n.t('knowledgePage.new')}
+		{sitemap === Sitemap.SESSIONS ? $i18n.t('newSession') : $i18n.t('newKnowledge')}
 	</Button>
 </div>
