@@ -1,45 +1,45 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Debug current TS file",
-      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/vite-node",
-      "args": ["${relativeFile}"],
-      "cwd": "${workspaceFolder}",
-      "internalConsoleOptions": "openOnSessionStart",
-      "skipFiles": ["<node_internals>/**", "node_modules/**"],
-      "env": {
-        "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json"
-      }
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Start vite",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "4000"],
-      "skipFiles": ["<node_internals>/**"],
-      "console": "integratedTerminal"
-    },
-    {
-      "type": "chrome",
-      "request": "launch",
-      "name": "Launch Chrome",
-      "url": "http://localhost:4000",
-      "webRoot": "${workspaceFolder}",
-      "sourceMaps": true,
-      "sourceMapPathOverrides": {
-        "webpack:///./src/*": "${webRoot}/src/*"
-      },
-      "runtimeArgs": ["--auto-open-devtools-for-tabs"]
-    }
-  ],
-  "compounds": [
-    {
-      "name": "Debug SvelteKit",
-      "configurations": ["Start vite", "Launch Chrome"]
-    }
-  ]
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Debug current TS file",
+			"runtimeExecutable": "${workspaceFolder}/node_modules/.bin/vite-node",
+			"args": ["${relativeFile}"],
+			"cwd": "${workspaceFolder}",
+			"internalConsoleOptions": "openOnSessionStart",
+			"skipFiles": ["<node_internals>/**", "node_modules/**"],
+			"env": {
+				"TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json"
+			}
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Start vite",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": ["run", "dev", "--", "--port", "4000"],
+			"skipFiles": ["<node_internals>/**"],
+			"console": "integratedTerminal"
+		},
+		{
+			"type": "chrome",
+			"request": "launch",
+			"name": "Launch Chrome",
+			"url": "http://localhost:4000",
+			"webRoot": "${workspaceFolder}",
+			"sourceMaps": true,
+			"sourceMapPathOverrides": {
+				"webpack:///./src/*": "${webRoot}/src/*"
+			},
+			"runtimeArgs": ["--auto-open-devtools-for-tabs"]
+		}
+	],
+	"compounds": [
+		{
+			"name": "Debug SvelteKit",
+			"configurations": ["Start vite", "Launch Chrome"]
+		}
+	]
 }
