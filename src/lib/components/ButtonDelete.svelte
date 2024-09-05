@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { Sitemap } from '$lib/sitemap';
-	import i18n from '$lib/i18n';
 	import { Check, Trash2, X } from 'lucide-svelte';
 	import type { Writable } from 'svelte/store';
-	import { knowledgeStore, sessionsStore, deleteStoreItem } from '$lib/store';
+
 	import { goto } from '$app/navigation';
+	import i18n from '$lib/i18n';
+	import { Sitemap } from '$lib/sitemap';
+	import { deleteStoreItem, knowledgeStore, sessionsStore } from '$lib/store';
+
 	import Button from './Button.svelte';
 
 	export let sitemap: Sitemap;

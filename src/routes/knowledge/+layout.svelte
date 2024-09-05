@@ -1,12 +1,12 @@
 <script lang="ts">
-	import Section from '$lib/components/Section.svelte';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
-	import SectionListItem from '$lib/components/SectionListItem.svelte';
-	import { knowledgeStore } from '$lib/store';
-	import { Sitemap } from '$lib/sitemap';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
-	import { formatTimestampToNow } from '$lib/utils';
+	import Section from '$lib/components/Section.svelte';
+	import SectionListItem from '$lib/components/SectionListItem.svelte';
 	import i18n from '$lib/i18n';
+	import { Sitemap } from '$lib/sitemap';
+	import { knowledgeStore } from '$lib/store';
+	import { formatTimestampToNow } from '$lib/utils';
 </script>
 
 <RobotsNoIndex />

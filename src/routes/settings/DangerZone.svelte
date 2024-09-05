@@ -1,8 +1,8 @@
 <script lang="ts">
-	import i18n from '$lib/i18n';
 	import Button from '$lib/components/Button.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
+	import i18n from '$lib/i18n';
 	import { LOCAL_STORAGE_PREFIX, StorageKey } from '$lib/store';
 
 	function deleteStorage(item: StorageKey): void {

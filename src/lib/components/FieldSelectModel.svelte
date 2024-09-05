@@ -1,6 +1,7 @@
 <script lang="ts">
 	import i18n from '$lib/i18n';
 	import { settingsStore } from '$lib/store';
+
 	import FieldSelect from './FieldSelect.svelte';
 
 	export let disabled: boolean = false;

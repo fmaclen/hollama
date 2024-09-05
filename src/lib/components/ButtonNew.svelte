@@ -1,10 +1,12 @@
 <script lang="ts">
-	import i18n from '$lib/i18n';
 	import { onMount } from 'svelte';
-	import { generateStorageId } from '$lib/utils';
+
+	import i18n from '$lib/i18n';
 	import { Sitemap } from '$lib/sitemap';
-	import { generateNewUrl } from './ButtonNew';
+	import { generateStorageId } from '$lib/utils';
+
 	import Button from './Button.svelte';
+	import { generateNewUrl } from './ButtonNew';
 
 	export let sitemap: Sitemap;
 	let newId: string;

@@ -1,6 +1,6 @@
 import net from 'net';
 import { join } from 'path';
-import { app, BrowserWindow, utilityProcess, dialog } from 'electron';
+import { app, BrowserWindow, dialog, utilityProcess } from 'electron';
 
 // Vite default dev & production ports
 const hollamaPort = app.isPackaged ? '4173' : '5173';

@@ -1,11 +1,12 @@
-import semver from 'semver';
 import { getUnixTime } from 'date-fns';
-
+import semver from 'semver';
 import { get, writable } from 'svelte/store';
+
 import { version } from '$app/environment';
 import { settingsStore } from '$lib/store';
-import { GITHUB_RELEASES_API } from './github';
+
 import type { HollamaMetadata } from '../routes/api/metadata/+server';
+import { GITHUB_RELEASES_API } from './github';
 
 const HOLLAMA_DEV_VERSION_SUFFIX = '-dev';
 const HOLLAMA_METADATA_ENDPOINT = '/api/metadata';

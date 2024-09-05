@@ -1,40 +1,40 @@
 <script lang="ts">
-	import { afterUpdate, tick } from 'svelte';
-	import { writable } from 'svelte/store';
 	import { Brain, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { afterUpdate, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import { writable } from 'svelte/store';
+
 	import { beforeNavigate } from '$app/navigation';
-
-	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { settingsStore, knowledgeStore } from '$lib/store';
-	import { ollamaChat, ollamaTags } from '$lib/ollama';
-	import {
-		saveSession,
-		type Message,
-		loadSession,
-		formatSessionMetadata,
-		getSessionTitle,
-		type Session
-	} from '$lib/sessions';
-	import { generateNewUrl } from '$lib/components/ButtonNew';
-	import { Sitemap } from '$lib/sitemap';
-	import i18n from '$lib/i18n';
-	import type { PageData } from './$types';
-
 	import Button from '$lib/components/Button.svelte';
-	import Article from './Article.svelte';
-	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
-	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
-	import FieldSelect from '$lib/components/FieldSelect.svelte';
-	import Header from '$lib/components/Header.svelte';
-	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
-	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
-	import Fieldset from '$lib/components/Fieldset.svelte';
-	import Field from '$lib/components/Field.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
-	import Metadata from '$lib/components/Metadata.svelte';
+	import { generateNewUrl } from '$lib/components/ButtonNew';
+	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
+	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
+	import Field from '$lib/components/Field.svelte';
+	import FieldSelect from '$lib/components/FieldSelect.svelte';
+	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
+	import Fieldset from '$lib/components/Fieldset.svelte';
+	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import Head from '$lib/components/Head.svelte';
+	import Header from '$lib/components/Header.svelte';
+	import Metadata from '$lib/components/Metadata.svelte';
+	import i18n from '$lib/i18n';
+	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
+	import { ollamaChat, ollamaTags } from '$lib/ollama';
+	import {
+		formatSessionMetadata,
+		getSessionTitle,
+		loadSession,
+		saveSession,
+		type Message,
+		type Session
+	} from '$lib/sessions';
+	import { Sitemap } from '$lib/sitemap';
+	import { knowledgeStore, settingsStore } from '$lib/store';
+
+	import type { PageData } from './$types';
+	import Article from './Article.svelte';
 
 	export let data: PageData;
 

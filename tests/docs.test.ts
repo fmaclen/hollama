@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+
 import {
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_KNOWLEDGE,
