@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import i18n from '$lib/i18n';
+	import LL from '$i18n/i18n-svelte';
 	import { Sitemap } from '$lib/sitemap';
 	import { generateStorageId } from '$lib/utils';
 
@@ -26,6 +26,6 @@
 		href={generateNewUrl(sitemap, newId)}
 		on:click={setId}
 	>
-		{sitemap === Sitemap.SESSIONS ? $i18n.t('sessionsPage.new') : $i18n.t('knowledgePage.new')}
+		{sitemap === Sitemap.SESSIONS ? $LL.newSession() : $LL.newKnowledge()}
 	</Button>
 </div>

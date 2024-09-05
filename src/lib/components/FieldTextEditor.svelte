@@ -4,12 +4,13 @@
 	import { basicSetup } from 'codemirror';
 	import { onMount } from 'svelte';
 	import { createTheme } from 'thememirror';
+	import type { LocalizedString } from 'typesafe-i18n';
 
 	import { settingsStore } from '$lib/store';
 
 	import Field from './Field.svelte';
 
-	export let label: string;
+	export let label: LocalizedString;
 	export let value: string;
 	export let handleSubmit: (event?: Event) => void;
 

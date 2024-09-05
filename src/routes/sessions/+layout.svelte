@@ -1,9 +1,9 @@
 <script lang="ts">
+	import LL from '$i18n/i18n-svelte';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
-	import i18n from '$lib/i18n';
 	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
 	import { Sitemap } from '$lib/sitemap';
 	import { sessionsStore } from '$lib/store';
@@ -23,7 +23,7 @@
 				/>
 			{/each}
 		{:else}
-			<EmptyMessage>{$i18n.t('sessionsPage.empty')}</EmptyMessage>
+			<EmptyMessage>{$LL.emptySessions()}</EmptyMessage>
 		{/if}
 	</svelte:fragment>
 
