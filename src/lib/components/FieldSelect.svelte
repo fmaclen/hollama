@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { ChevronDown } from 'lucide-svelte';
+
 	import Field from './Field.svelte';
 
 	export let name: string;
