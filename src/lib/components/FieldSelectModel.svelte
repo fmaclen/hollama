@@ -1,5 +1,5 @@
 <script lang="ts">
-	import i18n from '$lib/i18n';
+	import LL from '$i18n/i18n-svelte';
 	import { settingsStore } from '$lib/store';
 
 	import FieldSelect from './FieldSelect.svelte';
@@ -11,7 +11,7 @@
 </script>
 
 <FieldSelect
-	label={$i18n.t('availableModels')}
+	label={$LL.availableModels()}
 	name="model"
 	options={$settingsStore.ollamaModels.map((m) => ({ value: m.name, option: m.name }))}
 	disabled={disabled || !$settingsStore.ollamaModels.length}

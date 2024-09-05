@@ -1,8 +1,8 @@
 <script>
+	import LL from '$i18n/i18n-svelte';
 	import Empty from '$lib/components/EmptyMessage.svelte';
 	import Head from '$lib/components/Head.svelte';
-	import i18n from '$lib/i18n';
 </script>
 
-<Head title={$i18n.t('sessions', { count: 0 })} />
-<Empty>{$i18n.t('noSessionChosen')}</Empty>
+<Head title={$LL.sessions()} />
+<Empty>{$LL.noSessionChosen()}</Empty>

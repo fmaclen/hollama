@@ -2,8 +2,8 @@
 	import { Check, Trash2, X } from 'lucide-svelte';
 	import type { Writable } from 'svelte/store';
 
+	import LL from '$i18n/i18n-svelte';
 	import { goto } from '$app/navigation';
-	import i18n from '$lib/i18n';
 	import { Sitemap } from '$lib/sitemap';
 	import { deleteStoreItem, knowledgeStore, sessionsStore } from '$lib/store';
 
@@ -41,7 +41,7 @@
 			variant="icon"
 			class="delete-button__confirm"
 			on:click={deleteRecord}
-			title={$i18n.t('confirmDeletion')}
+			title={$LL.confirmDeletion()}
 		>
 			<Check class="h-4 w-4" />
 		</Button>
@@ -50,7 +50,7 @@
 			variant="icon"
 			class="delete__cancel"
 			on:click={() => updateConfirmDeletion(false)}
-			title={$i18n.t('dismiss')}
+			title={$LL.dismiss()}
 		>
 			<X class="h-4 w-4" />
 		</Button>
@@ -59,7 +59,7 @@
 			variant="icon"
 			class="delete__trash"
 			on:click={() => updateConfirmDeletion(true)}
-			title={sitemap === Sitemap.KNOWLEDGE ? $i18n.t('deleteKnowledge') : $i18n.t('deleteSession')}
+			title={sitemap === Sitemap.KNOWLEDGE ? $LL.deleteKnowledge() : $LL.deleteSession()}
 		>
 			<Trash2 class="h-4 w-4" />
 		</Button>
