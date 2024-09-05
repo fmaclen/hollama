@@ -28,6 +28,9 @@ const config = {
 			: adapterCloudflare(adapterConfig),
 		version: {
 			name: process.env.npm_package_version
+		},
+		alias: {
+			$i18n: 'src/i18n'
 		}
 	}
 };

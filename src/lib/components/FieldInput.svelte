@@ -1,8 +1,9 @@
 <script lang="ts">
 	import Field from './Field.svelte';
+	import type { LocalizedString } from 'typesafe-i18n';
 
 	export let name: string;
-	export let label: string;
+	export let label: LocalizedString;
 	export let placeholder: string | undefined = undefined;
 	export let disabled: boolean | undefined = false;
 	export let value: string | undefined = undefined;

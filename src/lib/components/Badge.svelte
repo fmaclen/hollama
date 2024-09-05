@@ -8,7 +8,7 @@
 
 <svelte:element
 	this={href ? 'a' : 'span'}
-	class="badge badge--{variant} {className}"
+	class="badge {variant ? `badge--${variant}` : ''} {className}"
 	{href}
 	style={capitalize ? 'text-transform: capitalize;' : ''}
 >

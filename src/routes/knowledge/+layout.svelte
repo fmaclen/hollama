@@ -1,4 +1,6 @@
 <script lang="ts">
+	import LL from '$i18n/i18n-svelte';
+
 	import Section from '$lib/components/Section.svelte';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
@@ -6,7 +8,6 @@
 	import { Sitemap } from '$lib/sitemap';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import { formatTimestampToNow } from '$lib/utils';
-	import i18n from '$lib/i18n';
 </script>
 
 <RobotsNoIndex />
@@ -23,7 +24,7 @@
 				/>
 			{/each}
 		{:else}
-			<EmptyMessage>{$i18n.t('emptyKnowledge')}</EmptyMessage>
+			<EmptyMessage>{$LL.emptyKnowledge()}</EmptyMessage>
 		{/if}
 	</svelte:fragment>
 

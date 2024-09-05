@@ -1,17 +1,18 @@
 <script lang="ts">
+	import LL from '$i18n/i18n-svelte';
+
 	import { page } from '$app/stores';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
-	import i18n from '$lib/i18n';
 </script>
 
 {#if $page.status === 404}
 	<EmptyMessage>
 		<strong>Error {$page.status}</strong>
-		— {$i18n.t('notFound')}
+		— {$LL.notFound()}
 	</EmptyMessage>
 {:else if $page.status !== 200}
 	<EmptyMessage>
 		<strong>Error {$page.status}</strong>
-		— {$i18n.t('internalServerError')}
+		— {$LL.internalServerError()}
 	</EmptyMessage>
 {/if}

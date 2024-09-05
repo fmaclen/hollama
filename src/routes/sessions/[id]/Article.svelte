@@ -1,8 +1,9 @@
 <script lang="ts">
+	import LL from '$i18n/i18n-svelte';
+
 	import { type Message } from '$lib/sessions';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import { Sitemap } from '$lib/sitemap';
-	import i18n from '$lib/i18n';
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import Badge from '$lib/components/Badge.svelte';
@@ -22,16 +23,18 @@
 		<div data-testid="session-role" class="article__role">
 			<Badge>
 				{#if isUserRole}
-					{$i18n.t('you')}
+					{$LL.you()}
+				{:else if message.role === 'assistant'}
+					{$LL.assistant()}
 				{:else}
-					{$i18n.t(`${message.role}`)}
+					{$LL.system()}
 				{/if}
 			</Badge>
 		</div>
 		<div class="article__interactive">
 			{#if retryIndex}
 				<Button
-					title={$i18n.t('retry')}
+					title={$LL.retry()}
 					variant="icon"
 					id="retry-index-{retryIndex}"
 					on:click={() => handleRetry && handleRetry(retryIndex)}
@@ -41,7 +44,7 @@
 			{/if}
 			{#if isUserRole}
 				<Button
-					title={$i18n.t('edit')}
+					title={$LL.edit()}
 					variant="icon"
 					on:click={() => handleEditMessage && handleEditMessage(message)}
 				>
@@ -57,7 +60,7 @@
 			<Button
 				variant="outline"
 				href={generateNewUrl(Sitemap.KNOWLEDGE, message.knowledge.id)}
-				aria-label={$i18n.t('goToKnowledge')}
+				aria-label={$LL.goToKnowledge()}
 			>
 				{message.knowledge.name}
 				<Brain class="-mr-1 ml-2 h-4 w-4" />
