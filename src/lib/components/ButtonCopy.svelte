@@ -1,6 +1,8 @@
 <script lang="ts">
-	import i18n from '$lib/i18n';
 	import { Files } from 'lucide-svelte';
+
+	import i18n from '$lib/i18n';
+
 	import Button from './Button.svelte';
 
 	export let content: string;

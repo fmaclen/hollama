@@ -1,6 +1,7 @@
-import type { ChatResponse, ListResponse } from 'ollama/browser';
-import type { Knowledge } from '$lib/knowledge';
 import type { Locator, Page, Route } from '@playwright/test';
+import type { ChatResponse, ListResponse } from 'ollama/browser';
+
+import type { Knowledge } from '$lib/knowledge';
 
 export const MOCK_API_TAGS_RESPONSE: ListResponse = {
 	models: [

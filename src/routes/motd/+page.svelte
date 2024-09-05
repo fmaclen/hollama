@@ -1,8 +1,7 @@
 <script lang="ts">
-	import i18n from '$lib/i18n';
-
 	import Head from '$lib/components/Head.svelte';
 	import Markdown from '$lib/components/Markdown.svelte';
+	import i18n from '$lib/i18n';
 
 	export let data: { motd: string };
 </script>

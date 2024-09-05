@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test';
+
 import {
+	chooseModelFromSettings,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_KNOWLEDGE,
 	MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1,
-	chooseModelFromSettings,
 	mockCompletionResponse,
 	mockTagsResponse,
 	seedKnowledgeAndReload,

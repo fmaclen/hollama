@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { Toaster } from 'svelte-sonner';
+	import { Brain, MessageSquareText, Moon, NotebookText, Settings2, Sun } from 'lucide-svelte';
 	import { onMount } from 'svelte';
-	import { Brain, MessageSquareText, Settings2, Sun, Moon, NotebookText } from 'lucide-svelte';
+	import { Toaster } from 'svelte-sonner';
 
 	import '../app.pcss';
 
-	import i18n from '$lib/i18n';
 	import { env } from '$env/dynamic/public';
-	import { onNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
+	import i18n from '$lib/i18n';
 	import { settingsStore } from '$lib/store';
-	import { updateStatusStore, checkForUpdates } from '$lib/updates';
+	import { checkForUpdates, updateStatusStore } from '$lib/updates';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = [
