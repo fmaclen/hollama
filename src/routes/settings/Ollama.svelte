@@ -154,7 +154,10 @@
 					{#if ollamaURL.protocol === 'https:'}
 						<P>
 							<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-							{@html $LL.tryingToConnectNotLocalhost()}
+							{@html $LL.tryingToConnectNotLocalhost({
+								hostname: '<code class="badge">localhost</code>',
+								ip: '<code class="badge">127.0.0.1</code>'
+							})}
 							<a
 								href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
 								target="_blank"

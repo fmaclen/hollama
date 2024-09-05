@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { ChevronDown } from 'lucide-svelte';
 	import Field from './Field.svelte';
+	import type { LocalizedString } from 'typesafe-i18n';
 
 	export let name: string;
-	export let label: string;
+	export let label: LocalizedString;
 	export let disabled: boolean | undefined = false;
 	export let options: { value: string; option: string }[] = [];
 	export let value: string | undefined = undefined;

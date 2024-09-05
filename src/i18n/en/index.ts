@@ -3,7 +3,7 @@ import type { BaseTranslation } from '../i18n-types';
 const en = {
 	allowConnections: 'Change your server settings to allow connections from',
 	allowMixedContent: 'Allow mixed content',
-	areYouSureYouWantToDeleteAll: 'Are you sure you want to delete all {type}?',
+	areYouSureYouWantToDeleteAll: 'Are you sure you want to delete all {type:string}?',
 	areYouSureYouWantToLeave: 'Are you sure you want to leave?\nThe completion in progress will stop',
 	assistant: 'Assistant',
 	automaticallyCheckForUpdates: 'Automatically check for updates',
@@ -80,7 +80,7 @@ const en = {
 	system: 'System',
 	systemPrompt: 'System prompt',
 	tryingToConnectNotLocalhost:
-		'If you want to connect to an Ollama server that is not available on <code class="badge">localhost</code> or <code class="badge">127.0.0.1</code> try',
+		'If you want to connect to an Ollama server that is not available on {hostname:string} or {ip:string} try',
 	version: 'Version',
 	writePromptToStart: 'Write a prompt to start a new session',
 	you: 'You'

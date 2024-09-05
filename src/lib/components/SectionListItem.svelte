@@ -25,7 +25,7 @@
 		<a
 			class="section-list-item__a"
 			data-testid={isSession ? 'session-item' : 'knowledge-item'}
-			aria-label={(isSession ? $LL.sessions() : $LL.knowledge()) + `: ${id}`}
+			aria-label={(isSession ? $LL.session() : $LL.knowledge()) + `: ${id}`}
 			href={`/${sitemap}/${id}`}
 		>
 			<p class="section-list-item__title">

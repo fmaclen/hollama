@@ -7,12 +7,12 @@
 
 {#if $page.status === 404}
 	<EmptyMessage>
-		<strong>Error {$page.status}</strong>
+		<strong>{$LL.error()} {$page.status}</strong>
 		— {$LL.notFound()}
 	</EmptyMessage>
 {:else if $page.status !== 200}
 	<EmptyMessage>
-		<strong>Error {$page.status}</strong>
+		<strong>{$LL.error()} {$page.status}</strong>
 		— {$LL.internalServerError()}
 	</EmptyMessage>
 {/if}

@@ -4,7 +4,7 @@
 
 	export let name: string;
 	export let label: LocalizedString;
-	export let placeholder: string | undefined = undefined;
+	export let placeholder: LocalizedString | string | undefined = undefined;
 	export let disabled: boolean | undefined = false;
 	export let value: string | undefined = undefined;
 </script>

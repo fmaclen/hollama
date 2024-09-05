@@ -23,7 +23,7 @@ type RootTranslation = {
 	allowMixedContent: string
 	/**
 	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​{​t​y​p​e​}​?
-	 * @param {unknown} type
+	 * @param {string} type
 	 */
 	areYouSureYouWantToDeleteAll: RequiredParams<'type'>
 	/**
@@ -333,9 +333,11 @@ type RootTranslation = {
 	 */
 	systemPrompt: string
 	/**
-	 * I​f​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​c​o​n​n​e​c​t​ ​t​o​ ​a​n​ ​O​l​l​a​m​a​ ​s​e​r​v​e​r​ ​t​h​a​t​ ​i​s​ ​n​o​t​ ​a​v​a​i​l​a​b​l​e​ ​o​n​ ​<​c​o​d​e​ ​c​l​a​s​s​=​"​b​a​d​g​e​"​>​l​o​c​a​l​h​o​s​t​<​/​c​o​d​e​>​ ​o​r​ ​<​c​o​d​e​ ​c​l​a​s​s​=​"​b​a​d​g​e​"​>​1​2​7​.​0​.​0​.​1​<​/​c​o​d​e​>​ ​t​r​y
+	 * I​f​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​c​o​n​n​e​c​t​ ​t​o​ ​a​n​ ​O​l​l​a​m​a​ ​s​e​r​v​e​r​ ​t​h​a​t​ ​i​s​ ​n​o​t​ ​a​v​a​i​l​a​b​l​e​ ​o​n​ ​{​h​o​s​t​n​a​m​e​}​ ​o​r​ ​{​i​p​}​ ​t​r​y
+	 * @param {string} hostname
+	 * @param {string} ip
 	 */
-	tryingToConnectNotLocalhost: string
+	tryingToConnectNotLocalhost: RequiredParams<'hostname' | 'ip'>
 	/**
 	 * V​e​r​s​i​o​n
 	 */
@@ -362,7 +364,7 @@ export type TranslationFunctions = {
 	/**
 	 * Are you sure you want to delete all {type}?
 	 */
-	areYouSureYouWantToDeleteAll: (arg: { type: unknown }) => LocalizedString
+	areYouSureYouWantToDeleteAll: (arg: { type: string }) => LocalizedString
 	/**
 	 * Are you sure you want to leave?
 The completion in progress will stop
@@ -668,9 +670,9 @@ The completion in progress will stop
 	 */
 	systemPrompt: () => LocalizedString
 	/**
-	 * If you want to connect to an Ollama server that is not available on <code class="badge">localhost</code> or <code class="badge">127.0.0.1</code> try
+	 * If you want to connect to an Ollama server that is not available on {hostname} or {ip} try
 	 */
-	tryingToConnectNotLocalhost: () => LocalizedString
+	tryingToConnectNotLocalhost: (arg: { hostname: string, ip: string }) => LocalizedString
 	/**
 	 * Version
 	 */
