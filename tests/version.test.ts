@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
+
 import { GITHUB_RELEASES_API } from '$lib/github';
+
 import { mockTagsResponse } from './utils';
 
 const currentVersion = process.env.npm_package_version;

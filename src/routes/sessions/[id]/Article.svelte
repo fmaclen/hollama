@@ -1,14 +1,14 @@
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
+	import { Brain, Pencil, RefreshCw } from 'lucide-svelte';
 
-	import { type Message } from '$lib/sessions';
-	import { generateNewUrl } from '$lib/components/ButtonNew';
-	import { Sitemap } from '$lib/sitemap';
+	import LL from '$i18n/i18n-svelte';
+	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
-	import Badge from '$lib/components/Badge.svelte';
-	import { Brain, Pencil, RefreshCw } from 'lucide-svelte';
+	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import Markdown from '$lib/components/Markdown.svelte';
+	import { type Message } from '$lib/sessions';
+	import { Sitemap } from '$lib/sitemap';
 
 	export let message: Message;
 	export let retryIndex: number | undefined = undefined;

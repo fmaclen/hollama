@@ -1,18 +1,19 @@
 <script lang="ts">
-	import LL, { setLocale } from '$i18n/i18n-svelte';
+	import { Brain, MessageSquareText, Moon, NotebookText, Settings2, Sun } from 'lucide-svelte';
+	import { beforeUpdate, onMount } from 'svelte';
 	import { Toaster } from 'svelte-sonner';
-	import { onMount, beforeUpdate } from 'svelte';
-	import { Brain, MessageSquareText, Settings2, Sun, Moon, NotebookText } from 'lucide-svelte';
+
+	import LL, { setLocale } from '$i18n/i18n-svelte';
 
 	import '../app.pcss';
 
+	import { loadLocale } from '$i18n/i18n-util.sync';
 	import { env } from '$env/dynamic/public';
-	import { onNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { settingsStore } from '$lib/store';
-	import { updateStatusStore, checkForUpdates } from '$lib/updates';
-	import { loadLocale } from '$i18n/i18n-util.sync';
+	import { checkForUpdates, updateStatusStore } from '$lib/updates';
 
 	$: pathname = $page.url.pathname;
 	const SITEMAP = ['/sessions', '/knowledge', '/settings', '/motd'];

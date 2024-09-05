@@ -1,10 +1,12 @@
 import type { ModelResponse } from 'ollama/browser';
-import { browser, version } from '$app/environment';
 import { writable } from 'svelte/store';
-import type { Session } from '$lib/sessions';
-import type { Knowledge } from './knowledge';
+
 import { env } from '$env/dynamic/public';
+import { browser, version } from '$app/environment';
+import type { Session } from '$lib/sessions';
+
 import type { HollamaMetadata } from '../routes/api/metadata/+server';
+import type { Knowledge } from './knowledge';
 
 function createLocalStorageStore<T>(key: string, defaultValue: T) {
 	const initialValue: T = browser

@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { writable } from 'svelte/store';
+
+	import LL from '$i18n/i18n-svelte';
 	import { page } from '$app/stores';
 	import { Sitemap } from '$lib/sitemap';
-	import LL from '$i18n/i18n-svelte';
-	import { writable } from 'svelte/store';
+
 	import ButtonDelete from './ButtonDelete.svelte';
 	import Metadata from './Metadata.svelte';
 

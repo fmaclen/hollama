@@ -1,8 +1,9 @@
 <script lang="ts">
 	import Head from '$lib/components/Head.svelte';
-	import Version from './Version.svelte';
-	import Ollama from './Ollama.svelte';
+
 	import DangerZone from './DangerZone.svelte';
+	import Ollama from './Ollama.svelte';
+	import Version from './Version.svelte';
 </script>
 
 <Head title="Settings" />

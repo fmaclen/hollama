@@ -1,25 +1,24 @@
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
-	import { onMount } from 'svelte';
+	import { CloudDownload } from 'lucide-svelte';
 	import type {
 		ErrorResponse,
 		ListResponse,
 		ProgressResponse,
 		StatusResponse
 	} from 'ollama/browser';
+	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { CloudDownload } from 'lucide-svelte';
 
+	import LL from '$i18n/i18n-svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
-	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import P from '$lib/components/P.svelte';
-
-	import { settingsStore } from '$lib/store';
 	import { ollamaPull, ollamaTags } from '$lib/ollama';
+	import { settingsStore } from '$lib/store';
 
 	let ollamaURL: URL | null = null;
 

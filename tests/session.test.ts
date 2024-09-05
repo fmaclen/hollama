@@ -1,15 +1,16 @@
 import { expect, test, type Dialog, type Locator } from '@playwright/test';
+
 import {
+	chooseModelFromSettings,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_SESSION_1_RESPONSE_1,
 	MOCK_SESSION_1_RESPONSE_2,
 	MOCK_SESSION_1_RESPONSE_3,
 	MOCK_SESSION_2_RESPONSE_1,
-	chooseModelFromSettings,
 	mockCompletionResponse,
 	mockTagsResponse,
-	textEditorLocator,
-	submitWithKeyboardShortcut
+	submitWithKeyboardShortcut,
+	textEditorLocator
 } from './utils';
 
 test.describe('Session', () => {

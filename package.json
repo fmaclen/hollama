@@ -18,6 +18,7 @@
 		"typesafe-i18n": "typesafe-i18n"
 	},
 	"devDependencies": {
+		"@ianvs/prettier-plugin-sort-imports": "^4.3.1",
 		"@playwright/test": "^1.43.0",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/adapter-node": "^5.0.1",
@@ -59,7 +60,8 @@
 		"tslib": "^2.4.1",
 		"typesafe-i18n": "^5.26.2",
 		"typescript": "^5.0.0",
-		"vite": "^5.0.3"
+		"vite": "^5.0.3",
+		"vite-node": "^2.0.5"
 	},
 	"optionalDependencies": {
 		"@sveltejs/adapter-cloudflare": "^4.2.1"

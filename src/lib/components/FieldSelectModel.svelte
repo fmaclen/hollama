@@ -1,6 +1,7 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
 	import { settingsStore } from '$lib/store';
+
 	import FieldSelect from './FieldSelect.svelte';
 
 	export let disabled: boolean = false;

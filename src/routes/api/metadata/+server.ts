@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
-import { version } from '$app/environment';
+
 import { env } from '$env/dynamic/public';
+import { version } from '$app/environment';
 
 export interface HollamaMetadata {
 	currentVersion: string;

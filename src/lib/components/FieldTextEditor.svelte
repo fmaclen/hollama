@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { basicSetup } from 'codemirror';
-	import { EditorView, keymap } from '@codemirror/view';
 	import { Prec } from '@codemirror/state';
+	import { EditorView, keymap } from '@codemirror/view';
+	import { basicSetup } from 'codemirror';
+	import { onMount } from 'svelte';
 	import { createTheme } from 'thememirror';
+
 	import { settingsStore } from '$lib/store';
+
 	import Field from './Field.svelte';
 	import type { LocalizedString } from 'typesafe-i18n';
 
