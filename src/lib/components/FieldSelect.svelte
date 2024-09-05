@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { ChevronDown } from 'lucide-svelte';
+	import type { LocalizedString } from 'typesafe-i18n';
 
 	import Field from './Field.svelte';
-	import type { LocalizedString } from 'typesafe-i18n';
 
 	export let name: string;
 	export let label: LocalizedString;

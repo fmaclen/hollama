@@ -1,6 +1,5 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
-
 	import { page } from '$app/stores';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 </script>

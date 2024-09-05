@@ -1,6 +1,7 @@
 <script lang="ts">
-	import Field from './Field.svelte';
 	import type { LocalizedString } from 'typesafe-i18n';
+
+	import Field from './Field.svelte';
 
 	export let name: string;
 	export let label: LocalizedString;

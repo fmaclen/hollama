@@ -76,7 +76,7 @@ type RootTranslation = {
 	 */
 	confirmDeletion: string
 	/**
-	 * c​o​n​n​e​c​t​e​d
+	 * C​o​n​n​e​c​t​e​d
 	 */
 	connected: string
 	/**
@@ -128,7 +128,7 @@ type RootTranslation = {
 	 */
 	deleteSession: string
 	/**
-	 * d​i​s​c​o​n​n​e​c​t​e​d
+	 * D​i​s​c​o​n​n​e​c​t​e​d
 	 */
 	disconnected: string
 	/**
@@ -415,7 +415,7 @@ The completion in progress will stop
 	 */
 	confirmDeletion: () => LocalizedString
 	/**
-	 * connected
+	 * Connected
 	 */
 	connected: () => LocalizedString
 	/**
@@ -467,7 +467,7 @@ The completion in progress will stop
 	 */
 	deleteSession: () => LocalizedString
 	/**
-	 * disconnected
+	 * Disconnected
 	 */
 	disconnected: () => LocalizedString
 	/**
