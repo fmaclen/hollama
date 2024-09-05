@@ -60,7 +60,8 @@
 					if ('status' in response && response.status === 'success') {
 						toast.success($LL.success(), {
 							id: toastId,
-							// HACK: `modelTag` is inferred as `string | undefined`, but it shouldn't be
+							// HACK: `modelTag` is inferred as `string | undefined`
+							// but it should be a `string` based on the guard clause above
 							description: $LL.modelWasDownloaded({ model: modelTag as string })
 						});
 						modelTag = '';
