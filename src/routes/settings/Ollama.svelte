@@ -124,15 +124,11 @@
 		on:keyup={getModelsList}
 	>
 		<svelte:fragment slot="status">
-			<Badge
-				variant={$settingsStore.ollamaServerStatus === 'disconnected' ? 'warning' : 'positive'}
-			>
-				{#if $settingsStore.ollamaServerStatus === 'disconnected'}
-					{$LL.disconnected()}
-				{:else}
-					{$LL.connected()}
-				{/if}
-			</Badge>
+			{#if $settingsStore.ollamaServerStatus === 'disconnected'}
+				<Badge variant="warning">{$LL.disconnected()}</Badge>
+			{:else}
+				<Badge variant="positive">{$LL.connected()}</Badge>
+			{/if}
 		</svelte:fragment>
 
 		<svelte:fragment slot="help">
@@ -140,7 +136,7 @@
 				<FieldHelp>
 					<P>
 						{$LL.allowConnections()}
-						<Badge capitalize={false}>{ollamaURL.origin}</Badge>
+						<Badge>{ollamaURL.origin}</Badge>
 						<Button
 							variant="link"
 							href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"

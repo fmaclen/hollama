@@ -37,8 +37,8 @@ test('handles server status updates correctly', async ({ page }) => {
 
 	// The starting status is "connected"
 	await expect(page.getByText('Disconnected')).not.toBeVisible();
-	await expect(page.getByText('Connected')).toBeVisible();
-	await expect(page.getByText('Connected')).toHaveClass(/badge--positive/);
+	await expect(page.getByText('Connected', { exact: true })).toBeVisible();
+	await expect(page.getByText('Connected', { exact: true })).toHaveClass(/badge--positive/);
 
 	// Mock the API to return an error response
 	await page.route('**/api/tags', async (route) => {
@@ -49,7 +49,7 @@ test('handles server status updates correctly', async ({ page }) => {
 	await page.getByLabel('Server').clear();
 
 	// Wait for the server status to be updated to "disconnected"
-	await expect(page.getByText('Connected')).not.toBeVisible();
+	await expect(page.getByText('Connected', { exact: true })).not.toBeVisible();
 	await expect(page.getByText('Disconnected')).toBeVisible();
 	await expect(page.getByText('Disconnected')).toHaveClass(/badge--warning/);
 });
