@@ -11,7 +11,8 @@ const es = {
 	browseModels: 'Explorar la lista de modelos disponibles',
 	cancel: 'Cancelar',
 	cantConnectToOllamaServer: 'No se puede conectar al servidor de Ollama',
-	checkBrowserExtensions: 'También verifica que ninguna extensión del navegador esté bloqueando la conexión',
+	checkBrowserExtensions:
+		'También verifica que ninguna extensión del navegador esté bloqueando la conexión',
 	checkNow: 'Comprobar ahora',
 	checkingForUpdates: 'Buscando actualizaciones...',
 	currentVersion: 'Versión actual',
@@ -56,7 +57,8 @@ const es = {
 	noKnowledgeChosen: 'Crea un nuevo conocimiento o elige uno de la lista',
 	noSessionChosen: 'Crea una nueva sesión o elige una existente de la lista',
 	notFound: 'La página que estás buscando no existe',
-	ollamaConnectionError: 'No se pudo conectar a Ollama. ¿Está el [servidor en ejecución](/settings)?',
+	ollamaConnectionError:
+		'No se pudo conectar a Ollama. ¿Está el [servidor en ejecución](/settings)?',
 	ollamaLibrary: 'Biblioteca de Ollama',
 	prompt: 'Indicación',
 	promptPlaceholder: 'Escribe literalmente cualquier cosa',
