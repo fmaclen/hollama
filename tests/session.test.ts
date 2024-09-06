@@ -9,7 +9,6 @@ import {
 	MOCK_SESSION_2_RESPONSE_1,
 	mockCompletionResponse,
 	mockTagsResponse,
-	submitWithKeyboardShortcut,
 	textEditorLocator
 } from './utils';
 
@@ -24,7 +23,6 @@ test.describe('Session', () => {
 	test('initializes new session correctly', async ({ page }) => {
 		const sessionIdLocator = page.getByTestId('session-id');
 		const sessionMetadata = page.getByTestId('session-metadata');
-		const newSessionButton = page.getByTestId('new-session');
 		const runButton = page.getByText('Run');
 		const newPromptHelp = page.getByText('Write a prompt to start a new session');
 
@@ -34,7 +32,7 @@ test.describe('Session', () => {
 		await expect(sessionMetadata).not.toBeVisible();
 		await expect(newPromptHelp).not.toBeVisible();
 
-		await newSessionButton.click();
+		await page.getByTestId('new-session').click();
 		await expect(sessionIdLocator).toBeVisible();
 		await expect(sessionIdLocator).toHaveText(/Session #[a-z0-9]{2,8}/);
 		await expect(sessionMetadata).toHaveText('New session');
@@ -65,7 +63,9 @@ test.describe('Session', () => {
 			})
 		).toBeVisible();
 		await expect(page.getByText('Write a prompt to start a new session')).not.toBeVisible();
-		await expect(page.getByTestId('session-metadata')).toHaveText(new RegExp(MOCK_API_TAGS_RESPONSE.models[0].name));
+		await expect(page.getByTestId('session-metadata')).toHaveText(
+			new RegExp(MOCK_API_TAGS_RESPONSE.models[0].name)
+		);
 	});
 
 	test('handles multiple messages in a session', async ({ page }) => {
