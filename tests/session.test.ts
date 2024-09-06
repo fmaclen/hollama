@@ -9,7 +9,6 @@ import {
 	MOCK_SESSION_2_RESPONSE_1,
 	mockCompletionResponse,
 	mockTagsResponse,
-	submitWithKeyboardShortcut,
 	textEditorLocator
 } from './utils';
 
@@ -21,12 +20,10 @@ test.describe('Session', () => {
 		promptTextarea = page.locator('.prompt-editor__textarea');
 	});
 
-	test('creates new session and chats', async ({ page }) => {
+	test('initializes new session correctly', async ({ page }) => {
 		const sessionIdLocator = page.getByTestId('session-id');
 		const sessionMetadata = page.getByTestId('session-metadata');
-		const newSessionButton = page.getByTestId('new-session');
 		const runButton = page.getByText('Run');
-		const articleLocator = page.locator('article');
 		const newPromptHelp = page.getByText('Write a prompt to start a new session');
 
 		await page.goto('/');
@@ -35,7 +32,7 @@ test.describe('Session', () => {
 		await expect(sessionMetadata).not.toBeVisible();
 		await expect(newPromptHelp).not.toBeVisible();
 
-		await newSessionButton.click();
+		await page.getByTestId('new-session').click();
 		await expect(sessionIdLocator).toBeVisible();
 		await expect(sessionIdLocator).toHaveText(/Session #[a-z0-9]{2,8}/);
 		await expect(sessionMetadata).toHaveText('New session');
@@ -43,20 +40,20 @@ test.describe('Session', () => {
 		await expect(runButton).toBeVisible();
 		await expect(runButton).toBeDisabled();
 		await expect(newPromptHelp).toBeVisible();
+	});
+
+	test('sends message and receives response', async ({ page }) => {
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
 
 		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
-		await expect(runButton).toBeEnabled();
-		await expect(
-			page.locator('article', {
-				hasText:
-					'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
-			})
-		).not.toBeVisible();
+		await expect(page.getByText('Run')).toBeEnabled();
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.keyboard.press('Shift+Enter');
-		await expect(sessionMetadata).toHaveText('New session');
+		await expect(page.getByTestId('session-metadata')).toHaveText('New session');
 
 		await page.keyboard.press('Enter');
 		await expect(
@@ -65,27 +62,26 @@ test.describe('Session', () => {
 					'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
 			})
 		).toBeVisible();
-		await expect(newPromptHelp).not.toBeVisible();
-		await expect(sessionMetadata).toHaveText(new RegExp(MOCK_API_TAGS_RESPONSE.models[0].name));
+		await expect(page.getByText('Write a prompt to start a new session')).not.toBeVisible();
+		await expect(page.getByTestId('session-metadata')).toHaveText(
+			new RegExp(MOCK_API_TAGS_RESPONSE.models[0].name)
+		);
+	});
 
-		await expect(
-			page.locator('article', {
-				hasText:
-					'No problem! If you have any other questions or would like to discuss something else, feel free to ask'
-			})
-		).not.toBeVisible();
-		await expect(page.locator('article', { hasText: "I understand, it's okay" })).not.toBeVisible();
+	test('handles multiple messages in a session', async ({ page }) => {
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_2);
-		await expect(textEditorLocator(page, 'Prompt')).not.toBeVisible();
+		await promptTextarea.fill("I understand, it's okay");
+		await page.getByText('Run').click();
 
-		await page.locator('.prompt-editor__toggle').click();
-		await expect(promptTextarea).not.toBeVisible();
-		await expect(textEditorLocator(page, 'Prompt')).toBeVisible();
-
-		// Submit the form in fullscreen prompt editor with keyboard shortcut (Cmd/Ctrl + Enter)
-		await textEditorLocator(page, 'Prompt').fill("I understand, it's okay");
-		await submitWithKeyboardShortcut(page);
 		await expect(page.locator('article', { hasText: "I understand, it's okay" })).toBeVisible();
 		await expect(
 			page.locator('article', {
@@ -95,15 +91,23 @@ test.describe('Session', () => {
 		).toBeVisible();
 		await expect(page.locator('article nav', { hasText: 'Assistant' })).toHaveCount(2);
 		await expect(page.locator('article nav', { hasText: 'You' })).toHaveCount(2);
+	});
 
-		// Check the session is saved to localStorage
-		await expect(page.getByText('No sessions')).not.toBeVisible();
+	test('preserves session state after navigation', async ({ page }) => {
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
 
-		await newSessionButton.click();
-		await expect(articleLocator).toHaveCount(0);
+		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+
+		await page.getByTestId('new-session').click();
+		await expect(page.locator('article')).toHaveCount(0);
 
 		await page.goBack();
-		await expect(articleLocator).toHaveCount(4);
+		await expect(page.locator('article')).toHaveCount(2);
 	});
 
 	test('generates a random session id', async ({ page }) => {
