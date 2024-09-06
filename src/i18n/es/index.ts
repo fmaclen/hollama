@@ -76,7 +76,7 @@ const es = {
 	session: 'Sesión',
 	sessions: 'Sesiones',
 	settings: 'Configuración',
-	somethingWentWrong: 'Lo siento, algo salió mal',
+	somethingWentWrong: 'Lo sentimos, algo salió mal',
 	stopResponse: 'Detener respuesta',
 	success: 'Éxito',
 	system: 'Sistema',
