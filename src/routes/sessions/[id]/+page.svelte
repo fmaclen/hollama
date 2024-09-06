@@ -21,6 +21,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
+	import { knowledgeStore, settingsStore } from '$lib/localStorage';
 	import { ollamaChat, ollamaTags } from '$lib/ollama';
 	import {
 		formatSessionMetadata,
@@ -31,7 +32,6 @@
 		type Session
 	} from '$lib/sessions';
 	import { Sitemap } from '$lib/sitemap';
-	import { knowledgeStore, settingsStore } from '$lib/store';
 
 	import type { PageData } from './$types';
 	import Article from './Article.svelte';

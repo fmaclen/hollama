@@ -12,7 +12,7 @@
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { settingsStore } from '$lib/store';
+	import { settingsStore } from '$lib/localStorage';
 	import { checkForUpdates, updateStatusStore } from '$lib/updates';
 
 	$: pathname = $page.url.pathname;

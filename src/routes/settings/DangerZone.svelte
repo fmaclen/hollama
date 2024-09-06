@@ -3,7 +3,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
-	import { LOCAL_STORAGE_PREFIX, StorageKey } from '$lib/store';
+	import { LOCAL_STORAGE_PREFIX, StorageKey } from '$lib/localStorage';
 
 	function deleteStorage(item: StorageKey): void {
 		if (
