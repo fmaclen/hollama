@@ -3,10 +3,12 @@
 	// REF https://github.com/rob-balfre/svelte-select/pull/665
 	// @ts-ignore
 	import Select from 'svelte-select/no-styles/Select.svelte';
+	import type { LocalizedString } from 'typesafe-i18n';
+
 	import Field from './Field.svelte';
 
 	export let name: string;
-	export let label: string;
+	export let label: LocalizedString;
 	export let disabled: boolean | undefined = false;
 	export let items: { value: string; label: string; group?: string }[] = [];
 	export let value: string | null = null;
@@ -18,20 +20,12 @@
 
 <Field {name} {disabled} hasNav={$$slots.nav}>
 	<svelte:fragment slot="label">{label}</svelte:fragment>
-	<Select
-		id={name}
-		{items}
-		{disabled}
-		{groupBy}
-		showChevron={true}
-		bind:value
-	/>
+	<Select id={name} {items} {disabled} {groupBy} showChevron={true} bind:value />
 
 	<svelte:fragment slot="nav">
 		<slot name="nav" />
 	</svelte:fragment>
 </Field>
-
 
 <style lang="postcss">
 	:global(.svelte-select) {
@@ -67,7 +61,7 @@
 	}
 
 	:global(.svelte-select .svelte-select-list) {
-		@apply focused-outline rounded-md border border-shade-4 bg-shade-0 max-h-[33dvh] overflow-y-auto;
+		@apply focused-outline max-h-[33dvh] overflow-y-auto rounded-md border border-shade-4 bg-shade-0;
 	}
 
 	:global(.svelte-select .list-item) {
@@ -75,7 +69,7 @@
 	}
 
 	:global(.svelte-select .empty) {
-		@apply text-muted w-full;
+		@apply w-full text-muted;
 	}
 
 	:global(.svelte-select .empty),

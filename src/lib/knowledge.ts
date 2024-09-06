@@ -1,5 +1,6 @@
 import { get } from 'svelte/store';
-import { knowledgeStore, sortStore } from '$lib/store';
+
+import { knowledgeStore, sortStore } from '$lib/localStorage';
 
 export interface Knowledge {
 	id: string;

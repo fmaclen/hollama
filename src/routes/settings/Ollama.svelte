@@ -1,24 +1,23 @@
 <script lang="ts">
-	import i18n from '$lib/i18n';
-	import { onMount } from 'svelte';
+	import { CloudDownload } from 'lucide-svelte';
 	import type {
 		ErrorResponse,
 		ListResponse,
 		ProgressResponse,
 		StatusResponse
 	} from 'ollama/browser';
+	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { CloudDownload } from 'lucide-svelte';
 
+	import LL from '$i18n/i18n-svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
-	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import P from '$lib/components/P.svelte';
-
-	import { settingsStore } from '$lib/store';
+	import { settingsStore } from '$lib/localStorage';
 	import { ollamaPull, ollamaTags } from '$lib/ollama';
 
 	let ollamaURL: URL | null = null;
@@ -51,23 +50,25 @@
 	async function pullModel() {
 		if (!modelTag) return;
 		isPullInProgress = true;
-		const toastId = toast.message($i18n.t('pullingModel'), { description: modelTag });
+		const toastId = toast.message($LL.pullingModel(), { description: modelTag });
 
 		try {
 			await ollamaPull(
 				{ model: modelTag, stream: true },
 				(response: ProgressResponse | StatusResponse | ErrorResponse) => {
 					if ('status' in response && response.status === 'success') {
-						toast.success($i18n.t('success'), {
+						toast.success($LL.success(), {
 							id: toastId,
-							description: $i18n.t('modelWasDownloaded', { model: modelTag })
+							// HACK: `modelTag` is inferred as `string | undefined`
+							// but it should be a `string` based on the guard clause above
+							description: $LL.modelWasDownloaded({ model: modelTag as string })
 						});
 						modelTag = '';
 						return;
 					}
 
 					if ('error' in response) {
-						toast.error($i18n.t('error'), { id: toastId, description: response.error });
+						toast.error($LL.error(), { id: toastId, description: response.error });
 						return;
 					}
 
@@ -86,7 +87,7 @@
 
 			toast.error(
 				typedError.message === 'Failed to fetch'
-					? $i18n.t('errors.couldntConnectToOllamaServer')
+					? $LL.couldntConnectToOllamaServer()
 					: typedError.message,
 				{
 					id: toastId,
@@ -116,51 +117,54 @@
 	<P><strong>Ollama</strong></P>
 	<FieldInput
 		name="server"
-		label="Server"
+		label={$LL.server()}
 		placeholder={DETAULT_OLLAMA_SERVER}
 		bind:value={ollamaServer}
 		on:keyup={getModelsList}
 	>
 		<svelte:fragment slot="status">
-			<Badge
-				variant={$settingsStore.ollamaServerStatus === 'disconnected' ? 'warning' : 'positive'}
-			>
-				{$i18n.t(`settingsPage.${$settingsStore.ollamaServerStatus}`)}
-			</Badge>
+			{#if $settingsStore.ollamaServerStatus === 'disconnected'}
+				<Badge variant="warning">{$LL.disconnected()}</Badge>
+			{:else}
+				<Badge variant="positive">{$LL.connected()}</Badge>
+			{/if}
 		</svelte:fragment>
 
 		<svelte:fragment slot="help">
 			{#if ollamaURL && $settingsStore.ollamaServerStatus === 'disconnected'}
 				<FieldHelp>
 					<P>
-						{$i18n.t('settingsPage.allowConnections')}
-						<Badge capitalize={false}>{ollamaURL.origin}</Badge>
+						{$LL.allowConnections()}
+						<Badge>{ollamaURL.origin}</Badge>
 						<Button
 							variant="link"
 							href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
 							target="_blank"
 						>
-							{$i18n.t('settingsPage.seeDocs')}
+							{$LL.seeDocs()}
 						</Button>
 					</P>
 					<P>
-						{$i18n.t('settingsPage.checkBrowserExtensions')}
+						{$LL.checkBrowserExtensions()}
 					</P>
 					{#if ollamaURL.protocol === 'https:'}
 						<P>
 							<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-							{@html $i18n.t('settingsPage.tryingToConnectNotLocalhost')}
+							{@html $LL.tryingToConnectNotLocalhost({
+								hostname: '<code class="badge">localhost</code>',
+								ip: '<code class="badge">127.0.0.1</code>'
+							})}
 							<a
 								href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
 								target="_blank"
 							>
-								{$i18n.t('settingsPage.creatingTunnel')}
+								{$LL.creatingTunnel()}
 							</a>
 							<a
 								href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
 								target="_blank"
 							>
-								{$i18n.t('settingsPage.allowMixedContent')}
+								{$LL.allowMixedContent()}
 							</a>.
 						</P>
 					{/if}
@@ -173,11 +177,10 @@
 
 	<FieldInput
 		name="pull-model"
-		label="Pull model"
-		placeholder={$i18n.t('pullModelPlaceholder')}
+		label={$LL.pullModel()}
+		placeholder={$LL.pullModelPlaceholder()}
 		bind:value={modelTag}
-		disabled={isPullInProgress ||
-			$settingsStore.ollamaServerStatus === $i18n.t('settingsPage.disconnected')}
+		disabled={isPullInProgress || $settingsStore.ollamaServerStatus === $LL.disconnected()}
 	>
 		<svelte:fragment slot="nav">
 			<Button
@@ -186,7 +189,7 @@
 				isLoading={isPullInProgress}
 				disabled={!modelTag ||
 					isPullInProgress ||
-					$settingsStore.ollamaServerStatus === $i18n.t('settingsPage.disconnected')}
+					$settingsStore.ollamaServerStatus === $LL.disconnected()}
 				on:click={pullModel}
 			>
 				<CloudDownload class="h-4 w-4" />
@@ -195,9 +198,9 @@
 		<svelte:fragment slot="help">
 			<FieldHelp>
 				<P>
-					{$i18n.t('settingsPage.browseModels')}
+					{$LL.browseModels()}
 					<Button href="https://ollama.com/library" variant="link" target="_blank">
-						{$i18n.t('settingsPage.ollamaLibrary')}
+						{$LL.ollamaLibrary()}
 					</Button>
 				</P>
 			</FieldHelp>

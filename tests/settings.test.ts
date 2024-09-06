@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_API_TAGS_RESPONSE, mockTagsResponse } from './utils';
 import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
+
+import { MOCK_API_TAGS_RESPONSE, mockTagsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
@@ -36,9 +37,9 @@ test('handles server status updates correctly', async ({ page }) => {
 	await expect(page.getByLabel('Server')).toHaveValue('http://localhost:11434');
 
 	// The starting status is "connected"
-	await expect(page.getByText('disconnected')).not.toBeVisible();
-	await expect(page.getByText('connected', { exact: true })).toBeVisible();
-	await expect(page.getByText('connected', { exact: true })).toHaveClass(/badge--positive/);
+	await expect(page.getByText('Disconnected')).not.toBeVisible();
+	await expect(page.getByText('Connected', { exact: true })).toBeVisible();
+	await expect(page.getByText('Connected', { exact: true })).toHaveClass(/badge--positive/);
 
 	// Mock the API to return an error response
 	await page.route('**/api/tags', async (route) => {
@@ -49,9 +50,9 @@ test('handles server status updates correctly', async ({ page }) => {
 	await page.getByLabel('Server').clear();
 
 	// Wait for the server status to be updated to "disconnected"
-	await expect(page.getByText('connected', { exact: true })).not.toBeVisible();
-	await expect(page.getByText('disconnected')).toBeVisible();
-	await expect(page.getByText('disconnected')).toHaveClass(/badge--warning/);
+	await expect(page.getByText('Connected', { exact: true })).not.toBeVisible();
+	await expect(page.getByText('Disconnected')).toBeVisible();
+	await expect(page.getByText('Disconnected')).toHaveClass(/badge--warning/);
 });
 
 test('deletes all settings and resets to default values', async ({ page }) => {

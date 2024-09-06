@@ -5,7 +5,7 @@
 	"homepage": "https://hollama.fernando.is",
 	"description": "A minimal UI for talking to Ollama servers",
 	"scripts": {
-		"dev": "vite dev --host",
+		"dev": "concurrently \"typesafe-i18n\" \"vite dev --host\"",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "playwright test --trace on",
@@ -14,9 +14,11 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"electron": "electron .",
-		"electron:build": "cross-env PUBLIC_ADAPTER=electron-node vite build && electron-builder"
+		"electron:build": "cross-env PUBLIC_ADAPTER=electron-node vite build && electron-builder",
+		"typesafe-i18n": "typesafe-i18n"
 	},
 	"devDependencies": {
+		"@ianvs/prettier-plugin-sort-imports": "^4.3.1",
 		"@playwright/test": "^1.43.0",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/adapter-node": "^5.0.1",
@@ -29,6 +31,7 @@
 		"@typescript-eslint/parser": "^7.0.0",
 		"autoprefixer": "^10.4.16",
 		"codemirror": "^6.0.1",
+		"concurrently": "^8.2.2",
 		"cross-env": "^7.0.3",
 		"date-fns": "^3.6.0",
 		"dotenv": "^16.4.5",
@@ -38,7 +41,6 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.35.1",
 		"highlight.js": "^11.9.0",
-		"i18next": "^23.12.2",
 		"lucide-svelte": "^0.372.0",
 		"markdown-it": "^14.1.0",
 		"ollama": "^0.5.8",
@@ -53,13 +55,14 @@
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
 		"svelte-i18next": "^2.2.2",
-		"svelte-select": "^5.8.3",
 		"svelte-sonner": "^0.3.27",
 		"tailwindcss": "^3.3.6",
 		"thememirror": "^2.0.1",
 		"tslib": "^2.4.1",
+		"typesafe-i18n": "^5.26.2",
 		"typescript": "^5.0.0",
-		"vite": "^5.0.3"
+		"vite": "^5.0.3",
+		"vite-node": "^2.0.5"
 	},
 	"optionalDependencies": {
 		"@sveltejs/adapter-cloudflare": "^4.2.1"

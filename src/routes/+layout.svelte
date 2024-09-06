@@ -1,31 +1,33 @@
 <script lang="ts">
+	import { Brain, MessageSquareText, Moon, NotebookText, Settings2, Sun } from 'lucide-svelte';
+	import { beforeUpdate, onMount } from 'svelte';
 	import { Toaster } from 'svelte-sonner';
-	import { onMount } from 'svelte';
-	import { Brain, MessageSquareText, Settings2, Sun, Moon, NotebookText } from 'lucide-svelte';
+
+	import LL, { setLocale } from '$i18n/i18n-svelte';
 
 	import '../app.pcss';
 
-	import i18n from '$lib/i18n';
+	import { loadLocale } from '$i18n/i18n-util.sync';
 	import { env } from '$env/dynamic/public';
-	import { onNavigate } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { settingsStore } from '$lib/store';
-	import { updateStatusStore, checkForUpdates } from '$lib/updates';
+	import { settingsStore } from '$lib/localStorage';
+	import { checkForUpdates, updateStatusStore } from '$lib/updates';
 
 	$: pathname = $page.url.pathname;
-	const SITEMAP = [
-		['/sessions', 'sessions'],
-		['/knowledge', 'knowledge'],
-		['/settings', 'settings'],
-		['/motd', 'motd']
-	];
+	const SITEMAP = ['/sessions', '/knowledge', '/settings', '/motd'];
 
 	$: theme = $settingsStore.userTheme;
 
 	onNavigate(async () => {
 		// Check for updates whenever the user follows a link (if auto-check is enabled)
 		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
+	});
+
+	beforeUpdate(() => {
+		loadLocale('en');
+		setLocale('en');
 	});
 
 	onMount(() => {
@@ -61,34 +63,37 @@
 			<img class="layout__logo" src="/favicon.png" alt="Hollama logo" />
 		</a>
 
-		{#each SITEMAP as [href, text]}
+		{#each SITEMAP as href}
 			<a
 				class="layout__a"
 				class:layout__a--active={pathname.includes(href)}
-				class:layout__a--notification={text === 'settings' &&
+				class:layout__a--notification={href === '/settings' &&
 					$updateStatusStore.showSidebarNotification}
 				{href}
 			>
 				{#if href === '/knowledge'}
 					<Brain class="h-4 w-4" />
+					{$LL.knowledge()}
 				{:else if href === '/sessions'}
 					<MessageSquareText class="h-4 w-4" />
+					{$LL.sessions()}
 				{:else if href === '/settings'}
 					<Settings2 class="h-4 w-4" />
+					{$LL.settings()}
 				{:else if href === '/motd'}
 					<NotebookText class="h-4 w-4" />
+					{$LL.motd()}
 				{/if}
-				{$i18n.t(text, { count: 0 })}
 			</a>
 		{/each}
 
 		<button class="layout__button" on:click={toggleTheme}>
 			{#if theme === 'light'}
 				<Moon class="h-4 w-4" />
-				{$i18n.t('theme.dark')}
+				{$LL.dark()}
 			{:else}
 				<Sun class="h-4 w-4" />
-				{$i18n.t('theme.light')}
+				{$LL.light()}
 			{/if}
 		</button>
 	</aside>

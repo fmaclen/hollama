@@ -1,14 +1,15 @@
-import { get } from 'svelte/store';
-import { settingsStore } from '$lib/store';
 import type {
 	ChatRequest,
 	ChatResponse,
-	ListResponse,
 	ErrorResponse,
+	ListResponse,
 	ProgressResponse,
 	PullRequest,
 	StatusResponse
 } from 'ollama/browser';
+import { get } from 'svelte/store';
+
+import { settingsStore } from '$lib/localStorage';
 
 function getServerFromSettings() {
 	const settings = get(settingsStore);

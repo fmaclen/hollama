@@ -1,40 +1,40 @@
 <script lang="ts">
-	import { afterUpdate, tick } from 'svelte';
-	import { writable } from 'svelte/store';
 	import { Brain, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { afterUpdate, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import { writable } from 'svelte/store';
+
+	import LL from '$i18n/i18n-svelte';
 	import { beforeNavigate } from '$app/navigation';
-
-	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { settingsStore, knowledgeStore } from '$lib/store';
-	import { ollamaChat, ollamaTags } from '$lib/ollama';
-	import {
-		saveSession,
-		type Message,
-		loadSession,
-		formatSessionMetadata,
-		getSessionTitle,
-		type Session
-	} from '$lib/sessions';
-	import { generateNewUrl } from '$lib/components/ButtonNew';
-	import { Sitemap } from '$lib/sitemap';
-	import i18n from '$lib/i18n';
-	import type { PageData } from './$types';
-
 	import Button from '$lib/components/Button.svelte';
-	import Article from './Article.svelte';
-	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
-	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
-	import FieldSelect from '$lib/components/FieldSelect.svelte';
-	import Header from '$lib/components/Header.svelte';
-	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
-	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
-	import Fieldset from '$lib/components/Fieldset.svelte';
-	import Field from '$lib/components/Field.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
-	import Metadata from '$lib/components/Metadata.svelte';
+	import { generateNewUrl } from '$lib/components/ButtonNew';
+	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
+	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
+	import Field from '$lib/components/Field.svelte';
+	import FieldSelect from '$lib/components/FieldSelect.svelte';
+	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
+	import Fieldset from '$lib/components/Fieldset.svelte';
+	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import Head from '$lib/components/Head.svelte';
+	import Header from '$lib/components/Header.svelte';
+	import Metadata from '$lib/components/Metadata.svelte';
+	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
+	import { knowledgeStore, settingsStore } from '$lib/localStorage';
+	import { ollamaChat, ollamaTags } from '$lib/ollama';
+	import {
+		formatSessionMetadata,
+		getSessionTitle,
+		loadSession,
+		saveSession,
+		type Message,
+		type Session
+	} from '$lib/sessions';
+	import { Sitemap } from '$lib/sitemap';
+
+	import type { PageData } from './$types';
+	import Article from './Article.svelte';
 
 	export let data: PageData;
 
@@ -67,7 +67,7 @@
 			$settingsStore.ollamaModels = (await ollamaTags()).models;
 		} catch {
 			$settingsStore.ollamaModels = [];
-			toast.warning($i18n.t('errors.cantConnectToOllamaServer'));
+			toast.warning($LL.cantConnectToOllamaServer());
 		}
 		scrollToBottom();
 	}
@@ -188,8 +188,11 @@
 
 	function handleError(error: Error) {
 		let content: string;
-		if (error.message === 'Failed to fetch') content = $i18n.t('errors.ollamaConnectionError');
-		else content = $i18n.t('errors.genericError', { error });
+		if (error.message === 'Failed to fetch') {
+			content = $LL.ollamaConnectionError();
+		} else {
+			content = $LL.genericError({ error: error.toString() });
+		}
 
 		const message: Message = { role: 'system', content };
 		session.messages = [...session.messages, message];
@@ -205,7 +208,7 @@
 
 	beforeNavigate((navigation) => {
 		if (!isCompletionInProgress) return;
-		const userConfirmed = confirm($i18n.t('dialogs.areYouSureYouWantToLeave'));
+		const userConfirmed = confirm($LL.areYouSureYouWantToLeave());
 		if (userConfirmed) {
 			stopCompletion();
 			return;
@@ -222,19 +225,14 @@
 </script>
 
 <div class="session">
-	<Head
-		title={[
-			isNewSession ? $i18n.t('sessionsPage.new') : getSessionTitle(session),
-			$i18n.t('sessions', { count: 0 })
-		]}
-	/>
+	<Head title={[isNewSession ? $LL.newSession() : getSessionTitle(session), $LL.sessions()]} />
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
-			{$i18n.t('sessions', { count: 1 })}
+			{$LL.session()}
 			<Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
 		</p>
 		<Metadata dataTestid="session-metadata">
-			{isNewSession ? $i18n.t('sessionsPage.new') : formatSessionMetadata(session)}
+			{isNewSession ? $LL.newSession() : formatSessionMetadata(session)}
 		</Metadata>
 
 		<svelte:fragment slot="nav">
@@ -250,7 +248,7 @@
 		<div class="session__history" bind:this={messageWindow}>
 			<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
 				{#if isNewSession}
-					<EmptyMessage>{$i18n.t('sessionsPage.writePromptToStart')}</EmptyMessage>
+					<EmptyMessage>{$LL.writePromptToStart()}</EmptyMessage>
 				{/if}
 
 				{#each session.messages as message, i (session.id + i)}
@@ -283,7 +281,7 @@
 							<div class="prompt-editor__project">
 								<FieldSelectModel />
 								<FieldSelect
-									label={$i18n.t('sessionsPage.systemPrompt')}
+									label={$LL.systemPrompt()}
 									name="knowledge"
 									disabled={$knowledgeStore.length === 0}
 									items={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
@@ -291,7 +289,7 @@
 								>
 									<svelte:fragment slot="nav">
 										<Button
-											aria-label={$i18n.t('knowledgePage.new')}
+											aria-label={$LL.newKnowledge()}
 											variant="outline"
 											href={generateNewUrl(Sitemap.KNOWLEDGE)}
 											class="h-full text-muted"
@@ -305,17 +303,13 @@
 
 						{#key session}
 							{#if isPromptFullscreen}
-								<FieldTextEditor
-									label={$i18n.t('sessionsPage.prompt')}
-									{handleSubmit}
-									bind:value={prompt}
-								/>
+								<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={prompt} />
 							{:else}
 								<Field name="prompt">
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
-										placeholder={$i18n.t('sessionsPage.promptPlaceholder')}
+										placeholder={$LL.promptPlaceholder()}
 										bind:this={promptTextarea}
 										bind:value={prompt}
 										on:keydown={handleKeyDown}
@@ -334,7 +328,7 @@
 										isPromptFullscreen = false;
 									}}
 								>
-									{$i18n.t('cancel')}
+									{$LL.cancel()}
 								</Button>
 							{/if}
 							<ButtonSubmit
@@ -345,7 +339,11 @@
 									$settingsStore.ollamaModels.length === 0 ||
 									!$settingsStore.ollamaModel}
 							>
-								{$i18n.t(messageIndexToEdit !== null ? 'saveAndRun' : 'sessionsPage.run')}
+								{#if messageIndexToEdit}
+									{$LL.run()}
+								{:else}
+									{$LL.saveAndRun()}
+								{/if}
 							</ButtonSubmit>
 
 							{#if isCompletionInProgress}

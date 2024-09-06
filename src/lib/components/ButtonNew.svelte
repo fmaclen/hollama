@@ -1,10 +1,12 @@
 <script lang="ts">
-	import i18n from '$lib/i18n';
 	import { onMount } from 'svelte';
-	import { generateStorageId } from '$lib/utils';
+
+	import LL from '$i18n/i18n-svelte';
 	import { Sitemap } from '$lib/sitemap';
-	import { generateNewUrl } from './ButtonNew';
+	import { generateStorageId } from '$lib/utils';
+
 	import Button from './Button.svelte';
+	import { generateNewUrl } from './ButtonNew';
 
 	export let sitemap: Sitemap;
 	let newId: string;
@@ -24,6 +26,6 @@
 		href={generateNewUrl(sitemap, newId)}
 		on:click={setId}
 	>
-		{sitemap === Sitemap.SESSIONS ? $i18n.t('sessionsPage.new') : $i18n.t('knowledgePage.new')}
+		{sitemap === Sitemap.SESSIONS ? $LL.newSession() : $LL.newKnowledge()}
 	</Button>
 </div>

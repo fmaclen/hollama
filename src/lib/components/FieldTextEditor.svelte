@@ -1,13 +1,16 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { basicSetup } from 'codemirror';
-	import { EditorView, keymap } from '@codemirror/view';
 	import { Prec } from '@codemirror/state';
+	import { EditorView, keymap } from '@codemirror/view';
+	import { basicSetup } from 'codemirror';
+	import { onMount } from 'svelte';
 	import { createTheme } from 'thememirror';
-	import { settingsStore } from '$lib/store';
+	import type { LocalizedString } from 'typesafe-i18n';
+
+	import { settingsStore } from '$lib/localStorage';
+
 	import Field from './Field.svelte';
 
-	export let label: string;
+	export let label: LocalizedString;
 	export let value: string;
 	export let handleSubmit: (event?: Event) => void;
 
