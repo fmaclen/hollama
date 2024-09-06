@@ -2,7 +2,7 @@
 	import { beforeUpdate } from 'svelte';
 
 	import { goto } from '$app/navigation';
-	import { settingsStore } from '$lib/store';
+	import { settingsStore } from '$lib/localStorage';
 
 	beforeUpdate(() => {
 		// If the server is connected, redirect to the sessions page

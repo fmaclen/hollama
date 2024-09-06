@@ -6,7 +6,7 @@
 	import { createTheme } from 'thememirror';
 	import type { LocalizedString } from 'typesafe-i18n';
 
-	import { settingsStore } from '$lib/store';
+	import { settingsStore } from '$lib/localStorage';
 
 	import Field from './Field.svelte';
 

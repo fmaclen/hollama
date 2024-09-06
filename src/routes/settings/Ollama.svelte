@@ -17,8 +17,8 @@
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
+	import { settingsStore } from '$lib/localStorage';
 	import { ollamaPull, ollamaTags } from '$lib/ollama';
-	import { settingsStore } from '$lib/store';
 
 	let ollamaURL: URL | null = null;
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
-	import { settingsStore } from '$lib/store';
+	import { settingsStore } from '$lib/localStorage';
 
 	import FieldSelect from './FieldSelect.svelte';
 

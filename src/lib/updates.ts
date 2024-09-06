@@ -3,7 +3,7 @@ import semver from 'semver';
 import { get, writable } from 'svelte/store';
 
 import { version } from '$app/environment';
-import { settingsStore } from '$lib/store';
+import { settingsStore } from '$lib/localStorage';
 
 import type { HollamaMetadata } from '../routes/api/metadata/+server';
 import { GITHUB_RELEASES_API } from './github';

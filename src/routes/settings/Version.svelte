@@ -7,7 +7,7 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
 	import { GITHUB_RELEASES_URL } from '$lib/github';
-	import { settingsStore } from '$lib/store';
+	import { settingsStore } from '$lib/localStorage';
 	import { checkForUpdates, updateStatusStore } from '$lib/updates';
 
 	// If this component is mounted we don't want the sidebar notification badge to be visible

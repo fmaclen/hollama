@@ -4,9 +4,9 @@
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
+	import { sessionsStore } from '$lib/localStorage';
 	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
 	import { Sitemap } from '$lib/sitemap';
-	import { sessionsStore } from '$lib/store';
 </script>
 
 <RobotsNoIndex />

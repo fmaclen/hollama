@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 
-import { sessionsStore, settingsStore, sortStore } from '$lib/store';
+import { sessionsStore, settingsStore, sortStore } from '$lib/localStorage';
 
 import type { Knowledge } from './knowledge';
 import { formatTimestampToNow } from './utils';

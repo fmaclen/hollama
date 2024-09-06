@@ -9,7 +9,7 @@ import type {
 } from 'ollama/browser';
 import { get } from 'svelte/store';
 
-import { settingsStore } from '$lib/store';
+import { settingsStore } from '$lib/localStorage';
 
 function getServerFromSettings() {
 	const settings = get(settingsStore);

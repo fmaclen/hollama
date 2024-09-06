@@ -4,8 +4,8 @@
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
+	import { knowledgeStore } from '$lib/localStorage';
 	import { Sitemap } from '$lib/sitemap';
-	import { knowledgeStore } from '$lib/store';
 	import { formatTimestampToNow } from '$lib/utils';
 </script>
 
