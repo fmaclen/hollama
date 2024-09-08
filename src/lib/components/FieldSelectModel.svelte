@@ -38,11 +38,12 @@
 	<Combobox.Root
 		bind:touchedInput
 		bind:inputValue
+		onOpenChange={(isOpening) => (inputValue = isOpening ? '' : $settingsStore.ollamaModel ?? '')}
 		{selected}
 		items={filteredModels}
 		disabled={!$settingsStore.ollamaModels.length}
 	>
-		<div class="flex pr-3">
+		<div class="flex pr-4">
 			<Combobox.Input
 				id={INPUT_ID}
 				class="base-input text-sm"
@@ -52,10 +53,18 @@
 			<ChevronDown class="h-4 w-4" />
 		</div>
 
-		<Combobox.Content class="mt-1 rounded-md bg-shade-0 shadow-md">
+		<Combobox.Content
+			sideOffset={4}
+			class="max-h-96 overflow-y-auto rounded-md bg-shade-0 shadow-md"
+		>
 			{#each filteredModels as model (model.value)}
-				<Combobox.Item value={model} class="data-[highlighted]:bg-warning-muted text-sm px-3 py-1">
-					{model.label}
+				<Combobox.Item
+					value={model}
+					class="flex w-full flex-row px-3 py-1 text-sm data-[highlighted]:bg-warning-muted"
+				>
+					<div class="w-full">
+						{model.label}
+					</div>
 					<Combobox.ItemIndicator>
 						<Check class="h-4 w-4" />
 					</Combobox.ItemIndicator>
@@ -67,4 +76,3 @@
 	</Combobox.Root>
 </Label.Root>
 
-<Fruits />
