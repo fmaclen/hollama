@@ -7,6 +7,7 @@ export type BaseLocale = 'en'
 
 export type Locales =
 	| 'en'
+	| 'es'
 
 export type Translation = RootTranslation
 
@@ -22,10 +23,17 @@ type RootTranslation = {
 	 */
 	allowMixedContent: string
 	/**
-	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​{​t​y​p​e​}​?
-	 * @param {string} type
+	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​k​n​o​w​l​e​d​g​e​?
 	 */
-	areYouSureYouWantToDeleteAll: RequiredParams<'type'>
+	areYouSureYouWantToDeleteAllKnowledge: string
+	/**
+	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​s​e​s​s​i​o​n​s​?
+	 */
+	areYouSureYouWantToDeleteAllSessions: string
+	/**
+	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​s​e​t​t​i​n​g​s​?
+	 */
+	areYouSureYouWantToDeleteAllSettings: string
 	/**
 	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​l​e​a​v​e​?​
 ​T​h​e​ ​c​o​m​p​l​e​t​i​o​n​ ​i​n​ ​p​r​o​g​r​e​s​s​ ​w​i​l​l​ ​s​t​o​p
@@ -362,9 +370,17 @@ export type TranslationFunctions = {
 	 */
 	allowMixedContent: () => LocalizedString
 	/**
-	 * Are you sure you want to delete all {type}?
+	 * Are you sure you want to delete all knowledge?
 	 */
-	areYouSureYouWantToDeleteAll: (arg: { type: string }) => LocalizedString
+	areYouSureYouWantToDeleteAllKnowledge: () => LocalizedString
+	/**
+	 * Are you sure you want to delete all sessions?
+	 */
+	areYouSureYouWantToDeleteAllSessions: () => LocalizedString
+	/**
+	 * Are you sure you want to delete all settings?
+	 */
+	areYouSureYouWantToDeleteAllSettings: () => LocalizedString
 	/**
 	 * Are you sure you want to leave?
 The completion in progress will stop

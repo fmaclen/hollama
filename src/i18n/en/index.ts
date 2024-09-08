@@ -3,7 +3,9 @@ import type { BaseTranslation } from '../i18n-types';
 const en = {
 	allowConnections: 'Change your server settings to allow connections from',
 	allowMixedContent: 'Allow mixed content',
-	areYouSureYouWantToDeleteAll: 'Are you sure you want to delete all {type:string}?',
+	areYouSureYouWantToDeleteAllKnowledge: 'Are you sure you want to delete all knowledge?',
+	areYouSureYouWantToDeleteAllSessions: 'Are you sure you want to delete all sessions?',
+	areYouSureYouWantToDeleteAllSettings: 'Are you sure you want to delete all settings?',
 	areYouSureYouWantToLeave: 'Are you sure you want to leave?\nThe completion in progress will stop',
 	assistant: 'Assistant',
 	automaticallyCheckForUpdates: 'Automatically check for updates',

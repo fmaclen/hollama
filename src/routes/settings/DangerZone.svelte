@@ -3,16 +3,15 @@
 	import Button from '$lib/components/Button.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
-	import { LOCAL_STORAGE_PREFIX, StorageKey } from '$lib/localStorage';
+	import { StorageKey } from '$lib/localStorage';
 
 	function deleteStorage(item: StorageKey): void {
-		if (
-			confirm(
-				$LL.areYouSureYouWantToDeleteAll({
-					type: item.replace(`${LOCAL_STORAGE_PREFIX}-`, '')
-				})
-			)
-		) {
+		const dialogText = {
+			[StorageKey.HollamaSessions]: $LL.areYouSureYouWantToDeleteAllSessions(),
+			[StorageKey.HollamaKnowledge]: $LL.areYouSureYouWantToDeleteAllKnowledge(),
+			[StorageKey.HollamaSettings]: $LL.areYouSureYouWantToDeleteAllSettings()
+		};
+		if (confirm(dialogText[item])) {
 			localStorage.removeItem(item);
 			location.reload();
 		}

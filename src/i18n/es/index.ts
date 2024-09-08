@@ -3,7 +3,11 @@ import type { BaseTranslation } from '../i18n-types';
 const es = {
 	allowConnections: 'Cambia la configuración de tu servidor para permitir conexiones desde',
 	allowMixedContent: 'Permitir contenido mixto',
-	areYouSureYouWantToDeleteAll: '¿Estás seguro de que quieres eliminar todos los {type:string}?',
+	areYouSureYouWantToDeleteAllKnowledge:
+		'¿Estás seguro de que quieres eliminar todo el conocimiento?',
+	areYouSureYouWantToDeleteAllSessions: '¿Estás seguro de que quieres eliminar todas las sesiones?',
+	areYouSureYouWantToDeleteAllSettings:
+		'¿Estás seguro de que quieres eliminar todas las configuraciones?',
 	areYouSureYouWantToLeave: '¿Estás seguro de que quieres salir?\nLa tarea en progreso se detendrá',
 	assistant: 'Asistente',
 	automaticallyCheckForUpdates: 'Buscar actualizaciones automáticamente',
