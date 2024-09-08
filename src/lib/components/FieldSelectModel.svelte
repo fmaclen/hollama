@@ -10,6 +10,7 @@
 	const INPUT_ID = 'model';
 	let inputValue = '';
 	let selected: Selected<string> | undefined;
+	let touchedInput = false;
 
 	// $: console.log('ollamaModels', $settingsStore.ollamaModels);
 	// $: console.log('ollamaModel', $settingsStore.ollamaModel);
@@ -19,7 +20,8 @@
 	$: models = $settingsStore.ollamaModels.map((m) => ({ value: m.name, label: m.name }));
 	$: if ($settingsStore.ollamaModel)
 		selected = { value: $settingsStore.ollamaModel, label: $settingsStore.ollamaModel };
-	$: filteredModels = inputValue ? models.filter((m) => m.value.includes(inputValue)) : models;
+	$: filteredModels =
+		inputValue && touchedInput && models ? models.filter((m) => m.value.includes(inputValue)) : models;
 	$: $settingsStore.ollamaModel = inputValue.trim();
 </script>
 
@@ -34,6 +36,7 @@
 	<Combobox.Root
 		{selected}
 		items={filteredModels}
+		bind:touchedInput
 		bind:inputValue
 		disabled={!$settingsStore.ollamaModels.length}
 	>
@@ -48,7 +51,7 @@
 		</div>
 
 		<Combobox.Content class="mt-1 rounded-md bg-shade-0 shadow-md">
-			{#each models as model (model.value)}
+			{#each filteredModels as model (model.value)}
 				<Combobox.Item value={model} class="data-[highlighted]:bg-accent-muted">
 					{model.label}
 					<Combobox.ItemIndicator>
