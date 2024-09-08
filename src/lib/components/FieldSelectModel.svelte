@@ -21,7 +21,9 @@
 	$: if ($settingsStore.ollamaModel)
 		selected = { value: $settingsStore.ollamaModel, label: $settingsStore.ollamaModel };
 	$: filteredModels =
-		inputValue && touchedInput && models ? models.filter((m) => m.value.includes(inputValue)) : models;
+		inputValue && touchedInput && models
+			? models.filter((m) => m.value.includes(inputValue))
+			: models;
 	$: $settingsStore.ollamaModel = inputValue.trim();
 </script>
 
@@ -34,10 +36,10 @@
 	</div>
 
 	<Combobox.Root
-		{selected}
-		items={filteredModels}
 		bind:touchedInput
 		bind:inputValue
+		{selected}
+		items={filteredModels}
 		disabled={!$settingsStore.ollamaModels.length}
 	>
 		<div class="flex pr-3">
@@ -52,7 +54,7 @@
 
 		<Combobox.Content class="mt-1 rounded-md bg-shade-0 shadow-md">
 			{#each filteredModels as model (model.value)}
-				<Combobox.Item value={model} class="data-[highlighted]:bg-accent-muted">
+				<Combobox.Item value={model} class="data-[highlighted]:bg-warning-muted text-sm px-3 py-1">
 					{model.label}
 					<Combobox.ItemIndicator>
 						<Check class="h-4 w-4" />
