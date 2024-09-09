@@ -8,16 +8,22 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('displays model list and updates settings store', async ({ page }) => {
-	const modelSelect = page.getByLabel('Available models');
-
 	await page.goto('/');
+	await expect(page.getByText('Connected')).toBeVisible();
 
 	// Check if the model list contains the expected models
-	await expect(modelSelect).toContainText(MOCK_API_TAGS_RESPONSE.models[0].name);
-	await expect(modelSelect).toContainText(MOCK_API_TAGS_RESPONSE.models[1].name);
-	await expect(modelSelect).toContainText(MOCK_API_TAGS_RESPONSE.models[2].name);
+	const modelComboBox = page.locator('label', { hasText: 'Available models' });
+	await expect(modelComboBox).toBeVisible();
+	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[0].name)).not.toBeVisible();
+	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name)).not.toBeVisible();
+	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[2].name)).not.toBeVisible();
 
-	await modelSelect.selectOption(MOCK_API_TAGS_RESPONSE.models[1].name);
+	await modelComboBox.click();
+	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[0].name)).toBeVisible();
+	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name)).toBeVisible();
+	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[2].name)).toBeVisible();
+
+	await page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name).click();
 
 	// Check if the settings store is updated with the selected model
 	const localStorageValue = await page.evaluate(() =>
@@ -57,14 +63,17 @@ test('handles server status updates correctly', async ({ page }) => {
 
 test('deletes all settings and resets to default values', async ({ page }) => {
 	await page.goto('/');
-	const modelSelect = page.getByLabel('Available models');
-	await expect(modelSelect).toHaveValue('');
+	// const modelSelect = page.getByLabel('Available models');
+	// await expect(modelSelect).toHaveValue('');
+	const comboBox = page.locator('label', { hasText: 'Available models' });
+	await expect(comboBox).toHaveValue('');
 
 	await page.getByLabel('Server').fill('http://localhost:3000');
-	await page.getByLabel('Available models').selectOption(MOCK_API_TAGS_RESPONSE.models[1].name);
+	await comboBox.click();
+	await page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name).click();
 	await page.reload();
 	await expect(page.getByLabel('Server')).toHaveValue('http://localhost:3000');
-	await expect(modelSelect).toHaveValue(MOCK_API_TAGS_RESPONSE.models[1].name);
+	await expect(comboBox).toHaveValue(MOCK_API_TAGS_RESPONSE.models[1].name);
 
 	// Check if the settings store is updated with the selected model
 	let localStorageValue = await page.evaluate(() =>
