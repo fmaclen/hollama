@@ -23,8 +23,6 @@
 	// Set the selected model when the component loads and there is no selected model
 	$: if ($settingsStore.ollamaModel && !selected) selected = { value: $settingsStore.ollamaModel };
 
-	$: console.log('inputValue', inputValue);
-
 	// Updates the current model in the store
 	function handleUpdateModel(model: string) {
 		console.log('updated model', model);
