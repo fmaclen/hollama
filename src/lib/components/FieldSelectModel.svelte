@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { Combobox, Label, type Selected } from 'bits-ui';
+	import { Combobox, type Selected } from 'bits-ui';
 	import { Check, ChevronsUpDown } from 'lucide-svelte';
 
 	import LL from '$i18n/i18n-svelte';
 	import { settingsStore } from '$lib/localStorage';
 
-	const FIELD_INPUT_ID = 'model';
+	import Field from './Field.svelte';
+
+	const MODEL_FIELD_NAME = 'model';
 	let inputValue = '';
 	let selected: Selected<string> | undefined;
 	let touchedInput = false;
@@ -30,13 +32,10 @@
 	}
 </script>
 
-<Label.Root
-	for={FIELD_INPUT_ID}
-	class="field__container {disabled ? 'field__container--disabled' : ''}"
->
-	<div class="flex items-center gap-x-2 px-3 pb-0.5 pt-3 text-xs font-medium leading-none">
+<Field name={MODEL_FIELD_NAME}>
+	<svelte:fragment slot="label">
 		{$LL.availableModels()}
-	</div>
+	</svelte:fragment>
 	<Combobox.Root
 		bind:touchedInput
 		bind:inputValue
@@ -47,7 +46,7 @@
 	>
 		<div class="relative flex items-center">
 			<Combobox.Input
-				id={FIELD_INPUT_ID}
+				id={MODEL_FIELD_NAME}
 				spellcheck="false"
 				class="base-input text-sm"
 				placeholder={$LL.search()}
@@ -82,16 +81,6 @@
 				<span class="px-3 text-sm text-muted">{$LL.searchEmpty()}</span>
 			{/each}
 		</Combobox.Content>
-		<Combobox.HiddenInput name={FIELD_INPUT_ID} />
+		<Combobox.HiddenInput name={MODEL_FIELD_NAME} />
 	</Combobox.Root>
-</Label.Root>
-
-<style lang="postcss">
-	:global(.field__container) {
-		@apply base-field-container;
-	}
-
-	:global(.field__container--disabled) {
-		@apply base-field-container--disabled;
-	}
-</style>
+</Field>
