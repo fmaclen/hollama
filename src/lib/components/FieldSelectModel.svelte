@@ -10,7 +10,7 @@
 	let selected: Selected<string> | undefined;
 	let touchedInput = false;
 
-	$: disabled = !$settingsStore.ollamaModels;
+	$: disabled = !$settingsStore.ollamaModels.length;
 
 	$: models = $settingsStore.ollamaModels.map((m) => ({ value: m.name, label: m.name }));
 
@@ -25,7 +25,6 @@
 
 	// Updates the current model in the store
 	function handleUpdateModel(model: string) {
-		console.log('updated model', model);
 		inputValue = model;
 		$settingsStore.ollamaModel = model;
 	}
@@ -48,8 +47,8 @@
 	>
 		<div class="relative flex items-center">
 			<Combobox.Input
-				spellcheck="false"
 				id={FIELD_INPUT_ID}
+				spellcheck="false"
 				class="base-input text-sm"
 				placeholder={$LL.search()}
 				aria-label={$LL.search()}
@@ -61,13 +60,13 @@
 
 		<Combobox.Content
 			sideOffset={4}
-			class="z-10 max-h-64 -translate-x-[1px] overflow-y-auto rounded-md bg-shade-0 py-1 shadow-md"
+			class="relative z-10 max-h-64 max-w-full overflow-y-auto rounded-md bg-shade-0 py-1 shadow-md"
 		>
 			{#each filteredModels as model}
 				<Combobox.Item
 					value={model.value}
 					label={model.label}
-					class="relative flex w-full flex-row py-1 pl-8 pr-2 text-sm data-[highlighted]:bg-shade-1"
+					class="relative flex w-full flex-row px-8 py-1 text-sm data-[highlighted]:bg-shade-1"
 				>
 					<div class="absolute left-2 top-1/2 -translate-y-1/2">
 						<Combobox.ItemIndicator>
