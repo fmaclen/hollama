@@ -3,6 +3,7 @@
 	import Head from '$lib/components/Head.svelte';
 
 	import DangerZone from './DangerZone.svelte';
+	import Language from './Language.svelte';
 	import Ollama from './Ollama.svelte';
 	import Version from './Version.svelte';
 </script>
@@ -11,6 +12,7 @@
 
 <section class="settings">
 	<div class="settings__container">
+		<Language />
 		<Version />
 		<Ollama />
 		<DangerZone />

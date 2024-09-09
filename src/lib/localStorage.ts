@@ -58,7 +58,7 @@ export interface Settings {
 	lastUpdateCheck: number | null;
 	autoCheckForUpdates: boolean;
 	userTheme: 'light' | 'dark';
-	userLanguage?: Locales;
+	userLanguage: Locales | null;
 	hollamaMetadata: HollamaMetadata;
 }
 
@@ -70,6 +70,7 @@ const defaultSettings: Settings = {
 	lastUpdateCheck: null,
 	autoCheckForUpdates: false,
 	userTheme: 'light',
+	userLanguage: null,
 	hollamaMetadata: {
 		currentVersion: version,
 		isDesktop: env.PUBLIC_ADAPTER === 'electron-node',

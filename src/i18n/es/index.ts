@@ -51,6 +51,7 @@ const es = {
 	isLatestVersion: 'Hay una versión más reciente disponible',
 	knowledgeSaved: 'Conocimiento guardado',
 	knowledge: 'Conocimiento',
+	language: 'Idioma',
 	light: 'Claro',
 	messageOfTheDay: 'Mensaje del día',
 	modelWasDownloaded: '{model:string} fue descargado',
@@ -64,6 +65,7 @@ const es = {
 	ollamaConnectionError:
 		'No se pudo conectar a Ollama. ¿Está el [servidor en ejecución](/settings)?',
 	ollamaLibrary: 'Biblioteca de Ollama',
+	preferences: 'Preferencias',
 	prompt: 'Indicación',
 	promptPlaceholder: 'Escribe literalmente cualquier cosa',
 	pullModel: 'Obtener modelo',

@@ -208,6 +208,10 @@ type RootTranslation = {
 	 */
 	knowledge: string
 	/**
+	 * L​a​n​g​u​a​g​e
+	 */
+	language: string
+	/**
 	 * L​i​g​h​t
 	 */
 	light: string
@@ -256,6 +260,10 @@ type RootTranslation = {
 	 * O​l​l​a​m​a​'​s​ ​l​i​b​r​a​r​y
 	 */
 	ollamaLibrary: string
+	/**
+	 * P​r​e​f​e​r​e​n​c​e​s
+	 */
+	preferences: string
 	/**
 	 * P​r​o​m​p​t
 	 */
@@ -554,6 +562,10 @@ The completion in progress will stop
 	 */
 	knowledge: () => LocalizedString
 	/**
+	 * Language
+	 */
+	language: () => LocalizedString
+	/**
 	 * Light
 	 */
 	light: () => LocalizedString
@@ -601,6 +613,10 @@ The completion in progress will stop
 	 * Ollama's library
 	 */
 	ollamaLibrary: () => LocalizedString
+	/**
+	 * Preferences
+	 */
+	preferences: () => LocalizedString
 	/**
 	 * Prompt
 	 */

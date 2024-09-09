@@ -2,14 +2,14 @@
 	import { Brain, MessageSquareText, Moon, NotebookText, Settings2, Sun } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { Toaster } from 'svelte-sonner';
+	import { detectLocale } from 'typesafe-i18n/detectors';
 
 	import LL, { setLocale } from '$i18n/i18n-svelte';
+	import { loadLocale } from '$i18n/i18n-util.sync';
 
 	import '../app.pcss';
 
 	import type { Locales } from '$i18n/i18n-types';
-	import { loadLocaleAsync } from '$i18n/i18n-util.async';
-	import { loadLocale } from '$i18n/i18n-util.sync';
 	import { env } from '$env/dynamic/public';
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
@@ -28,9 +28,11 @@
 	});
 
 	onMount(() => {
-		const locale = $settingsStore.userLanguage ? $settingsStore.userLanguage : 'en';
-		loadLocale(locale);
-		setLocale(locale);
+		if (!$settingsStore.userLanguage)
+			$settingsStore.userLanguage = detectLocale('en', ['en', 'es']) as Locales;
+
+		loadLocale($settingsStore.userLanguage);
+		setLocale($settingsStore.userLanguage);
 
 		if (!browser || theme) return;
 		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -42,13 +44,6 @@
 		theme = theme === 'light' ? 'dark' : 'light';
 		document.documentElement.setAttribute('data-color-theme', theme);
 		$settingsStore.userTheme = theme;
-	}
-
-	async function changeLanguage(locale: Locales) {
-		if (!Object.keys(LL).includes(locale)) return;
-		await loadLocaleAsync(locale);
-		setLocale(locale);
-		$settingsStore.userLanguage = locale;
 	}
 </script>
 
@@ -104,10 +99,6 @@
 				{$LL.light()}
 			{/if}
 		</button>
-
-		<!-- toggle language -->
-		<button class="layout__button" on:click={() => changeLanguage('en')}> EN </button>
-		<button class="layout__button" on:click={() => changeLanguage('es')}> ES </button>
 	</aside>
 
 	<main class="layout__main">
