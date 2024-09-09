@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Combobox, Label, type Selected } from 'bits-ui';
-	import { Check, ChevronDown } from 'lucide-svelte';
+	import { Check, ChevronDown, ChevronsUpDown } from 'lucide-svelte';
 
 	import LL from '$i18n/i18n-svelte';
 	import { settingsStore } from '$lib/localStorage';
@@ -26,51 +26,56 @@
 		$settingsStore.ollamaModel = inputValue;
 </script>
 
-<Label.Root
-	for={INPUT_ID}
-	class="flex w-full flex-col gap-y-1 rounded-md border bg-shade-0 text-sm"
+<Combobox.Root
+	bind:touchedInput
+	bind:inputValue
+	{selected}
+	items={filteredModels}
+	disabled={!$settingsStore.ollamaModels}
 >
-	<div class="flex items-center gap-x-2 px-3 pb-0.5 pt-3 text-xs font-medium leading-none">
-		{$LL.availableModels()}
-	</div>
-
-	<Combobox.Root
-		bind:touchedInput
-		bind:inputValue
-		{selected}
-		items={filteredModels}
-		disabled={!$settingsStore.ollamaModels}
+	<Label.Root
+		for={INPUT_ID}
+		class="relative flex w-full flex-col gap-y-1 rounded-md border bg-shade-0 text-sm"
 	>
-		<div class="flex pr-4">
+		<div class="flex items-center gap-x-2 px-3 pb-0.5 pt-3 text-xs font-medium leading-none">
+			{$LL.availableModels()}
+		</div>
+
+		<div class="relative flex items-center">
 			<Combobox.Input
 				id={INPUT_ID}
 				class="base-input text-sm"
 				placeholder="Search a model"
 				aria-label="Search a model"
 			/>
-			<ChevronDown class="h-4 w-4" />
+			<div class="absolute bottom-3 right-2.5">
+				<ChevronsUpDown class="h-4 w-4" />
+			</div>
 		</div>
 
 		<Combobox.Content
 			sideOffset={4}
-			class="z-10 max-h-64 overflow-y-auto rounded-md bg-shade-0 shadow-md"
+			class="z-10 max-h-64 overflow-y-auto rounded-md bg-shade-0 shadow-md py-1 -translate-x-[1px]"
 		>
 			{#each filteredModels as model}
 				<Combobox.Item
 					value={model.value}
-					class="flex w-full flex-row px-3 py-1 text-sm data-[highlighted]:bg-warning-muted"
+					class="flex w-full flex-row py-1 pl-8 pr-2 text-sm data-[highlighted]:bg-warning-muted relative"
 				>
+					<div class="absolute left-2 top-1/2 -translate-y-1/2">
+						<Combobox.ItemIndicator>
+							<Check class="h-4 w-4" />
+						</Combobox.ItemIndicator>
+					</div>
+
 					<div class="w-full">
 						{model.label}
 					</div>
-					<Combobox.ItemIndicator>
-						<Check class="h-4 w-4" />
-					</Combobox.ItemIndicator>
 				</Combobox.Item>
 			{:else}
 				<span>No results found</span>
 			{/each}
 		</Combobox.Content>
 		<Combobox.HiddenInput name={INPUT_ID} />
-	</Combobox.Root>
-</Label.Root>
+	</Label.Root>
+</Combobox.Root>
