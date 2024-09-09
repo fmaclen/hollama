@@ -42,8 +42,8 @@
 			<Combobox.Input
 				id={FIELD_INPUT_ID}
 				class="base-input text-sm"
-				placeholder="Search a model"
-				aria-label="Search a model"
+				placeholder={$LL.search()}
+				aria-label={$LL.search()}
 			/>
 			<div class="absolute bottom-3 right-2.5">
 				<ChevronsUpDown class="h-4 w-4" />
@@ -70,7 +70,7 @@
 					</div>
 				</Combobox.Item>
 			{:else}
-				<span>No results found</span>
+				<span class="px-3 text-sm text-muted">{$LL.searchEmpty()}</span>
 			{/each}
 		</Combobox.Content>
 		<Combobox.HiddenInput name={FIELD_INPUT_ID} />

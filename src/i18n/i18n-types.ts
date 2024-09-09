@@ -293,6 +293,14 @@ type RootTranslation = {
 	 */
 	saveAndRun: string
 	/**
+	 * S​e​a​r​c​h
+	 */
+	search: string
+	/**
+	 * N​o​ ​r​e​s​u​l​t​s​ ​f​o​u​n​d
+	 */
+	searchEmpty: string
+	/**
 	 * S​e​e​ ​d​o​c​s
 	 */
 	seeDocs: string
@@ -629,6 +637,14 @@ The completion in progress will stop
 	 * Save & run
 	 */
 	saveAndRun: () => LocalizedString
+	/**
+	 * Search
+	 */
+	search: () => LocalizedString
+	/**
+	 * No results found
+	 */
+	searchEmpty: () => LocalizedString
 	/**
 	 * See docs
 	 */
