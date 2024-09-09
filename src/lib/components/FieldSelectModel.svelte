@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Combobox, Label, type Selected } from 'bits-ui';
-	import { Check, ChevronDown, ChevronsUpDown } from 'lucide-svelte';
+	import { Check, ChevronsUpDown } from 'lucide-svelte';
 
 	import LL from '$i18n/i18n-svelte';
 	import { settingsStore } from '$lib/localStorage';
@@ -9,6 +9,8 @@
 	let inputValue = '';
 	let selected: Selected<string> | undefined;
 	let touchedInput = false;
+
+	$: disabled = !$settingsStore.ollamaModels;
 
 	$: models = $settingsStore.ollamaModels.map((m) => ({ value: m.name, label: m.name }));
 
@@ -21,25 +23,34 @@
 	// Set the selected model when the component loads and there is no selected model
 	$: if ($settingsStore.ollamaModel && !selected) selected = { value: $settingsStore.ollamaModel };
 
+	$: console.log('inputValue', inputValue);
+
 	// Updates the current model in the store
-	$: if ($settingsStore.ollamaModels.some((m) => m.name === inputValue))
-		$settingsStore.ollamaModel = inputValue;
+	function handleUpdateModel(model: string) {
+		console.log('updated model', model);
+		inputValue = model;
+		$settingsStore.ollamaModel = model;
+	}
 </script>
 
-<Combobox.Root
-	bind:touchedInput
-	bind:inputValue
-	{selected}
-	items={filteredModels}
-	disabled={!$settingsStore.ollamaModels}
+<Label.Root
+	for={FIELD_INPUT_ID}
+	class="field__container {disabled ? 'field__container--disabled' : ''}"
 >
-	<Label.Root for={FIELD_INPUT_ID} class="field__container">
-		<div class="flex items-center gap-x-2 px-3 pb-0.5 pt-3 text-xs font-medium leading-none">
-			{$LL.availableModels()}
-		</div>
-
+	<div class="flex items-center gap-x-2 px-3 pb-0.5 pt-3 text-xs font-medium leading-none">
+		{$LL.availableModels()}
+	</div>
+	<Combobox.Root
+		bind:touchedInput
+		bind:inputValue
+		{selected}
+		{disabled}
+		items={filteredModels}
+		onSelectedChange={(e) => e && handleUpdateModel(e.value)}
+	>
 		<div class="relative flex items-center">
 			<Combobox.Input
+				spellcheck="false"
 				id={FIELD_INPUT_ID}
 				class="base-input text-sm"
 				placeholder={$LL.search()}
@@ -57,7 +68,8 @@
 			{#each filteredModels as model}
 				<Combobox.Item
 					value={model.value}
-					class="relative flex w-full flex-row py-1 pl-8 pr-2 text-sm data-[highlighted]:bg-warning-muted"
+					label={model.label}
+					class="relative flex w-full flex-row py-1 pl-8 pr-2 text-sm data-[highlighted]:bg-shade-1"
 				>
 					<div class="absolute left-2 top-1/2 -translate-y-1/2">
 						<Combobox.ItemIndicator>
@@ -74,15 +86,15 @@
 			{/each}
 		</Combobox.Content>
 		<Combobox.HiddenInput name={FIELD_INPUT_ID} />
-	</Label.Root>
-</Combobox.Root>
+	</Combobox.Root>
+</Label.Root>
 
 <style lang="postcss">
 	:global(.field__container) {
-		@apply flex w-full flex-col gap-y-1 rounded-md border bg-shade-0 text-sm;
-		@apply focus-within:border-shade-6 focus-within:outline focus-within:outline-shade-2;
+		@apply base-field-container;
 	}
+
 	:global(.field__container--disabled) {
-		@apply bg-shade-1;
+		@apply base-field-container--disabled;
 	}
 </style>

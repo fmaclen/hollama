@@ -54,6 +54,13 @@ const config = {
 					'@apply flex w-full outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-transparent px-3 pb-2.5 placeholder:text-shade-6':
 						{}
 				},
+				'.base-field-container': {
+					'@apply flex w-full flex-col gap-y-1 rounded-md border bg-shade-0 text-sm focus-within:border-shade-6 focus-within:outline focus-within:outline-shade-2':
+						{}
+				},
+				'.base-field-container--disabled': {
+					'@apply bg-shade-1': {}
+				},
 				'.base-section': {
 					'@apply h-full w-full overflow-y-auto border-t bg-shade-2 lg:rounded-xl lg:border': {}
 				},

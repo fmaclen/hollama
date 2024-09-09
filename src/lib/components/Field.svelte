@@ -34,11 +34,10 @@
 	}
 
 	.field__container {
-		@apply flex w-full flex-col gap-y-1 rounded-md border bg-shade-0 text-sm;
-		@apply focus-within:border-shade-6 focus-within:outline focus-within:outline-shade-2;
+		@apply base-field-container;
 
 		&--disabled {
-			@apply bg-shade-1;
+			@apply base-field-container--disabled;
 		}
 	}
 
