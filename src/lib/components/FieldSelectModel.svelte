@@ -5,26 +5,25 @@
 	import LL from '$i18n/i18n-svelte';
 	import { settingsStore } from '$lib/localStorage';
 
-	import Fruits from './Fruits.svelte';
-
 	const INPUT_ID = 'model';
 	let inputValue = '';
 	let selected: Selected<string> | undefined;
 	let touchedInput = false;
 
-	// $: console.log('ollamaModels', $settingsStore.ollamaModels);
-	// $: console.log('ollamaModel', $settingsStore.ollamaModel);
-	$: console.log('selected', selected);
-	$: console.log('$settingsStore.ollamaModel', $settingsStore.ollamaModel);
-
 	$: models = $settingsStore.ollamaModels.map((m) => ({ value: m.name, label: m.name }));
-	$: if ($settingsStore.ollamaModel)
-		selected = { value: $settingsStore.ollamaModel, label: $settingsStore.ollamaModel };
+
+	// Filter the models based on the input value
 	$: filteredModels =
 		inputValue && touchedInput && models
 			? models.filter((m) => m.value.includes(inputValue))
 			: models;
-	$: $settingsStore.ollamaModel = inputValue.trim();
+
+	// Set the selected model when the component loads and there is no selected model
+	$: if ($settingsStore.ollamaModel && !selected) selected = { value: $settingsStore.ollamaModel };
+
+	// Updates the current model in the store
+	$: if ($settingsStore.ollamaModels.some((m) => m.name === inputValue))
+		$settingsStore.ollamaModel = inputValue;
 </script>
 
 <Label.Root
@@ -38,10 +37,9 @@
 	<Combobox.Root
 		bind:touchedInput
 		bind:inputValue
-		onOpenChange={(isOpening) => (inputValue = isOpening ? '' : $settingsStore.ollamaModel ?? '')}
 		{selected}
 		items={filteredModels}
-		disabled={!$settingsStore.ollamaModels.length}
+		disabled={!$settingsStore.ollamaModels}
 	>
 		<div class="flex pr-4">
 			<Combobox.Input
@@ -55,11 +53,11 @@
 
 		<Combobox.Content
 			sideOffset={4}
-			class="max-h-96 overflow-y-auto rounded-md bg-shade-0 shadow-md"
+			class="z-10 max-h-64 overflow-y-auto rounded-md bg-shade-0 shadow-md"
 		>
-			{#each filteredModels as model (model.value)}
+			{#each filteredModels as model}
 				<Combobox.Item
-					value={model}
+					value={model.value}
 					class="flex w-full flex-row px-3 py-1 text-sm data-[highlighted]:bg-warning-muted"
 				>
 					<div class="w-full">
@@ -73,6 +71,6 @@
 				<span>No results found</span>
 			{/each}
 		</Combobox.Content>
+		<Combobox.HiddenInput name={INPUT_ID} />
 	</Combobox.Root>
 </Label.Root>
-
