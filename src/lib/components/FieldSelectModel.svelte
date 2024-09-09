@@ -5,7 +5,7 @@
 	import LL from '$i18n/i18n-svelte';
 	import { settingsStore } from '$lib/localStorage';
 
-	const INPUT_ID = 'model';
+	const FIELD_INPUT_ID = 'model';
 	let inputValue = '';
 	let selected: Selected<string> | undefined;
 	let touchedInput = false;
@@ -33,17 +33,14 @@
 	items={filteredModels}
 	disabled={!$settingsStore.ollamaModels}
 >
-	<Label.Root
-		for={INPUT_ID}
-		class="relative flex w-full flex-col gap-y-1 rounded-md border bg-shade-0 text-sm"
-	>
+	<Label.Root for={FIELD_INPUT_ID} class="field__container">
 		<div class="flex items-center gap-x-2 px-3 pb-0.5 pt-3 text-xs font-medium leading-none">
 			{$LL.availableModels()}
 		</div>
 
 		<div class="relative flex items-center">
 			<Combobox.Input
-				id={INPUT_ID}
+				id={FIELD_INPUT_ID}
 				class="base-input text-sm"
 				placeholder="Search a model"
 				aria-label="Search a model"
@@ -55,12 +52,12 @@
 
 		<Combobox.Content
 			sideOffset={4}
-			class="z-10 max-h-64 overflow-y-auto rounded-md bg-shade-0 shadow-md py-1 -translate-x-[1px]"
+			class="z-10 max-h-64 -translate-x-[1px] overflow-y-auto rounded-md bg-shade-0 py-1 shadow-md"
 		>
 			{#each filteredModels as model}
 				<Combobox.Item
 					value={model.value}
-					class="flex w-full flex-row py-1 pl-8 pr-2 text-sm data-[highlighted]:bg-warning-muted relative"
+					class="relative flex w-full flex-row py-1 pl-8 pr-2 text-sm data-[highlighted]:bg-warning-muted"
 				>
 					<div class="absolute left-2 top-1/2 -translate-y-1/2">
 						<Combobox.ItemIndicator>
@@ -76,6 +73,16 @@
 				<span>No results found</span>
 			{/each}
 		</Combobox.Content>
-		<Combobox.HiddenInput name={INPUT_ID} />
+		<Combobox.HiddenInput name={FIELD_INPUT_ID} />
 	</Label.Root>
 </Combobox.Root>
+
+<style lang="postcss">
+	:global(.field__container) {
+		@apply flex w-full flex-col gap-y-1 rounded-md border bg-shade-0 text-sm;
+		@apply focus-within:border-shade-6 focus-within:outline focus-within:outline-shade-2;
+	}
+	:global(.field__container--disabled) {
+		@apply bg-shade-1;
+	}
+</style>
