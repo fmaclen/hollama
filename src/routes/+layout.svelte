@@ -76,16 +76,16 @@
 			>
 				{#if href === '/knowledge'}
 					<Brain class="h-4 w-4" />
-					{$LL.knowledge()}
+					<span class="layout__label">{$LL.knowledge()}</span>
 				{:else if href === '/sessions'}
 					<MessageSquareText class="h-4 w-4" />
-					{$LL.sessions()}
+					<span class="layout__label">{$LL.sessions()}</span>
 				{:else if href === '/settings'}
 					<Settings2 class="h-4 w-4" />
-					{$LL.settings()}
+					<span class="layout__label">{$LL.settings()}</span>
 				{:else if href === '/motd'}
 					<NotebookText class="h-4 w-4" />
-					{$LL.motd()}
+					<span class="layout__label">{$LL.motd()}</span>
 				{/if}
 			</a>
 		{/each}
@@ -93,10 +93,10 @@
 		<button class="layout__button" on:click={toggleTheme}>
 			{#if theme === 'light'}
 				<Moon class="h-4 w-4" />
-				{$LL.dark()}
+				<span class="layout__label">{$LL.dark()}</span>
 			{:else}
 				<Sun class="h-4 w-4" />
-				{$LL.light()}
+				<span class="layout__label">{$LL.light()}</span>
 			{/if}
 		</button>
 	</aside>
@@ -118,7 +118,7 @@
 	}
 
 	.layout__aside {
-		@apply flex w-full flex-row gap-x-4 px-4;
+		@apply flex w-full flex-row gap-x-2 px-4;
 		@apply lg:flex lg:w-max lg:flex-col;
 	}
 
@@ -129,9 +129,9 @@
 
 	.layout__button,
 	.layout__a {
-		@apply flex w-auto flex-grow flex-col items-center gap-x-2 gap-y-0.5 py-3 text-xs font-medium text-muted transition-colors duration-150;
+		@apply flex w-auto min-w-0 flex-1 flex-grow flex-col items-center gap-x-2 gap-y-0.5 py-3 text-xs font-medium text-muted transition-colors duration-150;
 		@apply sm:text-sm;
-		@apply lg:flex-grow-0 lg:flex-row lg:items-center lg:gap-4 lg:px-2;
+		@apply lg:flex-none lg:flex-grow-0 lg:flex-row lg:items-center lg:gap-4 lg:px-2;
 		@apply hover:text-active;
 	}
 
@@ -152,6 +152,11 @@
 		content: '';
 		@apply absolute left-1/2 top-2 h-2 w-2 translate-x-2 rounded-full bg-warning;
 		@apply lg:left-0 lg:top-1/2 lg:-translate-x-3 lg:-translate-y-1/2;
+	}
+
+	.layout__label {
+		@apply w-full truncate text-center;
+		@apply lg:text-left;
 	}
 
 	.layout__button {
