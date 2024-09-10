@@ -133,7 +133,7 @@ export async function chooseFromCombobox(
 	label: string | RegExp,
 	option: string | RegExp
 ) {
-	await page.locator('label', { hasText: label }).click();
+	await page.getByLabel(label).click();
 	await page.getByText(option).click();
 }
 

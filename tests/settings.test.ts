@@ -12,7 +12,7 @@ test('displays model list and updates settings store', async ({ page }) => {
 	await expect(page.getByText('Connected')).toBeVisible();
 
 	// Check if the model list contains the expected models
-	const modelComboBox = page.locator('label', { hasText: 'Available models' });
+	const modelComboBox = page.getByLabel('Available models');
 	await expect(modelComboBox).toBeVisible();
 	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[0].name)).not.toBeVisible();
 	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name)).not.toBeVisible();
@@ -65,7 +65,7 @@ test('deletes all settings and resets to default values', async ({ page }) => {
 	await page.goto('/');
 	// const modelSelect = page.getByLabel('Available models');
 	// await expect(modelSelect).toHaveValue('');
-	const comboBox = page.locator('label', { hasText: 'Available models' });
+	const comboBox = page.getByLabel('Available models');
 	await expect(comboBox).toHaveValue('');
 
 	await page.getByLabel('Server').fill('http://localhost:3000');
