@@ -43,42 +43,32 @@
 		items={filteredOptions}
 		onSelectedChange={(e) => e && handleChange(e)}
 	>
-		<div class="relative flex items-center">
+		<div class="field-select-input">
 			<Combobox.Input
 				spellcheck="false"
-				class="base-input text-sm"
+				class="field-combobox-input"
 				{placeholder}
 				id={name}
 				disabled={isDisabled}
 				aria-labelledby={`${name}-label`}
 			/>
-			<div class="absolute bottom-3 right-2.5">
+			<div class="field-select-icon">
 				<ChevronsUpDown class="h-4 w-4" />
 			</div>
 		</div>
 
-		<Combobox.Content
-			sideOffset={4}
-			class="relative z-10 max-h-64 max-w-full overflow-y-auto rounded-md bg-shade-0 py-1 shadow-md"
-		>
+		<Combobox.Content sideOffset={4} class="field-combobox-content">
 			{#each filteredOptions as option}
-				<Combobox.Item
-					value={option.value}
-					label={option.label}
-					class="relative flex w-full flex-row px-8 py-1 text-sm data-[highlighted]:bg-shade-1"
-				>
-					<div class="absolute left-2 top-1/2 -translate-y-1/2">
-						<Combobox.ItemIndicator>
-							<Check class="h-4 w-4" />
-						</Combobox.ItemIndicator>
-					</div>
-
-					<div class="w-full">
+				<Combobox.Item value={option.value} label={option.label} class="field-combobox-item">
+					<Combobox.ItemIndicator class="field-combobox-item-indicator">
+						<Check class="h-4 w-4" />
+					</Combobox.ItemIndicator>
+					<div class="field-combobox-item-label">
 						{option.label}
 					</div>
 				</Combobox.Item>
 			{:else}
-				<span class="px-3 text-sm text-muted">No results found</span>
+				<span class="field-select-empty">No results found</span>
 			{/each}
 		</Combobox.Content>
 	</Combobox.Root>
@@ -87,3 +77,43 @@
 		<slot name="nav" />
 	</svelte:fragment>
 </Field>
+
+<style lang="postcss">
+	.field-select-input {
+		@apply relative flex items-center;
+	}
+
+	.field-select-icon {
+		@apply absolute bottom-3 right-2.5;
+	}
+
+	.field-select-empty {
+		@apply px-3 text-sm text-muted;
+	}
+
+	/* Bits UI */
+
+	:global(.field-combobox-input) {
+		@apply base-input text-sm;
+	}
+
+	:global(.field-combobox-content) {
+		@apply relative z-10 max-h-64 max-w-full overflow-y-auto rounded-md bg-shade-0 py-1 shadow-md;
+	}
+
+	:global(.field-combobox-item) {
+		@apply relative flex w-full flex-row px-8 py-1 text-sm;
+	}
+
+	:global(.field-combobox-item[data-highlighted]) {
+		@apply bg-shade-1;
+	}
+
+	:global(.field-combobox-item-indicator) {
+		@apply absolute left-2 top-1/2 -translate-y-1/2;
+	}
+
+	:global(.field-combobox-item-label) {
+		@apply w-full;
+	}
+</style>
