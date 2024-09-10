@@ -6,8 +6,7 @@ const es = {
 	areYouSureYouWantToDeleteAllKnowledge:
 		'¿Estás seguro de que quieres eliminar todo el conocimiento?',
 	areYouSureYouWantToDeleteAllSessions: '¿Estás seguro de que quieres eliminar todas las sesiones?',
-	areYouSureYouWantToDeleteAllSettings:
-		'¿Estás seguro de que quieres eliminar todas las configuraciones?',
+	areYouSureYouWantToDeleteAllSettings: '¿Estás seguro de que quieres eliminar todos los ajustes?',
 	areYouSureYouWantToLeave: '¿Estás seguro de que quieres salir?\nLa tarea en progreso se detendrá',
 	assistant: 'Asistente',
 	automaticallyCheckForUpdates: 'Buscar actualizaciones automáticamente',
@@ -31,7 +30,7 @@ const es = {
 	dark: 'Oscuro',
 	deleteAllKnowledge: 'Eliminar todo el conocimiento',
 	deleteAllSessions: 'Eliminar todas las sesiones',
-	deleteAllSettings: 'Eliminar todas las configuraciones',
+	deleteAllSettings: 'Eliminar todos los ajustes',
 	deleteKnowledge: 'Eliminar conocimiento',
 	deleteSession: 'Eliminar sesión',
 	disconnected: 'Desconectado',
@@ -46,6 +45,7 @@ const es = {
 	goToKnowledge: 'Ir a conocimiento',
 	goToReleases: 'Ir a versiones',
 	howToUpdateDocker: '¿Cómo actualizar el contenedor Docker?',
+	interface: 'Interfaz',
 	internalServerError: 'Hubo un error interno del servidor, por favor intenta de nuevo más tarde',
 	isCurrentVersionLatest: 'Estás en la última versión',
 	isLatestVersion: 'Hay una versión más reciente disponible',
@@ -65,7 +65,6 @@ const es = {
 	ollamaConnectionError:
 		'No se pudo conectar a Ollama. ¿Está el [servidor en ejecución](/settings)?',
 	ollamaLibrary: 'Biblioteca de Ollama',
-	preferences: 'Preferencias',
 	prompt: 'Indicación',
 	promptPlaceholder: 'Escribe literalmente cualquier cosa',
 	pullModel: 'Obtener modelo',
@@ -81,7 +80,7 @@ const es = {
 	server: 'Servidor',
 	session: 'Sesión',
 	sessions: 'Sesiones',
-	settings: 'Configuración',
+	settings: 'Ajustes',
 	somethingWentWrong: 'Lo sentimos, algo salió mal',
 	stopResponse: 'Detener respuesta',
 	success: 'Éxito',

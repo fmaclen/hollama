@@ -188,6 +188,10 @@ type RootTranslation = {
 	 */
 	howToUpdateDocker: string
 	/**
+	 * I​n​t​e​r​f​a​c​e
+	 */
+	'interface': string
+	/**
 	 * T​h​e​r​e​ ​w​a​s​ ​a​n​ ​i​n​t​e​r​n​a​l​ ​s​e​r​v​e​r​ ​e​r​r​o​r​,​ ​p​l​e​a​s​e​ ​t​r​y​ ​a​g​a​i​n​ ​l​a​t​e​r
 	 */
 	internalServerError: string
@@ -260,10 +264,6 @@ type RootTranslation = {
 	 * O​l​l​a​m​a​'​s​ ​l​i​b​r​a​r​y
 	 */
 	ollamaLibrary: string
-	/**
-	 * P​r​e​f​e​r​e​n​c​e​s
-	 */
-	preferences: string
 	/**
 	 * P​r​o​m​p​t
 	 */
@@ -542,6 +542,10 @@ The completion in progress will stop
 	 */
 	howToUpdateDocker: () => LocalizedString
 	/**
+	 * Interface
+	 */
+	'interface': () => LocalizedString
+	/**
 	 * There was an internal server error, please try again later
 	 */
 	internalServerError: () => LocalizedString
@@ -613,10 +617,6 @@ The completion in progress will stop
 	 * Ollama's library
 	 */
 	ollamaLibrary: () => LocalizedString
-	/**
-	 * Preferences
-	 */
-	preferences: () => LocalizedString
 	/**
 	 * Prompt
 	 */

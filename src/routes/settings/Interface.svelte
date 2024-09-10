@@ -19,7 +19,7 @@
 </script>
 
 <Fieldset>
-	<P><strong>{$LL.preferences()}</strong></P>
+	<P><strong>{$LL.interface()}</strong></P>
 
 	<FieldSelect
 		name="language"
