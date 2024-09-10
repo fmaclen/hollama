@@ -11,13 +11,13 @@
 	<Label.Root
 		for={name}
 		class="
-			field-label-root
-			{isTextEditor && 'field-label-root--text-editor'}
-			{disabled && 'field-label-root--disabled'}
-		"
+		field-label-root
+		{isTextEditor && 'field-label-root--text-editor'}
+		{disabled && 'field-label-root--disabled'}
+	"
 	>
 		{#if $$slots.label}
-			<span class="field-label" class:field-label--text-editor={isTextEditor}>
+			<span id={`${name}-label`} class="field-label" class:field-label--text-editor={isTextEditor}>
 				<slot name="label" />
 			</span>
 		{/if}
