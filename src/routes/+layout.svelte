@@ -156,7 +156,7 @@
 
 	.layout__label {
 		@apply w-full truncate text-center;
-		@apply lg:text-left;
+		@apply lg:w-auto lg:text-left;
 	}
 
 	.layout__button {
