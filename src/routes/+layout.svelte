@@ -2,7 +2,7 @@
 	import { Brain, MessageSquareText, Moon, NotebookText, Settings2, Sun } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { Toaster } from 'svelte-sonner';
-	import { detectLocale } from 'typesafe-i18n/detectors';
+	import { detectLocale, navigatorDetector } from 'typesafe-i18n/detectors';
 
 	import LL, { setLocale } from '$i18n/i18n-svelte';
 	import { loadLocale } from '$i18n/i18n-util.sync';
@@ -29,7 +29,7 @@
 
 	onMount(() => {
 		if (!$settingsStore.userLanguage)
-			$settingsStore.userLanguage = detectLocale('en', ['en', 'es']) as Locales;
+			$settingsStore.userLanguage = detectLocale('en', ['en', 'es'], navigatorDetector) as Locales;
 
 		loadLocale($settingsStore.userLanguage);
 		setLocale($settingsStore.userLanguage);

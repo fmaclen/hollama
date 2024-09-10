@@ -138,3 +138,53 @@ test('a model can be pulled from the ollama library', async ({ page }) => {
 	await expect(downloadButton).toBeDisabled();
 	await expect(modelTagInput).not.toBeDisabled();
 });
+
+test('can switch language to spanish and back to english', async ({ page }) => {
+	const languageSelect = page.getByLabel('Language');
+	const idiomaSelect = page.getByLabel('Idioma');
+
+	await page.goto('/settings');
+	await expect(languageSelect).toBeVisible();
+	await expect(languageSelect).toContainText('English');
+	await expect(languageSelect).toContainText('Español');
+
+	await expect(page.getByText('Server')).toBeVisible();
+	await expect(page.getByText('Servidor')).not.toBeVisible();
+
+	await languageSelect.selectOption('Español');
+
+	let localStorageValue = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-settings')
+	);
+	expect(localStorageValue).toContain('"userLanguage":"es"');
+
+	await expect(page.getByText('Servidor')).toBeVisible();
+	await expect(page.getByText('Server')).not.toBeVisible();
+
+	await idiomaSelect.selectOption('English');
+
+	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
+	expect(localStorageValue).toContain('"userLanguage":"en"');
+	await expect(page.getByText('Server')).toBeVisible();
+	await expect(page.getByText('Servidor')).not.toBeVisible();
+});
+
+test.describe('locales', () => {
+	test.use({ locale: 'es-ES' });
+
+	test('default language is spanish', async ({ page }) => {
+		await page.goto('/settings');
+
+		expect(await page.evaluate(() => navigator.language)).toBe('es-ES');
+
+		await page.evaluate(() => window.localStorage.clear());
+		await page.reload();
+
+		expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+			'"userLanguage":"es"'
+		);
+
+		await expect(page.getByText('Server')).not.toBeVisible();
+		await expect(page.getByText('Servidor')).toBeVisible();
+	});
+});
