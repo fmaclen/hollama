@@ -68,6 +68,10 @@ type RootTranslation = {
 	 */
 	checkingForUpdates: string
 	/**
+	 * C​l​e​a​r
+	 */
+	clear: string
+	/**
 	 * C​u​r​r​e​n​t​ ​v​e​r​s​i​o​n
 	 */
 	currentVersion: string
@@ -414,6 +418,10 @@ The completion in progress will stop
 	 * Checking for updates...
 	 */
 	checkingForUpdates: () => LocalizedString
+	/**
+	 * Clear
+	 */
+	clear: () => LocalizedString
 	/**
 	 * Current version
 	 */

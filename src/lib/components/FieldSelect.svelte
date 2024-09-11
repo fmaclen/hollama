@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { Combobox, type Selected } from 'bits-ui';
-	import { Check, ChevronsUpDown } from 'lucide-svelte';
+	import { Check, ChevronsUpDown, X } from 'lucide-svelte';
 	import type { LocalizedString } from 'typesafe-i18n';
 
+	import LL from '$i18n/i18n-svelte';
+	import Button from '$lib/components/Button.svelte';
 	import Field from '$lib/components/Field.svelte';
 
 	export let name: string;
@@ -13,25 +15,44 @@
 	export let placeholder: string = '';
 	export let onChange: (value: Selected<string>) => void = () => {};
 
-	$: isDisabled = disabled || options.length === 0;
+	const noSelection = { value: '', label: '' };
 
 	let inputValue = '';
-	let selected: Selected<string> | undefined = value ? { value } : undefined;
+	let selected: Selected<string> | undefined = value
+		? { value, label: options.find((o) => o.value === value)?.label }
+		: undefined;
 	let touchedInput = false;
+	let open = false;
+
+	$: isDisabled = disabled || options.length === 0;
 
 	$: filteredOptions =
 		inputValue && touchedInput
 			? options.filter((o) => o.label?.toLowerCase().includes(inputValue.toLowerCase()))
 			: options;
 
-	$: if (!touchedInput && value) inputValue = value;
-
-	function handleChange(e: Selected<string>) {
+	function handleOnSelectedChange(e: Selected<string> | undefined) {
 		if (e) {
 			value = e.value;
 			selected = e;
 			onChange(e);
 		}
+	}
+
+	function handleOpenChange(wasMenuOpened: boolean) {
+		if (!wasMenuOpened) {
+			if (inputValue) {
+				inputValue = selected?.label ?? '';
+			} else {
+				handleClear();
+			}
+		}
+	}
+
+	function handleClear() {
+		value = undefined;
+		selected = noSelection;
+		onChange(noSelection);
 	}
 </script>
 
@@ -40,23 +61,39 @@
 	<Combobox.Root
 		bind:touchedInput
 		bind:inputValue
+		bind:open
 		{selected}
 		disabled={isDisabled}
 		items={filteredOptions}
-		onSelectedChange={(e) => e && handleChange(e)}
+		onSelectedChange={handleOnSelectedChange}
+		onOpenChange={handleOpenChange}
 	>
 		<div class="field-select-input">
 			<Combobox.Input
 				spellcheck="false"
 				class="field-combobox-input"
-				{placeholder}
+				placeholder={selected?.value ? selected.label : placeholder}
 				id={name}
 				disabled={isDisabled}
 				aria-labelledby={`${name}-label`}
 			/>
-			<div class="field-select-icon">
-				<ChevronsUpDown class="h-4 w-4" />
-			</div>
+
+			<nav class="field-select-nav">
+				{#if selected?.value}
+					<Button
+						variant="icon"
+						on:click={handleClear}
+						title={$LL.clear()}
+						class="pointer-events-auto"
+					>
+						<X class="h-4 w-4" />
+					</Button>
+				{/if}
+
+				<Button variant="icon" class="pointer-events-none">
+					<ChevronsUpDown class="h-4 w-4" />
+				</Button>
+			</nav>
 		</div>
 
 		<Combobox.Content sideOffset={4} class="field-combobox-content">
@@ -70,7 +107,7 @@
 					</div>
 				</Combobox.Item>
 			{:else}
-				<span class="field-select-empty">No results found</span>
+				<span class="field-select-empty">{$LL.searchEmpty()}</span>
 			{/each}
 		</Combobox.Content>
 	</Combobox.Root>
@@ -85,18 +122,18 @@
 		@apply relative flex items-center;
 	}
 
-	.field-select-icon {
-		@apply absolute bottom-3 right-2.5;
+	.field-select-nav {
+		@apply pointer-events-none absolute bottom-0 right-0 m-1 flex items-center;
 	}
 
 	.field-select-empty {
-		@apply px-3 text-sm text-muted;
+		@apply block w-full px-3 py-1 text-center text-sm text-muted;
 	}
 
 	/* Bits UI */
 
 	:global(.field-combobox-input) {
-		@apply base-input text-sm;
+		@apply base-input pr-16 text-sm;
 	}
 
 	:global(.field-combobox-content) {

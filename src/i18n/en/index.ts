@@ -14,6 +14,7 @@ const en = {
 	checkBrowserExtensions: 'Also check no browser extensions are blocking the connection',
 	checkNow: 'Check now',
 	checkingForUpdates: 'Checking for updates...',
+	clear: 'Clear',
 	currentVersion: 'Current version',
 	confirmDeletion: 'Confirm deletion',
 	connected: 'Connected',
