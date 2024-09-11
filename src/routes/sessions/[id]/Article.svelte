@@ -63,7 +63,7 @@
 				aria-label={$LL.goToKnowledge()}
 			>
 				{message.knowledge.name}
-				<Brain class="-mr-1 ml-2 base-icon" />
+				<Brain class="base-icon -mr-1 ml-2" />
 			</Button>
 		{:else if message.content}
 			<Markdown markdown={message.content} />
