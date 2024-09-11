@@ -30,6 +30,7 @@
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.0",
 		"autoprefixer": "^10.4.16",
+		"bits-ui": "^0.21.13",
 		"codemirror": "^6.0.1",
 		"concurrently": "^8.2.2",
 		"cross-env": "^7.0.3",

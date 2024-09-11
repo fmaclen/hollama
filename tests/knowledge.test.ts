@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import {
+	chooseFromCombobox,
 	chooseModelFromSettings,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_KNOWLEDGE,
@@ -110,7 +111,6 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 		'Create new knowledge or choose one from the list'
 	);
 	const knowledgeItems = page.getByTestId('knowledge-item');
-	const systemPromptSelect = page.getByLabel('System prompt');
 
 	await page.goto('/');
 	await page.getByText('Knowledge', { exact: true }).click();
@@ -126,8 +126,9 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	// Check the knowledge is available in the session
 	await page.getByText('Sessions').click();
 	await page.getByTestId('new-session').click();
-	await expect(systemPromptSelect).toContainText(MOCK_KNOWLEDGE[0].name);
-	await expect(systemPromptSelect).toContainText(MOCK_KNOWLEDGE[1].name);
+	await page.getByLabel('System prompt').click();
+	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[0].name })).toBeVisible();
+	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[1].name })).toBeVisible();
 
 	await page.locator('a', { hasText: 'Knowledge' }).click();
 	await page.getByText(MOCK_KNOWLEDGE[0].name).click();
@@ -143,8 +144,9 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	// Check is no longer in the session
 	await page.getByText('Sessions').click();
 	await page.getByTestId('new-session').click();
-	await expect(systemPromptSelect).not.toContainText(MOCK_KNOWLEDGE[0].name);
-	await expect(systemPromptSelect).toContainText(MOCK_KNOWLEDGE[1].name);
+	await page.getByLabel('System prompt').click();
+	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[0].name })).not.toBeVisible();
+	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[1].name })).toBeVisible();
 });
 
 test('all knowledge can be deleted', async ({ page }) => {
@@ -190,7 +192,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	await expect(sessionArticle).not.toBeVisible();
 
 	// Create a new session with knowledge
-	await page.getByLabel('System prompt').selectOption(MOCK_KNOWLEDGE[0].name);
+	await chooseFromCombobox(page, 'System prompt', MOCK_KNOWLEDGE[0].name);
 	await page.locator('.prompt-editor__textarea').fill('What is this about?');
 
 	// Check the request includes the knowledge as a system prompt when submitting the form

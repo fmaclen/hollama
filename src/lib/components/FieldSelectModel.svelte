@@ -1,19 +1,27 @@
 <script lang="ts">
+	import type { Selected } from 'bits-ui';
+
 	import LL from '$i18n/i18n-svelte';
 	import { settingsStore } from '$lib/localStorage';
 
 	import FieldSelect from './FieldSelect.svelte';
 
-	export let disabled: boolean = false;
+	let value: string | undefined = $settingsStore.ollamaModel || '';
 
-	let value: string = $settingsStore.ollamaModel || '';
-	$: $settingsStore.ollamaModel = value;
+	$: disabled = !$settingsStore.ollamaModels.length;
+	$: models = $settingsStore.ollamaModels.map((m) => ({ value: m.name, label: m.name }));
+
+	function handleChange(e: Selected<string>) {
+		$settingsStore.ollamaModel = e.value;
+	}
 </script>
 
 <FieldSelect
-	label={$LL.availableModels()}
 	name="model"
-	options={$settingsStore.ollamaModels.map((m) => ({ value: m.name, option: m.name }))}
-	disabled={disabled || !$settingsStore.ollamaModels.length}
+	{disabled}
+	placeholder={$LL.search()}
+	label={$LL.availableModels()}
+	options={models}
+	onChange={handleChange}
 	bind:value
 />

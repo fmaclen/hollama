@@ -128,9 +128,18 @@ export const MOCK_SESSION_2_RESPONSE_1: ChatResponse = {
 	eval_duration: 2181595000
 };
 
+export async function chooseFromCombobox(
+	page: Page,
+	label: string | RegExp,
+	option: string | RegExp
+) {
+	await page.getByLabel(label).click();
+	await page.getByText(option).click();
+}
+
 export async function chooseModelFromSettings(page: Page, modelName: string) {
 	await page.getByText('Settings', { exact: true }).click();
-	await page.getByLabel('Available models').selectOption(modelName);
+	await chooseFromCombobox(page, 'Available models', modelName);
 }
 
 export async function mockTagsResponse(page: Page) {
