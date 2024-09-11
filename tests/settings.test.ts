@@ -149,19 +149,24 @@ test('a model can be pulled from the ollama library', async ({ page }) => {
 });
 
 test('can switch language to spanish and back to english', async ({ page }) => {
-	const languageSelect = page.getByLabel('Language');
-	const idiomaSelect = page.getByLabel('Idioma');
+	const languageCombobox = page.getByLabel('Language');
+	const idiomaCombobox = page.getByLabel('Idioma');
 
 	await page.goto('/settings');
-	await expect(languageSelect).toBeVisible();
-	await expect(languageSelect).toContainText('English');
-	await expect(languageSelect).toContainText('Español');
-
+	await expect(idiomaCombobox).not.toBeVisible();
+	await expect(languageCombobox).toBeVisible();
+	await expect(languageCombobox).toHaveValue('English');
 	await expect(page.getByText('Server')).toBeVisible();
 	await expect(page.getByText('Servidor')).not.toBeVisible();
 
-	await languageSelect.selectOption('Español');
+	await languageCombobox.click();
 
+	await expect(page.getByRole('option', { name: 'English' })).toBeVisible();
+	await expect(page.getByRole('option', { name: 'Español' })).toBeVisible();
+	await page.getByRole('option', { name: 'Español' }).click();
+
+	await expect(languageCombobox).not.toBeVisible();
+	await expect(idiomaCombobox).toHaveValue('Español');
 	let localStorageValue = await page.evaluate(() =>
 		window.localStorage.getItem('hollama-settings')
 	);
@@ -170,7 +175,8 @@ test('can switch language to spanish and back to english', async ({ page }) => {
 	await expect(page.getByText('Servidor')).toBeVisible();
 	await expect(page.getByText('Server')).not.toBeVisible();
 
-	await idiomaSelect.selectOption('English');
+	await idiomaCombobox.click();
+	await page.getByRole('option', { name: 'English' }).click();
 
 	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(localStorageValue).toContain('"userLanguage":"en"');
