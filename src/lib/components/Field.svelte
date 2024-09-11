@@ -58,13 +58,11 @@
 
 	/* Bits UI */
 
-	.field {
-		:global(.field-label-root) {
-			@apply flex items-center gap-x-2 px-3 pb-0.5 pt-3 text-xs font-medium leading-none;
-		}
+	:global(.field-label-root) {
+		@apply flex items-center gap-x-2 px-3 pb-0.5 pt-3 text-xs font-medium leading-none;
+	}
 
-		:global(.field-label-root--text-editor) {
-			@apply border-b border-shade-2 p-3;
-		}
+	:global(.field-label-root--text-editor) {
+		@apply border-b border-shade-2 p-3;
 	}
 </style>
