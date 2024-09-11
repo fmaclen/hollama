@@ -104,15 +104,11 @@
 	}
 
 	:global(.field-combobox-item) {
-		@apply relative flex w-full flex-row px-8 py-1 text-sm;
+		@apply grid grid-cols-[24px,auto,max-content] items-center px-3 py-1 text-sm;
 	}
 
 	:global(.field-combobox-item[data-highlighted]) {
 		@apply bg-shade-1;
-	}
-
-	:global(.field-combobox-item-indicator) {
-		@apply absolute left-2 top-1/2 -translate-y-1/2;
 	}
 
 	:global(.field-combobox-item-label) {
