@@ -8,22 +8,23 @@
 </script>
 
 <div class="field" class:field--text-editor={isTextEditor} class:field--with-nav={hasNav}>
-	<Label.Root
-		for={name}
-		class="
-		field-label-root
-		{isTextEditor && 'field-label-root--text-editor'}
-		{disabled && 'field-label-root--disabled'}
-	"
+	<div
+		class="field-container"
+		class:field-container--text-editor={isTextEditor}
+		class:field-container--disabled={disabled}
 	>
 		{#if $$slots.label}
-			<span id={`${name}-label`} class="field-label" class:field-label--text-editor={isTextEditor}>
+			<Label.Root
+				for={name}
+				id={`${name}-label`}
+				class="field-label-root {isTextEditor ? 'field-label-root--text-editor' : ''}"
+			>
 				<slot name="label" />
-			</span>
+			</Label.Root>
 		{/if}
 
 		<slot />
-	</Label.Root>
+	</div>
 
 	<slot name="nav" />
 	<slot name="help" />
@@ -36,35 +37,34 @@
 		&--with-nav {
 			@apply grid grid-cols-[auto,max-content] items-end gap-x-2;
 		}
+
+		&--text-editor {
+			@apply h-full overflow-y-auto;
+		}
 	}
 
-	/* Text editor */
+	.field-container {
+		@apply flex w-full flex-col gap-y-1 rounded-md border bg-shade-0 text-sm;
+		@apply focus-within:border-shade-6 focus-within:outline focus-within:outline-shade-2;
 
-	.field--text-editor {
-		@apply h-full overflow-y-auto;
-	}
+		&--text-editor {
+			@apply h-full gap-y-0  p-0;
+		}
 
-	:global(.field-label-root--text-editor) {
-		@apply h-full gap-y-0  p-0;
-	}
-
-	:global(.field-label--text-editor) {
-		@apply border-b border-shade-2 p-3;
+		&--disabled {
+			@apply bg-shade-1;
+		}
 	}
 
 	/* Bits UI */
 
 	.field {
 		:global(.field-label-root) {
-			@apply flex w-full flex-col gap-y-1 rounded-md border bg-shade-0 text-sm;
-			@apply focus-within:border-shade-6 focus-within:outline focus-within:outline-shade-2;
-		}
-		:global(.field-label-root--disabled) {
-			@apply bg-shade-1;
+			@apply flex items-center gap-x-2 px-3 pb-0.5 pt-3 text-xs font-medium leading-none;
 		}
 
-		:global(.field-label) {
-			@apply flex items-center gap-x-2 px-3 pb-0.5 pt-3 text-xs font-medium leading-none;
+		:global(.field-label-root--text-editor) {
+			@apply border-b border-shade-2 p-3;
 		}
 	}
 </style>
