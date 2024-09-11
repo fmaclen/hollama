@@ -90,9 +90,9 @@
 					</Button>
 				{/if}
 
-				<Button variant="icon" class="pointer-events-none">
+				<span class="pr-1 py-2 pointer-events-none">
 					<ChevronsUpDown class="h-4 w-4" />
-				</Button>
+				</span>
 			</nav>
 		</div>
 
@@ -133,7 +133,7 @@
 	/* Bits UI */
 
 	:global(.field-combobox-input) {
-		@apply base-input pr-16 text-sm;
+		@apply base-input pr-14 text-sm;
 	}
 
 	:global(.field-combobox-content) {
