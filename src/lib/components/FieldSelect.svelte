@@ -21,7 +21,7 @@
 
 	$: filteredOptions =
 		inputValue && touchedInput
-			? options.filter((o) => o.value.toLowerCase().includes(inputValue.toLowerCase()))
+			? options.filter((o) => o.label?.toLowerCase().includes(inputValue.toLowerCase()))
 			: options;
 
 	function handleChange(e: Selected<string>) {
