@@ -24,6 +24,8 @@
 			? options.filter((o) => o.label?.toLowerCase().includes(inputValue.toLowerCase()))
 			: options;
 
+	$: if (!touchedInput && value) inputValue = value;
+
 	function handleChange(e: Selected<string>) {
 		if (e) {
 			value = e.value;
