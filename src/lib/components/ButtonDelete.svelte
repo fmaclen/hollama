@@ -43,7 +43,7 @@
 			on:click={deleteRecord}
 			title={$LL.confirmDeletion()}
 		>
-			<Check class="h-4 w-4" />
+			<Check class="base-icon" />
 		</Button>
 
 		<Button
@@ -52,7 +52,7 @@
 			on:click={() => updateConfirmDeletion(false)}
 			title={$LL.dismiss()}
 		>
-			<X class="h-4 w-4" />
+			<X class="base-icon" />
 		</Button>
 	{:else}
 		<Button
@@ -61,7 +61,7 @@
 			on:click={() => updateConfirmDeletion(true)}
 			title={sitemap === Sitemap.KNOWLEDGE ? $LL.deleteKnowledge() : $LL.deleteSession()}
 		>
-			<Trash2 class="h-4 w-4" />
+			<Trash2 class="base-icon" />
 		</Button>
 	{/if}
 </div>

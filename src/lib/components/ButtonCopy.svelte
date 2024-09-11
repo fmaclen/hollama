@@ -14,7 +14,7 @@
 
 <div class="copy-button">
 	<Button title={$LL.copy()} variant="icon" on:click={copyContent}>
-		<Files class="h-4 w-4" />
+		<Files class="base-icon" />
 	</Button>
 </div>
 

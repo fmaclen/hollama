@@ -283,8 +283,8 @@
 								<FieldSelect
 									label={$LL.systemPrompt()}
 									name="knowledge"
-									disabled={$knowledgeStore.length === 0}
-									options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
+									disabled={!$knowledgeStore.length}
+									options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
 									bind:value={knowledgeId}
 								>
 									<svelte:fragment slot="nav">
@@ -294,7 +294,7 @@
 											href={generateNewUrl(Sitemap.KNOWLEDGE)}
 											class="h-full text-muted"
 										>
-											<Brain class="h-4 w-4" />
+											<Brain class="base-icon" />
 										</Button>
 									</svelte:fragment>
 								</FieldSelect>
@@ -350,10 +350,10 @@
 								<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
 									<div class="prompt-editor__stop">
 										<span class="prompt-editor__stop-icon">
-											<StopCircle class=" h-4 w-4" />
+											<StopCircle class=" base-icon" />
 										</span>
 										<span class="prompt-editor__loading-icon">
-											<LoaderCircle class="prompt-editor__loading-icon h-4 w-4 animate-spin" />
+											<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />
 										</span>
 									</div>
 								</Button>

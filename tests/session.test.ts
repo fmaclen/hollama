@@ -1,6 +1,7 @@
 import { expect, test, type Dialog, type Locator } from '@playwright/test';
 
 import {
+	chooseFromCombobox,
 	chooseModelFromSettings,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_SESSION_1_RESPONSE_1,
@@ -47,7 +48,7 @@ test.describe('Session', () => {
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
 
-		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseFromCombobox(page, 'Model', MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(page.getByText('Run')).toBeEnabled();
 
@@ -73,7 +74,7 @@ test.describe('Session', () => {
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
 
-		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseFromCombobox(page, 'Model', MOCK_API_TAGS_RESPONSE.models[0].name);
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
@@ -98,7 +99,7 @@ test.describe('Session', () => {
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
 
-		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseFromCombobox(page, 'Model', MOCK_API_TAGS_RESPONSE.models[0].name);
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
@@ -423,7 +424,7 @@ test.describe('Session', () => {
 		await expect(sessionMetadata).toHaveText('New session');
 
 		// Mock a response that takes a while to generate
-		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseFromCombobox(page, 'Model', MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.route('**/chat', () => {});
 		await promptTextarea.fill('Hello world!');
 		await sendButton.click();
@@ -597,7 +598,7 @@ test.describe('Session', () => {
 		await page.route('**/chat', async (route) => {
 			await route.abort('failed');
 		});
-		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseFromCombobox(page, 'Model', MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.locator('button', { hasText: 'Run' }).click();
 		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
@@ -689,7 +690,7 @@ test.describe('Session', () => {
 		const initialClientHeight = await sessionHistory.evaluate((el) => el.clientHeight);
 		const initialScrollTop = await sessionHistory.evaluate((el) => el.scrollTop);
 
-		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseFromCombobox(page, 'Model', MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_3);
 		await page.getByText('Run').click();
@@ -712,7 +713,7 @@ test.describe('Session', () => {
 
 		await expect(page.getByTestId('disconnected-server')).not.toBeVisible();
 
-		await page.getByLabel('Model').selectOption(MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseFromCombobox(page, 'Model', MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(page.getByText('Run')).toBeEnabled();
 		await expect(

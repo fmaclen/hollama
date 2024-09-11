@@ -29,7 +29,7 @@
 		on:click
 	>
 		<span class="button__icon">
-			<LoaderCircle class="h-4 w-4 animate-spin" />
+			<LoaderCircle class="base-icon animate-spin" />
 		</span>
 		<slot />
 	</button>

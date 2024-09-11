@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import {
+	chooseFromCombobox,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_KNOWLEDGE,
 	mockTagsResponse,
@@ -18,13 +19,16 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	expect(await page.evaluate(() => document.fonts.size)).toBe(19);
 	expect(await page.evaluate(() => document.fonts.ready)).toBeTruthy();
 
-	await page.getByLabel('Available models').selectOption(MOCK_API_TAGS_RESPONSE.models[1].name);
+	await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[1].name);
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'settings.png' });
 
 	await page.goto('/sessions/ulxz6l'); // Visiting a fake session id so it doesn't change from test to test
+	await expect(page.locator('.prompt-editor__textarea')).toBeVisible();
+	await expect(page.locator('.text-editor')).not.toBeVisible();
+
 	await page.locator('.prompt-editor__toggle').click();
-	await expect(page.getByText('No sessions')).toBeVisible();
-	await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
+	await expect(page.locator('.prompt-editor__textarea')).not.toBeVisible();
+	await expect(page.locator('.text-editor')).toBeVisible();
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'session-new.png' });
 
 	// Stage 2 sessions

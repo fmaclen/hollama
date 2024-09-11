@@ -192,7 +192,7 @@
 					$settingsStore.ollamaServerStatus === $LL.disconnected()}
 				on:click={pullModel}
 			>
-				<CloudDownload class="h-4 w-4" />
+				<CloudDownload class="base-icon" />
 			</Button>
 		</svelte:fragment>
 		<svelte:fragment slot="help">
