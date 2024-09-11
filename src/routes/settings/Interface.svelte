@@ -7,8 +7,7 @@
 	import P from '$lib/components/P.svelte';
 	import { settingsStore } from '$lib/localStorage';
 
-	let value: Locales;
-	$: if (value) changeLanguage(value);
+	let value: Locales = $settingsStore.userLanguage || 'en';
 
 	function changeLanguage(locale: Locales) {
 		if (!locale) return;
@@ -25,9 +24,10 @@
 		name="language"
 		label={$LL.language()}
 		bind:value
+		onChange={() => changeLanguage(value)}
 		options={[
-			{ value: 'en', option: 'English' },
-			{ value: 'es', option: 'Español' }
+			{ value: 'en', label: 'English' },
+			{ value: 'es', label: 'Español' }
 		]}
 	/>
 </Fieldset>
