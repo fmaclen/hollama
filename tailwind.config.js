@@ -66,6 +66,9 @@ const config = {
 				'.badge': {
 					'@apply inline-flex max-w-max items-center rounded-md px-2 py-0.5 font-mono text-xs border border-shade-3 text-muted':
 						{}
+				},
+				'.base-icon': {
+					'@apply w-4 h-4': {}
 				}
 			});
 		}

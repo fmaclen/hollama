@@ -39,7 +39,7 @@
 					id="retry-index-{retryIndex}"
 					on:click={() => handleRetry && handleRetry(retryIndex)}
 				>
-					<RefreshCw class="h-4 w-4" />
+					<RefreshCw class="base-icon" />
 				</Button>
 			{/if}
 			{#if isUserRole}
@@ -48,7 +48,7 @@
 					variant="icon"
 					on:click={() => handleEditMessage && handleEditMessage(message)}
 				>
-					<Pencil class="h-4 w-4" />
+					<Pencil class="base-icon" />
 				</Button>
 			{/if}
 			<ButtonCopy content={message.content} />
@@ -63,7 +63,7 @@
 				aria-label={$LL.goToKnowledge()}
 			>
 				{message.knowledge.name}
-				<Brain class="-mr-1 ml-2 h-4 w-4" />
+				<Brain class="-mr-1 ml-2 base-icon" />
 			</Button>
 		{:else if message.content}
 			<Markdown markdown={message.content} />

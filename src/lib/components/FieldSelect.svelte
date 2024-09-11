@@ -86,12 +86,12 @@
 						title={$LL.clear()}
 						class="pointer-events-auto"
 					>
-						<X class="h-4 w-4" />
+						<X class="base-icon" />
 					</Button>
 				{/if}
 
 				<span class="pr-1 py-2 pointer-events-none">
-					<ChevronsUpDown class="h-4 w-4" />
+					<ChevronsUpDown class="base-icon" />
 				</span>
 			</nav>
 		</div>
@@ -100,7 +100,7 @@
 			{#each filteredOptions as option}
 				<Combobox.Item value={option.value} label={option.label} class="field-combobox-item">
 					<Combobox.ItemIndicator class="field-combobox-item-indicator">
-						<Check class="h-4 w-4" />
+						<Check class="base-icon" />
 					</Combobox.ItemIndicator>
 					<div class="field-combobox-item-label">
 						{option.label}

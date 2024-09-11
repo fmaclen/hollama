@@ -72,16 +72,16 @@
 				{href}
 			>
 				{#if href === '/knowledge'}
-					<Brain class="h-4 w-4" />
+					<Brain class="base-icon" />
 					{$LL.knowledge()}
 				{:else if href === '/sessions'}
-					<MessageSquareText class="h-4 w-4" />
+					<MessageSquareText class="base-icon" />
 					{$LL.sessions()}
 				{:else if href === '/settings'}
-					<Settings2 class="h-4 w-4" />
+					<Settings2 class="base-icon" />
 					{$LL.settings()}
 				{:else if href === '/motd'}
-					<NotebookText class="h-4 w-4" />
+					<NotebookText class="base-icon" />
 					{$LL.motd()}
 				{/if}
 			</a>
@@ -89,10 +89,10 @@
 
 		<button class="layout__button" on:click={toggleTheme}>
 			{#if theme === 'light'}
-				<Moon class="h-4 w-4" />
+				<Moon class="base-icon" />
 				{$LL.dark()}
 			{:else}
-				<Sun class="h-4 w-4" />
+				<Sun class="base-icon" />
 				{$LL.light()}
 			{/if}
 		</button>
