@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { Brain, MessageSquareText, Moon, NotebookText, Settings2, Sun } from 'lucide-svelte';
-	import { beforeUpdate, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { Toaster } from 'svelte-sonner';
+	import { detectLocale, navigatorDetector } from 'typesafe-i18n/detectors';
 
 	import LL, { setLocale } from '$i18n/i18n-svelte';
+	import { loadLocale } from '$i18n/i18n-util.sync';
 
 	import '../app.pcss';
 
-	import { loadLocale } from '$i18n/i18n-util.sync';
+	import type { Locales } from '$i18n/i18n-types';
 	import { env } from '$env/dynamic/public';
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
@@ -25,12 +27,13 @@
 		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
 	});
 
-	beforeUpdate(() => {
-		loadLocale('en');
-		setLocale('en');
-	});
-
 	onMount(() => {
+		if (!$settingsStore.userLanguage)
+			$settingsStore.userLanguage = detectLocale('en', ['en', 'es'], navigatorDetector) as Locales;
+
+		loadLocale($settingsStore.userLanguage);
+		setLocale($settingsStore.userLanguage);
+
 		if (!browser || theme) return;
 		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 			? 'dark'
@@ -73,16 +76,16 @@
 			>
 				{#if href === '/knowledge'}
 					<Brain class="base-icon" />
-					{$LL.knowledge()}
+					<span class="layout__label">{$LL.knowledge()}</span>
 				{:else if href === '/sessions'}
 					<MessageSquareText class="base-icon" />
-					{$LL.sessions()}
+					<span class="layout__label">{$LL.sessions()}</span>
 				{:else if href === '/settings'}
 					<Settings2 class="base-icon" />
-					{$LL.settings()}
+					<span class="layout__label">{$LL.settings()}</span>
 				{:else if href === '/motd'}
 					<NotebookText class="base-icon" />
-					{$LL.motd()}
+					<span class="layout__label">{$LL.motd()}</span>
 				{/if}
 			</a>
 		{/each}
@@ -90,10 +93,10 @@
 		<button class="layout__button" on:click={toggleTheme}>
 			{#if theme === 'light'}
 				<Moon class="base-icon" />
-				{$LL.dark()}
+				<span class="layout__label">{$LL.dark()}</span>
 			{:else}
 				<Sun class="base-icon" />
-				{$LL.light()}
+				<span class="layout__label">{$LL.light()}</span>
 			{/if}
 		</button>
 	</aside>
@@ -115,7 +118,7 @@
 	}
 
 	.layout__aside {
-		@apply flex w-full flex-row gap-x-4 px-4;
+		@apply flex w-full flex-row gap-x-2 px-4;
 		@apply lg:flex lg:w-max lg:flex-col;
 	}
 
@@ -126,9 +129,9 @@
 
 	.layout__button,
 	.layout__a {
-		@apply flex w-auto flex-grow flex-col items-center gap-x-2 gap-y-0.5 py-3 text-xs font-medium text-muted transition-colors duration-150;
+		@apply flex w-auto min-w-0 flex-1 flex-grow flex-col items-center gap-x-2 gap-y-0.5 py-3 text-xs font-medium text-muted transition-colors duration-150;
 		@apply sm:text-sm;
-		@apply lg:flex-grow-0 lg:flex-row lg:items-center lg:gap-4 lg:px-2;
+		@apply lg:flex-none lg:flex-grow-0 lg:flex-row lg:items-center lg:gap-4 lg:px-2;
 		@apply hover:text-active;
 	}
 
@@ -149,6 +152,11 @@
 		content: '';
 		@apply absolute left-1/2 top-2 h-2 w-2 translate-x-2 rounded-full bg-warning;
 		@apply lg:left-0 lg:top-1/2 lg:-translate-x-3 lg:-translate-y-1/2;
+	}
+
+	.layout__label {
+		@apply w-full truncate text-center;
+		@apply lg:w-auto lg:text-left;
 	}
 
 	.layout__button {

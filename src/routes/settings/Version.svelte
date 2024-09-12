@@ -93,7 +93,7 @@
 	}
 
 	.field-version__label {
-		@apply inline-flex flex-grow items-center gap-x-2 rounded-md border border-shade-4 px-3 py-2 text-sm;
+		@apply inline-flex flex-grow items-center gap-x-2 rounded-md border border-shade-4 px-3 py-2 text-sm leading-tight;
 		@apply hover:border-shade-6 hover:text-active;
 	}
 

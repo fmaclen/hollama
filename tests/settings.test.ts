@@ -147,3 +147,59 @@ test('a model can be pulled from the ollama library', async ({ page }) => {
 	await expect(downloadButton).toBeDisabled();
 	await expect(modelTagInput).not.toBeDisabled();
 });
+
+test('can switch language to spanish and back to english', async ({ page }) => {
+	const languageCombobox = page.getByLabel('Language');
+	const idiomaCombobox = page.getByLabel('Idioma');
+
+	await page.goto('/settings');
+	await expect(idiomaCombobox).not.toBeVisible();
+	await expect(languageCombobox).toBeVisible();
+	await expect(languageCombobox).toHaveValue('English');
+	await expect(page.getByText('Server')).toBeVisible();
+	await expect(page.getByText('Servidor')).not.toBeVisible();
+
+	await languageCombobox.click();
+
+	await expect(page.getByRole('option', { name: 'English' })).toBeVisible();
+	await expect(page.getByRole('option', { name: 'Español' })).toBeVisible();
+	await page.getByRole('option', { name: 'Español' }).click();
+
+	await expect(languageCombobox).not.toBeVisible();
+	await expect(idiomaCombobox).toHaveValue('Español');
+	let localStorageValue = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-settings')
+	);
+	expect(localStorageValue).toContain('"userLanguage":"es"');
+
+	await expect(page.getByText('Servidor')).toBeVisible();
+	await expect(page.getByText('Server')).not.toBeVisible();
+
+	await idiomaCombobox.click();
+	await page.getByRole('option', { name: 'English' }).click();
+
+	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
+	expect(localStorageValue).toContain('"userLanguage":"en"');
+	await expect(page.getByText('Server')).toBeVisible();
+	await expect(page.getByText('Servidor')).not.toBeVisible();
+});
+
+test.describe('locales', () => {
+	test.use({ locale: 'es-ES' });
+
+	test('default language is spanish', async ({ page }) => {
+		await page.goto('/settings');
+
+		expect(await page.evaluate(() => navigator.language)).toBe('es-ES');
+
+		await page.evaluate(() => window.localStorage.clear());
+		await page.reload();
+
+		expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+			'"userLanguage":"es"'
+		);
+
+		await expect(page.getByText('Server')).not.toBeVisible();
+		await expect(page.getByText('Servidor')).toBeVisible();
+	});
+});

@@ -1,17 +1,20 @@
 <script lang="ts">
+	import LL from '$i18n/i18n-svelte';
 	import Head from '$lib/components/Head.svelte';
 
 	import DangerZone from './DangerZone.svelte';
+	import Interface from './Interface.svelte';
 	import Ollama from './Ollama.svelte';
 	import Version from './Version.svelte';
 </script>
 
-<Head title="Settings" />
+<Head title={$LL.settings()} />
 
 <section class="settings">
 	<div class="settings__container">
 		<Version />
 		<Ollama />
+		<Interface />
 		<DangerZone />
 	</div>
 </section>

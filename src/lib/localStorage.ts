@@ -1,6 +1,7 @@
 import type { ModelResponse } from 'ollama/browser';
 import { writable } from 'svelte/store';
 
+import type { Locales } from '$i18n/i18n-types';
 import { env } from '$env/dynamic/public';
 import { browser, version } from '$app/environment';
 import type { Session } from '$lib/sessions';
@@ -57,6 +58,7 @@ export interface Settings {
 	lastUpdateCheck: number | null;
 	autoCheckForUpdates: boolean;
 	userTheme: 'light' | 'dark';
+	userLanguage: Locales | null;
 	hollamaMetadata: HollamaMetadata;
 }
 
@@ -68,6 +70,7 @@ const defaultSettings: Settings = {
 	lastUpdateCheck: null,
 	autoCheckForUpdates: false,
 	userTheme: 'light',
+	userLanguage: null,
 	hollamaMetadata: {
 		currentVersion: version,
 		isDesktop: env.PUBLIC_ADAPTER === 'electron-node',
