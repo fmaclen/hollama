@@ -39,7 +39,7 @@
 		}
 
 		&--text-editor {
-			@apply h-full overflow-scrollbar;
+			@apply overflow-scrollbar h-full;
 		}
 	}
 

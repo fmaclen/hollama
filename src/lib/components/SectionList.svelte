@@ -4,6 +4,6 @@
 
 <style lang="postcss">
 	.section-list {
-		@apply flex h-full flex-col overflow-scrollbar;
+		@apply overflow-scrollbar flex h-full flex-col;
 	}
 </style>

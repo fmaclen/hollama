@@ -25,7 +25,7 @@
 		@apply base-section base-section-fullscreen flex gap-x-8 px-6;
 
 		strong {
-			@apply text-nowrap mr-4;
+			@apply mr-4 text-nowrap;
 		}
 
 		span {

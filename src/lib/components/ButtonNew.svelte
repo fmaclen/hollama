@@ -18,7 +18,7 @@
 	onMount(setId);
 </script>
 
-<div class="flex gap-x-2 p-6 border-b">
+<div class="flex gap-x-2 border-b p-6">
 	<Button
 		data-testid={sitemap === Sitemap.SESSIONS ? 'new-session' : 'new-knowledge'}
 		class="w-full"

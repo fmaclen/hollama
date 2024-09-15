@@ -137,7 +137,7 @@
 	}
 
 	:global(.field-combobox-content) {
-		@apply relative z-10 max-h-64 max-w-full overflow-scrollbar rounded-md bg-shade-0 py-1 shadow-md;
+		@apply overflow-scrollbar relative z-10 max-h-64 max-w-full rounded-md bg-shade-0 py-1 shadow-md;
 	}
 
 	:global(.field-combobox-item) {
