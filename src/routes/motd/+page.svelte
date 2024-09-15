@@ -18,7 +18,7 @@
 	.motd {
 		@apply base-section base-section-fullscreen px-8;
 	}
-	
+
 	.motd-markdown {
 		@apply my-auto;
 	}

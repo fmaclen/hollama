@@ -62,7 +62,7 @@
 		</svelte:fragment>
 	</Header>
 
-	<Fieldset isFullscreen={true}>
+	<Fieldset context="editor">
 		<FieldInput name="name" label={$LL.name()} bind:value={name} />
 
 		{#key knowledge}

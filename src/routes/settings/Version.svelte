@@ -14,7 +14,7 @@
 	$: if ($updateStatusStore) $updateStatusStore.showSidebarNotification = false;
 </script>
 
-<Fieldset>
+<Fieldset context="settings">
 	<P><strong>{$LL.currentVersion()}</strong></P>
 
 	<div class="field-version">

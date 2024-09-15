@@ -276,7 +276,7 @@
 				</button>
 
 				<div class="prompt-editor__form">
-					<Fieldset isFullscreen={isPromptFullscreen}>
+					<Fieldset context={isPromptFullscreen ? 'editor' : undefined}>
 						{#if isNewSession}
 							<div class="prompt-editor__project">
 								<FieldSelectModel />
@@ -368,11 +368,11 @@
 
 <style lang="postcss">
 	.session {
-		@apply flex h-full w-full flex-col overflow-scrollbar;
+		@apply overflow-scrollbar flex h-full w-full flex-col;
 	}
 
 	.session__history {
-		@apply flex h-full flex-grow flex-col overflow-scrollbar;
+		@apply overflow-scrollbar flex h-full flex-grow flex-col;
 	}
 
 	.session__articles {
@@ -398,7 +398,7 @@
 	}
 
 	.prompt-editor__form {
-		@apply h-full overflow-scrollbar bg-shade-1;
+		@apply overflow-scrollbar h-full bg-shade-1;
 	}
 
 	.prompt-editor__toggle {

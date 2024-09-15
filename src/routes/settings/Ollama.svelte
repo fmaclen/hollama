@@ -113,7 +113,7 @@
 	});
 </script>
 
-<Fieldset>
+<Fieldset context="settings">
 	<P><strong>Ollama</strong></P>
 	<FieldInput
 		name="server"

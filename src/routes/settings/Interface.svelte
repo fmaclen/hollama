@@ -17,7 +17,7 @@
 	}
 </script>
 
-<Fieldset>
+<Fieldset context="settings">
 	<P><strong>{$LL.interface()}</strong></P>
 
 	<FieldSelect
