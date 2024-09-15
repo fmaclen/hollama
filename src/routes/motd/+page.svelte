@@ -9,11 +9,17 @@
 <Head title={$LL.messageOfTheDay()} />
 
 <section class="motd">
+	<div class="motd-markdown">
 		<Markdown markdown={data.motd} />
+	</div>
 </section>
 
 <style lang="postcss">
 	.motd {
-		@apply base-section base-section-fullscreen;
+		@apply base-section base-section-fullscreen px-8;
+	}
+	
+	.motd-markdown {
+		@apply my-auto;
 	}
 </style>

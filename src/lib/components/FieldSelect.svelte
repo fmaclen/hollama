@@ -90,9 +90,9 @@
 					</Button>
 				{/if}
 
-				<span class="pointer-events-none py-2 pr-1">
-					<ChevronsUpDown class="base-icon" />
-				</span>
+				<button class="pointer-events-none py-2 pr-1">
+					<ChevronsUpDown class="base-icon text-muted" />
+				</button>
 			</nav>
 		</div>
 

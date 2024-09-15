@@ -11,14 +11,20 @@
 <Head title={$LL.settings()} />
 
 <section class="settings">
+	<div class="settings-fieldsets">
 		<Version />
 		<Ollama />
 		<Interface />
 		<DangerZone />
+	</div>
 </section>
 
 <style lang="postcss">
 	.settings {
-		@apply base-section base-section-fullscreen;
+		@apply base-section base-section-fullscreen gap-y-8 px-6;
+	}
+
+	.settings-fieldsets {
+		@apply my-auto flex flex-col gap-y-12;
 	}
 </style>

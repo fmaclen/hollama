@@ -58,10 +58,8 @@ const config = {
 					'@apply h-full w-full overflow-scrollbar border-t bg-shade-2 lg:rounded-xl lg:border': {}
 				},
 				'.base-section-fullscreen': {
-					'@apply base-section flex border-spacing-1 flex-col bg-shade-1 py-24 items-center': {}
-				},
-				'.base-section-fullscreen-container': {
-					'@apply my-auto': {}
+					'@apply base-section flex border-spacing-1 flex-col bg-shade-1 py-12 lg:py-20 items-center':
+						{}
 				},
 				'.confirm-deletion': {
 					'@apply bg-gradient-to-r from-transparent to-red-50 dark:to-red-900': {}
