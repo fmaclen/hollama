@@ -66,6 +66,7 @@
 		"vite-node": "^2.0.5"
 	},
 	"optionalDependencies": {
+		"@rollup/rollup-linux-x64-gnu": "^4.21.3",
 		"@sveltejs/adapter-cloudflare": "^4.2.1"
 	},
 	"type": "module",
