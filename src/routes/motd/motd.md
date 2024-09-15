@@ -1,4 +1,4 @@
-`2024-9-10`
+`2024-9-15`
 
 ### Message of the day
 
@@ -7,11 +7,11 @@
 #### What's new?
 
 - **Desktop app** is now available for [Windows, macOS & Linux](https://github.com/fmaclen/hollama/releases)
-- **Download** [Ollama models](https://ollama.ai/models) directly from the [Settings](/settings) page
-- **Hola mundo!** UI is now available [in Spanish](/settings)
+- **Hola mundo!** UI is now available in [Spanish](/settings)
 
 #### Previously, in Hollama
 
+- **Download** [Ollama models](https://ollama.ai/models) from [Settings](/settings)
 - **Editable messages** in [Sessions](/sessions)
 - Customizable **system prompts**
 - **Code-editor** for prompting
