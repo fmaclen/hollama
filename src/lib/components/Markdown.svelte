@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import MarkdownIt from 'markdown-it/lib/index.mjs';
 	import hljs from 'highlight.js';
+	import MarkdownIt from 'markdown-it/lib/index.mjs';
+	import { onMount } from 'svelte';
+
 	import 'highlight.js/styles/github.min.css';
 
 	import ButtonCopy from './ButtonCopy.svelte';

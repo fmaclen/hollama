@@ -1,40 +1,40 @@
 <script lang="ts">
-	import { afterUpdate, tick } from 'svelte';
-	import { writable } from 'svelte/store';
 	import { Brain, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { afterUpdate, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
+	import { writable } from 'svelte/store';
+
+	import LL from '$i18n/i18n-svelte';
 	import { beforeNavigate } from '$app/navigation';
-
-	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { settingsStore, knowledgeStore } from '$lib/store';
-	import { ollamaChat, ollamaTags } from '$lib/ollama';
-	import {
-		saveSession,
-		type Message,
-		loadSession,
-		formatSessionMetadata,
-		getSessionTitle,
-		type Session
-	} from '$lib/sessions';
-	import { generateNewUrl } from '$lib/components/ButtonNew';
-	import { Sitemap } from '$lib/sitemap';
-	import i18n from '$lib/i18n';
-	import type { PageData } from './$types';
-
 	import Button from '$lib/components/Button.svelte';
-	import Article from './Article.svelte';
-	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
-	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
-	import FieldSelect from '$lib/components/FieldSelect.svelte';
-	import Header from '$lib/components/Header.svelte';
-	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
-	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
-	import Fieldset from '$lib/components/Fieldset.svelte';
-	import Field from '$lib/components/Field.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
-	import Metadata from '$lib/components/Metadata.svelte';
+	import { generateNewUrl } from '$lib/components/ButtonNew';
+	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
+	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
+	import Field from '$lib/components/Field.svelte';
+	import FieldSelect from '$lib/components/FieldSelect.svelte';
+	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
+	import Fieldset from '$lib/components/Fieldset.svelte';
+	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import Head from '$lib/components/Head.svelte';
+	import Header from '$lib/components/Header.svelte';
+	import Metadata from '$lib/components/Metadata.svelte';
+	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
+	import { knowledgeStore, settingsStore } from '$lib/localStorage';
+	import { ollamaChat, ollamaTags } from '$lib/ollama';
+	import {
+		formatSessionMetadata,
+		getSessionTitle,
+		loadSession,
+		saveSession,
+		type Message,
+		type Session
+	} from '$lib/sessions';
+	import { Sitemap } from '$lib/sitemap';
+
+	import type { PageData } from './$types';
+	import Article from './Article.svelte';
 
 	export let data: PageData;
 
@@ -47,6 +47,7 @@
 	let prompt: string;
 	let promptTextarea: HTMLTextAreaElement;
 	let isCompletionInProgress = false;
+	let messageIndexToEdit: number | null = null;
 	let isPromptFullscreen = false;
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
@@ -57,17 +58,16 @@
 	$: isNewSession = !session?.messages.length;
 	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
 	$: shouldFocusTextarea = !isPromptFullscreen;
-	$: if ($settingsStore?.ollamaModel) session.model = $settingsStore.ollamaModel;
+	$: if ($settingsStore.ollamaModel) session.model = $settingsStore.ollamaModel;
 	$: if (messageWindow) messageWindow.addEventListener('scroll', handleScroll);
 	$: if (data.id) handleSessionChange();
 
 	async function handleSessionChange() {
-		if (!$settingsStore) return;
 		try {
 			$settingsStore.ollamaModels = (await ollamaTags()).models;
 		} catch {
 			$settingsStore.ollamaModels = [];
-			toast.warning($i18n.t('errors.cantConnectToOllamaServer'));
+			toast.warning($LL.cantConnectToOllamaServer());
 		}
 		scrollToBottom();
 	}
@@ -77,12 +77,7 @@
 		userScrolledUp = scrollTop + clientHeight < scrollHeight;
 	}
 
-	async function handleSubmit() {
-		if (!prompt) return;
-
-		// Reset the prompt editor to its default state
-		isPromptFullscreen = false;
-
+	async function handleSubmitNewMessage() {
 		let knowledgeContext: Message | null = null;
 		if (knowledge) {
 			knowledgeContext = {
@@ -99,14 +94,30 @@
 			? [knowledgeContext, ...session.messages, message]
 			: [...session.messages, message];
 
-		let payload = {
-			model: session.model,
-			messages: session.messages,
-			stream: true
-		};
-
 		await scrollToBottom(true); // Force scroll after submitting prompt
-		await handleCompletion(payload);
+		await handleCompletion({ model: session.model, messages: session.messages });
+	}
+
+	async function handleSubmitEditMessage() {
+		if (messageIndexToEdit === null) return;
+
+		session.messages[messageIndexToEdit].content = prompt;
+
+		// Remove all messages after the edited message
+		session.messages = session.messages.slice(0, messageIndexToEdit + 1);
+
+		messageIndexToEdit = null;
+		prompt = '';
+
+		await handleCompletion({ model: session.model, messages: session.messages });
+	}
+
+	function handleSubmit() {
+		if (!prompt) return;
+		isPromptFullscreen = false;
+
+		if (messageIndexToEdit !== null) handleSubmitEditMessage();
+		else handleSubmitNewMessage();
 	}
 
 	async function handleRetry(index: number) {
@@ -116,13 +127,7 @@
 		const mostRecentUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
 		if (!mostRecentUserMessage) throw new Error('No user message to retry');
 
-		let payload = {
-			model: session.model,
-			messages: session.messages,
-			stream: true
-		};
-
-		await handleCompletion(payload);
+		await handleCompletion({ model: session.model, messages: session.messages });
 	}
 
 	async function handleCompletion(payload: { model: string; messages: Message[] }) {
@@ -132,8 +137,6 @@
 		completion = '';
 
 		try {
-			if (!$settingsStore?.ollamaServer) throw Error('Ollama server not configured');
-
 			await ollamaChat(payload, abortController.signal, async (chunk) => {
 				completion += chunk;
 				await scrollToBottom();
@@ -163,6 +166,13 @@
 		}
 	}
 
+	function handleEditMessage(message: Message) {
+		messageIndexToEdit = session.messages.findIndex((m) => m === message);
+		isPromptFullscreen = true;
+		prompt = message.content;
+		promptTextarea.focus();
+	}
+
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.shiftKey) return;
 		if (event.key !== 'Enter') return;
@@ -178,8 +188,11 @@
 
 	function handleError(error: Error) {
 		let content: string;
-		if (error.message === 'Failed to fetch') content = $i18n.t('errors.ollamaConnectionError');
-		else content = $i18n.t('errors.genericError', { error });
+		if (error.message === 'Failed to fetch') {
+			content = $LL.ollamaConnectionError();
+		} else {
+			content = $LL.genericError({ error: error.toString() });
+		}
 
 		const message: Message = { role: 'system', content };
 		session.messages = [...session.messages, message];
@@ -195,7 +208,7 @@
 
 	beforeNavigate((navigation) => {
 		if (!isCompletionInProgress) return;
-		const userConfirmed = confirm($i18n.t('dialogs.areYouSureYouWantToLeave'));
+		const userConfirmed = confirm($LL.areYouSureYouWantToLeave());
 		if (userConfirmed) {
 			stopCompletion();
 			return;
@@ -212,19 +225,14 @@
 </script>
 
 <div class="session">
-	<Head
-		title={[
-			isNewSession ? $i18n.t('sessionsPage.new') : getSessionTitle(session),
-			$i18n.t('sessions', { count: 0 })
-		]}
-	/>
+	<Head title={[isNewSession ? $LL.newSession() : getSessionTitle(session), $LL.sessions()]} />
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
-			{$i18n.t('sessions', { count: 1 })}
+			{$LL.session()}
 			<Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
 		</p>
 		<Metadata dataTestid="session-metadata">
-			{isNewSession ? $i18n.t('sessionsPage.new') : formatSessionMetadata(session)}
+			{isNewSession ? $LL.newSession() : formatSessionMetadata(session)}
 		</Metadata>
 
 		<svelte:fragment slot="nav">
@@ -240,7 +248,7 @@
 		<div class="session__history" bind:this={messageWindow}>
 			<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
 				{#if isNewSession}
-					<EmptyMessage>{$i18n.t('sessionsPage.writePromptToStart')}</EmptyMessage>
+					<EmptyMessage>{$LL.writePromptToStart()}</EmptyMessage>
 				{/if}
 
 				{#each session.messages as message, i (session.id + i)}
@@ -249,6 +257,7 @@
 							{message}
 							retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
 							{handleRetry}
+							{handleEditMessage}
 						/>
 					{/key}
 				{/each}
@@ -272,20 +281,20 @@
 							<div class="prompt-editor__project">
 								<FieldSelectModel />
 								<FieldSelect
-									label={$i18n.t('sessionsPage.systemPrompt')}
+									label={$LL.systemPrompt()}
 									name="knowledge"
-									disabled={!$knowledgeStore}
-									options={$knowledgeStore?.map((k) => ({ value: k.id, option: k.name }))}
+									disabled={!$knowledgeStore.length}
+									options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
 									bind:value={knowledgeId}
 								>
 									<svelte:fragment slot="nav">
 										<Button
-											aria-label={$i18n.t('knowledgePage.new')}
+											aria-label={$LL.newKnowledge()}
 											variant="outline"
 											href={generateNewUrl(Sitemap.KNOWLEDGE)}
 											class="h-full text-muted"
 										>
-											<Brain class="h-4 w-4" />
+											<Brain class="base-icon" />
 										</Button>
 									</svelte:fragment>
 								</FieldSelect>
@@ -294,17 +303,13 @@
 
 						{#key session}
 							{#if isPromptFullscreen}
-								<FieldTextEditor
-									label={$i18n.t('sessionsPage.prompt')}
-									{handleSubmit}
-									bind:value={prompt}
-								/>
+								<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={prompt} />
 							{:else}
 								<Field name="prompt">
 									<textarea
 										name="prompt"
 										class="prompt-editor__textarea"
-										placeholder={$i18n.t('sessionsPage.promptPlaceholder')}
+										placeholder={$LL.promptPlaceholder()}
 										bind:this={promptTextarea}
 										bind:value={prompt}
 										on:keydown={handleKeyDown}
@@ -314,24 +319,41 @@
 						{/key}
 
 						<nav class="prompt-editor__toolbar">
+							{#if messageIndexToEdit !== null}
+								<Button
+									variant="outline"
+									on:click={() => {
+										prompt = '';
+										messageIndexToEdit = null;
+										isPromptFullscreen = false;
+									}}
+								>
+									{$LL.cancel()}
+								</Button>
+							{/if}
 							<ButtonSubmit
 								{handleSubmit}
 								hasMetaKey={isPromptFullscreen}
 								disabled={!prompt ||
-									!$settingsStore?.ollamaModels.length ||
-									!$settingsStore?.ollamaModel}
+									$settingsStore.ollamaServerStatus === 'disconnected' ||
+									$settingsStore.ollamaModels.length === 0 ||
+									!$settingsStore.ollamaModel}
 							>
-								{$i18n.t('sessionsPage.run')}
+								{#if messageIndexToEdit}
+									{$LL.run()}
+								{:else}
+									{$LL.saveAndRun()}
+								{/if}
 							</ButtonSubmit>
 
 							{#if isCompletionInProgress}
 								<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
 									<div class="prompt-editor__stop">
 										<span class="prompt-editor__stop-icon">
-											<StopCircle class=" h-4 w-4" />
+											<StopCircle class=" base-icon" />
 										</span>
 										<span class="prompt-editor__loading-icon">
-											<LoaderCircle class="prompt-editor__loading-icon h-4 w-4 animate-spin" />
+											<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />
 										</span>
 									</div>
 								</Button>

@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { writable } from 'svelte/store';
+
+	import LL from '$i18n/i18n-svelte';
 	import { page } from '$app/stores';
 	import { Sitemap } from '$lib/sitemap';
-	import i18n from '$lib/i18n';
-	import { writable } from 'svelte/store';
+
 	import ButtonDelete from './ButtonDelete.svelte';
 	import Metadata from './Metadata.svelte';
 
@@ -25,9 +27,7 @@
 		<a
 			class="section-list-item__a"
 			data-testid={isSession ? 'session-item' : 'knowledge-item'}
-			aria-label={(isSession
-				? $i18n.t('sessions', { count: 1 })
-				: $i18n.t('knowledge', { count: 1 })) + `: ${id}`}
+			aria-label={(isSession ? $LL.session() : $LL.knowledge()) + `: ${id}`}
 			href={`/${sitemap}/${id}`}
 		>
 			<p class="section-list-item__title">

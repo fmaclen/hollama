@@ -51,7 +51,7 @@ const config = {
 		function ({ addComponents }) {
 			addComponents({
 				'.base-input': {
-					'@apply flex w-full outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-transparent px-3 pb-3 placeholder:text-shade-6':
+					'@apply flex w-full outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-transparent px-3 pb-2.5 placeholder:text-shade-6':
 						{}
 				},
 				'.base-section': {
@@ -66,6 +66,13 @@ const config = {
 				'.overflow-scrollbar': {
 					'@apply scrollbar scrollbar-track-transparent scrollbar-thumb-neutral-950/10 dark:scrollbar-thumb-neutral-100/10':
 						{}
+				},
+				'.badge': {
+					'@apply inline-flex max-w-max items-center rounded-md px-2 py-0.5 font-mono text-xs border border-shade-3 text-muted':
+						{}
+				},
+				'.base-icon': {
+					'@apply w-4 h-4': {}
 				}
 			});
 		},

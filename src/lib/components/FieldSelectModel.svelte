@@ -1,18 +1,27 @@
 <script lang="ts">
-	import i18n from '$lib/i18n';
-	import { settingsStore } from '$lib/store';
+	import type { Selected } from 'bits-ui';
+
+	import LL from '$i18n/i18n-svelte';
+	import { settingsStore } from '$lib/localStorage';
+
 	import FieldSelect from './FieldSelect.svelte';
 
-	export let disabled: boolean = false;
+	let value: string | undefined = $settingsStore.ollamaModel || '';
 
-	let value: string = $settingsStore?.ollamaModel || '';
-	$: if ($settingsStore) $settingsStore.ollamaModel = value;
+	$: disabled = !$settingsStore.ollamaModels.length;
+	$: models = $settingsStore.ollamaModels.map((m) => ({ value: m.name, label: m.name }));
+
+	function handleChange(e: Selected<string>) {
+		$settingsStore.ollamaModel = e.value;
+	}
 </script>
 
 <FieldSelect
-	label={$i18n.t('settingsPage.availableModels')}
 	name="model"
-	options={$settingsStore?.ollamaModels.map((m) => ({ value: m.name, option: m.name }))}
-	disabled={disabled || !$settingsStore?.ollamaModels.length}
+	{disabled}
+	placeholder={$LL.search()}
+	label={$LL.availableModels()}
+	options={models}
+	onChange={handleChange}
 	bind:value
 />

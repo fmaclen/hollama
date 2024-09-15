@@ -1,22 +1,29 @@
 import { expect, test } from '@playwright/test';
-import { MOCK_API_TAGS_RESPONSE, mockTagsResponse } from './utils';
 import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
+
+import { MOCK_API_TAGS_RESPONSE, mockTagsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
 });
 
 test('displays model list and updates settings store', async ({ page }) => {
-	const modelSelect = page.getByLabel('Available models');
-
 	await page.goto('/');
+	await expect(page.getByText('Connected')).toBeVisible();
 
 	// Check if the model list contains the expected models
-	await expect(modelSelect).toContainText(MOCK_API_TAGS_RESPONSE.models[0].name);
-	await expect(modelSelect).toContainText(MOCK_API_TAGS_RESPONSE.models[1].name);
-	await expect(modelSelect).toContainText(MOCK_API_TAGS_RESPONSE.models[2].name);
+	const modelComboBox = page.getByLabel('Available models');
+	await expect(modelComboBox).toBeVisible();
+	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[0].name)).not.toBeVisible();
+	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name)).not.toBeVisible();
+	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[2].name)).not.toBeVisible();
 
-	await modelSelect.selectOption(MOCK_API_TAGS_RESPONSE.models[1].name);
+	await modelComboBox.click();
+	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[0].name)).toBeVisible();
+	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name)).toBeVisible();
+	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[2].name)).toBeVisible();
+
+	await page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name).click();
 
 	// Check if the settings store is updated with the selected model
 	const localStorageValue = await page.evaluate(() =>
@@ -36,9 +43,9 @@ test('handles server status updates correctly', async ({ page }) => {
 	await expect(page.getByLabel('Server')).toHaveValue('http://localhost:11434');
 
 	// The starting status is "connected"
-	await expect(page.getByText('disconnected')).not.toBeVisible();
-	await expect(page.getByText('connected', { exact: true })).toBeVisible();
-	await expect(page.getByText('connected', { exact: true })).toHaveClass(/badge--positive/);
+	await expect(page.getByText('Disconnected')).not.toBeVisible();
+	await expect(page.getByText('Connected', { exact: true })).toBeVisible();
+	await expect(page.getByText('Connected', { exact: true })).toHaveClass(/badge--positive/);
 
 	// Mock the API to return an error response
 	await page.route('**/api/tags', async (route) => {
@@ -49,33 +56,24 @@ test('handles server status updates correctly', async ({ page }) => {
 	await page.getByLabel('Server').clear();
 
 	// Wait for the server status to be updated to "disconnected"
-	await expect(page.getByText('connected', { exact: true })).not.toBeVisible();
-	await expect(page.getByText('disconnected')).toBeVisible();
-	await expect(page.getByText('disconnected')).toHaveClass(/badge--warning/);
+	await expect(page.getByText('Connected', { exact: true })).not.toBeVisible();
+	await expect(page.getByText('Disconnected')).toBeVisible();
+	await expect(page.getByText('Disconnected')).toHaveClass(/badge--warning/);
 });
 
-test('settings can be deleted', async ({ page }) => {
-	const modelSelect = page.getByLabel('Available models');
-
+test('deletes all settings and resets to default values', async ({ page }) => {
 	await page.goto('/');
-	await expect(modelSelect).toHaveValue('');
+	// const modelSelect = page.getByLabel('Available models');
+	// await expect(modelSelect).toHaveValue('');
+	const comboBox = page.getByLabel('Available models');
+	await expect(comboBox).toHaveValue('');
 
-	// Stage the settings store with a model
-	await page.evaluate(
-		(modelName: string) =>
-			window.localStorage.setItem(
-				'hollama-settings',
-				JSON.stringify({
-					ollamaServer: 'http://localhost:3000',
-					ollamaModel: modelName
-				})
-			),
-		MOCK_API_TAGS_RESPONSE.models[1].name
-	);
-
+	await page.getByLabel('Server').fill('http://localhost:3000');
+	await comboBox.click();
+	await page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name).click();
 	await page.reload();
 	await expect(page.getByLabel('Server')).toHaveValue('http://localhost:3000');
-	await expect(modelSelect).toHaveValue(MOCK_API_TAGS_RESPONSE.models[1].name);
+	await expect(comboBox).toHaveValue(MOCK_API_TAGS_RESPONSE.models[1].name);
 
 	// Check if the settings store is updated with the selected model
 	let localStorageValue = await page.evaluate(() =>
@@ -86,7 +84,7 @@ test('settings can be deleted', async ({ page }) => {
 
 	// Click the delete button
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete server settings?'));
-	await page.getByText('Delete server settings').click();
+	await page.getByText('Delete all settings').click();
 
 	// Wait for page reload
 	await page.waitForFunction(() => {
@@ -148,4 +146,60 @@ test('a model can be pulled from the ollama library', async ({ page }) => {
 	await expect(modelTagInput).toHaveValue('');
 	await expect(downloadButton).toBeDisabled();
 	await expect(modelTagInput).not.toBeDisabled();
+});
+
+test('can switch language to spanish and back to english', async ({ page }) => {
+	const languageCombobox = page.getByLabel('Language');
+	const idiomaCombobox = page.getByLabel('Idioma');
+
+	await page.goto('/settings');
+	await expect(idiomaCombobox).not.toBeVisible();
+	await expect(languageCombobox).toBeVisible();
+	await expect(languageCombobox).toHaveValue('English');
+	await expect(page.getByText('Server')).toBeVisible();
+	await expect(page.getByText('Servidor')).not.toBeVisible();
+
+	await languageCombobox.click();
+
+	await expect(page.getByRole('option', { name: 'English' })).toBeVisible();
+	await expect(page.getByRole('option', { name: 'Español' })).toBeVisible();
+	await page.getByRole('option', { name: 'Español' }).click();
+
+	await expect(languageCombobox).not.toBeVisible();
+	await expect(idiomaCombobox).toHaveValue('Español');
+	let localStorageValue = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-settings')
+	);
+	expect(localStorageValue).toContain('"userLanguage":"es"');
+
+	await expect(page.getByText('Servidor')).toBeVisible();
+	await expect(page.getByText('Server')).not.toBeVisible();
+
+	await idiomaCombobox.click();
+	await page.getByRole('option', { name: 'English' }).click();
+
+	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
+	expect(localStorageValue).toContain('"userLanguage":"en"');
+	await expect(page.getByText('Server')).toBeVisible();
+	await expect(page.getByText('Servidor')).not.toBeVisible();
+});
+
+test.describe('locales', () => {
+	test.use({ locale: 'es-ES' });
+
+	test('default language is spanish', async ({ page }) => {
+		await page.goto('/settings');
+
+		expect(await page.evaluate(() => navigator.language)).toBe('es-ES');
+
+		await page.evaluate(() => window.localStorage.clear());
+		await page.reload();
+
+		expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+			'"userLanguage":"es"'
+		);
+
+		await expect(page.getByText('Server')).not.toBeVisible();
+		await expect(page.getByText('Servidor')).toBeVisible();
+	});
 });

@@ -1,27 +1,40 @@
 <script lang="ts">
-	import { env } from '$env/dynamic/public';
-	import { page } from '$app/stores';
+	import { Brain, MessageSquareText, Moon, NotebookText, Settings2, Sun } from 'lucide-svelte';
+	import { onMount } from 'svelte';
 	import { Toaster } from 'svelte-sonner';
-	import { Brain, MessageSquareText, Settings2, Sun, Moon, NotebookText } from 'lucide-svelte';
+	import { detectLocale, navigatorDetector } from 'typesafe-i18n/detectors';
+
+	import LL, { setLocale } from '$i18n/i18n-svelte';
+	import { loadLocale } from '$i18n/i18n-util.sync';
 
 	import '../app.pcss';
-	import { settingsStore } from '$lib/store';
-	import i18n from '$lib/i18n';
-	import { onMount } from 'svelte';
+
+	import type { Locales } from '$i18n/i18n-types';
+	import { env } from '$env/dynamic/public';
 	import { browser } from '$app/environment';
+	import { onNavigate } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { settingsStore } from '$lib/localStorage';
+	import { checkForUpdates, updateStatusStore } from '$lib/updates';
 
 	$: pathname = $page.url.pathname;
-	const SITEMAP = [
-		['/sessions', 'sessions'],
-		['/knowledge', 'knowledge'],
-		['/settings', 'settings'],
-		['/motd', 'motd']
-	];
+	const SITEMAP = ['/sessions', '/knowledge', '/settings', '/motd'];
 
-	$: theme = $settingsStore?.userTheme;
+	$: theme = $settingsStore.userTheme;
+
+	onNavigate(async () => {
+		// Check for updates whenever the user follows a link (if auto-check is enabled)
+		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
+	});
 
 	onMount(() => {
-		if (!$settingsStore || !browser || theme) return;
+		if (!$settingsStore.userLanguage)
+			$settingsStore.userLanguage = detectLocale('en', ['en', 'es'], navigatorDetector) as Locales;
+
+		loadLocale($settingsStore.userLanguage);
+		setLocale($settingsStore.userLanguage);
+
+		if (!browser || theme) return;
 		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 			? 'dark'
 			: 'light';
@@ -30,7 +43,7 @@
 	function toggleTheme() {
 		theme = theme === 'light' ? 'dark' : 'light';
 		document.documentElement.setAttribute('data-color-theme', theme);
-		if ($settingsStore) $settingsStore.userTheme = theme;
+		$settingsStore.userTheme = theme;
 	}
 </script>
 
@@ -53,28 +66,37 @@
 			<img class="layout__logo" src="/favicon.png" alt="Hollama logo" />
 		</a>
 
-		{#each SITEMAP as [href, text]}
-			<a class={`layout__a ${pathname.includes(href) ? 'layout__a--active' : ''}`} {href}>
+		{#each SITEMAP as href}
+			<a
+				class="layout__a"
+				class:layout__a--active={pathname.includes(href)}
+				class:layout__a--notification={href === '/settings' &&
+					$updateStatusStore.showSidebarNotification}
+				{href}
+			>
 				{#if href === '/knowledge'}
-					<Brain class="h-4 w-4" />
+					<Brain class="base-icon" />
+					<span class="layout__label">{$LL.knowledge()}</span>
 				{:else if href === '/sessions'}
-					<MessageSquareText class="h-4 w-4" />
+					<MessageSquareText class="base-icon" />
+					<span class="layout__label">{$LL.sessions()}</span>
 				{:else if href === '/settings'}
-					<Settings2 class="h-4 w-4" />
+					<Settings2 class="base-icon" />
+					<span class="layout__label">{$LL.settings()}</span>
 				{:else if href === '/motd'}
-					<NotebookText class="h-4 w-4" />
+					<NotebookText class="base-icon" />
+					<span class="layout__label">{$LL.motd()}</span>
 				{/if}
-				{$i18n.t(text, { count: 0 })}
 			</a>
 		{/each}
 
 		<button class="layout__button" on:click={toggleTheme}>
 			{#if theme === 'light'}
-				<Moon class="h-4 w-4" />
-				{$i18n.t('theme.dark')}
+				<Moon class="base-icon" />
+				<span class="layout__label">{$LL.dark()}</span>
 			{:else}
-				<Sun class="h-4 w-4" />
-				{$i18n.t('theme.light')}
+				<Sun class="base-icon" />
+				<span class="layout__label">{$LL.light()}</span>
 			{/if}
 		</button>
 	</aside>
@@ -96,7 +118,7 @@
 	}
 
 	.layout__aside {
-		@apply flex w-full flex-row gap-x-4 px-4;
+		@apply flex w-full flex-row gap-x-2 px-4;
 		@apply lg:flex lg:w-max lg:flex-col;
 	}
 
@@ -105,16 +127,11 @@
 		@apply lg:max-h-10 lg:min-w-10;
 	}
 
-	.layout__homepage {
-		@apply col-start-3 row-start-1 flex items-center;
-		@apply lg:py-4;
-	}
-
 	.layout__button,
 	.layout__a {
-		@apply flex w-auto flex-grow flex-col items-center gap-x-2 gap-y-0.5 py-3 text-xs font-medium text-muted transition-colors duration-150;
+		@apply flex w-auto min-w-0 flex-1 flex-grow flex-col items-center gap-x-2 gap-y-0.5 py-3 text-xs font-medium text-muted transition-colors duration-150;
 		@apply sm:text-sm;
-		@apply lg:flex-grow-0 lg:flex-row lg:items-center lg:gap-4 lg:px-2;
+		@apply lg:flex-none lg:flex-grow-0 lg:flex-row lg:items-center lg:gap-4 lg:px-2;
 		@apply hover:text-active;
 	}
 
@@ -126,6 +143,20 @@
 		@apply col-start-3 row-start-1 max-w-max;
 		@apply md:px-4;
 		@apply lg:px-0 lg:py-6;
+	}
+
+	.layout__a--notification {
+		@apply relative;
+	}
+	.layout__a--notification::before {
+		content: '';
+		@apply absolute left-1/2 top-2 h-2 w-2 translate-x-2 rounded-full bg-warning;
+		@apply lg:left-0 lg:top-1/2 lg:-translate-x-3 lg:-translate-y-1/2;
+	}
+
+	.layout__label {
+		@apply w-full truncate text-center;
+		@apply lg:w-auto lg:text-left;
 	}
 
 	.layout__button {

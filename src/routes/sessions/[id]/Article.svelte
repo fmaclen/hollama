@@ -1,17 +1,19 @@
 <script lang="ts">
-	import { type Message } from '$lib/sessions';
-	import { generateNewUrl } from '$lib/components/ButtonNew';
-	import { Sitemap } from '$lib/sitemap';
-	import i18n from '$lib/i18n';
+	import { Brain, Pencil, RefreshCw } from 'lucide-svelte';
+
+	import LL from '$i18n/i18n-svelte';
+	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
-	import Badge from '$lib/components/Badge.svelte';
-	import { Brain, RefreshCw } from 'lucide-svelte';
+	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import Markdown from '$lib/components/Markdown.svelte';
+	import { type Message } from '$lib/sessions';
+	import { Sitemap } from '$lib/sitemap';
 
 	export let message: Message;
 	export let retryIndex: number | undefined = undefined;
 	export let handleRetry: ((index: number) => void) | undefined = undefined;
+	export let handleEditMessage: ((message: Message) => void) | undefined = undefined;
 
 	const isUserRole = message.role === 'user';
 </script>
@@ -21,21 +23,32 @@
 		<div data-testid="session-role" class="article__role">
 			<Badge>
 				{#if isUserRole}
-					{$i18n.t('you')}
+					{$LL.you()}
+				{:else if message.role === 'assistant'}
+					{$LL.assistant()}
 				{:else}
-					{$i18n.t(`${message.role}`)}
+					{$LL.system()}
 				{/if}
 			</Badge>
 		</div>
 		<div class="article__interactive">
 			{#if retryIndex}
 				<Button
-					title={$i18n.t('retry')}
+					title={$LL.retry()}
 					variant="icon"
 					id="retry-index-{retryIndex}"
 					on:click={() => handleRetry && handleRetry(retryIndex)}
 				>
-					<RefreshCw class="h-4 w-4" />
+					<RefreshCw class="base-icon" />
+				</Button>
+			{/if}
+			{#if isUserRole}
+				<Button
+					title={$LL.edit()}
+					variant="icon"
+					on:click={() => handleEditMessage && handleEditMessage(message)}
+				>
+					<Pencil class="base-icon" />
 				</Button>
 			{/if}
 			<ButtonCopy content={message.content} />
@@ -47,10 +60,10 @@
 			<Button
 				variant="outline"
 				href={generateNewUrl(Sitemap.KNOWLEDGE, message.knowledge.id)}
-				aria-label={$i18n.t('sessionsPage.goToKnowledge')}
+				aria-label={$LL.goToKnowledge()}
 			>
 				{message.knowledge.name}
-				<Brain class="-mr-1 ml-2 h-4 w-4" />
+				<Brain class="base-icon -mr-1 ml-2" />
 			</Button>
 		{:else if message.content}
 			<Markdown markdown={message.content} />

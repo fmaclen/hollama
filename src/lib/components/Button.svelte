@@ -29,7 +29,7 @@
 		on:click
 	>
 		<span class="button__icon">
-			<LoaderCircle class="h-4 w-4 animate-spin" />
+			<LoaderCircle class="base-icon animate-spin" />
 		</span>
 		<slot />
 	</button>
@@ -37,11 +37,11 @@
 
 <style lang="postcss">
 	.button {
-		@apply inline-flex items-center justify-center whitespace-nowrap rounded-md;
+		@apply inline-flex items-center justify-center rounded-md;
 
 		&--default,
 		&--outline {
-			@apply border px-3 py-2 text-sm font-medium;
+			@apply border px-3 py-2 text-sm font-medium leading-tight;
 			@apply disabled:pointer-events-none disabled:border-shade-2 disabled:bg-shade-2 disabled:text-muted;
 		}
 
@@ -54,7 +54,11 @@
 		}
 
 		&--link {
-			@apply text-link rounded-none;
+			@apply text-link inline rounded-none;
+		}
+
+		&--link[target='_blank']:after {
+			content: ' ↗';
 		}
 
 		&--icon {

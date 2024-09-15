@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import type { Sitemap } from '$lib/sitemap';
+
 	import ButtonNew from './ButtonNew.svelte';
 	import SectionList from './SectionList.svelte';
-	import type { Sitemap } from '$lib/sitemap';
-	import { page } from '$app/stores';
 
 	export let sitemap: Sitemap;
 	$: isIndex = `/${sitemap}` === $page.url.pathname;

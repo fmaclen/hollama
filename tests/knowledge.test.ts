@@ -1,9 +1,11 @@
 import { expect, test } from '@playwright/test';
+
 import {
+	chooseFromCombobox,
+	chooseModelFromSettings,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_KNOWLEDGE,
 	MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1,
-	chooseModelFromSettings,
 	mockCompletionResponse,
 	mockTagsResponse,
 	seedKnowledgeAndReload,
@@ -109,7 +111,6 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 		'Create new knowledge or choose one from the list'
 	);
 	const knowledgeItems = page.getByTestId('knowledge-item');
-	const systemPromptSelect = page.getByLabel('System prompt');
 
 	await page.goto('/');
 	await page.getByText('Knowledge', { exact: true }).click();
@@ -125,8 +126,9 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	// Check the knowledge is available in the session
 	await page.getByText('Sessions').click();
 	await page.getByTestId('new-session').click();
-	await expect(systemPromptSelect).toContainText(MOCK_KNOWLEDGE[0].name);
-	await expect(systemPromptSelect).toContainText(MOCK_KNOWLEDGE[1].name);
+	await page.getByLabel('System prompt').click();
+	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[0].name })).toBeVisible();
+	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[1].name })).toBeVisible();
 
 	await page.locator('a', { hasText: 'Knowledge' }).click();
 	await page.getByText(MOCK_KNOWLEDGE[0].name).click();
@@ -142,8 +144,9 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	// Check is no longer in the session
 	await page.getByText('Sessions').click();
 	await page.getByTestId('new-session').click();
-	await expect(systemPromptSelect).not.toContainText(MOCK_KNOWLEDGE[0].name);
-	await expect(systemPromptSelect).toContainText(MOCK_KNOWLEDGE[1].name);
+	await page.getByLabel('System prompt').click();
+	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[0].name })).not.toBeVisible();
+	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[1].name })).toBeVisible();
 });
 
 test('all knowledge can be deleted', async ({ page }) => {
@@ -169,7 +172,7 @@ test('all knowledge can be deleted', async ({ page }) => {
 	await page.getByText('Knowledge', { exact: true }).click();
 	await expect(page.getByText('No knowledge')).toBeVisible();
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
-	expect(await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'))).toBe('null');
+	expect(await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'))).toBe('[]');
 });
 
 test('can use knowledge as system prompt in the session', async ({ page }) => {
@@ -189,7 +192,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	await expect(sessionArticle).not.toBeVisible();
 
 	// Create a new session with knowledge
-	await page.getByLabel('System prompt').selectOption(MOCK_KNOWLEDGE[0].name);
+	await chooseFromCombobox(page, 'System prompt', MOCK_KNOWLEDGE[0].name);
 	await page.locator('.prompt-editor__textarea').fill('What is this about?');
 
 	// Check the request includes the knowledge as a system prompt when submitting the form
@@ -205,8 +208,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 			messages: [
 				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
 				{ role: 'user', content: 'What is this about?' }
-			],
-			stream: true
+			]
 		})
 	);
 	expect(await sessionArticle.count()).toBe(3);
@@ -226,8 +228,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 			messages: [
 				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
 				{ role: 'user', content: 'What is this about?' }
-			],
-			stream: true
+			]
 		})
 	);
 	expect(await sessionArticle.count()).toBe(3);
@@ -252,8 +253,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 				{ role: 'user', content: 'What is this about?' },
 				{ role: 'assistant', content: MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.message.content },
 				{ role: 'user', content: 'Gotcha, thanks for the clarification' }
-			],
-			stream: true
+			]
 		})
 	);
 	expect(await sessionArticle.count()).toBe(5);

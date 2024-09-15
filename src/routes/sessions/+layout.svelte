@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { sessionsStore } from '$lib/store';
-	import { Sitemap } from '$lib/sitemap';
+	import LL from '$i18n/i18n-svelte';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
+	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
-	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
+	import { sessionsStore } from '$lib/localStorage';
 	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
-	import i18n from '$lib/i18n';
+	import { Sitemap } from '$lib/sitemap';
 </script>
 
 <RobotsNoIndex />
@@ -23,7 +23,7 @@
 				/>
 			{/each}
 		{:else}
-			<EmptyMessage>{$i18n.t('sessionsPage.empty')}</EmptyMessage>
+			<EmptyMessage>{$LL.emptySessions()}</EmptyMessage>
 		{/if}
 	</svelte:fragment>
 
