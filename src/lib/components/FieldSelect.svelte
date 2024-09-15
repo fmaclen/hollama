@@ -90,9 +90,9 @@
 					</Button>
 				{/if}
 
-				<span class="pointer-events-none py-2 pr-1">
-					<ChevronsUpDown class="base-icon" />
-				</span>
+				<button class="pointer-events-none py-2 pr-1">
+					<ChevronsUpDown class="base-icon text-muted" />
+				</button>
 			</nav>
 		</div>
 
@@ -137,7 +137,7 @@
 	}
 
 	:global(.field-combobox-content) {
-		@apply relative z-10 max-h-64 max-w-full overflow-y-auto rounded-md bg-shade-0 py-1 shadow-md;
+		@apply overflow-scrollbar relative z-10 max-h-64 max-w-full rounded-md bg-shade-0 py-1 shadow-md;
 	}
 
 	:global(.field-combobox-item) {

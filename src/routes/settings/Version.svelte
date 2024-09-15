@@ -14,7 +14,7 @@
 	$: if ($updateStatusStore) $updateStatusStore.showSidebarNotification = false;
 </script>
 
-<Fieldset>
+<Fieldset context="settings">
 	<P><strong>{$LL.currentVersion()}</strong></P>
 
 	<div class="field-version">
@@ -39,47 +39,49 @@
 			</Button>
 		</div>
 
-		<FieldHelp>
-			{#if $updateStatusStore.isCheckingForUpdates}
-				<P>{$LL.checkingForUpdates()}</P>
-			{:else if $updateStatusStore.couldntCheckForUpdates}
-				<P>
-					{$LL.couldntCheckForUpdates()}
-					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
-						{$LL.goToReleases()}
-					</Button>
-				</P>
-			{:else if $updateStatusStore.isCurrentVersionLatest}
-				<P>
-					{$LL.isCurrentVersionLatest()}
-					<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
-						{$LL.releaseHistory()}
-					</Button>
-				</P>
-			{:else if $updateStatusStore.latestVersion}
-				<P>
-					{$LL.isLatestVersion()}
-					<Badge variant="warning">{$updateStatusStore.latestVersion}</Badge>
-					{#if $updateStatusStore.canRefreshToUpdate}
-						<Button variant="link" on:click={() => window.location.reload()}>
-							{$LL.refreshToUpdate()}
-						</Button>
-					{:else if $settingsStore.hollamaMetadata.isDocker}
-						<Button
-							variant="link"
-							href="https://github.com/fmaclen/hollama/blob/main/SELF_HOSTING.md#updating-to-the-latest-version"
-							target="_blank"
-						>
-							{$LL.howToUpdateDocker()}
-						</Button>
-					{:else}
+		{#if $updateStatusStore.isCheckingForUpdates || $updateStatusStore.couldntCheckForUpdates || $updateStatusStore.isCurrentVersionLatest || $updateStatusStore.latestVersion}
+			<FieldHelp>
+				{#if $updateStatusStore.isCheckingForUpdates}
+					<P>{$LL.checkingForUpdates()}</P>
+				{:else if $updateStatusStore.couldntCheckForUpdates}
+					<P>
+						{$LL.couldntCheckForUpdates()}
 						<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
-							{$LL.goToDownloads()}
+							{$LL.goToReleases()}
 						</Button>
-					{/if}
-				</P>
-			{/if}
-		</FieldHelp>
+					</P>
+				{:else if $updateStatusStore.isCurrentVersionLatest}
+					<P>
+						{$LL.isCurrentVersionLatest()}
+						<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
+							{$LL.releaseHistory()}
+						</Button>
+					</P>
+				{:else if $updateStatusStore.latestVersion}
+					<P>
+						{$LL.isLatestVersion()}
+						<Badge variant="warning">{$updateStatusStore.latestVersion}</Badge>
+						{#if $updateStatusStore.canRefreshToUpdate}
+							<Button variant="link" on:click={() => window.location.reload()}>
+								{$LL.refreshToUpdate()}
+							</Button>
+						{:else if $settingsStore.hollamaMetadata.isDocker}
+							<Button
+								variant="link"
+								href="https://github.com/fmaclen/hollama/blob/main/SELF_HOSTING.md#updating-to-the-latest-version"
+								target="_blank"
+							>
+								{$LL.howToUpdateDocker()}
+							</Button>
+						{:else}
+							<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
+								{$LL.goToDownloads()}
+							</Button>
+						{/if}
+					</P>
+				{/if}
+			</FieldHelp>
+		{/if}
 	</div>
 </Fieldset>
 

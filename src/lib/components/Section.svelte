@@ -30,11 +30,11 @@
 	}
 
 	.section__aside {
-		@apply flex h-full min-w-80 flex-col overflow-y-auto border-r;
+		@apply overflow-scrollbar flex h-full min-w-80 flex-col border-r;
 	}
 
 	.section__content {
-		@apply flex h-full flex-col overflow-y-auto bg-shade-1;
+		@apply overflow-scrollbar flex h-full flex-col bg-shade-1;
 	}
 
 	.section--index {

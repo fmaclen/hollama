@@ -55,13 +55,21 @@ const config = {
 						{}
 				},
 				'.base-section': {
-					'@apply h-full w-full overflow-y-auto border-t bg-shade-2 lg:rounded-xl lg:border': {}
+					'@apply h-full w-full overflow-scrollbar border-t bg-shade-2 lg:rounded-xl lg:border': {}
+				},
+				'.base-section-fullscreen': {
+					'@apply base-section flex border-spacing-1 flex-col bg-shade-1 py-12 lg:py-20 items-center':
+						{}
 				},
 				'.confirm-deletion': {
 					'@apply bg-gradient-to-r from-transparent to-red-50 dark:to-red-900': {}
 				},
 				'.text-link': {
 					'@apply underline underline-offset-4 hover:text-accent': {}
+				},
+				'.overflow-scrollbar': {
+					'@apply overflow-auto scrollbar scrollbar-track-transparent scrollbar-thumb-shade-6/80':
+						{}
 				},
 				'.badge': {
 					'@apply inline-flex max-w-max items-center rounded-md px-2 py-0.5 font-mono text-xs border border-shade-3 text-muted':
@@ -71,7 +79,8 @@ const config = {
 					'@apply w-4 h-4': {}
 				}
 			});
-		}
+		},
+		require('tailwind-scrollbar')
 	]
 };
 

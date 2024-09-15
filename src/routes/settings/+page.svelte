@@ -11,7 +11,7 @@
 <Head title={$LL.settings()} />
 
 <section class="settings">
-	<div class="settings__container">
+	<div class="settings-fieldsets">
 		<Version />
 		<Ollama />
 		<Interface />
@@ -21,11 +21,10 @@
 
 <style lang="postcss">
 	.settings {
-		@apply base-section;
-		@apply flex border-spacing-1 flex-col bg-shade-1;
+		@apply base-section base-section-fullscreen gap-y-8 px-6;
 	}
 
-	.settings__container {
-		@apply my-auto flex flex-col gap-y-4;
+	.settings-fieldsets {
+		@apply my-auto flex w-full flex-col gap-y-12;
 	}
 </style>
