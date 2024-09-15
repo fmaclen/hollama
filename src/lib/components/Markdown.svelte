@@ -132,7 +132,7 @@
 	/* Code */
 
 	.markdown :global(pre) {
-		@apply relative my-6 overflow-auto rounded-md border border-shade-2;
+		@apply relative my-6 overflow-scrollbar rounded-md border border-shade-2;
 		@apply first:mt-0;
 	}
 

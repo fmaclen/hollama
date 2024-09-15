@@ -98,7 +98,7 @@
 <style lang="postcss">
 	.text-editor {
 		@apply base-input;
-		@apply h-full max-h-full min-h-[88px] overflow-y-auto rounded-b-md p-0;
+		@apply h-full max-h-full min-h-[88px] overflow-scrollbar rounded-b-md p-0;
 
 		:global(.cm-editor) {
 			@apply h-full w-full text-sm;

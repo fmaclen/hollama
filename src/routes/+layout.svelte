@@ -113,7 +113,7 @@
 	}
 
 	.layout {
-		@apply flex h-dvh max-h-dvh w-screen flex-col overflow-auto;
+		@apply flex h-dvh max-h-dvh w-screen flex-col overflow-scrollbar;
 		@apply lg:flex-row lg:gap-4 lg:p-4;
 	}
 
@@ -164,6 +164,6 @@
 	}
 
 	.layout__main {
-		@apply flex h-full w-full overflow-auto;
+		@apply flex h-full w-full overflow-scrollbar;
 	}
 </style>

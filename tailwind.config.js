@@ -55,7 +55,7 @@ const config = {
 						{}
 				},
 				'.base-section': {
-					'@apply h-full w-full overflow-y-auto border-t bg-shade-2 lg:rounded-xl lg:border': {}
+					'@apply h-full w-full overflow-scrollbar border-t bg-shade-2 lg:rounded-xl lg:border': {}
 				},
 				'.confirm-deletion': {
 					'@apply bg-gradient-to-r from-transparent to-red-50 dark:to-red-900': {}
@@ -64,7 +64,7 @@ const config = {
 					'@apply underline underline-offset-4 hover:text-accent': {}
 				},
 				'.overflow-scrollbar': {
-					'@apply scrollbar scrollbar-track-transparent scrollbar-thumb-neutral-950/10 dark:scrollbar-thumb-neutral-100/10':
+					'@apply overflow-auto scrollbar scrollbar-track-transparent scrollbar-thumb-shade-6/80':
 						{}
 				},
 				'.badge': {

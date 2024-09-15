@@ -368,11 +368,11 @@
 
 <style lang="postcss">
 	.session {
-		@apply flex h-full w-full flex-col overflow-y-auto;
+		@apply flex h-full w-full flex-col overflow-scrollbar;
 	}
 
 	.session__history {
-		@apply flex h-full flex-grow flex-col overflow-y-auto;
+		@apply flex h-full flex-grow flex-col overflow-scrollbar;
 	}
 
 	.session__articles {
@@ -398,7 +398,7 @@
 	}
 
 	.prompt-editor__form {
-		@apply h-full overflow-y-auto bg-shade-1;
+		@apply h-full overflow-scrollbar bg-shade-1;
 	}
 
 	.prompt-editor__toggle {

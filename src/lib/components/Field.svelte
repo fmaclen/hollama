@@ -39,7 +39,7 @@
 		}
 
 		&--text-editor {
-			@apply h-full overflow-y-auto;
+			@apply h-full overflow-scrollbar;
 		}
 	}
 
