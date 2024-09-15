@@ -1,5 +1,6 @@
 <script lang="ts">
-	import Button from './Button.svelte';
+	import { browser } from '$app/environment';
+	import Button from '$lib/components/Button.svelte';
 
 	export let handleSubmit;
 	export let disabled: boolean | undefined = false;
@@ -9,9 +10,11 @@
 <Button class="w-full text-left" on:click={handleSubmit} {disabled}>
 	<slot />
 
-	<span class="tag" class:tag--active={!disabled}>
-		{hasMetaKey ? (navigator.userAgent.indexOf('Mac') !== -1 ? '⌘' : 'Ctrl') : ''} ↵
-	</span>
+	{#if browser}
+		<span class="tag" class:tag--active={!disabled}>
+			{hasMetaKey ? (navigator.userAgent.indexOf('Mac') !== -1 ? '⌘' : 'Ctrl') : ''} ↵
+		</span>
+	{/if}
 </Button>
 
 <style lang="postcss">
