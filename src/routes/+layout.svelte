@@ -58,7 +58,20 @@
 	{/if}
 </svelte:head>
 
-<Toaster richColors={true} position="top-center" />
+<Toaster
+	toastOptions={{
+		unstyled: true,
+		classes: {
+			toast:
+				'shadow-xl px-4 py-3 flex items-center gap-x-3 max-w-full w-full rounded mx-auto text-xs mx-0',
+			error: 'text-red-50 bg-red-700',
+			success: 'text-emerald-50 bg-emerald-700',
+			warning: 'text-yellow-50 bg-yellow-700',
+			info: 'bg-shade-4 text-indigo-50'
+		}
+	}}
+	position="top-center"
+/>
 
 <div class="layout">
 	<aside class="layout__aside">

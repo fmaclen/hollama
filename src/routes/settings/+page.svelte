@@ -25,6 +25,6 @@
 	}
 
 	.settings-fieldsets {
-		@apply my-auto flex flex-col gap-y-12;
+		@apply my-auto flex w-full flex-col gap-y-12;
 	}
 </style>
