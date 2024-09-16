@@ -79,6 +79,12 @@ export function getSessionTitle(session: Session) {
 
 export function getLastUsedModels() {
 	const currentSessions = get(sessionsStore) || [];
-	const lastUsedModels = currentSessions.map((s) => s.model);
-	return [...new Set(lastUsedModels)].slice(-5);
+	const lastUsedModels: string[] = [];
+
+	for (const session of currentSessions) {
+		if (!lastUsedModels.includes(session.model)) lastUsedModels.push(session.model);
+		if (lastUsedModels.length >= 5) break;
+	}
+
+	return lastUsedModels;
 }
