@@ -80,6 +80,8 @@ const es = {
 	run: 'Ejecutar',
 	save: 'Guardar',
 	saveAndRun: 'Guardar y ejecutar',
+	search: 'Buscar',
+	searchEmpty: 'No se encontraron resultados',
 	seeDocs: 'Ver documentación',
 	server: 'Servidor',
 	session: 'Sesión',
