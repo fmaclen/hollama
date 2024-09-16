@@ -10,8 +10,16 @@
 	let value: string | undefined = $settingsStore.ollamaModel || '';
 
 	$: disabled = !$settingsStore.ollamaModels.length;
-	$: models = $settingsStore.ollamaModels.map((m) => ({ value: m.name, label: m.name }));
-	$: lastUsedModels = getLastUsedModels().map((m) => ({ value: m, label: m }));
+	$: models = $settingsStore.ollamaModels.map((m) => ({
+		value: m.name,
+		label: m.name,
+		extra: m.details.parameter_size
+	}));
+	$: lastUsedModels = getLastUsedModels().map((m) => ({
+		value: m,
+		label: m,
+		extra: models.find((model) => model.value === m)?.extra
+	}));
 
 	function handleChange(e: Selected<string>) {
 		$settingsStore.ollamaModel = e.value;

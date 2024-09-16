@@ -4,6 +4,7 @@
 	import type { LocalizedString } from 'typesafe-i18n';
 
 	import LL from '$i18n/i18n-svelte';
+	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Field from '$lib/components/Field.svelte';
 
@@ -15,7 +16,7 @@
 	export let placeholder: string = '';
 	export let onChange: (value: Option) => void = () => {};
 
-	type Option = Selected<string>;
+	type Option = Selected<string> & { extra?: string };
 	type OptionGroup = { label: string; options: Option[] };
 	type OptionOrGroup = Option | OptionGroup;
 
@@ -130,6 +131,9 @@
 								</Combobox.ItemIndicator>
 								<div class="field-combobox-item-label">
 									{option.label}
+									{#if option.extra}
+										<Badge>{option.extra}</Badge>
+									{/if}
 								</div>
 							</Combobox.Item>
 						{/each}
@@ -141,6 +145,9 @@
 						</Combobox.ItemIndicator>
 						<div class="field-combobox-item-label">
 							{group.label}
+							{#if group.extra}
+								<Badge>{group.extra}</Badge>
+							{/if}
 						</div>
 					</Combobox.Item>
 				{/if}
