@@ -16,7 +16,7 @@
 	export let placeholder: string = '';
 	export let onChange: (value: Option) => void = () => {};
 
-	type Option = Selected<string> & { extra?: string };
+	type Option = Selected<string> & { badge?: string };
 	type OptionGroup = { label: string; options: Option[] };
 	type OptionOrGroup = Option | OptionGroup;
 
@@ -124,19 +124,27 @@
 				{#if 'options' in group}
 					<div class="field-combobox-group">
 						<div class="field-combobox-group-label">{group.label}</div>
-						{#each group.options as option}
-							<Combobox.Item value={option.value} label={option.label} class="field-combobox-item">
-								<Combobox.ItemIndicator class="field-combobox-item-indicator">
-									<Check class="base-icon" />
-								</Combobox.ItemIndicator>
-								<div class="field-combobox-item-label">
-									{option.label}
-									{#if option.extra}
-										<Badge>{option.extra}</Badge>
-									{/if}
-								</div>
-							</Combobox.Item>
-						{/each}
+						{#if group.options.length > 0}
+							{#each group.options as option}
+								<Combobox.Item
+									value={option.value}
+									label={option.label}
+									class="field-combobox-item"
+								>
+									<Combobox.ItemIndicator class="field-combobox-item-indicator">
+										<Check class="base-icon" />
+									</Combobox.ItemIndicator>
+									<div class="field-combobox-item-label">
+										{option.label}
+										{#if option.badge}
+											<Badge>{option.badge}</Badge>
+										{/if}
+									</div>
+								</Combobox.Item>
+							{/each}
+						{:else}
+							<span class="field-select-empty">{$LL.noModels()}</span>
+						{/if}
 					</div>
 				{:else}
 					<Combobox.Item value={group.value} label={group.label} class="field-combobox-item">
@@ -145,8 +153,8 @@
 						</Combobox.ItemIndicator>
 						<div class="field-combobox-item-label">
 							{group.label}
-							{#if group.extra}
-								<Badge>{group.extra}</Badge>
+							{#if group.badge}
+								<Badge>{group.badge}</Badge>
 							{/if}
 						</div>
 					</Combobox.Item>
@@ -194,7 +202,7 @@
 	}
 
 	:global(.field-combobox-item-label) {
-		@apply w-full;
+		@apply grid w-full grid-cols-[auto,max-content];
 	}
 
 	:global(.field-combobox-group) {

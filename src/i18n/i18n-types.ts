@@ -15,10 +15,6 @@ export type Translations = RootTranslation
 
 type RootTranslation = {
 	/**
-	 * A​l​l​ ​m​o​d​e​l​s
-	 */
-	allModels: string
-	/**
 	 * C​h​a​n​g​e​ ​y​o​u​r​ ​s​e​r​v​e​r​ ​s​e​t​t​i​n​g​s​ ​t​o​ ​a​l​l​o​w​ ​c​o​n​n​e​c​t​i​o​n​s​ ​f​r​o​m
 	 */
 	allowConnections: string
@@ -261,6 +257,10 @@ type RootTranslation = {
 	 */
 	noKnowledgeChosen: string
 	/**
+	 * N​o​ ​m​o​d​e​l​s
+	 */
+	noModels: string
+	/**
 	 * C​r​e​a​t​e​ ​a​ ​n​e​w​ ​s​e​s​s​i​o​n​ ​o​r​ ​c​h​o​o​s​e​ ​a​n​ ​e​x​i​s​t​i​n​g​ ​o​n​e​ ​f​r​o​m​ ​t​h​e​ ​l​i​s​t
 	 */
 	noSessionChosen: string
@@ -276,6 +276,10 @@ type RootTranslation = {
 	 * O​l​l​a​m​a​'​s​ ​l​i​b​r​a​r​y
 	 */
 	ollamaLibrary: string
+	/**
+	 * O​t​h​e​r​ ​m​o​d​e​l​s
+	 */
+	otherModels: string
 	/**
 	 * P​r​o​m​p​t
 	 */
@@ -389,10 +393,6 @@ type RootTranslation = {
 }
 
 export type TranslationFunctions = {
-	/**
-	 * All models
-	 */
-	allModels: () => LocalizedString
 	/**
 	 * Change your server settings to allow connections from
 	 */
@@ -634,6 +634,10 @@ The completion in progress will stop
 	 */
 	noKnowledgeChosen: () => LocalizedString
 	/**
+	 * No models
+	 */
+	noModels: () => LocalizedString
+	/**
 	 * Create a new session or choose an existing one from the list
 	 */
 	noSessionChosen: () => LocalizedString
@@ -649,6 +653,10 @@ The completion in progress will stop
 	 * Ollama's library
 	 */
 	ollamaLibrary: () => LocalizedString
+	/**
+	 * Other models
+	 */
+	otherModels: () => LocalizedString
 	/**
 	 * Prompt
 	 */

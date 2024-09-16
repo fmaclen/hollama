@@ -1,7 +1,6 @@
 import type { BaseTranslation } from '../i18n-types';
 
 const en = {
-	allModels: 'All models',
 	allowConnections: 'Change your server settings to allow connections from',
 	allowMixedContent: 'Allow mixed content',
 	areYouSureYouWantToDeleteAllKnowledge: 'Are you sure you want to delete all knowledge?',
@@ -61,10 +60,12 @@ const en = {
 	newKnowledge: 'New knowledge',
 	newSession: 'New session',
 	noKnowledgeChosen: 'Create new knowledge or choose one from the list',
+	noModels: 'No models',
 	noSessionChosen: 'Create a new session or choose an existing one from the list',
 	notFound: 'The page you are looking for does not exist',
 	ollamaConnectionError: "Couldn't connect to Ollama. Is the [server running](/settings)?",
 	ollamaLibrary: "Ollama's library",
+	otherModels: 'Other models',
 	prompt: 'Prompt',
 	promptPlaceholder: 'Write literally anything',
 	pullModel: 'Pull model',

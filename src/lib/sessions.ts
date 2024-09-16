@@ -76,15 +76,3 @@ export function getSessionTitle(session: Session) {
 	const hasKnowledge = session.messages[0]?.knowledge;
 	return hasKnowledge ? session.messages[1]?.content : session.messages[0]?.content;
 }
-
-export function getLastUsedModels() {
-	const currentSessions = get(sessionsStore) || [];
-	const lastUsedModels: string[] = [];
-
-	for (const session of currentSessions) {
-		if (!lastUsedModels.includes(session.model)) lastUsedModels.push(session.model);
-		if (lastUsedModels.length >= 5) break;
-	}
-
-	return lastUsedModels;
-}
