@@ -76,3 +76,9 @@ export function getSessionTitle(session: Session) {
 	const hasKnowledge = session.messages[0]?.knowledge;
 	return hasKnowledge ? session.messages[1]?.content : session.messages[0]?.content;
 }
+
+export function getLastUsedModels() {
+	const currentSessions = get(sessionsStore) || [];
+	const lastUsedModels = currentSessions.map((s) => s.model);
+	return [...new Set(lastUsedModels)].slice(-5);
+}

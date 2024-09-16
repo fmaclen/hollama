@@ -10,28 +10,48 @@
 	export let name: string;
 	export let label: LocalizedString;
 	export let disabled: boolean | undefined = false;
-	export let options: Selected<string>[] = [];
+	export let options: OptionOrGroup[] = [];
 	export let value: string | undefined = undefined;
 	export let placeholder: string = '';
-	export let onChange: (value: Selected<string>) => void = () => {};
+	export let onChange: (value: Option) => void = () => {};
 
-	const noSelection = { value: '', label: '' };
+	type Option = Selected<string>;
+	type OptionGroup = { label: string; options: Option[] };
+	type OptionOrGroup = Option | OptionGroup;
+
+	const noSelection: Option = { value: '', label: '' };
 
 	let inputValue = '';
-	let selected: Selected<string> | undefined = value
-		? { value, label: options.find((o) => o.value === value)?.label }
-		: undefined;
+	let selected: Option | undefined;
 	let touchedInput = false;
 	let open = false;
 
 	$: isDisabled = disabled || options.length === 0;
+	$: selected = value
+		? options.flatMap((o) => ('options' in o ? o.options : o)).find((o) => o.value === value)
+		: undefined;
 
 	$: filteredOptions =
 		inputValue && touchedInput
-			? options.filter((o) => o.label?.toLowerCase().includes(inputValue.toLowerCase()))
+			? options
+					.map((group) => {
+						if ('options' in group) {
+							return {
+								label: group.label,
+								options: group.options.filter((o) =>
+									o.label?.toLowerCase().includes(inputValue.toLowerCase())
+								)
+							};
+						}
+						return group.label?.toLowerCase().includes(inputValue.toLowerCase()) ? group : null;
+					})
+					.filter(
+						(group): group is NonNullable<typeof group> & OptionOrGroup =>
+							group !== null && (!('options' in group) || group.options.length > 0)
+					)
 			: options;
 
-	function handleOnSelectedChange(e: Selected<string> | undefined) {
+	function handleOnSelectedChange(e: Option | undefined) {
 		if (e) {
 			value = e.value;
 			selected = e;
@@ -64,7 +84,7 @@
 		bind:open
 		{selected}
 		disabled={isDisabled}
-		items={filteredOptions}
+		items={filteredOptions.flatMap((o) => ('options' in o ? o.options : o))}
 		onSelectedChange={handleOnSelectedChange}
 		onOpenChange={handleOpenChange}
 	>
@@ -97,15 +117,31 @@
 		</div>
 
 		<Combobox.Content sideOffset={4} class="field-combobox-content">
-			{#each filteredOptions as option}
-				<Combobox.Item value={option.value} label={option.label} class="field-combobox-item">
-					<Combobox.ItemIndicator class="field-combobox-item-indicator">
-						<Check class="base-icon" />
-					</Combobox.ItemIndicator>
-					<div class="field-combobox-item-label">
-						{option.label}
+			{#each filteredOptions as group}
+				{#if 'options' in group}
+					<div class="field-combobox-group">
+						<div class="field-combobox-group-label">{group.label}</div>
+						{#each group.options as option}
+							<Combobox.Item value={option.value} label={option.label} class="field-combobox-item">
+								<Combobox.ItemIndicator class="field-combobox-item-indicator">
+									<Check class="base-icon" />
+								</Combobox.ItemIndicator>
+								<div class="field-combobox-item-label">
+									{option.label}
+								</div>
+							</Combobox.Item>
+						{/each}
 					</div>
-				</Combobox.Item>
+				{:else}
+					<Combobox.Item value={group.value} label={group.label} class="field-combobox-item">
+						<Combobox.ItemIndicator class="field-combobox-item-indicator">
+							<Check class="base-icon" />
+						</Combobox.ItemIndicator>
+						<div class="field-combobox-item-label">
+							{group.label}
+						</div>
+					</Combobox.Item>
+				{/if}
 			{:else}
 				<span class="field-select-empty">{$LL.searchEmpty()}</span>
 			{/each}
@@ -150,5 +186,13 @@
 
 	:global(.field-combobox-item-label) {
 		@apply w-full;
+	}
+
+	:global(.field-combobox-group) {
+		@apply py-1;
+	}
+
+	:global(.field-combobox-group-label) {
+		@apply px-3 py-1 text-xs font-semibold text-muted;
 	}
 </style>

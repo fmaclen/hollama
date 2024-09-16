@@ -1,6 +1,7 @@
 import type { BaseTranslation } from '../i18n-types';
 
 const en = {
+	allModels: 'All models',
 	allowConnections: 'Change your server settings to allow connections from',
 	allowMixedContent: 'Allow mixed content',
 	areYouSureYouWantToDeleteAllKnowledge: 'Are you sure you want to delete all knowledge?',
@@ -51,6 +52,7 @@ const en = {
 	knowledgeSaved: 'Knowledge saved',
 	knowledge: 'Knowledge',
 	language: 'Language',
+	lastUsedModels: 'Recently used models',
 	light: 'Light',
 	messageOfTheDay: 'Message of the day',
 	modelWasDownloaded: '{model:string} was downloaded',

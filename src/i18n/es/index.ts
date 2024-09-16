@@ -3,6 +3,7 @@ import type { BaseTranslation, Translation } from '../i18n-types';
 
 const es = {
 	...(en as Translation),
+	allModels: 'Todos los modelos',
 	allowConnections: 'Cambia la configuración de tu servidor para permitir conexiones desde',
 	allowMixedContent: 'Permitir contenido mixto',
 	areYouSureYouWantToDeleteAllKnowledge:
@@ -54,6 +55,7 @@ const es = {
 	knowledgeSaved: 'Conocimiento guardado',
 	knowledge: 'Conocimiento',
 	language: 'Idioma',
+	lastUsedModels: 'Modelos utilizados recientemente',
 	light: 'Claro',
 	messageOfTheDay: 'Mensaje del día',
 	modelWasDownloaded: '{model:string} fue descargado',

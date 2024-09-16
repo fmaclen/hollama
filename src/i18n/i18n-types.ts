@@ -15,6 +15,10 @@ export type Translations = RootTranslation
 
 type RootTranslation = {
 	/**
+	 * A​l​l​ ​m​o​d​e​l​s
+	 */
+	allModels: string
+	/**
 	 * C​h​a​n​g​e​ ​y​o​u​r​ ​s​e​r​v​e​r​ ​s​e​t​t​i​n​g​s​ ​t​o​ ​a​l​l​o​w​ ​c​o​n​n​e​c​t​i​o​n​s​ ​f​r​o​m
 	 */
 	allowConnections: string
@@ -220,6 +224,10 @@ type RootTranslation = {
 	 */
 	language: string
 	/**
+	 * R​e​c​e​n​t​l​y​ ​u​s​e​d​ ​m​o​d​e​l​s
+	 */
+	lastUsedModels: string
+	/**
 	 * L​i​g​h​t
 	 */
 	light: string
@@ -381,6 +389,10 @@ type RootTranslation = {
 }
 
 export type TranslationFunctions = {
+	/**
+	 * All models
+	 */
+	allModels: () => LocalizedString
 	/**
 	 * Change your server settings to allow connections from
 	 */
@@ -585,6 +597,10 @@ The completion in progress will stop
 	 * Language
 	 */
 	language: () => LocalizedString
+	/**
+	 * Recently used models
+	 */
+	lastUsedModels: () => LocalizedString
 	/**
 	 * Light
 	 */
