@@ -71,8 +71,10 @@
 
 	function handleClear() {
 		value = undefined;
-		selected = noSelection;
-		onChange(noSelection);
+		requestAnimationFrame(() => {
+			selected = noSelection;
+			onChange(noSelection);
+		});
 	}
 </script>
 
