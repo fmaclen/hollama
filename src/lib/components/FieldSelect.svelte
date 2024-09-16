@@ -143,7 +143,7 @@
 								</Combobox.Item>
 							{/each}
 						{:else}
-							<span class="field-select-empty">{$LL.noModels()}</span>
+							<span class="field-select-empty">{$LL.noRecentModels()}</span>
 						{/if}
 					</div>
 				{:else}

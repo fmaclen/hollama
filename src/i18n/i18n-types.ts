@@ -257,9 +257,9 @@ type RootTranslation = {
 	 */
 	noKnowledgeChosen: string
 	/**
-	 * N​o​ ​m​o​d​e​l​s
+	 * N​o​ ​r​e​c​e​n​t​l​y​ ​u​s​e​d​ ​m​o​d​e​l​s
 	 */
-	noModels: string
+	noRecentModels: string
 	/**
 	 * C​r​e​a​t​e​ ​a​ ​n​e​w​ ​s​e​s​s​i​o​n​ ​o​r​ ​c​h​o​o​s​e​ ​a​n​ ​e​x​i​s​t​i​n​g​ ​o​n​e​ ​f​r​o​m​ ​t​h​e​ ​l​i​s​t
 	 */
@@ -634,9 +634,9 @@ The completion in progress will stop
 	 */
 	noKnowledgeChosen: () => LocalizedString
 	/**
-	 * No models
+	 * No recently used models
 	 */
-	noModels: () => LocalizedString
+	noRecentModels: () => LocalizedString
 	/**
 	 * Create a new session or choose an existing one from the list
 	 */

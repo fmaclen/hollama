@@ -60,7 +60,7 @@ const en = {
 	newKnowledge: 'New knowledge',
 	newSession: 'New session',
 	noKnowledgeChosen: 'Create new knowledge or choose one from the list',
-	noModels: 'No models',
+	noRecentModels: 'No recently used models',
 	noSessionChosen: 'Create a new session or choose an existing one from the list',
 	notFound: 'The page you are looking for does not exist',
 	ollamaConnectionError: "Couldn't connect to Ollama. Is the [server running](/settings)?",

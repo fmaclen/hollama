@@ -64,7 +64,7 @@ const es = {
 	newKnowledge: 'Nuevo conocimiento',
 	newSession: 'Nueva sesión',
 	noKnowledgeChosen: 'Crea un nuevo conocimiento o elige uno de la lista',
-	noModels: 'No hay modelos',
+	noRecentModels: 'No hay modelos utilizados recientemente',
 	noSessionChosen: 'Crea una nueva sesión o elige una existente de la lista',
 	notFound: 'La página que estás buscando no existe',
 	ollamaConnectionError:
