@@ -21,5 +21,9 @@
 
 	.motd-markdown {
 		@apply my-auto;
+
+		:global(*) {
+			@apply text-balance;
+		}
 	}
 </style>
