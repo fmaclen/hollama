@@ -76,7 +76,6 @@ const en = {
 	retry: 'Retry',
 	run: 'Run',
 	save: 'Save',
-	saveAndRun: 'Save & run',
 	search: 'Search',
 	searchEmpty: 'No results found',
 	seeDocs: 'See docs',

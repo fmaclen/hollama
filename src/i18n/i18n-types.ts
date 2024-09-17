@@ -321,10 +321,6 @@ type RootTranslation = {
 	 */
 	save: string
 	/**
-	 * S​a​v​e​ ​&​ ​r​u​n
-	 */
-	saveAndRun: string
-	/**
 	 * S​e​a​r​c​h
 	 */
 	search: string
@@ -697,10 +693,6 @@ The completion in progress will stop
 	 * Save
 	 */
 	save: () => LocalizedString
-	/**
-	 * Save & run
-	 */
-	saveAndRun: () => LocalizedString
 	/**
 	 * Search
 	 */

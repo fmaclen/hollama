@@ -81,7 +81,6 @@ const es = {
 	retry: 'Reintentar',
 	run: 'Ejecutar',
 	save: 'Guardar',
-	saveAndRun: 'Guardar y ejecutar',
 	search: 'Buscar',
 	searchEmpty: 'No se encontraron resultados',
 	seeDocs: 'Ver documentación',
