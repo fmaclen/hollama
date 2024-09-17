@@ -77,7 +77,6 @@ const es = {
 	retry: 'Reintentar',
 	run: 'Ejecutar',
 	save: 'Guardar',
-	saveAndRun: 'Guardar y ejecutar',
 	seeDocs: 'Ver documentación',
 	server: 'Servidor',
 	session: 'Sesión',

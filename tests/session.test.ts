@@ -523,7 +523,7 @@ test.describe('Session', () => {
 		await page.locator('.article', { hasText: 'You' }).first().hover();
 		await page.locator('.article', { hasText: 'You' }).first().getByTitle('Edit').click();
 		await textEditorLocator(page, 'Prompt').fill('Hello world!');
-		await page.getByText('Save & run').click();
+		await page.getByText('Run').click();
 
 		expect(
 			await page

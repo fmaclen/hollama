@@ -339,11 +339,7 @@
 									$settingsStore.ollamaModels.length === 0 ||
 									!$settingsStore.ollamaModel}
 							>
-								{#if messageIndexToEdit}
-									{$LL.run()}
-								{:else}
-									{$LL.saveAndRun()}
-								{/if}
+								{$LL.run()}
 							</ButtonSubmit>
 
 							{#if isCompletionInProgress}
