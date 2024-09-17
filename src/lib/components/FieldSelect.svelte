@@ -135,7 +135,9 @@
 										<Check class="base-icon" />
 									</Combobox.ItemIndicator>
 									<div class="field-combobox-item-label">
-										{option.label}
+										<span class="field-combobox-item-label-option" title={option.label}>
+											{option.label}
+										</span>
 										{#if option.badge}
 											<Badge>{option.badge}</Badge>
 										{/if}
@@ -202,7 +204,11 @@
 	}
 
 	:global(.field-combobox-item-label) {
-		@apply grid w-full grid-cols-[auto,max-content];
+		@apply grid w-full cursor-pointer grid-cols-[auto,max-content] gap-x-1;
+	}
+
+	:global(.field-combobox-item-label-option) {
+		@apply overflow-hidden text-ellipsis text-nowrap;
 	}
 
 	:global(.field-combobox-group) {
