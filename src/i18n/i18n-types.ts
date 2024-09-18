@@ -220,6 +220,10 @@ type RootTranslation = {
 	 */
 	language: string
 	/**
+	 * R​e​c​e​n​t​l​y​ ​u​s​e​d​ ​m​o​d​e​l​s
+	 */
+	lastUsedModels: string
+	/**
 	 * L​i​g​h​t
 	 */
 	light: string
@@ -253,6 +257,10 @@ type RootTranslation = {
 	 */
 	noKnowledgeChosen: string
 	/**
+	 * N​o​ ​r​e​c​e​n​t​l​y​ ​u​s​e​d​ ​m​o​d​e​l​s
+	 */
+	noRecentModels: string
+	/**
 	 * C​r​e​a​t​e​ ​a​ ​n​e​w​ ​s​e​s​s​i​o​n​ ​o​r​ ​c​h​o​o​s​e​ ​a​n​ ​e​x​i​s​t​i​n​g​ ​o​n​e​ ​f​r​o​m​ ​t​h​e​ ​l​i​s​t
 	 */
 	noSessionChosen: string
@@ -268,6 +276,10 @@ type RootTranslation = {
 	 * O​l​l​a​m​a​'​s​ ​l​i​b​r​a​r​y
 	 */
 	ollamaLibrary: string
+	/**
+	 * O​t​h​e​r​ ​m​o​d​e​l​s
+	 */
+	otherModels: string
 	/**
 	 * P​r​o​m​p​t
 	 */
@@ -582,6 +594,10 @@ The completion in progress will stop
 	 */
 	language: () => LocalizedString
 	/**
+	 * Recently used models
+	 */
+	lastUsedModels: () => LocalizedString
+	/**
 	 * Light
 	 */
 	light: () => LocalizedString
@@ -614,6 +630,10 @@ The completion in progress will stop
 	 */
 	noKnowledgeChosen: () => LocalizedString
 	/**
+	 * No recently used models
+	 */
+	noRecentModels: () => LocalizedString
+	/**
 	 * Create a new session or choose an existing one from the list
 	 */
 	noSessionChosen: () => LocalizedString
@@ -629,6 +649,10 @@ The completion in progress will stop
 	 * Ollama's library
 	 */
 	ollamaLibrary: () => LocalizedString
+	/**
+	 * Other models
+	 */
+	otherModels: () => LocalizedString
 	/**
 	 * Prompt
 	 */

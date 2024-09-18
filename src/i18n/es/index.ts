@@ -3,6 +3,7 @@ import type { BaseTranslation, Translation } from '../i18n-types';
 
 const es = {
 	...(en as Translation),
+	allModels: 'Todos los modelos',
 	allowConnections: 'Cambia la configuración de tu servidor para permitir conexiones desde',
 	allowMixedContent: 'Permitir contenido mixto',
 	areYouSureYouWantToDeleteAllKnowledge:
@@ -54,6 +55,7 @@ const es = {
 	knowledgeSaved: 'Conocimiento guardado',
 	knowledge: 'Conocimiento',
 	language: 'Idioma',
+	lastUsedModels: 'Modelos utilizados recientemente',
 	light: 'Claro',
 	messageOfTheDay: 'Mensaje del día',
 	modelWasDownloaded: '{model:string} fue descargado',
@@ -62,11 +64,13 @@ const es = {
 	newKnowledge: 'Nuevo conocimiento',
 	newSession: 'Nueva sesión',
 	noKnowledgeChosen: 'Crea un nuevo conocimiento o elige uno de la lista',
+	noRecentModels: 'No hay modelos utilizados recientemente',
 	noSessionChosen: 'Crea una nueva sesión o elige una existente de la lista',
 	notFound: 'La página que estás buscando no existe',
 	ollamaConnectionError:
 		'No se pudo conectar a Ollama. ¿Está el [servidor en ejecución](/settings)?',
 	ollamaLibrary: 'Biblioteca de Ollama',
+	otherModels: 'Otros modelos',
 	prompt: 'Indicación',
 	promptPlaceholder: 'Escribe literalmente cualquier cosa',
 	pullModel: 'Obtener modelo',
@@ -77,6 +81,8 @@ const es = {
 	retry: 'Reintentar',
 	run: 'Ejecutar',
 	save: 'Guardar',
+	search: 'Buscar',
+	searchEmpty: 'No se encontraron resultados',
 	seeDocs: 'Ver documentación',
 	server: 'Servidor',
 	session: 'Sesión',
