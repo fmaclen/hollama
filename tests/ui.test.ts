@@ -82,8 +82,8 @@ test.describe('FieldSelect', () => {
 
 	test('models are correctly grouped and sorted', async ({ page }) => {
 		const newSessionButton = page.getByTestId('new-session');
-		await page.goto('/settings');
 		await mockTagsResponse(page);
+		await page.goto('/settings');
 
 		await page.getByText('Sessions', { exact: true }).click();
 		await newSessionButton.click();
