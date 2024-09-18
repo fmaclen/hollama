@@ -124,6 +124,7 @@ test.describe('FieldSelect', () => {
 		const otherModelsGroup = page.locator('.field-combobox-group', {
 			hasText: 'Other models'
 		});
+		await expect(otherModelsGroup).toHaveCount(1);
 		await expect(otherModelsGroup).toContainText(MOCK_API_TAGS_RESPONSE.models[2].name);
 	});
 });
