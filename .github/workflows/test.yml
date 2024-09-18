@@ -6,7 +6,7 @@ on:
 jobs:
   integration-tests:
     name: Integration tests
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
