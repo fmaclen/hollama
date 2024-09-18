@@ -1,13 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 
-import {
-	chooseFromCombobox,
-	MOCK_API_TAGS_RESPONSE,
-	MOCK_SESSION_1_RESPONSE_1,
-	mockCompletionResponse,
-	mockTagsResponse
-} from './utils';
+import { MOCK_API_TAGS_RESPONSE, mockTagsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
