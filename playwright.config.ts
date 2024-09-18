@@ -8,9 +8,8 @@ const config: PlaywrightTestConfig = {
 	testDir: 'tests',
 	testMatch: /(.+\.)?(test|spec)\.[jt]s/,
 	timeout: 5000,
-	retries: 2,
 	use: {
-		trace: 'on-first-retry',
+		trace: 'retain-on-failure',
 		contextOptions: {
 			permissions: ['clipboard-write', 'clipboard-read']
 		},
