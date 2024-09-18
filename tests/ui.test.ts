@@ -96,6 +96,7 @@ test.describe('FieldSelect', () => {
 		await page
 			.locator('.prompt-editor__textarea')
 			.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await expect(page.getByText('Run')).toBeEnabled();
 		await page.getByText('Run').click();
 
 		// Create another session with a different model
