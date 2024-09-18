@@ -88,24 +88,25 @@ test.describe('FieldSelect', () => {
 		await page.getByText('Sessions', { exact: true }).click();
 		await newSessionButton.click();
 
-		// Select a model
-		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[1].name);
-
 		// Mock a session with a specific model
+		await expect(page.getByText('Run')).toBeDisabled();
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page
 			.locator('.prompt-editor__textarea')
 			.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[1].name);
 		await expect(page.getByText('Run')).toBeEnabled();
 		await page.getByText('Run').click();
 
 		// Create another session with a different model
 		await newSessionButton.click();
-		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
+		await expect(page.getByText('Run')).toBeDisabled();
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page
 			.locator('.prompt-editor__textarea')
 			.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
+		await expect(page.getByText('Run')).toBeEnabled();
 		await page.getByText('Run').click();
 
 		await newSessionButton.click();
