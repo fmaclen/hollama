@@ -1,4 +1,4 @@
-name: Snapshots
+name: Playwright
 
 on:
   pull_request:
