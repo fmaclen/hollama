@@ -8,7 +8,7 @@
 		"dev": "concurrently \"typesafe-i18n\" \"vite dev --host\"",
 		"build": "vite build",
 		"preview": "vite preview",
-		"test": "playwright test --trace on --ignore-snapshots",
+		"test": "playwright test --trace on",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
