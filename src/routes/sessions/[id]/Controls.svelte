@@ -6,7 +6,7 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
-	import type { OllamaOptions } from '$lib/ollama';
+	import type { Session } from '$lib/sessions';
 
 	const DEFAULT_MIROSTAT = '0';
 	const DEFAULT_MIROSTAT_ETA = '0.1';
@@ -31,15 +31,33 @@
 	const DEFAULT_PRESENCE_PENALTY = '0';
 	const DEFAULT_FREQUENCY_PENALTY = '0';
 
-	export let ollamaOptions: Writable<OllamaOptions>;
+	export let session: Writable<Session>;
 
 	// HACK: Stop is a `string[]` so we are hardcoding it to a single value for now
 	let stop: string = '';
-	$: if (stop) $ollamaOptions.stop = [stop];
+	$: if (stop) $session.options.stop = [stop];
 </script>
 
 <Fieldset>
-	<FieldTextEditor label={$LL.systemPrompt()} value={''} />
+	<!-- <FieldSelect
+		label={$LL.systemPrompt()}
+		name="knowledge"
+		disabled={!$knowledgeStore.length}
+		options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
+		bind:value={knowledgeId}
+	>
+		<svelte:fragment slot="nav">
+			<Button
+				aria-label={$LL.newKnowledge()}
+				variant="outline"
+				href={generateNewUrl(Sitemap.KNOWLEDGE)}
+				class="h-full text-muted"
+			>
+				<Brain class="base-icon" />
+			</Button>
+		</svelte:fragment>
+	</FieldSelect> -->
+	<FieldTextEditor label={$LL.systemPrompt()} bind:value={$session.systemPrompt.content} />
 	<div class="grid grid-cols-2 gap-3">
 		<FieldInput
 			name="mirostat"
@@ -49,7 +67,7 @@
 			max={2}
 			step={1}
 			placeholder={DEFAULT_MIROSTAT}
-			bind:value={$ollamaOptions.mirostat}
+			bind:value={$session.options.mirostat}
 		/>
 		<FieldInput
 			name="mirostat_eta"
@@ -57,7 +75,7 @@
 			type="number"
 			step={0.01}
 			placeholder={DEFAULT_MIROSTAT_ETA}
-			bind:value={$ollamaOptions.mirostat_eta}
+			bind:value={$session.options.mirostat_eta}
 		/>
 		<FieldInput
 			name="mirostat_tau"
@@ -65,7 +83,7 @@
 			type="number"
 			step={0.1}
 			placeholder={DEFAULT_MIROSTAT_TAU}
-			bind:value={$ollamaOptions.mirostat_tau}
+			bind:value={$session.options.mirostat_tau}
 		/>
 		<FieldInput
 			name="num_ctx"
@@ -74,7 +92,7 @@
 			min={1}
 			step={1}
 			placeholder={DEFAULT_NUM_CTX}
-			bind:value={$ollamaOptions.num_ctx}
+			bind:value={$session.options.num_ctx}
 		/>
 		<FieldInput
 			name="repeat_last_n"
@@ -83,7 +101,7 @@
 			min={-1}
 			step={1}
 			placeholder={DEFAULT_REPEAT_LAST_N}
-			bind:value={$ollamaOptions.repeat_last_n}
+			bind:value={$session.options.repeat_last_n}
 		/>
 		<FieldInput
 			name="repeat_penalty"
@@ -91,7 +109,7 @@
 			type="number"
 			step={0.1}
 			placeholder={DEFAULT_REPEAT_PENALTY}
-			bind:value={$ollamaOptions.repeat_penalty}
+			bind:value={$session.options.repeat_penalty}
 		/>
 		<FieldInput
 			name="temperature"
@@ -101,7 +119,7 @@
 			max={2}
 			step={0.1}
 			placeholder={DEFAULT_TEMPERATURE}
-			bind:value={$ollamaOptions.temperature}
+			bind:value={$session.options.temperature}
 		/>
 		<FieldInput
 			name="seed"
@@ -110,7 +128,7 @@
 			min={0}
 			step={1}
 			placeholder={DEFAULT_SEED}
-			bind:value={$ollamaOptions.seed}
+			bind:value={$session.options.seed}
 		/>
 		<FieldInput
 			name="stop"
@@ -126,7 +144,7 @@
 			min={1}
 			step={0.1}
 			placeholder={DEFAULT_TFS_Z}
-			bind:value={$ollamaOptions.tfs_z}
+			bind:value={$session.options.tfs_z}
 		/>
 		<FieldInput
 			name="num_predict"
@@ -135,7 +153,7 @@
 			min={-2}
 			step={1}
 			placeholder={DEFAULT_NUM_PREDICT}
-			bind:value={$ollamaOptions.num_predict}
+			bind:value={$session.options.num_predict}
 		/>
 		<FieldInput
 			name="top_k"
@@ -144,7 +162,7 @@
 			min={1}
 			step={1}
 			placeholder={DEFAULT_TOP_K}
-			bind:value={$ollamaOptions.top_k}
+			bind:value={$session.options.top_k}
 		/>
 		<FieldInput
 			name="top_p"
@@ -154,7 +172,7 @@
 			max={1}
 			step={0.05}
 			placeholder={DEFAULT_TOP_P}
-			bind:value={$ollamaOptions.top_p}
+			bind:value={$session.options.top_p}
 		/>
 		<FieldInput
 			name="min_p"
@@ -164,7 +182,7 @@
 			max={1}
 			step={0.01}
 			placeholder={DEFAULT_MIN_P}
-			bind:value={$ollamaOptions.min_p}
+			bind:value={$session.options.min_p}
 		/>
 		<FieldInput
 			name="num_batch"
@@ -173,7 +191,7 @@
 			min={1}
 			step={1}
 			placeholder={DEFAULT_NUM_BATCH}
-			bind:value={$ollamaOptions.num_batch}
+			bind:value={$session.options.num_batch}
 		/>
 		<FieldInput
 			name="num_gpu"
@@ -182,7 +200,7 @@
 			min={0}
 			step={1}
 			placeholder={DEFAULT_NUM_GPU}
-			bind:value={$ollamaOptions.num_gpu}
+			bind:value={$session.options.num_gpu}
 		/>
 		<FieldInput
 			name="main_gpu"
@@ -191,7 +209,7 @@
 			min={0}
 			step={1}
 			placeholder={DEFAULT_MAIN_GPU}
-			bind:value={$ollamaOptions.main_gpu}
+			bind:value={$session.options.main_gpu}
 		/>
 		<FieldInput
 			name="num_thread"
@@ -200,7 +218,7 @@
 			min={1}
 			step={1}
 			placeholder={DEFAULT_NUM_THREAD}
-			bind:value={$ollamaOptions.num_thread}
+			bind:value={$session.options.num_thread}
 		/>
 		<FieldInput
 			name="num_keep"
@@ -209,7 +227,7 @@
 			min={0}
 			step={1}
 			placeholder={DEFAULT_NUM_KEEP}
-			bind:value={$ollamaOptions.num_keep}
+			bind:value={$session.options.num_keep}
 		/>
 		<FieldInput
 			name="typical_p"
@@ -219,7 +237,7 @@
 			max={1}
 			step={0.01}
 			placeholder={DEFAULT_TYPICAL_P}
-			bind:value={$ollamaOptions.typical_p}
+			bind:value={$session.options.typical_p}
 		/>
 		<FieldInput
 			name="presence_penalty"
@@ -227,7 +245,7 @@
 			type="number"
 			step={0.01}
 			placeholder={DEFAULT_PRESENCE_PENALTY}
-			bind:value={$ollamaOptions.presence_penalty}
+			bind:value={$session.options.presence_penalty}
 		/>
 		<FieldInput
 			name="frequency_penalty"
@@ -235,46 +253,46 @@
 			type="number"
 			step={0.01}
 			placeholder={DEFAULT_FREQUENCY_PENALTY}
-			bind:value={$ollamaOptions.frequency_penalty}
+			bind:value={$session.options.frequency_penalty}
 		/>
 	</div>
 
 	<div class="grid grid-cols-2 gap-3">
-		<FieldCheckbox label={$LL.numa()} bind:checked={$ollamaOptions.numa} name="numa" />
+		<FieldCheckbox label={$LL.numa()} bind:checked={$session.options.numa} name="numa" />
 
-		<FieldCheckbox label={$LL.lowVram()} bind:checked={$ollamaOptions.low_vram} name="low_vram" />
+		<FieldCheckbox label={$LL.lowVram()} bind:checked={$session.options.low_vram} name="low_vram" />
 
-		<FieldCheckbox label={$LL.f16Kv()} bind:checked={$ollamaOptions.f16_kv} name="f16_kv" />
+		<FieldCheckbox label={$LL.f16Kv()} bind:checked={$session.options.f16_kv} name="f16_kv" />
 
 		<FieldCheckbox
 			label={$LL.logitsAll()}
-			bind:checked={$ollamaOptions.logits_all}
+			bind:checked={$session.options.logits_all}
 			name="logits_all"
 		/>
 
 		<FieldCheckbox
 			label={$LL.vocabOnly()}
-			bind:checked={$ollamaOptions.vocab_only}
+			bind:checked={$session.options.vocab_only}
 			name="vocab_only"
 		/>
 
-		<FieldCheckbox label={$LL.useMmap()} bind:checked={$ollamaOptions.use_mmap} name="use_mmap" />
+		<FieldCheckbox label={$LL.useMmap()} bind:checked={$session.options.use_mmap} name="use_mmap" />
 
 		<FieldCheckbox
 			label={$LL.useMlock()}
-			bind:checked={$ollamaOptions.use_mlock}
+			bind:checked={$session.options.use_mlock}
 			name="use_mlock"
 		/>
 
 		<FieldCheckbox
 			label={$LL.embeddingOnly()}
-			bind:checked={$ollamaOptions.embedding_only}
+			bind:checked={$session.options.embedding_only}
 			name="embedding_only"
 		/>
 
 		<FieldCheckbox
 			label={$LL.penalizeNewline()}
-			bind:checked={$ollamaOptions.penalize_newline}
+			bind:checked={$session.options.penalize_newline}
 			name="penalize_newline"
 		/>
 	</div>

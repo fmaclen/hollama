@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { Brain, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
+	import type { ChatRequest } from 'ollama/browser';
 	import { afterUpdate, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { writable, type Writable } from 'svelte/store';
@@ -10,20 +11,17 @@
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
-	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import Field from '$lib/components/Field.svelte';
-	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import Head from '$lib/components/Head.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
-	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { knowledgeStore, settingsStore } from '$lib/localStorage';
-	import { ollamaChat, ollamaTags, type OllamaOptions } from '$lib/ollama';
+	import { settingsStore } from '$lib/localStorage';
+	import { ollamaChat, ollamaTags } from '$lib/ollama';
 	import {
 		formatSessionMetadata,
 		getSessionTitle,
@@ -41,9 +39,6 @@
 	export let data: PageData;
 
 	let messageWindow: HTMLElement;
-	let knowledgeId: string;
-	let knowledge: Knowledge | null;
-	let session: Session;
 	let completion: string;
 	let abortController: AbortController;
 	let prompt: string;
@@ -55,14 +50,12 @@
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
 
-	const ollamaOptions: Writable<Partial<OllamaOptions>> = writable({});
+	const session: Writable<Session> = writable(loadSession(data.id));
 	const shouldConfirmDeletion = writable(false);
 
-	$: session = loadSession(data.id);
-	$: isNewSession = !session?.messages.length;
-	$: knowledge = knowledgeId ? loadKnowledge(knowledgeId) : null;
+	$: isNewSession = !$session?.messages.length;
 	$: shouldFocusTextarea = !isPromptFullscreen;
-	$: if ($settingsStore.ollamaModel) session.model = $settingsStore.ollamaModel;
+	$: if ($settingsStore.ollamaModel) $session.model = $settingsStore.ollamaModel;
 	$: if (messageWindow) messageWindow.addEventListener('scroll', handleScroll);
 	$: if (data.id) handleSessionChange();
 
@@ -82,38 +75,25 @@
 	}
 
 	async function handleSubmitNewMessage() {
-		let knowledgeContext: Message | null = null;
-		if (knowledge) {
-			knowledgeContext = {
-				role: 'system',
-				// Ollama only needs the content of the knowledge
-				content: knowledge.content,
-				// But we include the entire knowledge object to use the metadata in the UI
-				knowledge
-			};
-		}
-
 		const message: Message = { role: 'user', content: prompt };
-		session.messages = knowledgeContext
-			? [knowledgeContext, ...session.messages, message]
-			: [...session.messages, message];
+		$session.messages = [...$session.messages, message];
 
 		await scrollToBottom(true); // Force scroll after submitting prompt
-		await handleCompletion({ model: session.model, messages: session.messages });
+		await handleCompletion([...$session.messages, message]);
 	}
 
 	async function handleSubmitEditMessage() {
 		if (messageIndexToEdit === null) return;
 
-		session.messages[messageIndexToEdit].content = prompt;
+		$session.messages[messageIndexToEdit].content = prompt;
 
 		// Remove all messages after the edited message
-		session.messages = session.messages.slice(0, messageIndexToEdit + 1);
+		$session.messages = $session.messages.slice(0, messageIndexToEdit + 1);
 
 		messageIndexToEdit = null;
 		prompt = '';
 
-		await handleCompletion({ model: session.model, messages: session.messages });
+		await handleCompletion($session.messages);
 	}
 
 	function handleSubmit() {
@@ -126,41 +106,39 @@
 
 	async function handleRetry(index: number) {
 		// Remove all the messages after the index
-		session.messages = session.messages.slice(0, index);
+		$session.messages = $session.messages.slice(0, index);
 
-		const mostRecentUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
+		const mostRecentUserMessage = $session.messages.filter((m) => m.role === 'user').at(-1);
 		if (!mostRecentUserMessage) throw new Error('No user message to retry');
 
-		await handleCompletion({ model: session.model, messages: session.messages });
+		await handleCompletion($session.messages);
 	}
 
-	async function handleCompletion(payload: { model: string; messages: Message[] }) {
+	async function handleCompletion(messages: Message[]) {
 		abortController = new AbortController();
 		isCompletionInProgress = true;
 		prompt = ''; // Reset the prompt form field
 		completion = '';
 
+		const ollamaChatRequest: ChatRequest = {
+			model: $session.model,
+			options: $session.options,
+			messages: [$session.systemPrompt, ...messages]
+		};
+
+		console.log(ollamaChatRequest);
+
 		try {
-			await ollamaChat(
-				{ ...payload, options: $ollamaOptions },
-				abortController.signal,
-				async (chunk) => {
-					completion += chunk;
-					await scrollToBottom();
-				}
-			);
+			await ollamaChat(ollamaChatRequest, abortController.signal, async (chunk) => {
+				completion += chunk;
+				await scrollToBottom();
+			});
 
 			// After the completion save the session
 			const message: Message = { role: 'assistant', content: completion };
-			session.messages = [...session.messages, message];
-			session.updatedAt = new Date().toISOString();
-
-			if (knowledge) {
-				session.knowledge = knowledge;
-				knowledgeId = '';
-			}
-
-			saveSession({ ...session });
+			$session.messages = [...$session.messages, message];
+			$session.updatedAt = new Date().toISOString();
+			saveSession({ ...$session });
 
 			// Final housekeeping
 			completion = '';
@@ -175,7 +153,7 @@
 	}
 
 	function handleEditMessage(message: Message) {
-		messageIndexToEdit = session.messages.findIndex((m) => m === message);
+		messageIndexToEdit = $session.messages.findIndex((m) => m === message);
 		isPromptFullscreen = true;
 		prompt = message.content;
 		promptTextarea.focus();
@@ -203,15 +181,15 @@
 		}
 
 		const message: Message = { role: 'system', content };
-		session.messages = [...session.messages, message];
+		$session.messages = [...$session.messages, message];
 	}
 
 	function stopCompletion() {
-		prompt = session.messages[session.messages.length - 1].content; // Reset the prompt to the last sent message
+		prompt = $session.messages[$session.messages.length - 1].content; // Reset the prompt to the last sent message
 		abortController.abort();
 		completion = '';
 		isCompletionInProgress = false;
-		session.messages = session.messages.slice(0, -1); // Remove the "incomplete" AI response
+		$session.messages = $session.messages.slice(0, -1); // Remove the "incomplete" AI response
 	}
 
 	beforeNavigate((navigation) => {
@@ -233,14 +211,14 @@
 </script>
 
 <div class="session">
-	<Head title={[isNewSession ? $LL.newSession() : getSessionTitle(session), $LL.sessions()]} />
+	<Head title={[isNewSession ? $LL.newSession() : getSessionTitle($session), $LL.sessions()]} />
 	<Header confirmDeletion={$shouldConfirmDeletion}>
 		<p data-testid="session-id" class="text-sm font-bold leading-none">
 			{$LL.session()}
-			<Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
+			<Button variant="link" href={`/sessions/${$session.id}`}>#{$session.id}</Button>
 		</p>
 		<Metadata dataTestid="session-metadata">
-			{isNewSession ? $LL.newSession() : formatSessionMetadata(session)}
+			{isNewSession ? $LL.newSession() : formatSessionMetadata($session)}
 		</Metadata>
 
 		<svelte:fragment slot="nav">
@@ -253,16 +231,16 @@
 			</Button>
 			{#if !isNewSession}
 				{#if !$shouldConfirmDeletion}
-					<ButtonCopy content={JSON.stringify(session.messages, null, 2)} />
+					<ButtonCopy content={JSON.stringify($session.messages, null, 2)} />
 				{/if}
-				<ButtonDelete sitemap={Sitemap.SESSIONS} id={session.id} {shouldConfirmDeletion} />
+				<ButtonDelete sitemap={Sitemap.SESSIONS} id={$session.id} {shouldConfirmDeletion} />
 			{/if}
 		</svelte:fragment>
 	</Header>
 
 	<div class="session__history" bind:this={messageWindow}>
 		{#if isControls}
-			<Controls {ollamaOptions} />
+			<Controls {session} />
 		{:else}
 			{#key isNewSession}
 				<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
@@ -270,7 +248,7 @@
 						<EmptyMessage>{$LL.writePromptToStart()}</EmptyMessage>
 					{/if}
 
-					{#each session.messages as message, i (session.id + i)}
+					{#each $session.messages as message, i ($session.id + i)}
 						{#key message.role}
 							<Article
 								{message}
@@ -296,29 +274,7 @@
 
 					<div class="prompt-editor__form">
 						<Fieldset context={isPromptFullscreen ? 'editor' : undefined}>
-							{#if isNewSession}
-								<div class="prompt-editor__project">
-									<FieldSelectModel />
-									<FieldSelect
-										label={$LL.systemPrompt()}
-										name="knowledge"
-										disabled={!$knowledgeStore.length}
-										options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
-										bind:value={knowledgeId}
-									>
-										<svelte:fragment slot="nav">
-											<Button
-												aria-label={$LL.newKnowledge()}
-												variant="outline"
-												href={generateNewUrl(Sitemap.KNOWLEDGE)}
-												class="h-full text-muted"
-											>
-												<Brain class="base-icon" />
-											</Button>
-										</svelte:fragment>
-									</FieldSelect>
-								</div>
-							{/if}
+							<FieldSelectModel />
 
 							{#key session}
 								{#if isPromptFullscreen}
