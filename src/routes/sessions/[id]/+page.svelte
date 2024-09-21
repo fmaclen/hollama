@@ -55,7 +55,7 @@
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
 
-	const ollamaOptions: Writable<OllamaOptions> = writable({});
+	const ollamaOptions: Writable<Partial<OllamaOptions>> = writable({});
 	const shouldConfirmDeletion = writable(false);
 
 	$: session = loadSession(data.id);
@@ -141,10 +141,14 @@
 		completion = '';
 
 		try {
-			await ollamaChat({ ...payload, options: $ollamaOptions }, abortController.signal, async (chunk) => {
-				completion += chunk;
-				await scrollToBottom();
-			});
+			await ollamaChat(
+				{ ...payload, options: $ollamaOptions },
+				abortController.signal,
+				async (chunk) => {
+					completion += chunk;
+					await scrollToBottom();
+				}
+			);
 
 			// After the completion save the session
 			const message: Message = { role: 'assistant', content: completion };

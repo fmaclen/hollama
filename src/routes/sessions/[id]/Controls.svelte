@@ -16,7 +16,7 @@
 	const DEFAULT_REPEAT_PENALTY = '1.1';
 	const DEFAULT_TEMPERATURE = '0.8';
 	const DEFAULT_SEED = '0';
-	const DEFAULT_STOP = '\\n';
+	const DEFAULT_STOP = 'AI assistant:';
 	const DEFAULT_TFS_Z = '1';
 	const DEFAULT_NUM_PREDICT = '128';
 	const DEFAULT_TOP_K = '40';
