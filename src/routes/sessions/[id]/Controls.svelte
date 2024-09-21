@@ -2,11 +2,11 @@
 	import type { Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
+	import FieldCheckbox from '$lib/components/FieldCheckbox.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import type { OllamaOptions } from '$lib/ollama';
-
 
 	const DEFAULT_MIROSTAT = '0';
 	const DEFAULT_MIROSTAT_ETA = '0.1';
@@ -33,7 +33,7 @@
 
 	export let ollamaOptions: Writable<OllamaOptions>;
 
-	// Stop is a `string[]` so we are hardcoding it to a single value for now
+	// HACK: Stop is a `string[]` so we are hardcoding it to a single value for now
 	let stop: string = '';
 	$: if (stop) $ollamaOptions.stop = [stop];
 </script>
@@ -240,80 +240,42 @@
 	</div>
 
 	<div class="grid grid-cols-2 gap-3">
-		<label class="field-checkbox__label">
-			<input type="checkbox" bind:checked={$ollamaOptions.numa} class="field-checkbox__input" />
-			{$LL.numa()}
-		</label>
+		<FieldCheckbox label={$LL.numa()} bind:checked={$ollamaOptions.numa} name="numa" />
 
-		<label class="field-checkbox__label">
-			<input type="checkbox" bind:checked={$ollamaOptions.low_vram} class="field-checkbox__input" />
-			{$LL.lowVram()}
-		</label>
+		<FieldCheckbox label={$LL.lowVram()} bind:checked={$ollamaOptions.low_vram} name="low_vram" />
 
-		<label class="field-checkbox__label">
-			<input type="checkbox" bind:checked={$ollamaOptions.f16_kv} class="field-checkbox__input" />
-			{$LL.f16Kv()}
-		</label>
+		<FieldCheckbox label={$LL.f16Kv()} bind:checked={$ollamaOptions.f16_kv} name="f16_kv" />
 
-		<label class="field-checkbox__label">
-			<input
-				type="checkbox"
-				bind:checked={$ollamaOptions.logits_all}
-				class="field-checkbox__input"
-			/>
-			{$LL.logitsAll()}
-		</label>
+		<FieldCheckbox
+			label={$LL.logitsAll()}
+			bind:checked={$ollamaOptions.logits_all}
+			name="logits_all"
+		/>
 
-		<label class="field-checkbox__label">
-			<input
-				type="checkbox"
-				bind:checked={$ollamaOptions.vocab_only}
-				class="field-checkbox__input"
-			/>
-			{$LL.vocabOnly()}
-		</label>
+		<FieldCheckbox
+			label={$LL.vocabOnly()}
+			bind:checked={$ollamaOptions.vocab_only}
+			name="vocab_only"
+		/>
 
-		<label class="field-checkbox__label">
-			<input type="checkbox" bind:checked={$ollamaOptions.use_mmap} class="field-checkbox__input" />
-			{$LL.useMmap()}
-		</label>
+		<FieldCheckbox label={$LL.useMmap()} bind:checked={$ollamaOptions.use_mmap} name="use_mmap" />
 
-		<label class="field-checkbox__label">
-			<input
-				type="checkbox"
-				bind:checked={$ollamaOptions.use_mlock}
-				class="field-checkbox__input"
-			/>
-			{$LL.useMlock()}
-		</label>
+		<FieldCheckbox
+			label={$LL.useMlock()}
+			bind:checked={$ollamaOptions.use_mlock}
+			name="use_mlock"
+		/>
 
-		<label class="field-checkbox__label">
-			<input
-				type="checkbox"
-				bind:checked={$ollamaOptions.embedding_only}
-				class="field-checkbox__input"
-			/>
-			{$LL.embeddingOnly()}
-		</label>
+		<FieldCheckbox
+			label={$LL.embeddingOnly()}
+			bind:checked={$ollamaOptions.embedding_only}
+			name="embedding_only"
+		/>
 
-		<label class="field-checkbox__label">
-			<input
-				type="checkbox"
-				bind:checked={$ollamaOptions.penalize_newline}
-				class="field-checkbox__input"
-			/>
-			{$LL.penalizeNewline()}
-		</label>
+		<FieldCheckbox
+			label={$LL.penalizeNewline()}
+			bind:checked={$ollamaOptions.penalize_newline}
+			name="penalize_newline"
+		/>
 	</div>
 </Fieldset>
-
-<style lang="postcss">
-	.field-checkbox__label {
-		@apply inline-flex items-center gap-x-2 rounded-md border border-shade-4 px-3 py-2 text-sm leading-tight;
-		@apply hover:border-shade-6 hover:text-active;
-	}
-
-	.field-checkbox__input {
-		@apply accent-accent;
-	}
-</style>
