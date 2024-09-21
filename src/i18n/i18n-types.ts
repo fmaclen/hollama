@@ -386,6 +386,138 @@ type RootTranslation = {
 	 * Y​o​u
 	 */
 	you: string
+	/**
+	 * S​h​o​w​ ​c​o​n​t​r​o​l​s
+	 */
+	showControls: string
+	/**
+	 * H​i​d​e​ ​c​o​n​t​r​o​l​s
+	 */
+	hideControls: string
+	/**
+	 * M​i​r​o​s​t​a​t
+	 */
+	mirostat: string
+	/**
+	 * M​i​r​o​s​t​a​t​ ​E​t​a
+	 */
+	mirostatEta: string
+	/**
+	 * M​i​r​o​s​t​a​t​ ​T​a​u
+	 */
+	mirostatTau: string
+	/**
+	 * C​o​n​t​e​x​t​ ​W​i​n​d​o​w​ ​S​i​z​e
+	 */
+	numCtx: string
+	/**
+	 * R​e​p​e​a​t​ ​L​a​s​t​ ​N
+	 */
+	repeatLastN: string
+	/**
+	 * R​e​p​e​a​t​ ​P​e​n​a​l​t​y
+	 */
+	repeatPenalty: string
+	/**
+	 * T​e​m​p​e​r​a​t​u​r​e
+	 */
+	temperature: string
+	/**
+	 * R​a​n​d​o​m​ ​S​e​e​d
+	 */
+	seed: string
+	/**
+	 * S​t​o​p​ ​S​e​q​u​e​n​c​e
+	 */
+	stop: string
+	/**
+	 * T​F​S​ ​Z
+	 */
+	tfsZ: string
+	/**
+	 * N​u​m​b​e​r​ ​o​f​ ​T​o​k​e​n​s​ ​t​o​ ​P​r​e​d​i​c​t
+	 */
+	numPredict: string
+	/**
+	 * T​o​p​ ​K
+	 */
+	topK: string
+	/**
+	 * T​o​p​ ​P
+	 */
+	topP: string
+	/**
+	 * M​i​n​ ​P
+	 */
+	minP: string
+	/**
+	 * T​y​p​i​c​a​l​ ​P
+	 */
+	typicalP: string
+	/**
+	 * P​r​e​s​e​n​c​e​ ​P​e​n​a​l​t​y
+	 */
+	presencePenalty: string
+	/**
+	 * F​r​e​q​u​e​n​c​y​ ​P​e​n​a​l​t​y
+	 */
+	frequencyPenalty: string
+	/**
+	 * N​u​m​b​e​r​ ​o​f​ ​B​a​t​c​h
+	 */
+	numBatch: string
+	/**
+	 * N​u​m​b​e​r​ ​o​f​ ​G​P​U
+	 */
+	numGpu: string
+	/**
+	 * M​a​i​n​ ​G​P​U
+	 */
+	mainGpu: string
+	/**
+	 * N​u​m​b​e​r​ ​o​f​ ​T​h​r​e​a​d
+	 */
+	numThread: string
+	/**
+	 * N​u​m​b​e​r​ ​o​f​ ​K​e​e​p
+	 */
+	numKeep: string
+	/**
+	 * N​U​M​A
+	 */
+	numa: string
+	/**
+	 * L​o​w​ ​V​R​A​M
+	 */
+	lowVram: string
+	/**
+	 * F​1​6​ ​K​V
+	 */
+	f16Kv: string
+	/**
+	 * L​o​g​i​t​s​ ​A​l​l
+	 */
+	logitsAll: string
+	/**
+	 * V​o​c​a​b​ ​O​n​l​y
+	 */
+	vocabOnly: string
+	/**
+	 * U​s​e​ ​M​M​A​P
+	 */
+	useMmap: string
+	/**
+	 * U​s​e​ ​M​L​O​C​K
+	 */
+	useMlock: string
+	/**
+	 * E​m​b​e​d​d​i​n​g​ ​O​n​l​y
+	 */
+	embeddingOnly: string
+	/**
+	 * P​e​n​a​l​i​z​e​ ​N​e​w​l​i​n​e
+	 */
+	penalizeNewline: string
 }
 
 export type TranslationFunctions = {
@@ -757,6 +889,138 @@ The completion in progress will stop
 	 * You
 	 */
 	you: () => LocalizedString
+	/**
+	 * Show controls
+	 */
+	showControls: () => LocalizedString
+	/**
+	 * Hide controls
+	 */
+	hideControls: () => LocalizedString
+	/**
+	 * Mirostat
+	 */
+	mirostat: () => LocalizedString
+	/**
+	 * Mirostat Eta
+	 */
+	mirostatEta: () => LocalizedString
+	/**
+	 * Mirostat Tau
+	 */
+	mirostatTau: () => LocalizedString
+	/**
+	 * Context Window Size
+	 */
+	numCtx: () => LocalizedString
+	/**
+	 * Repeat Last N
+	 */
+	repeatLastN: () => LocalizedString
+	/**
+	 * Repeat Penalty
+	 */
+	repeatPenalty: () => LocalizedString
+	/**
+	 * Temperature
+	 */
+	temperature: () => LocalizedString
+	/**
+	 * Random Seed
+	 */
+	seed: () => LocalizedString
+	/**
+	 * Stop Sequence
+	 */
+	stop: () => LocalizedString
+	/**
+	 * TFS Z
+	 */
+	tfsZ: () => LocalizedString
+	/**
+	 * Number of Tokens to Predict
+	 */
+	numPredict: () => LocalizedString
+	/**
+	 * Top K
+	 */
+	topK: () => LocalizedString
+	/**
+	 * Top P
+	 */
+	topP: () => LocalizedString
+	/**
+	 * Min P
+	 */
+	minP: () => LocalizedString
+	/**
+	 * Typical P
+	 */
+	typicalP: () => LocalizedString
+	/**
+	 * Presence Penalty
+	 */
+	presencePenalty: () => LocalizedString
+	/**
+	 * Frequency Penalty
+	 */
+	frequencyPenalty: () => LocalizedString
+	/**
+	 * Number of Batch
+	 */
+	numBatch: () => LocalizedString
+	/**
+	 * Number of GPU
+	 */
+	numGpu: () => LocalizedString
+	/**
+	 * Main GPU
+	 */
+	mainGpu: () => LocalizedString
+	/**
+	 * Number of Thread
+	 */
+	numThread: () => LocalizedString
+	/**
+	 * Number of Keep
+	 */
+	numKeep: () => LocalizedString
+	/**
+	 * NUMA
+	 */
+	numa: () => LocalizedString
+	/**
+	 * Low VRAM
+	 */
+	lowVram: () => LocalizedString
+	/**
+	 * F16 KV
+	 */
+	f16Kv: () => LocalizedString
+	/**
+	 * Logits All
+	 */
+	logitsAll: () => LocalizedString
+	/**
+	 * Vocab Only
+	 */
+	vocabOnly: () => LocalizedString
+	/**
+	 * Use MMAP
+	 */
+	useMmap: () => LocalizedString
+	/**
+	 * Use MLOCK
+	 */
+	useMlock: () => LocalizedString
+	/**
+	 * Embedding Only
+	 */
+	embeddingOnly: () => LocalizedString
+	/**
+	 * Penalize Newline
+	 */
+	penalizeNewline: () => LocalizedString
 }
 
 export type Formatters = {}

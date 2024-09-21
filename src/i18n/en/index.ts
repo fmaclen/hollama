@@ -92,7 +92,43 @@ const en = {
 		'If you want to connect to an Ollama server that is not available on {hostname:string} or {ip:string} try',
 	version: 'Version',
 	writePromptToStart: 'Write a prompt to start a new session',
-	you: 'You'
+	you: 'You',
+
+	showControls: 'Show controls',
+	hideControls: 'Hide controls',
+
+	// New translations for Ollama parameters
+	mirostat: 'Mirostat',
+	mirostatEta: 'Mirostat Eta',
+	mirostatTau: 'Mirostat Tau',
+	numCtx: 'Context Window Size',
+	repeatLastN: 'Repeat Last N',
+	repeatPenalty: 'Repeat Penalty',
+	temperature: 'Temperature',
+	seed: 'Random Seed',
+	stop: 'Stop Sequence',
+	tfsZ: 'TFS Z',
+	numPredict: 'Number of Tokens to Predict',
+	topK: 'Top K',
+	topP: 'Top P',
+	minP: 'Min P',
+	typicalP: 'Typical P',
+	presencePenalty: 'Presence Penalty',
+	frequencyPenalty: 'Frequency Penalty',
+	numBatch: 'Number of Batch',
+	numGpu: 'Number of GPU',
+	mainGpu: 'Main GPU',
+	numThread: 'Number of Thread',
+	numKeep: 'Number of Keep',
+	numa: 'NUMA',
+	lowVram: 'Low VRAM',
+	f16Kv: 'F16 KV',
+	logitsAll: 'Logits All',
+	vocabOnly: 'Vocab Only',
+	useMmap: 'Use MMAP',
+	useMlock: 'Use MLOCK',
+	embeddingOnly: 'Embedding Only',
+	penalizeNewline: 'Penalize Newline'
 } satisfies BaseTranslation;
 
 export default en;

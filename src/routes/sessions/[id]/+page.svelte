@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { Brain, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import Settings_2 from 'lucide-svelte/icons/settings-2';
 	import { afterUpdate, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { writable } from 'svelte/store';
+	import { writable, type Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import { beforeNavigate } from '$app/navigation';
@@ -22,7 +23,7 @@
 	import Metadata from '$lib/components/Metadata.svelte';
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { knowledgeStore, settingsStore } from '$lib/localStorage';
-	import { ollamaChat, ollamaTags } from '$lib/ollama';
+	import { ollamaChat, ollamaTags, type OllamaOptions } from '$lib/ollama';
 	import {
 		formatSessionMetadata,
 		getSessionTitle,
@@ -35,6 +36,7 @@
 
 	import type { PageData } from './$types';
 	import Article from './Article.svelte';
+	import Controls from './Controls.svelte';
 
 	export let data: PageData;
 
@@ -49,9 +51,11 @@
 	let isCompletionInProgress = false;
 	let messageIndexToEdit: number | null = null;
 	let isPromptFullscreen = false;
+	let isControls = false;
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
 
+	const ollamaOptions: Writable<OllamaOptions> = writable({});
 	const shouldConfirmDeletion = writable(false);
 
 	$: session = loadSession(data.id);
@@ -137,7 +141,7 @@
 		completion = '';
 
 		try {
-			await ollamaChat(payload, abortController.signal, async (chunk) => {
+			await ollamaChat({ ...payload, options: $ollamaOptions }, abortController.signal, async (chunk) => {
 				completion += chunk;
 				await scrollToBottom();
 			});
@@ -236,6 +240,13 @@
 		</Metadata>
 
 		<svelte:fragment slot="nav">
+			<Button
+				variant="icon"
+				on:click={() => (isControls = !isControls)}
+				aria-label={isControls ? $LL.hideControls() : $LL.showControls()}
+			>
+				<Settings_2 class="base-icon" />
+			</Button>
 			{#if !isNewSession}
 				{#if !$shouldConfirmDeletion}
 					<ButtonCopy content={JSON.stringify(session.messages, null, 2)} />
@@ -244,122 +255,127 @@
 			{/if}
 		</svelte:fragment>
 	</Header>
-	{#key isNewSession}
-		<div class="session__history" bind:this={messageWindow}>
-			<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
-				{#if isNewSession}
-					<EmptyMessage>{$LL.writePromptToStart()}</EmptyMessage>
-				{/if}
 
-				{#each session.messages as message, i (session.id + i)}
-					{#key message.role}
-						<Article
-							{message}
-							retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
-							{handleRetry}
-							{handleEditMessage}
-						/>
-					{/key}
-				{/each}
+	<div class="session__history" bind:this={messageWindow}>
+		{#if isControls}
+			<Controls {ollamaOptions} />
+		{:else}
+			{#key isNewSession}
+				<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
+					{#if isNewSession}
+						<EmptyMessage>{$LL.writePromptToStart()}</EmptyMessage>
+					{/if}
 
-				{#if isCompletionInProgress}
-					<Article message={{ role: 'assistant', content: completion || '...' }} />
-				{/if}
-			</div>
-
-			<div class="prompt-editor {isPromptFullscreen ? 'prompt-editor--fullscreen' : ''}">
-				<button
-					class="prompt-editor__toggle"
-					on:click={() => (isPromptFullscreen = !isPromptFullscreen)}
-				>
-					<UnfoldVertical class="mx-auto my-2 h-3 w-3 opacity-50" />
-				</button>
-
-				<div class="prompt-editor__form">
-					<Fieldset context={isPromptFullscreen ? 'editor' : undefined}>
-						{#if isNewSession}
-							<div class="prompt-editor__project">
-								<FieldSelectModel />
-								<FieldSelect
-									label={$LL.systemPrompt()}
-									name="knowledge"
-									disabled={!$knowledgeStore.length}
-									options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
-									bind:value={knowledgeId}
-								>
-									<svelte:fragment slot="nav">
-										<Button
-											aria-label={$LL.newKnowledge()}
-											variant="outline"
-											href={generateNewUrl(Sitemap.KNOWLEDGE)}
-											class="h-full text-muted"
-										>
-											<Brain class="base-icon" />
-										</Button>
-									</svelte:fragment>
-								</FieldSelect>
-							</div>
-						{/if}
-
-						{#key session}
-							{#if isPromptFullscreen}
-								<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={prompt} />
-							{:else}
-								<Field name="prompt">
-									<textarea
-										name="prompt"
-										class="prompt-editor__textarea"
-										placeholder={$LL.promptPlaceholder()}
-										bind:this={promptTextarea}
-										bind:value={prompt}
-										on:keydown={handleKeyDown}
-									/>
-								</Field>
-							{/if}
+					{#each session.messages as message, i (session.id + i)}
+						{#key message.role}
+							<Article
+								{message}
+								retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
+								{handleRetry}
+								{handleEditMessage}
+							/>
 						{/key}
+					{/each}
 
-						<nav class="prompt-editor__toolbar">
-							{#if messageIndexToEdit !== null}
-								<Button
-									variant="outline"
-									on:click={() => {
-										prompt = '';
-										messageIndexToEdit = null;
-										isPromptFullscreen = false;
-									}}
-								>
-									{$LL.cancel()}
-								</Button>
-							{/if}
-							<ButtonSubmit
-								{handleSubmit}
-								hasMetaKey={isPromptFullscreen}
-								disabled={!prompt ||
-									$settingsStore.ollamaServerStatus === 'disconnected' ||
-									$settingsStore.ollamaModels.length === 0 ||
-									!$settingsStore.ollamaModel}
-							>
-								{$LL.run()}
-							</ButtonSubmit>
-
-							{#if isCompletionInProgress}
-								<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
-									<div class="prompt-editor__stop">
-										<span class="prompt-editor__stop-icon">
-											<StopCircle class=" base-icon" />
-										</span>
-										<span class="prompt-editor__loading-icon">
-											<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />
-										</span>
-									</div>
-								</Button>
-							{/if}
-						</nav>
-					</Fieldset>
+					{#if isCompletionInProgress}
+						<Article message={{ role: 'assistant', content: completion || '...' }} />
+					{/if}
 				</div>
-			</div>
-		</div>
-	{/key}
+
+				<div class="prompt-editor {isPromptFullscreen ? 'prompt-editor--fullscreen' : ''}">
+					<button
+						class="prompt-editor__toggle"
+						on:click={() => (isPromptFullscreen = !isPromptFullscreen)}
+					>
+						<UnfoldVertical class="mx-auto my-2 h-3 w-3 opacity-50" />
+					</button>
+
+					<div class="prompt-editor__form">
+						<Fieldset context={isPromptFullscreen ? 'editor' : undefined}>
+							{#if isNewSession}
+								<div class="prompt-editor__project">
+									<FieldSelectModel />
+									<FieldSelect
+										label={$LL.systemPrompt()}
+										name="knowledge"
+										disabled={!$knowledgeStore.length}
+										options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
+										bind:value={knowledgeId}
+									>
+										<svelte:fragment slot="nav">
+											<Button
+												aria-label={$LL.newKnowledge()}
+												variant="outline"
+												href={generateNewUrl(Sitemap.KNOWLEDGE)}
+												class="h-full text-muted"
+											>
+												<Brain class="base-icon" />
+											</Button>
+										</svelte:fragment>
+									</FieldSelect>
+								</div>
+							{/if}
+
+							{#key session}
+								{#if isPromptFullscreen}
+									<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={prompt} />
+								{:else}
+									<Field name="prompt">
+										<textarea
+											name="prompt"
+											class="prompt-editor__textarea"
+											placeholder={$LL.promptPlaceholder()}
+											bind:this={promptTextarea}
+											bind:value={prompt}
+											on:keydown={handleKeyDown}
+										/>
+									</Field>
+								{/if}
+							{/key}
+
+							<nav class="prompt-editor__toolbar">
+								{#if messageIndexToEdit !== null}
+									<Button
+										variant="outline"
+										on:click={() => {
+											prompt = '';
+											messageIndexToEdit = null;
+											isPromptFullscreen = false;
+										}}
+									>
+										{$LL.cancel()}
+									</Button>
+								{/if}
+								<ButtonSubmit
+									{handleSubmit}
+									hasMetaKey={isPromptFullscreen}
+									disabled={!prompt ||
+										$settingsStore.ollamaServerStatus === 'disconnected' ||
+										$settingsStore.ollamaModels.length === 0 ||
+										!$settingsStore.ollamaModel}
+								>
+									{$LL.run()}
+								</ButtonSubmit>
+
+								{#if isCompletionInProgress}
+									<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
+										<div class="prompt-editor__stop">
+											<span class="prompt-editor__stop-icon">
+												<StopCircle class=" base-icon" />
+											</span>
+											<span class="prompt-editor__loading-icon">
+												<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />
+											</span>
+										</div>
+									</Button>
+								{/if}
+							</nav>
+						</Fieldset>
+					</div>
+				</div>
+			{/key}
+		{/if}
+	</div>
 </div>
 
 <style lang="postcss">
