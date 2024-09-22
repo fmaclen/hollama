@@ -22,6 +22,17 @@ export interface Session {
 	updatedAt?: string;
 }
 
+export interface Prompt {
+	content: string;
+	view: 'messages' | 'options';
+	messageIndexToEdit: number | null;
+	isCodeEditor: boolean;
+	isCompletionInProgress: boolean;
+	shouldFocusTextarea: boolean;
+	promptTextarea?: HTMLTextAreaElement;
+	abortController?: AbortController;
+}
+
 export const loadSession = (id: string): Session => {
 	let session: Session | null = null;
 
