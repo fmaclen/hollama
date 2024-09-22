@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
 	import type { ChatRequest } from 'ollama/browser';
 	import { afterUpdate, tick } from 'svelte';
@@ -46,10 +47,9 @@
 	let isCompletionInProgress = false;
 	let messageIndexToEdit: number | null = null;
 	let isPromptFullscreen = false;
-	let isControls = false;
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
-
+	let view: 'messages' | 'options' = 'messages';
 	const session: Writable<Session> = writable(loadSession(data.id));
 	const shouldConfirmDeletion = writable(false);
 
@@ -222,13 +222,6 @@
 		</Metadata>
 
 		<svelte:fragment slot="nav">
-			<Button
-				variant="icon"
-				on:click={() => (isControls = !isControls)}
-				aria-label={isControls ? $LL.hideControls() : $LL.showControls()}
-			>
-				<Settings_2 class="base-icon" />
-			</Button>
 			{#if !isNewSession}
 				{#if !$shouldConfirmDeletion}
 					<ButtonCopy content={JSON.stringify($session.messages, null, 2)} />
@@ -239,7 +232,7 @@
 	</Header>
 
 	<div class="session__history" bind:this={messageWindow}>
-		{#if isControls}
+		{#if view === 'options'}
 			<Controls {session} />
 		{:else}
 			{#key isNewSession}
@@ -263,78 +256,97 @@
 						<Article message={{ role: 'assistant', content: completion || '...' }} />
 					{/if}
 				</div>
-
-				<div class="prompt-editor {isPromptFullscreen ? 'prompt-editor--fullscreen' : ''}">
-					<button
-						class="prompt-editor__toggle"
-						on:click={() => (isPromptFullscreen = !isPromptFullscreen)}
-					>
-						<UnfoldVertical class="mx-auto my-2 h-3 w-3 opacity-50" />
-					</button>
-
-					<div class="prompt-editor__form">
-						<Fieldset context={isPromptFullscreen ? 'editor' : undefined}>
-							<FieldSelectModel />
-
-							{#key session}
-								{#if isPromptFullscreen}
-									<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={prompt} />
-								{:else}
-									<Field name="prompt">
-										<textarea
-											name="prompt"
-											class="prompt-editor__textarea"
-											placeholder={$LL.promptPlaceholder()}
-											bind:this={promptTextarea}
-											bind:value={prompt}
-											on:keydown={handleKeyDown}
-										/>
-									</Field>
-								{/if}
-							{/key}
-
-							<nav class="prompt-editor__toolbar">
-								{#if messageIndexToEdit !== null}
-									<Button
-										variant="outline"
-										on:click={() => {
-											prompt = '';
-											messageIndexToEdit = null;
-											isPromptFullscreen = false;
-										}}
-									>
-										{$LL.cancel()}
-									</Button>
-								{/if}
-								<ButtonSubmit
-									{handleSubmit}
-									hasMetaKey={isPromptFullscreen}
-									disabled={!prompt ||
-										$settingsStore.ollamaServerStatus === 'disconnected' ||
-										$settingsStore.ollamaModels.length === 0 ||
-										!$settingsStore.ollamaModel}
-								>
-									{$LL.run()}
-								</ButtonSubmit>
-
-								{#if isCompletionInProgress}
-									<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
-										<div class="prompt-editor__stop">
-											<span class="prompt-editor__stop-icon">
-												<StopCircle class=" base-icon" />
-											</span>
-											<span class="prompt-editor__loading-icon">
-												<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />
-											</span>
-										</div>
-									</Button>
-								{/if}
-							</nav>
-						</Fieldset>
-					</div>
-				</div>
 			{/key}
 		{/if}
+
+		<div class="prompt-editor {isPromptFullscreen ? 'prompt-editor--fullscreen' : ''}">
+			<button
+				class="prompt-editor__toggle"
+				on:click={() => (isPromptFullscreen = !isPromptFullscreen)}
+			>
+				<UnfoldVertical class="mx-auto my-2 h-3 w-3 opacity-50" />
+			</button>
+
+			<div class="prompt-editor__form">
+				<Fieldset context={isPromptFullscreen ? 'editor' : undefined}>
+					<div class="prompt-editor__project">
+						<FieldSelectModel />
+
+						<nav class="prompt-editor__segmented-nav-container">
+							<Button
+								variant="icon"
+								class={`prompt-editor__segmented-nav ${view === 'messages' ? ' prompt-editor__segmented-nav--active' : ''}`}
+								on:click={() => (view = 'messages')}
+							>
+								<MessageSquareText class="base-icon" />
+							</Button>
+							<Button
+								variant="icon"
+								class={`prompt-editor__segmented-nav ${view === 'options' ? ' prompt-editor__segmented-nav--active' : ''}`}
+								on:click={() => (view = 'options')}
+							>
+								<Settings_2 class="base-icon" />
+							</Button>
+						</nav>
+					</div>
+
+					{#key session}
+						{#if isPromptFullscreen}
+							<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={prompt} />
+						{:else}
+							<Field name="prompt">
+								<textarea
+									name="prompt"
+									class="prompt-editor__textarea"
+									placeholder={$LL.promptPlaceholder()}
+									bind:this={promptTextarea}
+									bind:value={prompt}
+									on:keydown={handleKeyDown}
+								/>
+							</Field>
+						{/if}
+					{/key}
+
+					<nav class="prompt-editor__toolbar">
+						{#if messageIndexToEdit !== null}
+							<Button
+								variant="outline"
+								on:click={() => {
+									prompt = '';
+									messageIndexToEdit = null;
+									isPromptFullscreen = false;
+								}}
+							>
+								{$LL.cancel()}
+							</Button>
+						{/if}
+						<ButtonSubmit
+							{handleSubmit}
+							hasMetaKey={isPromptFullscreen}
+							disabled={!prompt ||
+								$settingsStore.ollamaServerStatus === 'disconnected' ||
+								$settingsStore.ollamaModels.length === 0 ||
+								!$settingsStore.ollamaModel}
+						>
+							{$LL.run()}
+						</ButtonSubmit>
+
+						{#if isCompletionInProgress}
+							<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
+								<div class="prompt-editor__stop">
+									<span class="prompt-editor__stop-icon">
+										<StopCircle class=" base-icon" />
+									</span>
+									<span class="prompt-editor__loading-icon">
+										<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />
+									</span>
+								</div>
+							</Button>
+						{/if}
+					</nav>
+				</Fieldset>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -362,7 +374,19 @@
 	}
 
 	.prompt-editor__project {
-		@apply grid grid-cols-[1fr,1fr] items-end gap-x-3;
+		@apply grid grid-cols-[auto,max-content] items-end gap-x-2;
+	}
+
+	.prompt-editor__segmented-nav-container {
+		@apply flex h-full items-center rounded bg-shade-2 p-1;
+	}
+
+	:global(.prompt-editor__segmented-nav) {
+		@apply h-full;
+	}
+
+	:global(.prompt-editor__segmented-nav--active) {
+		@apply bg-shade-0 shadow;
 	}
 
 	.prompt-editor--fullscreen {
