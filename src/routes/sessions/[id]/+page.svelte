@@ -168,13 +168,6 @@
 		await handleCompletion($session.messages);
 	}
 
-	function handleEditMessage(message: Message) {
-		$editor.messageIndexToEdit = $session.messages.findIndex((m) => m === message);
-		$editor.isCodeEditor = true;
-		$editor.content = message.content;
-		$editor.promptTextarea?.focus();
-	}
-
 	async function scrollToBottom(shouldForceScroll = false) {
 		if (!shouldForceScroll && (!editorWindow || userScrolledUp)) return;
 		await tick();
@@ -229,7 +222,7 @@
 		{#if $editor.view === 'options'}
 			<Controls {session} />
 		{:else}
-			<Messages {session} {editor} {handleEditMessage} {handleRetry} />
+			<Messages {session} {editor} {handleRetry} />
 		{/if}
 
 		<PromptEditor {editor} {handleSubmit} {stopCompletion} />

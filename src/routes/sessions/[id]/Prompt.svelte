@@ -42,21 +42,23 @@
 			<div class="prompt-editor__project">
 				<FieldSelectModel />
 
-				<nav class="prompt-editor__segmented-nav-container">
-					<Button
-						variant="icon"
-						class={`prompt-editor__segmented-nav ${$editor.view === 'messages' ? ' prompt-editor__segmented-nav--active' : ''}`}
-						on:click={() => ($editor.view = 'messages')}
+				<nav class="segmented-nav">
+					<div
+						class="segmented-nav__button"
+						class:segmented-nav__button--active={$editor.view === 'messages'}
 					>
-						<MessageSquareText class="base-icon" />
-					</Button>
-					<Button
-						variant="icon"
-						class={`prompt-editor__segmented-nav ${$editor.view === 'options' ? ' prompt-editor__segmented-nav--active' : ''}`}
-						on:click={() => ($editor.view = 'options')}
+						<Button variant="icon" on:click={() => ($editor.view = 'messages')} class="h-full" isActive={$editor.view === 'messages'}>
+							<MessageSquareText class="base-icon" />
+						</Button>
+					</div>
+					<div
+						class="segmented-nav__button"
+						class:segmented-nav__button--active={$editor.view === 'options'}
 					>
-						<Settings_2 class="base-icon" />
-					</Button>
+						<Button variant="icon" on:click={() => ($editor.view = 'options')} class="h-full" isActive={$editor.view === 'options'}>
+							<Settings_2 class="base-icon" />
+						</Button>
+					</div>
 				</nav>
 			</div>
 
@@ -126,18 +128,6 @@
 		@apply grid grid-cols-[auto,max-content] items-end gap-x-2;
 	}
 
-	.prompt-editor__segmented-nav-container {
-		@apply flex h-full items-center rounded bg-shade-2 p-1;
-	}
-
-	:global(.prompt-editor__segmented-nav) {
-		@apply h-full;
-	}
-
-	:global(.prompt-editor__segmented-nav--active) {
-		@apply bg-shade-0 shadow;
-	}
-
 	.prompt-editor--fullscreen {
 		@apply min-h-[60dvh];
 	}
@@ -186,5 +176,17 @@
 
 	.prompt-editor__loading-icon {
 		@apply opacity-100;
+	}
+
+	.segmented-nav {
+		@apply flex h-full items-center rounded bg-shade-2 p-1;
+	}
+
+	.segmented-nav__button {
+		@apply h-full text-shade-6;
+
+		&--active {
+			@apply bg-shade-0 text-neutral-50;
+		}
 	}
 </style>
