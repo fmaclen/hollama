@@ -12,9 +12,9 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import { settingsStore } from '$lib/localStorage';
-	import type { Prompt, Session } from '$lib/sessions';
+	import type { Editor } from '$lib/sessions';
 
-	export let prompt: Writable<Prompt>;
+	export let editor: Writable<Editor>;
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;
 
@@ -29,60 +29,60 @@
 	}
 </script>
 
-<div class="prompt-editor {$prompt.isCodeEditor ? 'prompt-editor--fullscreen' : ''}">
+<div class="prompt-editor {$editor.isCodeEditor ? 'prompt-editor--fullscreen' : ''}">
 	<button
 		class="prompt-editor__toggle"
-		on:click={() => ($prompt.isCodeEditor = !$prompt.isCodeEditor)}
+		on:click={() => ($editor.isCodeEditor = !$editor.isCodeEditor)}
 	>
 		<UnfoldVertical class="mx-auto my-2 h-3 w-3 opacity-50" />
 	</button>
 
 	<div class="prompt-editor__form">
-		<Fieldset context={$prompt.isCodeEditor ? 'editor' : undefined}>
+		<Fieldset context={$editor.isCodeEditor ? 'editor' : undefined}>
 			<div class="prompt-editor__project">
 				<FieldSelectModel />
 
 				<nav class="prompt-editor__segmented-nav-container">
 					<Button
 						variant="icon"
-						class={`prompt-editor__segmented-nav ${$prompt.view === 'messages' ? ' prompt-editor__segmented-nav--active' : ''}`}
-						on:click={() => ($prompt.view = 'messages')}
+						class={`prompt-editor__segmented-nav ${$editor.view === 'messages' ? ' prompt-editor__segmented-nav--active' : ''}`}
+						on:click={() => ($editor.view = 'messages')}
 					>
 						<MessageSquareText class="base-icon" />
 					</Button>
 					<Button
 						variant="icon"
-						class={`prompt-editor__segmented-nav ${$prompt.view === 'options' ? ' prompt-editor__segmented-nav--active' : ''}`}
-						on:click={() => ($prompt.view = 'options')}
+						class={`prompt-editor__segmented-nav ${$editor.view === 'options' ? ' prompt-editor__segmented-nav--active' : ''}`}
+						on:click={() => ($editor.view = 'options')}
 					>
 						<Settings_2 class="base-icon" />
 					</Button>
 				</nav>
 			</div>
 
-			{#if $prompt.isCodeEditor}
-				<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={$prompt.content} />
+			{#if $editor.isCodeEditor}
+				<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={$editor.content} />
 			{:else}
 				<Field name="prompt">
 					<textarea
 						name="prompt"
 						class="prompt-editor__textarea"
 						placeholder={$LL.promptPlaceholder()}
-						bind:this={$prompt.promptTextarea}
-						bind:value={$prompt.content}
+						bind:this={$editor.promptTextarea}
+						bind:value={$editor.content}
 						on:keydown={handleKeyDown}
 					/>
 				</Field>
 			{/if}
 
 			<nav class="prompt-editor__toolbar">
-				{#if $prompt.messageIndexToEdit !== null}
+				{#if $editor.messageIndexToEdit !== null}
 					<Button
 						variant="outline"
 						on:click={() => {
-							$prompt.content = '';
-							$prompt.messageIndexToEdit = null;
-							$prompt.isCodeEditor = false;
+							$editor.content = '';
+							$editor.messageIndexToEdit = null;
+							$editor.isCodeEditor = false;
 						}}
 					>
 						{$LL.cancel()}
@@ -90,8 +90,8 @@
 				{/if}
 				<ButtonSubmit
 					{handleSubmit}
-					hasMetaKey={$prompt.isCodeEditor}
-					disabled={!prompt ||
+					hasMetaKey={$editor.isCodeEditor}
+					disabled={!editor ||
 						$settingsStore.ollamaServerStatus === 'disconnected' ||
 						$settingsStore.ollamaModels.length === 0 ||
 						!$settingsStore.ollamaModel}
@@ -99,7 +99,7 @@
 					{$LL.run()}
 				</ButtonSubmit>
 
-				{#if $prompt.isCompletionInProgress}
+				{#if $editor.isCompletionInProgress}
 					<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
 						<div class="prompt-editor__stop">
 							<span class="prompt-editor__stop-icon">

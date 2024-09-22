@@ -22,13 +22,15 @@ export interface Session {
 	updatedAt?: string;
 }
 
-export interface Prompt {
+export interface Editor {
 	content: string;
 	view: 'messages' | 'options';
 	messageIndexToEdit: number | null;
 	isCodeEditor: boolean;
 	isCompletionInProgress: boolean;
+	isNewSession: boolean;
 	shouldFocusTextarea: boolean;
+	completion?: string;
 	promptTextarea?: HTMLTextAreaElement;
 	abortController?: AbortController;
 }
