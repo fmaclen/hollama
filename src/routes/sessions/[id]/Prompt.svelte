@@ -29,7 +29,7 @@
 	}
 </script>
 
-<div class="prompt-editor {$editor.isCodeEditor ? 'prompt-editor--fullscreen' : ''}">
+<div class="prompt-editor" class:prompt-editor--fullscreen={$editor.isCodeEditor}>
 	<button
 		class="prompt-editor__toggle"
 		on:click={() => ($editor.isCodeEditor = !$editor.isCodeEditor)}
@@ -47,7 +47,12 @@
 						class="segmented-nav__button"
 						class:segmented-nav__button--active={$editor.view === 'messages'}
 					>
-						<Button variant="icon" on:click={() => ($editor.view = 'messages')} class="h-full" isActive={$editor.view === 'messages'}>
+						<Button
+							variant="icon"
+							on:click={() => ($editor.view = 'messages')}
+							class="h-full"
+							isActive={$editor.view === 'messages'}
+						>
 							<MessageSquareText class="base-icon" />
 						</Button>
 					</div>
@@ -55,7 +60,12 @@
 						class="segmented-nav__button"
 						class:segmented-nav__button--active={$editor.view === 'options'}
 					>
-						<Button variant="icon" on:click={() => ($editor.view = 'options')} class="h-full" isActive={$editor.view === 'options'}>
+						<Button
+							variant="icon"
+							on:click={() => ($editor.view = 'options')}
+							class="h-full"
+							isActive={$editor.view === 'options'}
+						>
 							<Settings_2 class="base-icon" />
 						</Button>
 					</div>
