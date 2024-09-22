@@ -6,6 +6,7 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
+	import P from '$lib/components/P.svelte';
 	import type { Session } from '$lib/sessions';
 
 	const DEFAULT_MIROSTAT = '0';
@@ -57,7 +58,11 @@
 			</Button>
 		</svelte:fragment>
 	</FieldSelect> -->
+	<P><strong>{$LL.systemPrompt()}</strong></P>
 	<FieldTextEditor label={$LL.systemPrompt()} bind:value={$session.systemPrompt.content} />
+</Fieldset>
+<Fieldset>
+	<P><strong>Model options</strong></P>
 	<div class="grid grid-cols-2 gap-3">
 		<FieldInput
 			name="mirostat"
@@ -256,7 +261,9 @@
 			bind:value={$session.options.frequency_penalty}
 		/>
 	</div>
-
+</Fieldset>
+<Fieldset>
+	<P><strong>Runtime options</strong></P>
 	<div class="grid grid-cols-2 gap-3">
 		<FieldCheckbox label={$LL.numa()} bind:checked={$session.options.numa} name="numa" />
 
