@@ -83,6 +83,7 @@
 			$settingsStore.ollamaModels = [];
 			toast.warning($LL.cantConnectToOllamaServer());
 		}
+		$editor.view = 'messages';
 		session = writable(loadSession(data.id));
 		scrollToBottom();
 	}
