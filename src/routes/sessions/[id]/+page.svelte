@@ -118,6 +118,7 @@
 	function handleSubmit() {
 		if (!$editor.content) return;
 		$editor.isCodeEditor = false;
+		$editor.view = 'messages';
 
 		if ($editor.messageIndexToEdit !== null) handleSubmitEditMessage();
 		else handleSubmitNewMessage();
