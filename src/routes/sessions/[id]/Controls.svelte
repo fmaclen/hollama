@@ -40,56 +40,13 @@
 </script>
 
 <Fieldset>
-	<!-- <FieldSelect
-		label={$LL.systemPrompt()}
-		name="knowledge"
-		disabled={!$knowledgeStore.length}
-		options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
-		bind:value={knowledgeId}
-	>
-		<svelte:fragment slot="nav">
-			<Button
-				aria-label={$LL.newKnowledge()}
-				variant="outline"
-				href={generateNewUrl(Sitemap.KNOWLEDGE)}
-				class="h-full text-muted"
-			>
-				<Brain class="base-icon" />
-			</Button>
-		</svelte:fragment>
-	</FieldSelect> -->
 	<P><strong>{$LL.systemPrompt()}</strong></P>
 	<FieldTextEditor label={$LL.systemPrompt()} bind:value={$session.systemPrompt.content} />
 </Fieldset>
+
 <Fieldset>
 	<P><strong>Model options</strong></P>
 	<div class="grid grid-cols-2 gap-3">
-		<FieldInput
-			name="mirostat"
-			label={$LL.mirostat()}
-			type="number"
-			min={0}
-			max={2}
-			step={1}
-			placeholder={DEFAULT_MIROSTAT}
-			bind:value={$session.options.mirostat}
-		/>
-		<FieldInput
-			name="mirostat_eta"
-			label={$LL.mirostatEta()}
-			type="number"
-			step={0.01}
-			placeholder={DEFAULT_MIROSTAT_ETA}
-			bind:value={$session.options.mirostat_eta}
-		/>
-		<FieldInput
-			name="mirostat_tau"
-			label={$LL.mirostatTau()}
-			type="number"
-			step={0.1}
-			placeholder={DEFAULT_MIROSTAT_TAU}
-			bind:value={$session.options.mirostat_tau}
-		/>
 		<FieldInput
 			name="num_ctx"
 			label={$LL.numCtx()}
@@ -100,31 +57,80 @@
 			bind:value={$session.options.num_ctx}
 		/>
 		<FieldInput
-			name="repeat_last_n"
-			label={$LL.repeatLastN()}
+			name="num_batch"
+			label={$LL.numBatch()}
 			type="number"
-			min={-1}
+			min={1}
 			step={1}
-			placeholder={DEFAULT_REPEAT_LAST_N}
-			bind:value={$session.options.repeat_last_n}
+			placeholder={DEFAULT_NUM_BATCH}
+			bind:value={$session.options.num_batch}
 		/>
 		<FieldInput
-			name="repeat_penalty"
-			label={$LL.repeatPenalty()}
-			type="number"
-			step={0.1}
-			placeholder={DEFAULT_REPEAT_PENALTY}
-			bind:value={$session.options.repeat_penalty}
-		/>
-		<FieldInput
-			name="temperature"
-			label={$LL.temperature()}
+			name="num_gpu"
+			label={$LL.numGpu()}
 			type="number"
 			min={0}
-			max={2}
-			step={0.1}
-			placeholder={DEFAULT_TEMPERATURE}
-			bind:value={$session.options.temperature}
+			step={1}
+			placeholder={DEFAULT_NUM_GPU}
+			bind:value={$session.options.num_gpu}
+		/>
+		<FieldInput
+			name="main_gpu"
+			label={$LL.mainGpu()}
+			type="number"
+			min={0}
+			step={1}
+			placeholder={DEFAULT_MAIN_GPU}
+			bind:value={$session.options.main_gpu}
+		/>
+		<FieldInput
+			name="num_thread"
+			label={$LL.numThread()}
+			type="number"
+			min={1}
+			step={1}
+			placeholder={DEFAULT_NUM_THREAD}
+			bind:value={$session.options.num_thread}
+		/>
+		<br />
+		<FieldCheckbox label={$LL.numa()} bind:checked={$session.options.numa} name="numa" />
+		<FieldCheckbox label={$LL.lowVram()} bind:checked={$session.options.low_vram} name="low_vram" />
+		<FieldCheckbox label={$LL.f16Kv()} bind:checked={$session.options.f16_kv} name="f16_kv" />
+		<FieldCheckbox
+			label={$LL.logitsAll()}
+			bind:checked={$session.options.logits_all}
+			name="logits_all"
+		/>
+		<FieldCheckbox
+			label={$LL.vocabOnly()}
+			bind:checked={$session.options.vocab_only}
+			name="vocab_only"
+		/>
+		<FieldCheckbox label={$LL.useMmap()} bind:checked={$session.options.use_mmap} name="use_mmap" />
+		<FieldCheckbox
+			label={$LL.useMlock()}
+			bind:checked={$session.options.use_mlock}
+			name="use_mlock"
+		/>
+		<FieldCheckbox
+			label={$LL.embeddingOnly()}
+			bind:checked={$session.options.embedding_only}
+			name="embedding_only"
+		/>
+	</div>
+</Fieldset>
+
+<Fieldset>
+	<P><strong>Runtime options</strong></P>
+	<div class="grid grid-cols-2 gap-3">
+		<FieldInput
+			name="num_keep"
+			label={$LL.numKeep()}
+			type="number"
+			min={0}
+			step={1}
+			placeholder={DEFAULT_NUM_KEEP}
+			bind:value={$session.options.num_keep}
 		/>
 		<FieldInput
 			name="seed"
@@ -134,22 +140,6 @@
 			step={1}
 			placeholder={DEFAULT_SEED}
 			bind:value={$session.options.seed}
-		/>
-		<FieldInput
-			name="stop"
-			label={$LL.stop()}
-			type="text"
-			placeholder={DEFAULT_STOP}
-			bind:value={stop}
-		/>
-		<FieldInput
-			name="tfs_z"
-			label={$LL.tfsZ()}
-			type="number"
-			min={1}
-			step={0.1}
-			placeholder={DEFAULT_TFS_Z}
-			bind:value={$session.options.tfs_z}
 		/>
 		<FieldInput
 			name="num_predict"
@@ -190,49 +180,13 @@
 			bind:value={$session.options.min_p}
 		/>
 		<FieldInput
-			name="num_batch"
-			label={$LL.numBatch()}
+			name="tfs_z"
+			label={$LL.tfsZ()}
 			type="number"
 			min={1}
-			step={1}
-			placeholder={DEFAULT_NUM_BATCH}
-			bind:value={$session.options.num_batch}
-		/>
-		<FieldInput
-			name="num_gpu"
-			label={$LL.numGpu()}
-			type="number"
-			min={0}
-			step={1}
-			placeholder={DEFAULT_NUM_GPU}
-			bind:value={$session.options.num_gpu}
-		/>
-		<FieldInput
-			name="main_gpu"
-			label={$LL.mainGpu()}
-			type="number"
-			min={0}
-			step={1}
-			placeholder={DEFAULT_MAIN_GPU}
-			bind:value={$session.options.main_gpu}
-		/>
-		<FieldInput
-			name="num_thread"
-			label={$LL.numThread()}
-			type="number"
-			min={1}
-			step={1}
-			placeholder={DEFAULT_NUM_THREAD}
-			bind:value={$session.options.num_thread}
-		/>
-		<FieldInput
-			name="num_keep"
-			label={$LL.numKeep()}
-			type="number"
-			min={0}
-			step={1}
-			placeholder={DEFAULT_NUM_KEEP}
-			bind:value={$session.options.num_keep}
+			step={0.1}
+			placeholder={DEFAULT_TFS_Z}
+			bind:value={$session.options.tfs_z}
 		/>
 		<FieldInput
 			name="typical_p"
@@ -243,6 +197,33 @@
 			step={0.01}
 			placeholder={DEFAULT_TYPICAL_P}
 			bind:value={$session.options.typical_p}
+		/>
+		<FieldInput
+			name="repeat_last_n"
+			label={$LL.repeatLastN()}
+			type="number"
+			min={-1}
+			step={1}
+			placeholder={DEFAULT_REPEAT_LAST_N}
+			bind:value={$session.options.repeat_last_n}
+		/>
+		<FieldInput
+			name="temperature"
+			label={$LL.temperature()}
+			type="number"
+			min={0}
+			max={2}
+			step={0.1}
+			placeholder={DEFAULT_TEMPERATURE}
+			bind:value={$session.options.temperature}
+		/>
+		<FieldInput
+			name="repeat_penalty"
+			label={$LL.repeatPenalty()}
+			type="number"
+			step={0.1}
+			placeholder={DEFAULT_REPEAT_PENALTY}
+			bind:value={$session.options.repeat_penalty}
 		/>
 		<FieldInput
 			name="presence_penalty"
@@ -260,42 +241,40 @@
 			placeholder={DEFAULT_FREQUENCY_PENALTY}
 			bind:value={$session.options.frequency_penalty}
 		/>
-	</div>
-</Fieldset>
-<Fieldset>
-	<P><strong>Runtime options</strong></P>
-	<div class="grid grid-cols-2 gap-3">
-		<FieldCheckbox label={$LL.numa()} bind:checked={$session.options.numa} name="numa" />
-
-		<FieldCheckbox label={$LL.lowVram()} bind:checked={$session.options.low_vram} name="low_vram" />
-
-		<FieldCheckbox label={$LL.f16Kv()} bind:checked={$session.options.f16_kv} name="f16_kv" />
-
-		<FieldCheckbox
-			label={$LL.logitsAll()}
-			bind:checked={$session.options.logits_all}
-			name="logits_all"
+		<FieldInput
+			name="mirostat"
+			label={$LL.mirostat()}
+			type="number"
+			min={0}
+			max={2}
+			step={1}
+			placeholder={DEFAULT_MIROSTAT}
+			bind:value={$session.options.mirostat}
 		/>
-
-		<FieldCheckbox
-			label={$LL.vocabOnly()}
-			bind:checked={$session.options.vocab_only}
-			name="vocab_only"
+		<FieldInput
+			name="mirostat_tau"
+			label={$LL.mirostatTau()}
+			type="number"
+			step={0.1}
+			placeholder={DEFAULT_MIROSTAT_TAU}
+			bind:value={$session.options.mirostat_tau}
 		/>
-
-		<FieldCheckbox label={$LL.useMmap()} bind:checked={$session.options.use_mmap} name="use_mmap" />
-
-		<FieldCheckbox
-			label={$LL.useMlock()}
-			bind:checked={$session.options.use_mlock}
-			name="use_mlock"
+		<FieldInput
+			name="mirostat_eta"
+			label={$LL.mirostatEta()}
+			type="number"
+			step={0.01}
+			placeholder={DEFAULT_MIROSTAT_ETA}
+			bind:value={$session.options.mirostat_eta}
 		/>
-
-		<FieldCheckbox
-			label={$LL.embeddingOnly()}
-			bind:checked={$session.options.embedding_only}
-			name="embedding_only"
+		<FieldInput
+			name="stop"
+			label={$LL.stop()}
+			type="text"
+			placeholder={DEFAULT_STOP}
+			bind:value={stop}
 		/>
+		<br />
 
 		<FieldCheckbox
 			label={$LL.penalizeNewline()}
