@@ -14,7 +14,6 @@
 	import { settingsStore } from '$lib/localStorage';
 	import type { Prompt, Session } from '$lib/sessions';
 
-	export let session: Writable<Session>;
 	export let prompt: Writable<Prompt>;
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;

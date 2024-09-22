@@ -246,7 +246,7 @@
 			</div>
 		{/if}
 
-		<PromptEditor {session} {prompt} {handleSubmit} {stopCompletion} />
+		<PromptEditor {prompt} {handleSubmit} {stopCompletion} />
 	</div>
 </div>
 
