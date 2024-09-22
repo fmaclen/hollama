@@ -39,6 +39,7 @@
 
 	export let data: PageData;
 
+	let session: Writable<Session> = writable(loadSession(data.id));
 	let messageWindow: HTMLElement;
 	let completion: string;
 	let abortController: AbortController;
@@ -50,7 +51,6 @@
 	let shouldFocusTextarea = false;
 	let userScrolledUp = false;
 	let view: 'messages' | 'options' = 'messages';
-	const session: Writable<Session> = writable(loadSession(data.id));
 	const shouldConfirmDeletion = writable(false);
 
 	$: isNewSession = !$session?.messages.length;
@@ -66,6 +66,7 @@
 			$settingsStore.ollamaModels = [];
 			toast.warning($LL.cantConnectToOllamaServer());
 		}
+		session = writable(loadSession(data.id));
 		scrollToBottom();
 	}
 
@@ -235,28 +236,26 @@
 		{#if view === 'options'}
 			<Controls {session} />
 		{:else}
-			{#key isNewSession}
-				<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
-					{#if isNewSession}
-						<EmptyMessage>{$LL.writePromptToStart()}</EmptyMessage>
-					{/if}
+			<div class="session__articles {isPromptFullscreen ? 'session__articles--fullscreen' : ''}">
+				{#if isNewSession}
+					<EmptyMessage>{$LL.writePromptToStart()}</EmptyMessage>
+				{/if}
 
-					{#each $session.messages as message, i ($session.id + i)}
-						{#key message.role}
-							<Article
-								{message}
-								retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
-								{handleRetry}
-								{handleEditMessage}
-							/>
-						{/key}
-					{/each}
+				{#each $session.messages as message, i ($session.id + i)}
+					{#key message.role}
+						<Article
+							{message}
+							retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
+							{handleRetry}
+							{handleEditMessage}
+						/>
+					{/key}
+				{/each}
 
-					{#if isCompletionInProgress}
-						<Article message={{ role: 'assistant', content: completion || '...' }} />
-					{/if}
-				</div>
-			{/key}
+				{#if isCompletionInProgress}
+					<Article message={{ role: 'assistant', content: completion || '...' }} />
+				{/if}
+			</div>
 		{/if}
 
 		<div class="prompt-editor {isPromptFullscreen ? 'prompt-editor--fullscreen' : ''}">
