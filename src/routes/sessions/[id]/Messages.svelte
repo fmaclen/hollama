@@ -14,7 +14,7 @@
 	function handleEditMessage(message: Message) {
 		$editor.messageIndexToEdit = $session.messages.findIndex((m) => m === message);
 		$editor.isCodeEditor = true;
-		$editor.content = message.content;
+		$editor.prompt = message.content;
 		$editor.promptTextarea?.focus();
 	}
 </script>

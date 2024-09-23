@@ -43,7 +43,7 @@
 
 	let session: Writable<Session> = writable(loadSession(data.id));
 	let editor: Writable<Editor> = writable({
-		content: '',
+		prompt: '',
 		view: 'messages',
 		messageIndexToEdit: null,
 		isCodeEditor: false,
@@ -58,8 +58,8 @@
 	$: if (data.id) handleSessionChange();
 	$: if ($settingsStore.ollamaModel) $session.model = $settingsStore.ollamaModel;
 	$: if (editorWindow) editorWindow.addEventListener('scroll', handleScroll);
-	$: if ($editor.view === 'options') scrollToTop();
-	$: if ($editor.view === 'messages') scrollToBottom(true);
+	// $: if ($editor.view === 'options') scrollToTop();
+	// $: if ($editor.view === 'messages') scrollToBottom(true);
 
 	beforeNavigate((navigation) => {
 		if (!$editor.isCompletionInProgress) return;
@@ -96,29 +96,28 @@
 	}
 
 	async function handleSubmitNewMessage() {
-		const message: Message = { role: 'user', content: $editor.content };
+		const message: Message = { role: 'user', content: $editor.prompt };
 		$session.messages = [...$session.messages, message];
-
 		await scrollToBottom(true); // Force scroll after submitting prompt
-		await handleCompletion([...$session.messages, message]);
+		await handleCompletion($session.messages);
 	}
 
 	async function handleSubmitEditMessage() {
 		if ($editor.messageIndexToEdit === null) return;
 
-		$session.messages[$editor.messageIndexToEdit].content = $editor.content;
+		$session.messages[$editor.messageIndexToEdit].content = $editor.prompt;
 
 		// Remove all messages after the edited message
 		$session.messages = $session.messages.slice(0, $editor.messageIndexToEdit + 1);
 
 		$editor.messageIndexToEdit = null;
-		$editor.content = '';
+		$editor.prompt = '';
 
 		await handleCompletion($session.messages);
 	}
 
 	function handleSubmit() {
-		if (!$editor.content) return;
+		if (!$editor.prompt) return;
 		$editor.isCodeEditor = false;
 		$editor.view = 'messages';
 
@@ -129,7 +128,7 @@
 	async function handleCompletion(messages: Message[]) {
 		$editor.abortController = new AbortController();
 		$editor.isCompletionInProgress = true;
-		$editor.content = ''; // Reset the prompt form field
+		$editor.prompt = ''; // Reset the prompt form field
 		$editor.completion = '';
 
 		const ollamaChatRequest: ChatRequest = {
@@ -178,10 +177,10 @@
 		requestAnimationFrame(() => (editorWindow.scrollTop = editorWindow.scrollHeight));
 	}
 
-	async function scrollToTop() {
-		await tick();
-		requestAnimationFrame(() => (editorWindow.scrollTop = 0));
-	}
+	// async function scrollToTop() {
+	// 	await tick();
+	// 	requestAnimationFrame(() => (editorWindow.scrollTop = 0));
+	// }
 
 	function handleError(error: Error) {
 		let content: string;
@@ -196,7 +195,7 @@
 	}
 
 	function stopCompletion() {
-		$editor.content = $session.messages[$session.messages.length - 1].content; // Reset the prompt to the last sent message
+		$editor.prompt = $session.messages[$session.messages.length - 1].content; // Reset the prompt to the last sent message
 		$editor.abortController?.abort();
 		$editor.completion = '';
 		$editor.isCompletionInProgress = false;

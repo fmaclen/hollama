@@ -23,7 +23,7 @@ export interface Session {
 }
 
 export interface Editor {
-	content: string;
+	prompt: string;
 	view: 'messages' | 'options';
 	messageIndexToEdit: number | null;
 	isCodeEditor: boolean;

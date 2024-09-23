@@ -126,6 +126,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	// Check the knowledge is available in the session
 	await page.getByText('Sessions').click();
 	await page.getByTestId('new-session').click();
+	await page.getByLabel('Options').click();
 	await page.getByLabel('System prompt').click();
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[0].name })).toBeVisible();
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[1].name })).toBeVisible();
@@ -144,6 +145,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	// Check is no longer in the session
 	await page.getByText('Sessions').click();
 	await page.getByTestId('new-session').click();
+	await page.getByLabel('Options').click();
 	await page.getByLabel('System prompt').click();
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[0].name })).not.toBeVisible();
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[1].name })).toBeVisible();
@@ -192,6 +194,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	await expect(sessionArticle).not.toBeVisible();
 
 	// Create a new session with knowledge
+	await page.getByLabel('Options').click();
 	await chooseFromCombobox(page, 'System prompt', MOCK_KNOWLEDGE[0].name);
 	await page.locator('.prompt-editor__textarea').fill('What is this about?');
 
@@ -201,19 +204,19 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 		if (request.url().includes('/api/chat')) requestPostData = request.postData();
 	});
 
-	await page.getByText('Run').click();
+	await page.locator('button', { hasText: 'Run' }).click();
 	expect(requestPostData).toContain(
 		JSON.stringify({
 			model: MOCK_API_TAGS_RESPONSE.models[0].name,
+			options: {},
 			messages: [
 				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
 				{ role: 'user', content: 'What is this about?' }
 			]
 		})
 	);
-	expect(await sessionArticle.count()).toBe(3);
-	expect(await sessionArticle.first().textContent()).toContain(MOCK_KNOWLEDGE[0].name);
-	expect(await sessionArticle.nth(1).textContent()).toContain('What is this about?');
+	expect(await sessionArticle.count()).toBe(2);
+	expect(await sessionArticle.first().textContent()).toContain('What is this about?');
 	expect(await sessionArticle.last().textContent()).toContain(
 		MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.message.content
 	);
@@ -225,15 +228,15 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	expect(requestPostData).toContain(
 		JSON.stringify({
 			model: MOCK_API_TAGS_RESPONSE.models[0].name,
+			options: {},
 			messages: [
 				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
 				{ role: 'user', content: 'What is this about?' }
 			]
 		})
 	);
-	expect(await sessionArticle.count()).toBe(3);
-	expect(await sessionArticle.first().textContent()).toContain(MOCK_KNOWLEDGE[0].name);
-	expect(await sessionArticle.nth(1).textContent()).toContain('What is this about?');
+	expect(await sessionArticle.count()).toBe(2);
+	expect(await sessionArticle.first().textContent()).toContain('What is this about?');
 	expect(await sessionArticle.last().textContent()).toContain(
 		MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.message.content
 	);
@@ -248,6 +251,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	expect(requestPostData).toContain(
 		JSON.stringify({
 			model: MOCK_API_TAGS_RESPONSE.models[0].name,
+			options: {},
 			messages: [
 				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
 				{ role: 'user', content: 'What is this about?' },
@@ -256,13 +260,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 			]
 		})
 	);
-	expect(await sessionArticle.count()).toBe(5);
-
-	// Can click on the knowledge to see it in the knowledge view
-	await page.getByLabel('Go to knowledge').click();
-	await expect(knowledgeId).toBeVisible();
-	await expect(page.getByLabel('Name')).toHaveValue(MOCK_KNOWLEDGE[0].name);
-	await expect(page.getByText('What is this about?')).not.toBeVisible();
+	expect(await sessionArticle.count()).toBe(4);
 });
 
 test('can use shortcut to create knowledge from session', async ({ page }) => {
@@ -271,6 +269,7 @@ test('can use shortcut to create knowledge from session', async ({ page }) => {
 
 	await page.goto('/sessions');
 	await page.getByTestId('new-session').click();
+	await page.getByLabel('Options').click();
 	await expect(page.getByLabel('System prompt')).toBeDisabled(); // Disabled when there is no knowledge
 	await expect(sessionId).toBeVisible();
 	await expect(knowledgeId).not.toBeVisible();

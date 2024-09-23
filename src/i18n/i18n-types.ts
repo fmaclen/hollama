@@ -232,6 +232,10 @@ type RootTranslation = {
 	 */
 	messageOfTheDay: string
 	/**
+	 * M​e​s​s​a​g​e​s
+	 */
+	messages: string
+	/**
 	 * {​m​o​d​e​l​}​ ​w​a​s​ ​d​o​w​n​l​o​a​d​e​d
 	 * @param {string} model
 	 */
@@ -276,6 +280,10 @@ type RootTranslation = {
 	 * O​l​l​a​m​a​'​s​ ​l​i​b​r​a​r​y
 	 */
 	ollamaLibrary: string
+	/**
+	 * O​p​t​i​o​n​s
+	 */
+	options: string
 	/**
 	 * O​t​h​e​r​ ​m​o​d​e​l​s
 	 */
@@ -738,6 +746,10 @@ The completion in progress will stop
 	 */
 	messageOfTheDay: () => LocalizedString
 	/**
+	 * Messages
+	 */
+	messages: () => LocalizedString
+	/**
 	 * {model} was downloaded
 	 */
 	modelWasDownloaded: (arg: { model: string }) => LocalizedString
@@ -781,6 +793,10 @@ The completion in progress will stop
 	 * Ollama's library
 	 */
 	ollamaLibrary: () => LocalizedString
+	/**
+	 * Options
+	 */
+	options: () => LocalizedString
 	/**
 	 * Other models
 	 */

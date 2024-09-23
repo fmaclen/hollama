@@ -48,6 +48,7 @@
 						class:segmented-nav__button--active={$editor.view === 'messages'}
 					>
 						<Button
+							aria-label={$LL.messages()}
 							variant="icon"
 							on:click={() => ($editor.view = 'messages')}
 							class="h-full"
@@ -61,6 +62,7 @@
 						class:segmented-nav__button--active={$editor.view === 'options'}
 					>
 						<Button
+						aria-label={$LL.options()}
 							variant="icon"
 							on:click={() => ($editor.view = 'options')}
 							class="h-full"
@@ -73,7 +75,7 @@
 			</div>
 
 			{#if $editor.isCodeEditor}
-				<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={$editor.content} />
+				<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={$editor.prompt} />
 			{:else}
 				<Field name="prompt">
 					<textarea
@@ -81,7 +83,7 @@
 						class="prompt-editor__textarea"
 						placeholder={$LL.promptPlaceholder()}
 						bind:this={$editor.promptTextarea}
-						bind:value={$editor.content}
+						bind:value={$editor.prompt}
 						on:keydown={handleKeyDown}
 					/>
 				</Field>
@@ -92,7 +94,7 @@
 					<Button
 						variant="outline"
 						on:click={() => {
-							$editor.content = '';
+							$editor.prompt = '';
 							$editor.messageIndexToEdit = null;
 							$editor.isCodeEditor = false;
 						}}
@@ -103,7 +105,7 @@
 				<ButtonSubmit
 					{handleSubmit}
 					hasMetaKey={$editor.isCodeEditor}
-					disabled={!editor ||
+					disabled={!$editor.prompt ||
 						$settingsStore.ollamaServerStatus === 'disconnected' ||
 						$settingsStore.ollamaModels.length === 0 ||
 						!$settingsStore.ollamaModel}
