@@ -101,7 +101,7 @@
 				id={name}
 				disabled={isDisabled}
 				aria-labelledby={`${name}-label`}
-				readonly={!allowSearch}
+				readonly={allowSearch ? null : true}
 			/>
 
 			<nav class="field-select-nav">
