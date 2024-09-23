@@ -7,7 +7,13 @@
 	export let label: LocalizedString;
 	export let placeholder: LocalizedString | string | undefined = undefined;
 	export let disabled: boolean | undefined = false;
-	export let value: string | undefined = undefined;
+	export let value: string | number | undefined = undefined;
+	export let type: 'text' | 'number' = 'text';
+
+	// New props for numeric inputs
+	export let min: number | undefined = undefined;
+	export let max: number | undefined = undefined;
+	export let step: number | undefined = undefined;
 </script>
 
 <Field {name} hasNav={$$slots.nav} {disabled}>
@@ -21,7 +27,32 @@
 		{/if}
 	</svelte:fragment>
 
-	<input class="field-input" id={name} {disabled} {placeholder} bind:value on:keyup />
+	{#if type === 'number'}
+		<input
+			class="field-input"
+			id={name}
+			{disabled}
+			{placeholder}
+			type="number"
+			{min}
+			{max}
+			{step}
+			bind:value
+			on:input
+			on:keyup
+		/>
+	{:else}
+		<input
+			class="field-input"
+			id={name}
+			{disabled}
+			{placeholder}
+			type="text"
+			bind:value
+			on:input
+			on:keyup
+		/>
+	{/if}
 
 	<svelte:fragment slot="nav">
 		<slot name="nav" />

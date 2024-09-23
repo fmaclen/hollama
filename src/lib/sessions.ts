@@ -3,6 +3,7 @@ import { get } from 'svelte/store';
 import { sessionsStore, settingsStore, sortStore } from '$lib/localStorage';
 
 import type { Knowledge } from './knowledge';
+import type { OllamaOptions } from './ollama';
 import { formatTimestampToNow } from './utils';
 
 export interface Message {
@@ -16,8 +17,22 @@ export interface Session {
 	id: string;
 	model: string;
 	messages: Message[];
+	systemPrompt: Message;
+	options: Partial<OllamaOptions>;
 	updatedAt?: string;
-	knowledge?: Knowledge;
+}
+
+export interface Editor {
+	prompt: string;
+	view: 'messages' | 'options';
+	messageIndexToEdit: number | null;
+	isCodeEditor: boolean;
+	isCompletionInProgress: boolean;
+	isNewSession: boolean;
+	shouldFocusTextarea: boolean;
+	completion?: string;
+	promptTextarea?: HTMLTextAreaElement;
+	abortController?: AbortController;
 }
 
 export const loadSession = (id: string): Session => {
@@ -26,10 +41,24 @@ export const loadSession = (id: string): Session => {
 	// Retrieve the current sessions
 	const currentSessions = get(sessionsStore);
 
+	const defaultSystemPrompt: Message = {
+		role: 'system',
+		content: ''
+	};
+
 	// Find the session with the given id
 	if (currentSessions) {
 		const existingSession = currentSessions.find((s) => s.id === id);
-		existingSession && (session = existingSession);
+		if (existingSession) {
+			session = {
+				...existingSession,
+				// NOTE: `options` and `systemPrompt` are required fields but `existingSessions`
+				// created before this feature was implemented need to be set to the defaults.
+				// Over time we can probably remove them.
+				options: existingSession.options || {},
+				systemPrompt: existingSession.systemPrompt || defaultSystemPrompt
+			};
+		}
 	}
 
 	if (!session) {
@@ -37,7 +66,14 @@ export const loadSession = (id: string): Session => {
 		const model = get(settingsStore)?.ollamaModel || '';
 
 		// Create a new session
-		session = { id, model, messages: [], updatedAt: new Date().toISOString() };
+		session = {
+			id,
+			model,
+			systemPrompt: defaultSystemPrompt,
+			updatedAt: new Date().toISOString(),
+			messages: [],
+			options: {}
+		};
 	}
 
 	return session;
