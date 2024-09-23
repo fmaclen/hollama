@@ -37,6 +37,8 @@
 	// DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
 	// DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
 
+	const shouldConfirmDeletion = writable(false);
+
 	export let data: PageData;
 
 	let session: Writable<Session> = writable(loadSession(data.id));
@@ -49,15 +51,15 @@
 		shouldFocusTextarea: false,
 		isNewSession: true
 	});
-
 	let editorWindow: HTMLElement;
 	let userScrolledUp = false;
-	const shouldConfirmDeletion = writable(false);
 
 	$: $editor.isNewSession = !$session?.messages.length;
+	$: if (data.id) handleSessionChange();
 	$: if ($settingsStore.ollamaModel) $session.model = $settingsStore.ollamaModel;
 	$: if (editorWindow) editorWindow.addEventListener('scroll', handleScroll);
-	$: if (data.id) handleSessionChange();
+	$: if ($editor.view === 'options') scrollToTop();
+	$: if ($editor.view === 'messages') scrollToBottom(true);
 
 	beforeNavigate((navigation) => {
 		if (!$editor.isCompletionInProgress) return;
@@ -174,6 +176,11 @@
 		if (!shouldForceScroll && (!editorWindow || userScrolledUp)) return;
 		await tick();
 		requestAnimationFrame(() => (editorWindow.scrollTop = editorWindow.scrollHeight));
+	}
+
+	async function scrollToTop() {
+		await tick();
+		requestAnimationFrame(() => (editorWindow.scrollTop = 0));
 	}
 
 	function handleError(error: Error) {
