@@ -146,7 +146,7 @@
 			const message: Message = { role: 'assistant', content: $editor.completion };
 			$session.messages = [...$session.messages, message];
 			$session.updatedAt = new Date().toISOString();
-			saveSession({ ...$session });
+			saveSession($session);
 
 			// Final housekeeping
 			$editor.completion = '';

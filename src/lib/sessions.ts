@@ -41,7 +41,7 @@ export const loadSession = (id: string): Session => {
 	// Retrieve the current sessions
 	const currentSessions = get(sessionsStore);
 
-	const systemPrompt: Message = {
+	const defaultSystemPrompt: Message = {
 		role: 'system',
 		content: ''
 	};
@@ -49,10 +49,16 @@ export const loadSession = (id: string): Session => {
 	// Find the session with the given id
 	if (currentSessions) {
 		const existingSession = currentSessions.find((s) => s.id === id);
-		// HACK
-		// Need to add a migration, otherwise the session will be missing systemPrompt
-		// and options causing errors
-		existingSession && (session = { ...existingSession, options: {}, systemPrompt });
+		if (existingSession) {
+			session = {
+				...existingSession,
+				// NOTE: `options` and `systemPrompt` are required fields but `existingSessions`
+				// created before this feature was implemented need to be set to the defaults.
+				// Over time we can probably remove them.
+				options: existingSession.options || {},
+				systemPrompt: existingSession.systemPrompt || defaultSystemPrompt
+			};
+		}
 	}
 
 	if (!session) {
@@ -63,10 +69,10 @@ export const loadSession = (id: string): Session => {
 		session = {
 			id,
 			model,
+			systemPrompt: defaultSystemPrompt,
+			updatedAt: new Date().toISOString(),
 			messages: [],
-			systemPrompt,
-			options: {},
-			updatedAt: new Date().toISOString()
+			options: {}
 		};
 	}
 
