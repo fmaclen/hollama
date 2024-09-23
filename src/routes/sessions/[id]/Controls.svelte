@@ -1,13 +1,20 @@
 <script lang="ts">
+	import { Brain } from 'lucide-svelte';
 	import type { Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
+	import Button from '$lib/components/Button.svelte';
+	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import FieldCheckbox from '$lib/components/FieldCheckbox.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
+	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import P from '$lib/components/P.svelte';
+	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
+	import { knowledgeStore } from '$lib/localStorage';
 	import type { Session } from '$lib/sessions';
+	import { Sitemap } from '$lib/sitemap';
 
 	const DEFAULT_MIROSTAT = '0';
 	const DEFAULT_MIROSTAT_ETA = '0.1';
@@ -37,11 +44,48 @@
 	// HACK: Stop is a `string[]` so we are hardcoding it to a single value for now
 	let stop: string = '';
 	$: if (stop) $session.options.stop = [stop];
+
+	let knowledgeId: string | undefined;
+
+	$: {
+		if ($session.systemPrompt.knowledge && !knowledgeId) {
+			// Initial load: set knowledgeId if knowledge exists
+			knowledgeId = $session.systemPrompt.knowledge.id;
+		} else if (knowledgeId !== $session.systemPrompt.knowledge?.id) {
+			// Knowledge selection changed
+			if (knowledgeId) {
+				const knowledge = loadKnowledge(knowledgeId);
+				$session.systemPrompt.knowledge = knowledge;
+				$session.systemPrompt.content = knowledge.content;
+			} else {
+				// Clear knowledge if knowledgeId is undefined
+				$session.systemPrompt.knowledge = undefined;
+				$session.systemPrompt.content = '';
+			}
+		}
+	}
 </script>
 
 <Fieldset>
 	<P><strong>{$LL.systemPrompt()}</strong></P>
-	<FieldTextEditor label={$LL.systemPrompt()} bind:value={$session.systemPrompt.content} />
+	<FieldSelect
+		label={$LL.systemPrompt()}
+		name="knowledge"
+		disabled={!$knowledgeStore.length}
+		options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
+		bind:value={knowledgeId}
+	>
+		<svelte:fragment slot="nav">
+			<Button
+				aria-label={$LL.newKnowledge()}
+				variant="outline"
+				href={generateNewUrl(Sitemap.KNOWLEDGE)}
+				class="h-full text-muted"
+			>
+				<Brain class="base-icon" />
+			</Button>
+		</svelte:fragment>
+	</FieldSelect>
 </Fieldset>
 
 <Fieldset>
