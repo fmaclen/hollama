@@ -15,6 +15,7 @@
 	export let value: string | undefined = undefined;
 	export let placeholder: string = '';
 	export let allowClear: boolean = true;
+	export let allowSearch: boolean = true;
 	export let onChange: (value: Option) => void = () => {};
 
 	type Option = Selected<string> & { badge?: string };
@@ -100,6 +101,7 @@
 				id={name}
 				disabled={isDisabled}
 				aria-labelledby={`${name}-label`}
+				readonly={!allowSearch}
 			/>
 
 			<nav class="field-select-nav">

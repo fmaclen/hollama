@@ -25,6 +25,7 @@
 		label={$LL.language()}
 		bind:value
 		allowClear={false}
+		allowSearch={false}
 		onChange={() => changeLanguage(value)}
 		options={[
 			{ value: 'en', label: 'English' },
