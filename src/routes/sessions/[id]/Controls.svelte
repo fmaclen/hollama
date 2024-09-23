@@ -9,9 +9,8 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
-	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import P from '$lib/components/P.svelte';
-	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
+	import { loadKnowledge } from '$lib/knowledge';
 	import { knowledgeStore } from '$lib/localStorage';
 	import type { Session } from '$lib/sessions';
 	import { Sitemap } from '$lib/sitemap';
