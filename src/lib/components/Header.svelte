@@ -22,7 +22,7 @@
 	}
 
 	.header__headline {
-		@apply flex flex-col gap-y-2 p-4;
+		@apply flex flex-col gap-y-1.5 p-4;
 		@apply lg:p-6;
 	}
 
