@@ -20,7 +20,7 @@
 	}
 </script>
 
-<div class="session__articles" bind:this={messagesWindow}>
+<div class="session__history" bind:this={messagesWindow}>
 	{#if $editor.isNewSession}
 		<EmptyMessage>{$LL.writePromptToStart()}</EmptyMessage>
 	{/if}
@@ -42,7 +42,7 @@
 </div>
 
 <style lang="postcss">
-	.session__articles {
+	.session__history {
 		@apply overflow-scrollbar flex-grow p-4;
 		@apply lg:p-8;
 	}

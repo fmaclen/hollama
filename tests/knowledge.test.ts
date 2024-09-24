@@ -126,8 +126,10 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	// Check the knowledge is available in the session
 	await page.getByText('Sessions').click();
 	await page.getByTestId('new-session').click();
-	await page.getByLabel('Options').click();
-	await page.getByLabel('System prompt').click();
+	await page.getByLabel('Controls').click();
+	await page
+		.locator('fieldset:has-text("System prompt") input[aria-labelledby="knowledge-label"]')
+		.click();
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[0].name })).toBeVisible();
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[1].name })).toBeVisible();
 
@@ -145,8 +147,8 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	// Check is no longer in the session
 	await page.getByText('Sessions').click();
 	await page.getByTestId('new-session').click();
-	await page.getByLabel('Options').click();
-	await page.getByLabel('System prompt').click();
+	await page.getByLabel('Controls').click();
+	await page.getByLabel('Knowledge', { exact: true }).click();
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[0].name })).not.toBeVisible();
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[1].name })).toBeVisible();
 });
@@ -178,7 +180,7 @@ test('all knowledge can be deleted', async ({ page }) => {
 });
 
 test('can use knowledge as system prompt in the session', async ({ page }) => {
-	const sessionArticle = page.locator('.session__articles .article');
+	const sessionArticle = page.locator('.session__history .article');
 	const knowledgeId = page.getByTestId('knowledge-id');
 
 	await mockTagsResponse(page);
@@ -194,8 +196,8 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	await expect(sessionArticle).not.toBeVisible();
 
 	// Create a new session with knowledge
-	await page.getByLabel('Options').click();
-	await chooseFromCombobox(page, 'System prompt', MOCK_KNOWLEDGE[0].name);
+	await page.getByLabel('Controls').click();
+	await chooseFromCombobox(page, 'Knowledge', MOCK_KNOWLEDGE[0].name);
 	await page.locator('.prompt-editor__textarea').fill('What is this about?');
 
 	// Check the request includes the knowledge as a system prompt when submitting the form
@@ -269,8 +271,12 @@ test('can use shortcut to create knowledge from session', async ({ page }) => {
 
 	await page.goto('/sessions');
 	await page.getByTestId('new-session').click();
-	await page.getByLabel('Options').click();
-	await expect(page.getByLabel('System prompt')).toBeDisabled(); // Disabled when there is no knowledge
+	await page.getByLabel('Controls').click();
+	const knowledgeCombobox = page.locator(
+		'fieldset:has-text("System prompt") input[aria-labelledby="knowledge-label"]'
+	);
+	await expect(knowledgeCombobox).toBeDisabled();
+	await expect(knowledgeCombobox).toHaveAttribute('placeholder', 'No knowledge');
 	await expect(sessionId).toBeVisible();
 	await expect(knowledgeId).not.toBeVisible();
 
