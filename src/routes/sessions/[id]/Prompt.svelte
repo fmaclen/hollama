@@ -19,8 +19,10 @@
 	export let stopCompletion: () => void;
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
 
-	// FIXME this always focuses on the textarea when typing on any field in <controls>
-	// $: $prompt.shouldFocusTextarea = !$prompt.isCodeEditor;
+	function toggleCodeEditor() {
+		$editor.isCodeEditor = !$editor.isCodeEditor;
+		$editor.shouldFocusTextarea = !$editor.isCodeEditor;
+	}
 
 	function switchToMessages() {
 		$editor.view = 'messages';
@@ -36,10 +38,7 @@
 </script>
 
 <div class="prompt-editor" class:prompt-editor--fullscreen={$editor.isCodeEditor}>
-	<button
-		class="prompt-editor__toggle"
-		on:click={() => ($editor.isCodeEditor = !$editor.isCodeEditor)}
-	>
+	<button class="prompt-editor__toggle" on:click={toggleCodeEditor}>
 		<UnfoldVertical class="mx-auto my-2 h-3 w-3 opacity-50" />
 	</button>
 

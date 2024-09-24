@@ -10,7 +10,7 @@
 	export let value: string | number | undefined = undefined;
 	export let type: 'text' | 'number' = 'text';
 
-	// New props for numeric inputs
+	// Props for numeric inputs
 	export let min: number | undefined = undefined;
 	export let max: number | undefined = undefined;
 	export let step: number | undefined = undefined;

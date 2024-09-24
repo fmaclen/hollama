@@ -12,7 +12,7 @@
 
 	export let label: LocalizedString;
 	export let value: string;
-	export let handleSubmit: (event?: Event) => void | undefined = undefined;
+	export let handleSubmit: ((event?: Event) => void) | undefined = undefined;
 
 	let view: EditorView;
 	let container: HTMLDivElement | null;
@@ -60,7 +60,7 @@
 		{
 			key: 'Mod-Enter',
 			run: () => {
-				handleSubmit();
+				handleSubmit?.();
 				return true;
 			}
 		}
