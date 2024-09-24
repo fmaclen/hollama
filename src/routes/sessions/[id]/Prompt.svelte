@@ -59,14 +59,14 @@
 					</div>
 					<div
 						class="segmented-nav__button"
-						class:segmented-nav__button--active={$editor.view === 'options'}
+						class:segmented-nav__button--active={$editor.view === 'controls'}
 					>
 						<Button
 							aria-label={$LL.controls()}
 							variant="icon"
-							on:click={() => ($editor.view = 'options')}
+							on:click={() => ($editor.view = 'controls')}
 							class="h-full"
-							isActive={$editor.view === 'options'}
+							isActive={$editor.view === 'controls'}
 						>
 							<Settings_2 class="base-icon" />
 						</Button>
@@ -195,7 +195,7 @@
 	}
 
 	.segmented-nav__button {
-		@apply h-full text-shade-6 rounded-sm px-1;
+		@apply h-full rounded-sm px-1 text-shade-6;
 
 		&--active {
 			@apply bg-shade-0 text-neutral-50 shadow;

@@ -24,7 +24,7 @@ export interface Session {
 
 export interface Editor {
 	prompt: string;
-	view: 'messages' | 'options';
+	view: 'messages' | 'controls';
 	messageIndexToEdit: number | null;
 	isCodeEditor: boolean;
 	isCompletionInProgress: boolean;

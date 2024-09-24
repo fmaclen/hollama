@@ -30,13 +30,6 @@
 	import Messages from './Messages.svelte';
 	import PromptEditor from './Prompt.svelte';
 
-	// DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
-	// DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
-	$: console.log('$session', $session);
-	$: console.log('$prompt', $editor);
-	// DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
-	// DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
-
 	const shouldConfirmDeletion = writable(false);
 
 	export let data: PageData;
@@ -51,15 +44,14 @@
 		shouldFocusTextarea: false,
 		isNewSession: true
 	});
-	let editorWindow: HTMLElement;
+	let messagesWindow: HTMLDivElement;
 	let userScrolledUp = false;
 
 	$: $editor.isNewSession = !$session?.messages.length;
+	$: if ($editor.view === 'messages') scrollToBottom(true);
 	$: if (data.id) handleSessionChange();
 	$: if ($settingsStore.ollamaModel) $session.model = $settingsStore.ollamaModel;
-	$: if (editorWindow) editorWindow.addEventListener('scroll', handleScroll);
-	// $: if ($editor.view === 'options') scrollToTop();
-	// $: if ($editor.view === 'messages') scrollToBottom(true);
+	$: if (messagesWindow) messagesWindow.addEventListener('scroll', handleScroll);
 
 	beforeNavigate((navigation) => {
 		if (!$editor.isCompletionInProgress) return;
@@ -90,11 +82,6 @@
 		scrollToBottom();
 	}
 
-	function handleScroll() {
-		const { scrollTop, scrollHeight, clientHeight } = editorWindow;
-		userScrolledUp = scrollTop + clientHeight < scrollHeight;
-	}
-
 	async function handleSubmitNewMessage() {
 		const message: Message = { role: 'user', content: $editor.prompt };
 		$session.messages = [...$session.messages, message];
@@ -123,6 +110,16 @@
 
 		if ($editor.messageIndexToEdit !== null) handleSubmitEditMessage();
 		else handleSubmitNewMessage();
+	}
+
+	async function handleRetry(index: number) {
+		// Remove all the messages after the index
+		$session.messages = $session.messages.slice(0, index);
+
+		const mostRecentUserMessage = $session.messages.filter((m) => m.role === 'user').at(-1);
+		if (!mostRecentUserMessage) throw new Error('No user message to retry');
+
+		await handleCompletion($session.messages);
 	}
 
 	async function handleCompletion(messages: Message[]) {
@@ -161,26 +158,13 @@
 		}
 	}
 
-	async function handleRetry(index: number) {
-		// Remove all the messages after the index
-		$session.messages = $session.messages.slice(0, index);
-
-		const mostRecentUserMessage = $session.messages.filter((m) => m.role === 'user').at(-1);
-		if (!mostRecentUserMessage) throw new Error('No user message to retry');
-
-		await handleCompletion($session.messages);
+	function stopCompletion() {
+		$editor.prompt = $session.messages[$session.messages.length - 1].content; // Reset the prompt to the last sent message
+		$editor.abortController?.abort();
+		$editor.completion = '';
+		$editor.isCompletionInProgress = false;
+		$session.messages = $session.messages.slice(0, -1); // Remove the "incomplete" AI response
 	}
-
-	async function scrollToBottom(shouldForceScroll = false) {
-		if (!shouldForceScroll && (!editorWindow || userScrolledUp)) return;
-		await tick();
-		requestAnimationFrame(() => (editorWindow.scrollTop = editorWindow.scrollHeight));
-	}
-
-	// async function scrollToTop() {
-	// 	await tick();
-	// 	requestAnimationFrame(() => (editorWindow.scrollTop = 0));
-	// }
 
 	function handleError(error: Error) {
 		let content: string;
@@ -194,12 +178,15 @@
 		$session.messages = [...$session.messages, message];
 	}
 
-	function stopCompletion() {
-		$editor.prompt = $session.messages[$session.messages.length - 1].content; // Reset the prompt to the last sent message
-		$editor.abortController?.abort();
-		$editor.completion = '';
-		$editor.isCompletionInProgress = false;
-		$session.messages = $session.messages.slice(0, -1); // Remove the "incomplete" AI response
+	function handleScroll() {
+		const { scrollTop, scrollHeight, clientHeight } = messagesWindow;
+		userScrolledUp = scrollTop + clientHeight < scrollHeight;
+	}
+
+	async function scrollToBottom(shouldForceScroll = false) {
+		if (!shouldForceScroll && (!messagesWindow || userScrolledUp)) return;
+		await tick();
+		requestAnimationFrame(() => (messagesWindow.scrollTop = messagesWindow.scrollHeight));
 	}
 </script>
 
@@ -226,23 +213,17 @@
 		</svelte:fragment>
 	</Header>
 
-	<div class="session__history" bind:this={editorWindow}>
-		{#if $editor.view === 'options'}
-			<Controls {session} />
-		{:else}
-			<Messages {session} {editor} {handleRetry} />
-		{/if}
+	{#if $editor.view === 'controls'}
+		<Controls {session} />
+	{:else}
+		<Messages bind:messagesWindow {session} {editor} {handleRetry} />
+	{/if}
 
-		<PromptEditor {editor} {handleSubmit} {stopCompletion} />
-	</div>
+	<PromptEditor {editor} {handleSubmit} {stopCompletion} />
 </div>
 
 <style lang="postcss">
 	.session {
-		@apply overflow-scrollbar flex h-full w-full flex-col;
-	}
-
-	.session__history {
-		@apply overflow-scrollbar flex h-full flex-grow flex-col;
+		@apply flex h-full w-full flex-col overflow-hidden;
 	}
 </style>

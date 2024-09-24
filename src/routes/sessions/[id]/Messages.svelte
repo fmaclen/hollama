@@ -9,6 +9,7 @@
 
 	export let session: Writable<Session>;
 	export let editor: Writable<Editor>;
+	export let messagesWindow: HTMLDivElement;
 	export let handleRetry: (index: number) => void;
 
 	function handleEditMessage(message: Message) {
@@ -19,7 +20,7 @@
 	}
 </script>
 
-<div class="session__articles">
+<div class="session__articles" bind:this={messagesWindow}>
 	{#if $editor.isNewSession}
 		<EmptyMessage>{$LL.writePromptToStart()}</EmptyMessage>
 	{/if}
@@ -42,7 +43,7 @@
 
 <style lang="postcss">
 	.session__articles {
-		@apply flex-grow p-4;
+		@apply overflow-scrollbar flex-grow p-4;
 		@apply lg:p-8;
 	}
 </style>
