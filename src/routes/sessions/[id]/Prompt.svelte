@@ -17,9 +17,15 @@
 	export let editor: Writable<Editor>;
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;
+	export let scrollToBottom: (shouldForceScroll: boolean) => void;
 
 	// FIXME this always focuses on the textarea when typing on any field in <controls>
 	// $: $prompt.shouldFocusTextarea = !$prompt.isCodeEditor;
+
+	function switchToMessages() {
+		$editor.view = 'messages';
+		scrollToBottom(true);
+	}
 
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.shiftKey) return;
@@ -50,7 +56,7 @@
 						<Button
 							aria-label={$LL.messages()}
 							variant="icon"
-							on:click={() => ($editor.view = 'messages')}
+							on:click={switchToMessages}
 							class="h-full"
 							isActive={$editor.view === 'messages'}
 						>

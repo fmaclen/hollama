@@ -48,7 +48,6 @@
 	let userScrolledUp = false;
 
 	$: $editor.isNewSession = !$session?.messages.length;
-	$: if ($editor.view === 'messages') scrollToBottom(true);
 	$: if (data.id) handleSessionChange();
 	$: if ($settingsStore.ollamaModel) $session.model = $settingsStore.ollamaModel;
 	$: if (messagesWindow) messagesWindow.addEventListener('scroll', handleScroll);
@@ -219,7 +218,7 @@
 		<Messages bind:messagesWindow {session} {editor} {handleRetry} />
 	{/if}
 
-	<PromptEditor {editor} {handleSubmit} {stopCompletion} />
+	<PromptEditor {editor} {handleSubmit} {stopCompletion} {scrollToBottom} />
 </div>
 
 <style lang="postcss">
