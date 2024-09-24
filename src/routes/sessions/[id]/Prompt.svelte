@@ -195,10 +195,10 @@
 	}
 
 	.segmented-nav__button {
-		@apply h-full text-shade-6;
+		@apply h-full text-shade-6 rounded-sm px-1;
 
 		&--active {
-			@apply bg-shade-0 text-neutral-50;
+			@apply bg-shade-0 text-neutral-50 shadow;
 		}
 	}
 </style>
