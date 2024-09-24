@@ -86,6 +86,10 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await page.locator('article', { hasText: "Here's a basic function" }).hover();
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'session.png' });
 
+	await page.getByLabel('Controls').click();
+	await expect(page.getByText('System prompt')).toBeVisible();
+	expect(await page.screenshot()).toMatchSnapshot({ name: 'session-controls.png' });
+
 	await page.getByText('Knowledge', { exact: true }).click();
 	await expect(page.getByText('No knowledge')).toBeVisible();
 
