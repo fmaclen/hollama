@@ -503,10 +503,6 @@ type RootTranslation = {
 	 */
 	f16Kv: string
 	/**
-	 * L​o​g​i​t​s​ ​a​l​l
-	 */
-	logitsAll: string
-	/**
 	 * V​o​c​a​b​ ​o​n​l​y
 	 */
 	vocabOnly: string
@@ -518,10 +514,6 @@ type RootTranslation = {
 	 * U​s​e​ ​M​L​O​C​K
 	 */
 	useMlock: string
-	/**
-	 * E​m​b​e​d​d​i​n​g​ ​o​n​l​y
-	 */
-	embeddingOnly: string
 	/**
 	 * P​e​n​a​l​i​z​e​ ​n​e​w​l​i​n​e
 	 */
@@ -1014,10 +1006,6 @@ The completion in progress will stop
 	 */
 	f16Kv: () => LocalizedString
 	/**
-	 * Logits all
-	 */
-	logitsAll: () => LocalizedString
-	/**
 	 * Vocab only
 	 */
 	vocabOnly: () => LocalizedString
@@ -1029,10 +1017,6 @@ The completion in progress will stop
 	 * Use MLOCK
 	 */
 	useMlock: () => LocalizedString
-	/**
-	 * Embedding only
-	 */
-	embeddingOnly: () => LocalizedString
 	/**
 	 * Penalize newline
 	 */

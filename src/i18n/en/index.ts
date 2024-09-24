@@ -124,11 +124,9 @@ const en = {
 	numa: 'NUMA',
 	lowVram: 'Low VRAM',
 	f16Kv: 'F16 KV',
-	logitsAll: 'Logits all',
 	vocabOnly: 'Vocab only',
 	useMmap: 'Use MMAP',
 	useMlock: 'Use MLOCK',
-	embeddingOnly: 'Embedding only',
 	penalizeNewline: 'Penalize newline'
 } satisfies BaseTranslation;
 
