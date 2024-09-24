@@ -28,7 +28,7 @@
 		options={[
 			{ value: 'en', label: 'English' },
 			{ value: 'es', label: 'Español' },
-			{ value: 'tr', label: 'Türkçe' },
+			{ value: 'tr', label: 'Türkçe' }
 		]}
 	/>
 </Fieldset>
