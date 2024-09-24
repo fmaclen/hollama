@@ -22,21 +22,21 @@
 	const DEFAULT_REPEAT_LAST_N = '64';
 	const DEFAULT_REPEAT_PENALTY = '1.1';
 	const DEFAULT_TEMPERATURE = '0.8';
-	const DEFAULT_SEED = '';
+	const DEFAULT_SEED = 'Random';
 	const DEFAULT_STOP = '';
 	const DEFAULT_TFS_Z = '1';
 	const DEFAULT_NUM_PREDICT = '128';
 	const DEFAULT_TOP_K = '40';
 	const DEFAULT_TOP_P = '0.9';
-	const DEFAULT_MIN_P = '0.05';
-	const DEFAULT_NUM_BATCH = '1';
-	const DEFAULT_NUM_GPU = '1';
-	const DEFAULT_MAIN_GPU = '0';
-	const DEFAULT_NUM_THREAD = '4';
-	const DEFAULT_NUM_KEEP = '0';
-	const DEFAULT_TYPICAL_P = '1.0';
-	const DEFAULT_PRESENCE_PENALTY = '0';
-	const DEFAULT_FREQUENCY_PENALTY = '0';
+	const DEFAULT_MIN_P = '0.0';
+	const DEFAULT_NUM_BATCH = '';
+	const DEFAULT_NUM_GPU = 'Auto';
+	const DEFAULT_MAIN_GPU = 'Auto';
+	const DEFAULT_NUM_THREAD = 'Auto';
+	const DEFAULT_NUM_KEEP = 'Auto';
+	const DEFAULT_TYPICAL_P = '';
+	const DEFAULT_PRESENCE_PENALTY = '';
+	const DEFAULT_FREQUENCY_PENALTY = '';
 
 	export let session: Writable<Session>;
 
@@ -68,9 +68,10 @@
 <Fieldset>
 	<P><strong>{$LL.systemPrompt()}</strong></P>
 	<FieldSelect
-		label={$LL.systemPrompt()}
+		label={$LL.knowledge()}
 		name="knowledge"
 		disabled={!$knowledgeStore.length}
+		placeholder={!$knowledgeStore.length ? $LL.emptyKnowledge() : ''}
 		options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
 		bind:value={knowledgeId}
 	>
@@ -88,84 +89,8 @@
 </Fieldset>
 
 <Fieldset>
-	<P><strong>Model options</strong></P>
-	<div class="grid grid-cols-2 gap-3">
-		<FieldInput
-			name="num_ctx"
-			label={$LL.numCtx()}
-			type="number"
-			min={1}
-			step={1}
-			placeholder={DEFAULT_NUM_CTX}
-			bind:value={$session.options.num_ctx}
-		/>
-		<FieldInput
-			name="num_batch"
-			label={$LL.numBatch()}
-			type="number"
-			min={1}
-			step={1}
-			placeholder={DEFAULT_NUM_BATCH}
-			bind:value={$session.options.num_batch}
-		/>
-		<FieldInput
-			name="num_gpu"
-			label={$LL.numGpu()}
-			type="number"
-			min={0}
-			step={1}
-			placeholder={DEFAULT_NUM_GPU}
-			bind:value={$session.options.num_gpu}
-		/>
-		<FieldInput
-			name="main_gpu"
-			label={$LL.mainGpu()}
-			type="number"
-			min={0}
-			step={1}
-			placeholder={DEFAULT_MAIN_GPU}
-			bind:value={$session.options.main_gpu}
-		/>
-		<FieldInput
-			name="num_thread"
-			label={$LL.numThread()}
-			type="number"
-			min={1}
-			step={1}
-			placeholder={DEFAULT_NUM_THREAD}
-			bind:value={$session.options.num_thread}
-		/>
-		<br />
-		<FieldCheckbox label={$LL.numa()} bind:checked={$session.options.numa} name="numa" />
-		<FieldCheckbox label={$LL.lowVram()} bind:checked={$session.options.low_vram} name="low_vram" />
-		<FieldCheckbox label={$LL.f16Kv()} bind:checked={$session.options.f16_kv} name="f16_kv" />
-		<FieldCheckbox
-			label={$LL.logitsAll()}
-			bind:checked={$session.options.logits_all}
-			name="logits_all"
-		/>
-		<FieldCheckbox
-			label={$LL.vocabOnly()}
-			bind:checked={$session.options.vocab_only}
-			name="vocab_only"
-		/>
-		<FieldCheckbox label={$LL.useMmap()} bind:checked={$session.options.use_mmap} name="use_mmap" />
-		<FieldCheckbox
-			label={$LL.useMlock()}
-			bind:checked={$session.options.use_mlock}
-			name="use_mlock"
-		/>
-		<FieldCheckbox
-			label={$LL.embeddingOnly()}
-			bind:checked={$session.options.embedding_only}
-			name="embedding_only"
-		/>
-	</div>
-</Fieldset>
-
-<Fieldset>
-	<P><strong>Runtime options</strong></P>
-	<div class="grid grid-cols-2 gap-3">
+	<P><strong>{$LL.modelOptions()}</strong></P>
+	<div class="controls-fieldset__inputs">
 		<FieldInput
 			name="num_keep"
 			label={$LL.numKeep()}
@@ -317,8 +242,8 @@
 			placeholder={DEFAULT_STOP}
 			bind:value={stop}
 		/>
-		<br />
-
+	</div>
+	<div class="controls-fieldset__checkboxes">
 		<FieldCheckbox
 			label={$LL.penalizeNewline()}
 			bind:checked={$session.options.penalize_newline}
@@ -326,3 +251,80 @@
 		/>
 	</div>
 </Fieldset>
+
+<Fieldset>
+	<P><strong>{$LL.runtimeOptions()}</strong></P>
+	<div class="controls-fieldset__inputs">
+		<FieldInput
+			name="num_ctx"
+			label={$LL.numCtx()}
+			type="number"
+			min={1}
+			step={1}
+			placeholder={DEFAULT_NUM_CTX}
+			bind:value={$session.options.num_ctx}
+		/>
+		<FieldInput
+			name="num_batch"
+			label={$LL.numBatch()}
+			type="number"
+			min={1}
+			step={1}
+			placeholder={DEFAULT_NUM_BATCH}
+			bind:value={$session.options.num_batch}
+		/>
+		<FieldInput
+			name="num_gpu"
+			label={$LL.numGpu()}
+			type="number"
+			min={0}
+			step={1}
+			placeholder={DEFAULT_NUM_GPU}
+			bind:value={$session.options.num_gpu}
+		/>
+		<FieldInput
+			name="main_gpu"
+			label={$LL.mainGpu()}
+			type="number"
+			min={0}
+			step={1}
+			placeholder={DEFAULT_MAIN_GPU}
+			bind:value={$session.options.main_gpu}
+		/>
+		<FieldInput
+			name="num_thread"
+			label={$LL.numThread()}
+			type="number"
+			min={1}
+			step={1}
+			placeholder={DEFAULT_NUM_THREAD}
+			bind:value={$session.options.num_thread}
+		/>
+	</div>
+	<div class="controls-fieldset__checkboxes">
+		<FieldCheckbox label={$LL.numa()} bind:checked={$session.options.numa} name="numa" />
+		<FieldCheckbox label={$LL.lowVram()} bind:checked={$session.options.low_vram} name="low_vram" />
+		<FieldCheckbox label={$LL.f16Kv()} bind:checked={$session.options.f16_kv} name="f16_kv" />
+		<FieldCheckbox
+			label={$LL.vocabOnly()}
+			bind:checked={$session.options.vocab_only}
+			name="vocab_only"
+		/>
+		<FieldCheckbox label={$LL.useMmap()} bind:checked={$session.options.use_mmap} name="use_mmap" />
+		<FieldCheckbox
+			label={$LL.useMlock()}
+			bind:checked={$session.options.use_mlock}
+			name="use_mlock"
+		/>
+	</div>
+</Fieldset>
+
+<style lang="postcss">
+	.controls-fieldset__inputs {
+		@apply grid grid-cols-2 gap-2;
+	}
+
+	.controls-fieldset__checkboxes {
+		@apply flex flex-wrap gap-2;
+	}
+</style>

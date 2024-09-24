@@ -62,7 +62,7 @@
 						class:segmented-nav__button--active={$editor.view === 'options'}
 					>
 						<Button
-							aria-label={$LL.options()}
+							aria-label={$LL.controls()}
 							variant="icon"
 							on:click={() => ($editor.view = 'options')}
 							class="h-full"

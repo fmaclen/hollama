@@ -96,6 +96,10 @@ type RootTranslation = {
 	 */
 	content: string
 	/**
+	 * C​o​n​t​r​o​l​s
+	 */
+	controls: string
+	/**
 	 * C​o​p​y
 	 */
 	copy: string
@@ -241,6 +245,10 @@ type RootTranslation = {
 	 */
 	modelWasDownloaded: RequiredParams<'model'>
 	/**
+	 * M​o​d​e​l​ ​o​p​t​i​o​n​s
+	 */
+	modelOptions: string
+	/**
 	 * M​o​t​d
 	 */
 	motd: string
@@ -281,10 +289,6 @@ type RootTranslation = {
 	 */
 	ollamaLibrary: string
 	/**
-	 * O​p​t​i​o​n​s
-	 */
-	options: string
-	/**
 	 * O​t​h​e​r​ ​m​o​d​e​l​s
 	 */
 	otherModels: string
@@ -324,6 +328,10 @@ type RootTranslation = {
 	 * R​u​n
 	 */
 	run: string
+	/**
+	 * R​u​n​t​i​m​e​ ​o​p​t​i​o​n​s
+	 */
+	runtimeOptions: string
 	/**
 	 * S​a​v​e
 	 */
@@ -395,19 +403,11 @@ type RootTranslation = {
 	 */
 	you: string
 	/**
-	 * S​h​o​w​ ​c​o​n​t​r​o​l​s
-	 */
-	showControls: string
-	/**
-	 * H​i​d​e​ ​c​o​n​t​r​o​l​s
-	 */
-	hideControls: string
-	/**
 	 * M​i​r​o​s​t​a​t
 	 */
 	mirostat: string
 	/**
-	 * M​i​r​o​s​t​a​t​ ​E​t​a
+	 * M​i​r​o​s​t​a​t​ ​E​T​A
 	 */
 	mirostatEta: string
 	/**
@@ -415,15 +415,15 @@ type RootTranslation = {
 	 */
 	mirostatTau: string
 	/**
-	 * C​o​n​t​e​x​t​ ​W​i​n​d​o​w​ ​S​i​z​e
+	 * C​o​n​t​e​x​t​ ​s​i​z​e
 	 */
 	numCtx: string
 	/**
-	 * R​e​p​e​a​t​ ​L​a​s​t​ ​N
+	 * R​e​p​e​a​t​ ​l​a​s​t​ ​N
 	 */
 	repeatLastN: string
 	/**
-	 * R​e​p​e​a​t​ ​P​e​n​a​l​t​y
+	 * R​e​p​e​a​t​ ​p​e​n​a​l​t​y
 	 */
 	repeatPenalty: string
 	/**
@@ -431,11 +431,11 @@ type RootTranslation = {
 	 */
 	temperature: string
 	/**
-	 * R​a​n​d​o​m​ ​S​e​e​d
+	 * S​e​e​d
 	 */
 	seed: string
 	/**
-	 * S​t​o​p​ ​S​e​q​u​e​n​c​e
+	 * S​t​o​p​ ​s​e​q​u​e​n​c​e
 	 */
 	stop: string
 	/**
@@ -443,7 +443,7 @@ type RootTranslation = {
 	 */
 	tfsZ: string
 	/**
-	 * N​u​m​b​e​r​ ​o​f​ ​T​o​k​e​n​s​ ​t​o​ ​P​r​e​d​i​c​t
+	 * N​u​m​ ​p​r​e​d​i​c​t
 	 */
 	numPredict: string
 	/**
@@ -463,19 +463,19 @@ type RootTranslation = {
 	 */
 	typicalP: string
 	/**
-	 * P​r​e​s​e​n​c​e​ ​P​e​n​a​l​t​y
+	 * P​r​e​s​e​n​c​e​ ​p​e​n​a​l​t​y
 	 */
 	presencePenalty: string
 	/**
-	 * F​r​e​q​u​e​n​c​y​ ​P​e​n​a​l​t​y
+	 * F​r​e​q​u​e​n​c​y​ ​p​e​n​a​l​t​y
 	 */
 	frequencyPenalty: string
 	/**
-	 * N​u​m​b​e​r​ ​o​f​ ​B​a​t​c​h
+	 * N​u​m​ ​b​a​t​c​h
 	 */
 	numBatch: string
 	/**
-	 * N​u​m​b​e​r​ ​o​f​ ​G​P​U
+	 * N​u​m​ ​G​P​U
 	 */
 	numGpu: string
 	/**
@@ -483,11 +483,11 @@ type RootTranslation = {
 	 */
 	mainGpu: string
 	/**
-	 * N​u​m​b​e​r​ ​o​f​ ​T​h​r​e​a​d
+	 * N​u​m​b​e​r​ ​o​f​ ​t​h​r​e​a​d​s
 	 */
 	numThread: string
 	/**
-	 * N​u​m​b​e​r​ ​o​f​ ​K​e​e​p
+	 * N​u​m​ ​k​e​e​p
 	 */
 	numKeep: string
 	/**
@@ -503,11 +503,11 @@ type RootTranslation = {
 	 */
 	f16Kv: string
 	/**
-	 * L​o​g​i​t​s​ ​A​l​l
+	 * L​o​g​i​t​s​ ​a​l​l
 	 */
 	logitsAll: string
 	/**
-	 * V​o​c​a​b​ ​O​n​l​y
+	 * V​o​c​a​b​ ​o​n​l​y
 	 */
 	vocabOnly: string
 	/**
@@ -519,11 +519,11 @@ type RootTranslation = {
 	 */
 	useMlock: string
 	/**
-	 * E​m​b​e​d​d​i​n​g​ ​O​n​l​y
+	 * E​m​b​e​d​d​i​n​g​ ​o​n​l​y
 	 */
 	embeddingOnly: string
 	/**
-	 * P​e​n​a​l​i​z​e​ ​N​e​w​l​i​n​e
+	 * P​e​n​a​l​i​z​e​ ​n​e​w​l​i​n​e
 	 */
 	penalizeNewline: string
 }
@@ -610,6 +610,10 @@ The completion in progress will stop
 	 * Content
 	 */
 	content: () => LocalizedString
+	/**
+	 * Controls
+	 */
+	controls: () => LocalizedString
 	/**
 	 * Copy
 	 */
@@ -754,6 +758,10 @@ The completion in progress will stop
 	 */
 	modelWasDownloaded: (arg: { model: string }) => LocalizedString
 	/**
+	 * Model options
+	 */
+	modelOptions: () => LocalizedString
+	/**
 	 * Motd
 	 */
 	motd: () => LocalizedString
@@ -794,10 +802,6 @@ The completion in progress will stop
 	 */
 	ollamaLibrary: () => LocalizedString
 	/**
-	 * Options
-	 */
-	options: () => LocalizedString
-	/**
 	 * Other models
 	 */
 	otherModels: () => LocalizedString
@@ -837,6 +841,10 @@ The completion in progress will stop
 	 * Run
 	 */
 	run: () => LocalizedString
+	/**
+	 * Runtime options
+	 */
+	runtimeOptions: () => LocalizedString
 	/**
 	 * Save
 	 */
@@ -906,19 +914,11 @@ The completion in progress will stop
 	 */
 	you: () => LocalizedString
 	/**
-	 * Show controls
-	 */
-	showControls: () => LocalizedString
-	/**
-	 * Hide controls
-	 */
-	hideControls: () => LocalizedString
-	/**
 	 * Mirostat
 	 */
 	mirostat: () => LocalizedString
 	/**
-	 * Mirostat Eta
+	 * Mirostat ETA
 	 */
 	mirostatEta: () => LocalizedString
 	/**
@@ -926,15 +926,15 @@ The completion in progress will stop
 	 */
 	mirostatTau: () => LocalizedString
 	/**
-	 * Context Window Size
+	 * Context size
 	 */
 	numCtx: () => LocalizedString
 	/**
-	 * Repeat Last N
+	 * Repeat last N
 	 */
 	repeatLastN: () => LocalizedString
 	/**
-	 * Repeat Penalty
+	 * Repeat penalty
 	 */
 	repeatPenalty: () => LocalizedString
 	/**
@@ -942,11 +942,11 @@ The completion in progress will stop
 	 */
 	temperature: () => LocalizedString
 	/**
-	 * Random Seed
+	 * Seed
 	 */
 	seed: () => LocalizedString
 	/**
-	 * Stop Sequence
+	 * Stop sequence
 	 */
 	stop: () => LocalizedString
 	/**
@@ -954,7 +954,7 @@ The completion in progress will stop
 	 */
 	tfsZ: () => LocalizedString
 	/**
-	 * Number of Tokens to Predict
+	 * Num predict
 	 */
 	numPredict: () => LocalizedString
 	/**
@@ -974,19 +974,19 @@ The completion in progress will stop
 	 */
 	typicalP: () => LocalizedString
 	/**
-	 * Presence Penalty
+	 * Presence penalty
 	 */
 	presencePenalty: () => LocalizedString
 	/**
-	 * Frequency Penalty
+	 * Frequency penalty
 	 */
 	frequencyPenalty: () => LocalizedString
 	/**
-	 * Number of Batch
+	 * Num batch
 	 */
 	numBatch: () => LocalizedString
 	/**
-	 * Number of GPU
+	 * Num GPU
 	 */
 	numGpu: () => LocalizedString
 	/**
@@ -994,11 +994,11 @@ The completion in progress will stop
 	 */
 	mainGpu: () => LocalizedString
 	/**
-	 * Number of Thread
+	 * Number of threads
 	 */
 	numThread: () => LocalizedString
 	/**
-	 * Number of Keep
+	 * Num keep
 	 */
 	numKeep: () => LocalizedString
 	/**
@@ -1014,11 +1014,11 @@ The completion in progress will stop
 	 */
 	f16Kv: () => LocalizedString
 	/**
-	 * Logits All
+	 * Logits all
 	 */
 	logitsAll: () => LocalizedString
 	/**
-	 * Vocab Only
+	 * Vocab only
 	 */
 	vocabOnly: () => LocalizedString
 	/**
@@ -1030,11 +1030,11 @@ The completion in progress will stop
 	 */
 	useMlock: () => LocalizedString
 	/**
-	 * Embedding Only
+	 * Embedding only
 	 */
 	embeddingOnly: () => LocalizedString
 	/**
-	 * Penalize Newline
+	 * Penalize newline
 	 */
 	penalizeNewline: () => LocalizedString
 }
