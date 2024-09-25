@@ -184,22 +184,36 @@ test('can switch language to spanish and back to english', async ({ page }) => {
 	await expect(page.getByText('Servidor')).not.toBeVisible();
 });
 
-test.describe('locales', () => {
-	test.use({ locale: 'es-ES' });
+test.describe('Locales', () => {
+	test.describe('Spanish', () => {
+		test.use({ locale: 'es-ES' });
+		test('default language is spanish', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('es-ES');
 
-	test('default language is spanish', async ({ page }) => {
-		await page.goto('/settings');
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Server')).not.toBeVisible();
+			await expect(page.getByText('Servidor')).toBeVisible();
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"es"'
+			);
+		});
+	});
 
-		expect(await page.evaluate(() => navigator.language)).toBe('es-ES');
+	test.describe('Turkish', () => {
+		test.use({ locale: 'tr-TR' });
+		test('default language is turkish', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('tr-TR');
 
-		await page.evaluate(() => window.localStorage.clear());
-		await page.reload();
-
-		expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
-			'"userLanguage":"es"'
-		);
-
-		await expect(page.getByText('Server')).not.toBeVisible();
-		await expect(page.getByText('Servidor')).toBeVisible();
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Server')).not.toBeVisible();
+			await expect(page.getByText('Sunucu')).toBeVisible();
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"tr"'
+			);
+		});
 	});
 });

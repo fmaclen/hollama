@@ -29,7 +29,8 @@
 		onChange={() => changeLanguage(value)}
 		options={[
 			{ value: 'en', label: 'English' },
-			{ value: 'es', label: 'Español' }
+			{ value: 'es', label: 'Español' },
+			{ value: 'tr', label: 'Türkçe' }
 		]}
 	/>
 </Fieldset>
