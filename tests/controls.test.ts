@@ -2,13 +2,11 @@ import { expect, test } from '@playwright/test';
 
 import {
 	chooseFromCombobox,
-	chooseModelFromSettings,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_SESSION_1_RESPONSE_1,
 	MOCK_SESSION_1_RESPONSE_2,
 	MOCK_SESSION_1_RESPONSE_3,
 	MOCK_SESSION_2_RESPONSE_1,
-	mockCompletionResponse,
 	mockTagsResponse
 } from './utils';
 
@@ -72,7 +70,7 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	const modelName = MOCK_API_TAGS_RESPONSE.models[1].name;
 	await chooseFromCombobox(page, 'Available models', modelName);
 
-	let requestPayload: any;
+	let requestPayload;
 
 	await page.route('**/api/chat', async (route) => {
 		const request = route.request();
