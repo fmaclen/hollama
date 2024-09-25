@@ -130,7 +130,7 @@
 		const ollamaChatRequest: ChatRequest = {
 			model: $session.model,
 			options: $session.options,
-			messages: [$session.systemPrompt, ...messages]
+			messages: $session.systemPrompt.content ? [$session.systemPrompt, ...messages] : messages
 		};
 
 		try {

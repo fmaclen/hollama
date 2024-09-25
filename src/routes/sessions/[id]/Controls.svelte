@@ -41,7 +41,7 @@
 	export let session: Writable<Session>;
 
 	// HACK: Stop is a `string[]` so we are hardcoding it to a single value for now
-	let stop: string = '';
+	let stop: string = $session.options.stop?.[0] ?? '';
 	$: if (stop) $session.options.stop = [stop];
 
 	let knowledgeId: string | undefined;
