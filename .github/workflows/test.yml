@@ -1,4 +1,4 @@
-name: Test
+name: Playwright
 
 on:
   pull_request:
@@ -6,9 +6,19 @@ on:
 jobs:
   integration-tests:
     name: Integration tests
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
     steps:
       - uses: actions/checkout@v4
+        with:
+          # REF https://github.com/ad-m/github-push-action?tab=readme-ov-file#example-workflow-file
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -20,7 +30,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
-        run: npm test
+        run: npx playwright test --update-snapshots --reporter=list
         env:
           CI: true
 
@@ -29,3 +39,16 @@ jobs:
         with:
           name: test-results
           path: test-results/
+
+      - name: Commit updated snapshots
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add -A
+          git commit -m "Update snapshots" || echo "No new snapshots to commit"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
