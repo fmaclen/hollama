@@ -1,4 +1,4 @@
-`2024-9-17`
+`2024-9-25`
 
 ### Message of the day
 
@@ -7,8 +7,8 @@
 #### What's new?
 
 - **Desktop app** is now available for [Windows, macOS & Linux](https://github.com/fmaclen/hollama/releases)
-- **Hola mundo!** UI is now available in [Spanish](/settings)
 - **Enhanced models menu** now shows parameter size and highlights recently used models
+- **Selam Dünya!** UI is now available in [Turkish](/settings)
 
 #### Previously, in Hollama
 

@@ -29,7 +29,11 @@
 
 	onMount(() => {
 		if (!$settingsStore.userLanguage)
-			$settingsStore.userLanguage = detectLocale('en', ['en', 'es'], navigatorDetector) as Locales;
+			$settingsStore.userLanguage = detectLocale(
+				'en',
+				['en', 'es', 'tr'],
+				navigatorDetector
+			) as Locales;
 
 		loadLocale($settingsStore.userLanguage);
 		setLocale($settingsStore.userLanguage);
