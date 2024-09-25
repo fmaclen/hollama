@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ChatRequest } from 'ollama/browser';
-	import { afterUpdate, tick } from 'svelte';
+	import { afterUpdate, onMount, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { writable, type Writable } from 'svelte/store';
 
@@ -50,7 +50,10 @@
 	$: $editor.isNewSession = !$session?.messages.length;
 	$: if (data.id) handleSessionChange();
 	$: if ($settingsStore.ollamaModel) $session.model = $settingsStore.ollamaModel;
-	$: if (messagesWindow) messagesWindow.addEventListener('scroll', handleScroll);
+
+	onMount(() => {
+		messagesWindow.addEventListener('scroll', handleScroll);
+	});
 
 	beforeNavigate((navigation) => {
 		if (!$editor.isCompletionInProgress) return;
@@ -215,7 +218,9 @@
 	{#if $editor.view === 'controls'}
 		<Controls {session} />
 	{:else}
-		<Messages bind:messagesWindow {session} {editor} {handleRetry} />
+		<div class="session__history" bind:this={messagesWindow}>
+			<Messages {session} {editor} {handleRetry} />
+		</div>
 	{/if}
 
 	<PromptEditor {editor} {handleSubmit} {stopCompletion} {scrollToBottom} />
@@ -224,5 +229,10 @@
 <style lang="postcss">
 	.session {
 		@apply flex h-full w-full flex-col overflow-hidden;
+	}
+
+	.session__history {
+		@apply overflow-scrollbar flex-grow p-4;
+		@apply lg:p-8;
 	}
 </style>

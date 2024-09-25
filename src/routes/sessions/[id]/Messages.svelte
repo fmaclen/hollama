@@ -9,7 +9,6 @@
 
 	export let session: Writable<Session>;
 	export let editor: Writable<Editor>;
-	export let messagesWindow: HTMLDivElement;
 	export let handleRetry: (index: number) => void;
 
 	function handleEditMessage(message: Message) {
@@ -20,30 +19,21 @@
 	}
 </script>
 
-<div class="session__history" bind:this={messagesWindow}>
-	{#if $editor.isNewSession}
-		<EmptyMessage>{$LL.writePromptToStart()}</EmptyMessage>
-	{/if}
+{#if $editor.isNewSession}
+	<EmptyMessage>{$LL.writePromptToStart()}</EmptyMessage>
+{/if}
 
-	{#each $session.messages as message, i ($session.id + i)}
-		{#key message.role}
-			<Article
-				{message}
-				retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
-				{handleRetry}
-				handleEditMessage={() => handleEditMessage(message)}
-			/>
-		{/key}
-	{/each}
+{#each $session.messages as message, i ($session.id + i)}
+	{#key message.role}
+		<Article
+			{message}
+			retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
+			{handleRetry}
+			handleEditMessage={() => handleEditMessage(message)}
+		/>
+	{/key}
+{/each}
 
-	{#if $editor.isCompletionInProgress}
-		<Article message={{ role: 'assistant', content: $editor.completion || '...' }} />
-	{/if}
-</div>
-
-<style lang="postcss">
-	.session__history {
-		@apply overflow-scrollbar flex-grow p-4;
-		@apply lg:p-8;
-	}
-</style>
+{#if $editor.isCompletionInProgress}
+	<Article message={{ role: 'assistant', content: $editor.completion || '...' }} />
+{/if}
