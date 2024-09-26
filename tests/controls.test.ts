@@ -161,39 +161,43 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await expect(page.getByText('System prompt')).not.toBeVisible();
 
 	// Assert the options were submitted correctly
+	const customizedOptions = {
+		// Model options
+		num_keep: 5,
+		seed: 42,
+		num_predict: 100,
+		top_k: 50,
+		top_p: 0.95,
+		min_p: 0.05,
+		tfs_z: 0.5,
+		typical_p: 0.7,
+		repeat_last_n: 32,
+		temperature: 0.7,
+		repeat_penalty: 1.2,
+		presence_penalty: 0.5,
+		frequency_penalty: 0.5,
+		mirostat: 1,
+		mirostat_tau: 3.9,
+		mirostat_eta: 0.15,
+		stop: ['AI assistant:'],
+		penalize_newline: true,
+		// Runtime options
+		num_ctx: 4096,
+		num_batch: 512,
+		num_gpu: 1,
+		main_gpu: 0,
+		num_thread: 8,
+		numa: true,
+		low_vram: true,
+		f16_kv: true,
+		vocab_only: true,
+		use_mmap: true,
+		use_mlock: true
+	};
+
 	expect(requestPayload).toEqual({
 		model: 'gemma:7b',
-		options: {
-			num_keep: 5,
-			seed: 42,
-			num_predict: 100,
-			top_k: 50,
-			top_p: 0.95,
-			min_p: 0.05,
-			tfs_z: 0.5,
-			typical_p: 0.7,
-			repeat_last_n: 32,
-			temperature: 0.7,
-			repeat_penalty: 1.2,
-			presence_penalty: 0.5,
-			frequency_penalty: 0.5,
-			mirostat: 1,
-			mirostat_tau: 3.9,
-			mirostat_eta: 0.15,
-			stop: ['AI assistant:'],
-			num_ctx: 4096,
-			num_batch: 512,
-			num_gpu: 1,
-			main_gpu: 0,
-			num_thread: 8,
-			penalize_newline: true,
-			numa: true,
-			low_vram: true,
-			f16_kv: true,
-			vocab_only: true,
-			use_mmap: true,
-			use_mlock: true
-		},
+		options: customizedOptions,
 		messages: [
 			{
 				role: 'user',
@@ -282,37 +286,7 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	// Model was changed in the last session, options are retained
 	expect(requestPayload).toEqual({
 		model: 'openhermes2.5-mistral:latest',
-		options: {
-			num_keep: 5,
-			seed: 42,
-			num_predict: 100,
-			top_k: 50,
-			top_p: 0.95,
-			min_p: 0.05,
-			tfs_z: 0.5,
-			typical_p: 0.7,
-			repeat_last_n: 32,
-			temperature: 0.7,
-			repeat_penalty: 1.2,
-			presence_penalty: 0.5,
-			frequency_penalty: 0.5,
-			mirostat: 1,
-			mirostat_tau: 3.9,
-			mirostat_eta: 0.15,
-			stop: ['AI assistant:'],
-			num_ctx: 4096,
-			num_batch: 512,
-			num_gpu: 1,
-			main_gpu: 0,
-			num_thread: 8,
-			penalize_newline: true,
-			numa: true,
-			low_vram: true,
-			f16_kv: true,
-			vocab_only: true,
-			use_mmap: true,
-			use_mlock: true
-		},
+		options: customizedOptions,
 		messages: [
 			{
 				role: 'user',
@@ -370,4 +344,9 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await expect(page.getByLabel('Vocab only')).toBeChecked();
 	await expect(page.getByLabel('Use MMAP')).toBeChecked();
 	await expect(page.getByLabel('Use MLOCK')).toBeChecked();
+
+	// Check the options were saved to localStorage
+	expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toContain(
+		JSON.stringify(customizedOptions)
+	);
 });
