@@ -61,6 +61,9 @@ const config = {
 					'@apply base-section flex border-spacing-1 flex-col bg-shade-1 py-12 lg:py-20 items-center':
 						{}
 				},
+				'.base-fieldset-container': {
+					'@apply p-4 lg:p-6 xl:p-8': {}
+				},
 				'.confirm-deletion': {
 					'@apply bg-gradient-to-r from-transparent to-red-50 dark:to-red-900': {}
 				},
