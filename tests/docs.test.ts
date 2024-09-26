@@ -82,12 +82,15 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 
 	await page.getByText('Write a Python function').click();
 	await expect(page.getByText("Here's a basic function")).toBeVisible();
-	await expect(page.getByLabel('Model')).not.toBeVisible();
 	await expect(page.getByText('No knowledge', { exact: true })).not.toBeVisible();
 	await page.locator('article', { hasText: "Here's a basic function" }).hover();
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'session.png' });
 
-	await page.getByText('Knowledge', { exact: true }).click();
+	await page.getByLabel('Controls').click();
+	await expect(page.getByText('System prompt')).toBeVisible();
+	expect(await page.screenshot()).toMatchSnapshot({ name: 'session-controls.png' });
+
+	await page.locator('.layout__a', { hasText: 'Knowledge' }).click();
 	await expect(page.getByText('No knowledge')).toBeVisible();
 
 	await seedKnowledgeAndReload(page);

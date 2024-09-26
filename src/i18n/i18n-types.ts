@@ -97,6 +97,10 @@ type RootTranslation = {
 	 */
 	content: string
 	/**
+	 * C​o​n​t​r​o​l​s
+	 */
+	controls: string
+	/**
 	 * C​o​p​y
 	 */
 	copy: string
@@ -233,10 +237,18 @@ type RootTranslation = {
 	 */
 	messageOfTheDay: string
 	/**
+	 * M​e​s​s​a​g​e​s
+	 */
+	messages: string
+	/**
 	 * {​m​o​d​e​l​}​ ​w​a​s​ ​d​o​w​n​l​o​a​d​e​d
 	 * @param {string} model
 	 */
 	modelWasDownloaded: RequiredParams<'model'>
+	/**
+	 * M​o​d​e​l​ ​o​p​t​i​o​n​s
+	 */
+	modelOptions: string
 	/**
 	 * M​o​t​d
 	 */
@@ -318,6 +330,10 @@ type RootTranslation = {
 	 */
 	run: string
 	/**
+	 * R​u​n​t​i​m​e​ ​o​p​t​i​o​n​s
+	 */
+	runtimeOptions: string
+	/**
 	 * S​a​v​e
 	 */
 	save: string
@@ -387,6 +403,122 @@ type RootTranslation = {
 	 * Y​o​u
 	 */
 	you: string
+	/**
+	 * M​i​r​o​s​t​a​t
+	 */
+	mirostat: string
+	/**
+	 * M​i​r​o​s​t​a​t​ ​E​T​A
+	 */
+	mirostatEta: string
+	/**
+	 * M​i​r​o​s​t​a​t​ ​T​a​u
+	 */
+	mirostatTau: string
+	/**
+	 * C​o​n​t​e​x​t​ ​s​i​z​e
+	 */
+	numCtx: string
+	/**
+	 * R​e​p​e​a​t​ ​l​a​s​t​ ​N
+	 */
+	repeatLastN: string
+	/**
+	 * R​e​p​e​a​t​ ​p​e​n​a​l​t​y
+	 */
+	repeatPenalty: string
+	/**
+	 * T​e​m​p​e​r​a​t​u​r​e
+	 */
+	temperature: string
+	/**
+	 * S​e​e​d
+	 */
+	seed: string
+	/**
+	 * S​t​o​p​ ​s​e​q​u​e​n​c​e
+	 */
+	stop: string
+	/**
+	 * T​F​S​ ​Z
+	 */
+	tfsZ: string
+	/**
+	 * N​u​m​ ​p​r​e​d​i​c​t
+	 */
+	numPredict: string
+	/**
+	 * T​o​p​ ​K
+	 */
+	topK: string
+	/**
+	 * T​o​p​ ​P
+	 */
+	topP: string
+	/**
+	 * M​i​n​ ​P
+	 */
+	minP: string
+	/**
+	 * T​y​p​i​c​a​l​ ​P
+	 */
+	typicalP: string
+	/**
+	 * P​r​e​s​e​n​c​e​ ​p​e​n​a​l​t​y
+	 */
+	presencePenalty: string
+	/**
+	 * F​r​e​q​u​e​n​c​y​ ​p​e​n​a​l​t​y
+	 */
+	frequencyPenalty: string
+	/**
+	 * N​u​m​ ​b​a​t​c​h
+	 */
+	numBatch: string
+	/**
+	 * N​u​m​ ​G​P​U
+	 */
+	numGpu: string
+	/**
+	 * M​a​i​n​ ​G​P​U
+	 */
+	mainGpu: string
+	/**
+	 * N​u​m​b​e​r​ ​o​f​ ​t​h​r​e​a​d​s
+	 */
+	numThread: string
+	/**
+	 * N​u​m​ ​k​e​e​p
+	 */
+	numKeep: string
+	/**
+	 * N​U​M​A
+	 */
+	numa: string
+	/**
+	 * L​o​w​ ​V​R​A​M
+	 */
+	lowVram: string
+	/**
+	 * F​1​6​ ​K​V
+	 */
+	f16Kv: string
+	/**
+	 * V​o​c​a​b​ ​o​n​l​y
+	 */
+	vocabOnly: string
+	/**
+	 * U​s​e​ ​M​M​A​P
+	 */
+	useMmap: string
+	/**
+	 * U​s​e​ ​M​L​O​C​K
+	 */
+	useMlock: string
+	/**
+	 * P​e​n​a​l​i​z​e​ ​n​e​w​l​i​n​e
+	 */
+	penalizeNewline: string
 }
 
 export type TranslationFunctions = {
@@ -471,6 +603,10 @@ The completion in progress will stop
 	 * Content
 	 */
 	content: () => LocalizedString
+	/**
+	 * Controls
+	 */
+	controls: () => LocalizedString
 	/**
 	 * Copy
 	 */
@@ -607,9 +743,17 @@ The completion in progress will stop
 	 */
 	messageOfTheDay: () => LocalizedString
 	/**
+	 * Messages
+	 */
+	messages: () => LocalizedString
+	/**
 	 * {model} was downloaded
 	 */
 	modelWasDownloaded: (arg: { model: string }) => LocalizedString
+	/**
+	 * Model options
+	 */
+	modelOptions: () => LocalizedString
 	/**
 	 * Motd
 	 */
@@ -691,6 +835,10 @@ The completion in progress will stop
 	 */
 	run: () => LocalizedString
 	/**
+	 * Runtime options
+	 */
+	runtimeOptions: () => LocalizedString
+	/**
 	 * Save
 	 */
 	save: () => LocalizedString
@@ -758,6 +906,122 @@ The completion in progress will stop
 	 * You
 	 */
 	you: () => LocalizedString
+	/**
+	 * Mirostat
+	 */
+	mirostat: () => LocalizedString
+	/**
+	 * Mirostat ETA
+	 */
+	mirostatEta: () => LocalizedString
+	/**
+	 * Mirostat Tau
+	 */
+	mirostatTau: () => LocalizedString
+	/**
+	 * Context size
+	 */
+	numCtx: () => LocalizedString
+	/**
+	 * Repeat last N
+	 */
+	repeatLastN: () => LocalizedString
+	/**
+	 * Repeat penalty
+	 */
+	repeatPenalty: () => LocalizedString
+	/**
+	 * Temperature
+	 */
+	temperature: () => LocalizedString
+	/**
+	 * Seed
+	 */
+	seed: () => LocalizedString
+	/**
+	 * Stop sequence
+	 */
+	stop: () => LocalizedString
+	/**
+	 * TFS Z
+	 */
+	tfsZ: () => LocalizedString
+	/**
+	 * Num predict
+	 */
+	numPredict: () => LocalizedString
+	/**
+	 * Top K
+	 */
+	topK: () => LocalizedString
+	/**
+	 * Top P
+	 */
+	topP: () => LocalizedString
+	/**
+	 * Min P
+	 */
+	minP: () => LocalizedString
+	/**
+	 * Typical P
+	 */
+	typicalP: () => LocalizedString
+	/**
+	 * Presence penalty
+	 */
+	presencePenalty: () => LocalizedString
+	/**
+	 * Frequency penalty
+	 */
+	frequencyPenalty: () => LocalizedString
+	/**
+	 * Num batch
+	 */
+	numBatch: () => LocalizedString
+	/**
+	 * Num GPU
+	 */
+	numGpu: () => LocalizedString
+	/**
+	 * Main GPU
+	 */
+	mainGpu: () => LocalizedString
+	/**
+	 * Number of threads
+	 */
+	numThread: () => LocalizedString
+	/**
+	 * Num keep
+	 */
+	numKeep: () => LocalizedString
+	/**
+	 * NUMA
+	 */
+	numa: () => LocalizedString
+	/**
+	 * Low VRAM
+	 */
+	lowVram: () => LocalizedString
+	/**
+	 * F16 KV
+	 */
+	f16Kv: () => LocalizedString
+	/**
+	 * Vocab only
+	 */
+	vocabOnly: () => LocalizedString
+	/**
+	 * Use MMAP
+	 */
+	useMmap: () => LocalizedString
+	/**
+	 * Use MLOCK
+	 */
+	useMlock: () => LocalizedString
+	/**
+	 * Penalize newline
+	 */
+	penalizeNewline: () => LocalizedString
 }
 
 export type Formatters = {}
