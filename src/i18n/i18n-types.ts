@@ -69,21 +69,17 @@ type RootTranslation = {
 	 */
 	checkBrowserExtensions: string
 	/**
-	 * C​h​e​c​k​ ​n​o​w
-	 */
-	checkNow: string
-	/**
 	 * C​h​e​c​k​i​n​g​ ​f​o​r​ ​u​p​d​a​t​e​s​.​.​.
 	 */
 	checkingForUpdates: string
 	/**
+	 * C​h​e​c​k​ ​n​o​w
+	 */
+	checkNow: string
+	/**
 	 * C​l​e​a​r
 	 */
 	clear: string
-	/**
-	 * C​u​r​r​e​n​t​ ​v​e​r​s​i​o​n
-	 */
-	currentVersion: string
 	/**
 	 * C​o​n​f​i​r​m​ ​d​e​l​e​t​i​o​n
 	 */
@@ -116,6 +112,10 @@ type RootTranslation = {
 	 * C​r​e​a​t​i​n​g​ ​a​ ​t​u​n​n​e​l
 	 */
 	creatingTunnel: string
+	/**
+	 * C​u​r​r​e​n​t​ ​v​e​r​s​i​o​n
+	 */
+	currentVersion: string
 	/**
 	 * D​a​n​g​e​r​ ​z​o​n​e
 	 */
@@ -173,6 +173,14 @@ type RootTranslation = {
 	 */
 	error: string
 	/**
+	 * F​1​6​ ​K​V
+	 */
+	f16Kv: string
+	/**
+	 * F​r​e​q​u​e​n​c​y​ ​p​e​n​a​l​t​y
+	 */
+	frequencyPenalty: string
+	/**
 	 * S​o​r​r​y​,​ ​s​o​m​e​t​h​i​n​g​ ​w​e​n​t​ ​w​r​o​n​g​.​
 ​`​`​`​
 ​{​e​r​r​o​r​}​
@@ -213,13 +221,13 @@ type RootTranslation = {
 	 */
 	isLatestVersion: string
 	/**
-	 * K​n​o​w​l​e​d​g​e​ ​s​a​v​e​d
-	 */
-	knowledgeSaved: string
-	/**
 	 * K​n​o​w​l​e​d​g​e
 	 */
 	knowledge: string
+	/**
+	 * K​n​o​w​l​e​d​g​e​ ​s​a​v​e​d
+	 */
+	knowledgeSaved: string
 	/**
 	 * L​a​n​g​u​a​g​e
 	 */
@@ -233,6 +241,14 @@ type RootTranslation = {
 	 */
 	light: string
 	/**
+	 * L​o​w​ ​V​R​A​M
+	 */
+	lowVram: string
+	/**
+	 * M​a​i​n​ ​G​P​U
+	 */
+	mainGpu: string
+	/**
 	 * M​e​s​s​a​g​e​ ​o​f​ ​t​h​e​ ​d​a​y
 	 */
 	messageOfTheDay: string
@@ -241,14 +257,30 @@ type RootTranslation = {
 	 */
 	messages: string
 	/**
-	 * {​m​o​d​e​l​}​ ​w​a​s​ ​d​o​w​n​l​o​a​d​e​d
-	 * @param {string} model
+	 * M​i​n​ ​P
 	 */
-	modelWasDownloaded: RequiredParams<'model'>
+	minP: string
+	/**
+	 * M​i​r​o​s​t​a​t
+	 */
+	mirostat: string
+	/**
+	 * M​i​r​o​s​t​a​t​ ​E​T​A
+	 */
+	mirostatEta: string
+	/**
+	 * M​i​r​o​s​t​a​t​ ​T​a​u
+	 */
+	mirostatTau: string
 	/**
 	 * M​o​d​e​l​ ​o​p​t​i​o​n​s
 	 */
 	modelOptions: string
+	/**
+	 * {​m​o​d​e​l​}​ ​w​a​s​ ​d​o​w​n​l​o​a​d​e​d
+	 * @param {string} model
+	 */
+	modelWasDownloaded: RequiredParams<'model'>
 	/**
 	 * M​o​t​d
 	 */
@@ -282,6 +314,34 @@ type RootTranslation = {
 	 */
 	notFound: string
 	/**
+	 * N​u​m​ ​b​a​t​c​h
+	 */
+	numBatch: string
+	/**
+	 * C​o​n​t​e​x​t​ ​s​i​z​e
+	 */
+	numCtx: string
+	/**
+	 * N​u​m​ ​G​P​U
+	 */
+	numGpu: string
+	/**
+	 * N​u​m​ ​k​e​e​p
+	 */
+	numKeep: string
+	/**
+	 * N​u​m​ ​p​r​e​d​i​c​t
+	 */
+	numPredict: string
+	/**
+	 * N​u​m​b​e​r​ ​o​f​ ​t​h​r​e​a​d​s
+	 */
+	numThread: string
+	/**
+	 * N​U​M​A
+	 */
+	numa: string
+	/**
 	 * C​o​u​l​d​n​'​t​ ​c​o​n​n​e​c​t​ ​t​o​ ​O​l​l​a​m​a​.​ ​I​s​ ​t​h​e​ ​[​s​e​r​v​e​r​ ​r​u​n​n​i​n​g​]​(​/​s​e​t​t​i​n​g​s​)​?
 	 */
 	ollamaConnectionError: string
@@ -293,6 +353,14 @@ type RootTranslation = {
 	 * O​t​h​e​r​ ​m​o​d​e​l​s
 	 */
 	otherModels: string
+	/**
+	 * P​e​n​a​l​i​z​e​ ​n​e​w​l​i​n​e
+	 */
+	penalizeNewline: string
+	/**
+	 * P​r​e​s​e​n​c​e​ ​p​e​n​a​l​t​y
+	 */
+	presencePenalty: string
 	/**
 	 * P​r​o​m​p​t
 	 */
@@ -322,6 +390,14 @@ type RootTranslation = {
 	 */
 	releaseHistory: string
 	/**
+	 * R​e​p​e​a​t​ ​l​a​s​t​ ​N
+	 */
+	repeatLastN: string
+	/**
+	 * R​e​p​e​a​t​ ​p​e​n​a​l​t​y
+	 */
+	repeatPenalty: string
+	/**
 	 * R​e​t​r​y
 	 */
 	retry: string
@@ -345,6 +421,10 @@ type RootTranslation = {
 	 * N​o​ ​r​e​s​u​l​t​s​ ​f​o​u​n​d
 	 */
 	searchEmpty: string
+	/**
+	 * S​e​e​d
+	 */
+	seed: string
 	/**
 	 * S​e​e​ ​d​o​c​s
 	 */
@@ -370,6 +450,10 @@ type RootTranslation = {
 	 */
 	somethingWentWrong: string
 	/**
+	 * S​t​o​p​ ​s​e​q​u​e​n​c​e
+	 */
+	stop: string
+	/**
 	 * S​t​o​p​ ​r​e​s​p​o​n​s​e
 	 */
 	stopResponse: string
@@ -386,67 +470,13 @@ type RootTranslation = {
 	 */
 	systemPrompt: string
 	/**
-	 * I​f​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​c​o​n​n​e​c​t​ ​t​o​ ​a​n​ ​O​l​l​a​m​a​ ​s​e​r​v​e​r​ ​t​h​a​t​ ​i​s​ ​n​o​t​ ​a​v​a​i​l​a​b​l​e​ ​o​n​ ​{​h​o​s​t​n​a​m​e​}​ ​o​r​ ​{​i​p​}​ ​t​r​y
-	 * @param {string} hostname
-	 * @param {string} ip
-	 */
-	tryingToConnectNotLocalhost: RequiredParams<'hostname' | 'ip'>
-	/**
-	 * V​e​r​s​i​o​n
-	 */
-	version: string
-	/**
-	 * W​r​i​t​e​ ​a​ ​p​r​o​m​p​t​ ​t​o​ ​s​t​a​r​t​ ​a​ ​n​e​w​ ​s​e​s​s​i​o​n
-	 */
-	writePromptToStart: string
-	/**
-	 * Y​o​u
-	 */
-	you: string
-	/**
-	 * M​i​r​o​s​t​a​t
-	 */
-	mirostat: string
-	/**
-	 * M​i​r​o​s​t​a​t​ ​E​T​A
-	 */
-	mirostatEta: string
-	/**
-	 * M​i​r​o​s​t​a​t​ ​T​a​u
-	 */
-	mirostatTau: string
-	/**
-	 * C​o​n​t​e​x​t​ ​s​i​z​e
-	 */
-	numCtx: string
-	/**
-	 * R​e​p​e​a​t​ ​l​a​s​t​ ​N
-	 */
-	repeatLastN: string
-	/**
-	 * R​e​p​e​a​t​ ​p​e​n​a​l​t​y
-	 */
-	repeatPenalty: string
-	/**
 	 * T​e​m​p​e​r​a​t​u​r​e
 	 */
 	temperature: string
 	/**
-	 * S​e​e​d
-	 */
-	seed: string
-	/**
-	 * S​t​o​p​ ​s​e​q​u​e​n​c​e
-	 */
-	stop: string
-	/**
 	 * T​F​S​ ​Z
 	 */
 	tfsZ: string
-	/**
-	 * N​u​m​ ​p​r​e​d​i​c​t
-	 */
-	numPredict: string
 	/**
 	 * T​o​p​ ​K
 	 */
@@ -456,69 +486,39 @@ type RootTranslation = {
 	 */
 	topP: string
 	/**
-	 * M​i​n​ ​P
+	 * I​f​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​c​o​n​n​e​c​t​ ​t​o​ ​a​n​ ​O​l​l​a​m​a​ ​s​e​r​v​e​r​ ​t​h​a​t​ ​i​s​ ​n​o​t​ ​a​v​a​i​l​a​b​l​e​ ​o​n​ ​{​h​o​s​t​n​a​m​e​}​ ​o​r​ ​{​i​p​}​ ​t​r​y
+	 * @param {string} hostname
+	 * @param {string} ip
 	 */
-	minP: string
+	tryingToConnectNotLocalhost: RequiredParams<'hostname' | 'ip'>
 	/**
 	 * T​y​p​i​c​a​l​ ​P
 	 */
 	typicalP: string
 	/**
-	 * P​r​e​s​e​n​c​e​ ​p​e​n​a​l​t​y
+	 * U​s​e​ ​M​L​O​C​K
 	 */
-	presencePenalty: string
-	/**
-	 * F​r​e​q​u​e​n​c​y​ ​p​e​n​a​l​t​y
-	 */
-	frequencyPenalty: string
-	/**
-	 * N​u​m​ ​b​a​t​c​h
-	 */
-	numBatch: string
-	/**
-	 * N​u​m​ ​G​P​U
-	 */
-	numGpu: string
-	/**
-	 * M​a​i​n​ ​G​P​U
-	 */
-	mainGpu: string
-	/**
-	 * N​u​m​b​e​r​ ​o​f​ ​t​h​r​e​a​d​s
-	 */
-	numThread: string
-	/**
-	 * N​u​m​ ​k​e​e​p
-	 */
-	numKeep: string
-	/**
-	 * N​U​M​A
-	 */
-	numa: string
-	/**
-	 * L​o​w​ ​V​R​A​M
-	 */
-	lowVram: string
-	/**
-	 * F​1​6​ ​K​V
-	 */
-	f16Kv: string
-	/**
-	 * V​o​c​a​b​ ​o​n​l​y
-	 */
-	vocabOnly: string
+	useMlock: string
 	/**
 	 * U​s​e​ ​M​M​A​P
 	 */
 	useMmap: string
 	/**
-	 * U​s​e​ ​M​L​O​C​K
+	 * V​e​r​s​i​o​n
 	 */
-	useMlock: string
+	version: string
 	/**
-	 * P​e​n​a​l​i​z​e​ ​n​e​w​l​i​n​e
+	 * V​o​c​a​b​ ​o​n​l​y
 	 */
-	penalizeNewline: string
+	vocabOnly: string
+	/**
+	 * W​r​i​t​e​ ​a​ ​p​r​o​m​p​t​ ​t​o​ ​s​t​a​r​t​ ​a​ ​n​e​w​ ​s​e​s​s​i​o​n
+	 */
+	writePromptToStart: string
+	/**
+	 * Y​o​u
+	 */
+	you: string
 }
 
 export type TranslationFunctions = {
@@ -576,21 +576,17 @@ The completion in progress will stop
 	 */
 	checkBrowserExtensions: () => LocalizedString
 	/**
-	 * Check now
-	 */
-	checkNow: () => LocalizedString
-	/**
 	 * Checking for updates...
 	 */
 	checkingForUpdates: () => LocalizedString
 	/**
+	 * Check now
+	 */
+	checkNow: () => LocalizedString
+	/**
 	 * Clear
 	 */
 	clear: () => LocalizedString
-	/**
-	 * Current version
-	 */
-	currentVersion: () => LocalizedString
 	/**
 	 * Confirm deletion
 	 */
@@ -623,6 +619,10 @@ The completion in progress will stop
 	 * Creating a tunnel
 	 */
 	creatingTunnel: () => LocalizedString
+	/**
+	 * Current version
+	 */
+	currentVersion: () => LocalizedString
 	/**
 	 * Danger zone
 	 */
@@ -680,6 +680,14 @@ The completion in progress will stop
 	 */
 	error: () => LocalizedString
 	/**
+	 * F16 KV
+	 */
+	f16Kv: () => LocalizedString
+	/**
+	 * Frequency penalty
+	 */
+	frequencyPenalty: () => LocalizedString
+	/**
 	 * Sorry, something went wrong.
 ```
 {error}
@@ -719,13 +727,13 @@ The completion in progress will stop
 	 */
 	isLatestVersion: () => LocalizedString
 	/**
-	 * Knowledge saved
-	 */
-	knowledgeSaved: () => LocalizedString
-	/**
 	 * Knowledge
 	 */
 	knowledge: () => LocalizedString
+	/**
+	 * Knowledge saved
+	 */
+	knowledgeSaved: () => LocalizedString
 	/**
 	 * Language
 	 */
@@ -739,6 +747,14 @@ The completion in progress will stop
 	 */
 	light: () => LocalizedString
 	/**
+	 * Low VRAM
+	 */
+	lowVram: () => LocalizedString
+	/**
+	 * Main GPU
+	 */
+	mainGpu: () => LocalizedString
+	/**
 	 * Message of the day
 	 */
 	messageOfTheDay: () => LocalizedString
@@ -747,13 +763,29 @@ The completion in progress will stop
 	 */
 	messages: () => LocalizedString
 	/**
-	 * {model} was downloaded
+	 * Min P
 	 */
-	modelWasDownloaded: (arg: { model: string }) => LocalizedString
+	minP: () => LocalizedString
+	/**
+	 * Mirostat
+	 */
+	mirostat: () => LocalizedString
+	/**
+	 * Mirostat ETA
+	 */
+	mirostatEta: () => LocalizedString
+	/**
+	 * Mirostat Tau
+	 */
+	mirostatTau: () => LocalizedString
 	/**
 	 * Model options
 	 */
 	modelOptions: () => LocalizedString
+	/**
+	 * {model} was downloaded
+	 */
+	modelWasDownloaded: (arg: { model: string }) => LocalizedString
 	/**
 	 * Motd
 	 */
@@ -787,6 +819,34 @@ The completion in progress will stop
 	 */
 	notFound: () => LocalizedString
 	/**
+	 * Num batch
+	 */
+	numBatch: () => LocalizedString
+	/**
+	 * Context size
+	 */
+	numCtx: () => LocalizedString
+	/**
+	 * Num GPU
+	 */
+	numGpu: () => LocalizedString
+	/**
+	 * Num keep
+	 */
+	numKeep: () => LocalizedString
+	/**
+	 * Num predict
+	 */
+	numPredict: () => LocalizedString
+	/**
+	 * Number of threads
+	 */
+	numThread: () => LocalizedString
+	/**
+	 * NUMA
+	 */
+	numa: () => LocalizedString
+	/**
 	 * Couldn't connect to Ollama. Is the [server running](/settings)?
 	 */
 	ollamaConnectionError: () => LocalizedString
@@ -798,6 +858,14 @@ The completion in progress will stop
 	 * Other models
 	 */
 	otherModels: () => LocalizedString
+	/**
+	 * Penalize newline
+	 */
+	penalizeNewline: () => LocalizedString
+	/**
+	 * Presence penalty
+	 */
+	presencePenalty: () => LocalizedString
 	/**
 	 * Prompt
 	 */
@@ -827,6 +895,14 @@ The completion in progress will stop
 	 */
 	releaseHistory: () => LocalizedString
 	/**
+	 * Repeat last N
+	 */
+	repeatLastN: () => LocalizedString
+	/**
+	 * Repeat penalty
+	 */
+	repeatPenalty: () => LocalizedString
+	/**
 	 * Retry
 	 */
 	retry: () => LocalizedString
@@ -850,6 +926,10 @@ The completion in progress will stop
 	 * No results found
 	 */
 	searchEmpty: () => LocalizedString
+	/**
+	 * Seed
+	 */
+	seed: () => LocalizedString
 	/**
 	 * See docs
 	 */
@@ -875,6 +955,10 @@ The completion in progress will stop
 	 */
 	somethingWentWrong: () => LocalizedString
 	/**
+	 * Stop sequence
+	 */
+	stop: () => LocalizedString
+	/**
 	 * Stop response
 	 */
 	stopResponse: () => LocalizedString
@@ -891,65 +975,13 @@ The completion in progress will stop
 	 */
 	systemPrompt: () => LocalizedString
 	/**
-	 * If you want to connect to an Ollama server that is not available on {hostname} or {ip} try
-	 */
-	tryingToConnectNotLocalhost: (arg: { hostname: string, ip: string }) => LocalizedString
-	/**
-	 * Version
-	 */
-	version: () => LocalizedString
-	/**
-	 * Write a prompt to start a new session
-	 */
-	writePromptToStart: () => LocalizedString
-	/**
-	 * You
-	 */
-	you: () => LocalizedString
-	/**
-	 * Mirostat
-	 */
-	mirostat: () => LocalizedString
-	/**
-	 * Mirostat ETA
-	 */
-	mirostatEta: () => LocalizedString
-	/**
-	 * Mirostat Tau
-	 */
-	mirostatTau: () => LocalizedString
-	/**
-	 * Context size
-	 */
-	numCtx: () => LocalizedString
-	/**
-	 * Repeat last N
-	 */
-	repeatLastN: () => LocalizedString
-	/**
-	 * Repeat penalty
-	 */
-	repeatPenalty: () => LocalizedString
-	/**
 	 * Temperature
 	 */
 	temperature: () => LocalizedString
 	/**
-	 * Seed
-	 */
-	seed: () => LocalizedString
-	/**
-	 * Stop sequence
-	 */
-	stop: () => LocalizedString
-	/**
 	 * TFS Z
 	 */
 	tfsZ: () => LocalizedString
-	/**
-	 * Num predict
-	 */
-	numPredict: () => LocalizedString
 	/**
 	 * Top K
 	 */
@@ -959,69 +991,37 @@ The completion in progress will stop
 	 */
 	topP: () => LocalizedString
 	/**
-	 * Min P
+	 * If you want to connect to an Ollama server that is not available on {hostname} or {ip} try
 	 */
-	minP: () => LocalizedString
+	tryingToConnectNotLocalhost: (arg: { hostname: string, ip: string }) => LocalizedString
 	/**
 	 * Typical P
 	 */
 	typicalP: () => LocalizedString
 	/**
-	 * Presence penalty
+	 * Use MLOCK
 	 */
-	presencePenalty: () => LocalizedString
-	/**
-	 * Frequency penalty
-	 */
-	frequencyPenalty: () => LocalizedString
-	/**
-	 * Num batch
-	 */
-	numBatch: () => LocalizedString
-	/**
-	 * Num GPU
-	 */
-	numGpu: () => LocalizedString
-	/**
-	 * Main GPU
-	 */
-	mainGpu: () => LocalizedString
-	/**
-	 * Number of threads
-	 */
-	numThread: () => LocalizedString
-	/**
-	 * Num keep
-	 */
-	numKeep: () => LocalizedString
-	/**
-	 * NUMA
-	 */
-	numa: () => LocalizedString
-	/**
-	 * Low VRAM
-	 */
-	lowVram: () => LocalizedString
-	/**
-	 * F16 KV
-	 */
-	f16Kv: () => LocalizedString
-	/**
-	 * Vocab only
-	 */
-	vocabOnly: () => LocalizedString
+	useMlock: () => LocalizedString
 	/**
 	 * Use MMAP
 	 */
 	useMmap: () => LocalizedString
 	/**
-	 * Use MLOCK
+	 * Version
 	 */
-	useMlock: () => LocalizedString
+	version: () => LocalizedString
 	/**
-	 * Penalize newline
+	 * Vocab only
 	 */
-	penalizeNewline: () => LocalizedString
+	vocabOnly: () => LocalizedString
+	/**
+	 * Write a prompt to start a new session
+	 */
+	writePromptToStart: () => LocalizedString
+	/**
+	 * You
+	 */
+	you: () => LocalizedString
 }
 
 export type Formatters = {}
