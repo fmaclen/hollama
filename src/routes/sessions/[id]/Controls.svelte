@@ -331,9 +331,8 @@
 
 <style lang="postcss">
 	.controls {
-		@apply flex flex-col gap-y-6 overflow-scroll p-4;
-		@apply md:gap-y-8 md:p-6;
-		@apply xl:gap-y-10 xl:p-8;
+		@apply base-fieldset-container flex flex-col gap-y-6 overflow-scroll;
+		@apply md:gap-y-8;
 	}
 
 	.control-inputs {

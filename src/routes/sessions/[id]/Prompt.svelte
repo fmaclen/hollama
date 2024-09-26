@@ -150,9 +150,7 @@
 	}
 
 	.prompt-editor__form {
-		@apply overflow-scrollbar h-full bg-shade-1 p-4;
-		@apply md:p-6;
-		@apply xl:p-8;
+		@apply base-fieldset-container overflow-scrollbar flex h-full bg-shade-1;
 	}
 
 	.prompt-editor__toggle {
