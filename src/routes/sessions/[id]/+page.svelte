@@ -233,6 +233,7 @@
 
 	.session__history {
 		@apply overflow-scrollbar flex-grow p-4;
-		@apply lg:p-8;
+		@apply md:p-6;
+		@apply xl:p-8;
 	}
 </style>

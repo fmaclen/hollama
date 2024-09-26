@@ -331,7 +331,9 @@
 
 <style lang="postcss">
 	.controls {
-		@apply overflow-scroll p-2;
+		@apply flex flex-col gap-y-6 overflow-scroll p-4;
+		@apply md:gap-y-8 md:p-6;
+		@apply xl:gap-y-10 xl:p-8;
 	}
 
 	.control-inputs {

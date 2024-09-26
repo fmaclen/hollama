@@ -43,7 +43,7 @@
 	</button>
 
 	<div class="prompt-editor__form">
-		<Fieldset context={$editor.isCodeEditor ? 'editor' : undefined}>
+		<Fieldset>
 			<div class="prompt-editor__project">
 				<FieldSelectModel />
 
@@ -150,7 +150,9 @@
 	}
 
 	.prompt-editor__form {
-		@apply overflow-scrollbar h-full bg-shade-1;
+		@apply overflow-scrollbar h-full bg-shade-1 p-4;
+		@apply md:p-6;
+		@apply xl:p-8;
 	}
 
 	.prompt-editor__toggle {
