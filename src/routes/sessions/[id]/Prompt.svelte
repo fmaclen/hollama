@@ -15,6 +15,7 @@
 	import type { Editor } from '$lib/sessions';
 
 	export let editor: Writable<Editor>;
+	export let model: string;
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
@@ -45,7 +46,7 @@
 	<div class="prompt-editor__form">
 		<Fieldset>
 			<div class="prompt-editor__project">
-				<FieldSelectModel />
+				<FieldSelectModel bind:model />
 
 				<nav class="segmented-nav">
 					<div

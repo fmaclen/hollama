@@ -7,7 +7,8 @@
 #### What's new?
 
 - **Desktop app** is now available for [Windows, macOS & Linux](https://github.com/fmaclen/hollama/releases)
-- **Model & runtime options** can now be set on every session
+- **Change the model** on an existing session
+- **Advanced Ollama parameters** can be set at any time on every session
 
 #### Previously, in Hollama
 

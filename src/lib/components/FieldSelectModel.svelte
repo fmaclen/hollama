@@ -6,7 +6,7 @@
 
 	import FieldSelect from './FieldSelect.svelte';
 
-	let value: string | undefined = $settingsStore.ollamaModel || '';
+	export let model: string | undefined = $settingsStore.ollamaModel || '';
 
 	type ModelOption = {
 		value: string;
@@ -54,5 +54,5 @@
 		{ label: $LL.otherModels(), options: otherModels }
 	]}
 	onChange={handleChange}
-	bind:value
+	bind:value={model}
 />

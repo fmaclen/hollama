@@ -49,7 +49,6 @@
 
 	$: $editor.isNewSession = !$session?.messages.length;
 	$: if (data.id) handleSessionChange();
-	$: if ($settingsStore.ollamaModel) $session.model = $settingsStore.ollamaModel;
 
 	onMount(() => {
 		messagesWindow.addEventListener('scroll', handleScroll);
@@ -223,7 +222,7 @@
 		</div>
 	{/if}
 
-	<PromptEditor {editor} {handleSubmit} {stopCompletion} {scrollToBottom} />
+	<PromptEditor bind:model={$session.model} {editor} {handleSubmit} {stopCompletion} {scrollToBottom} />
 </div>
 
 <style lang="postcss">

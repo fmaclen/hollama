@@ -283,9 +283,9 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	});
 
 	await page.getByRole('button', { name: 'Run' }).click();
-	// Model was changed in the last session, options are retained
+	// Model is retained from last session
 	expect(requestPayload).toEqual({
-		model: 'openhermes2.5-mistral:latest',
+		model: 'gemma:7b',
 		options: customizedOptions,
 		messages: [
 			{
