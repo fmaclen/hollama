@@ -1,4 +1,4 @@
-`2024-9-25`
+`2024-9-26`
 
 ### Message of the day
 
@@ -7,11 +7,12 @@
 #### What's new?
 
 - **Desktop app** is now available for [Windows, macOS & Linux](https://github.com/fmaclen/hollama/releases)
-- **Enhanced models menu** now shows parameter size and highlights recently used models
-- **Selam Dünya!** UI is now available in [Turkish](/settings)
+- **Model & runtime options** can now be set on every session
 
 #### Previously, in Hollama
 
+- **Multi-language support** UI is now available in [Spanish & Turkish](/settings)
+- **Enhanced models menu** now shows parameter size and highlights recently used models
 - **Download** [Ollama models](https://ollama.ai/models) from [Settings](/settings)
 - **Editable messages** in [Sessions](/sessions)
 - Customizable **system prompts**
