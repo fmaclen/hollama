@@ -45,6 +45,10 @@ type RootTranslation = {
 	 */
 	assistant: string
 	/**
+	 * A​u​t​o
+	 */
+	automatic: string
+	/**
 	 * A​u​t​o​m​a​t​i​c​a​l​l​y​ ​c​h​e​c​k​ ​f​o​r​ ​u​p​d​a​t​e​s
 	 */
 	automaticallyCheckForUpdates: string
@@ -382,6 +386,10 @@ type RootTranslation = {
 	 */
 	pullingModel: string
 	/**
+	 * R​a​n​d​o​m
+	 */
+	random: string
+	/**
 	 * R​e​f​r​e​s​h​ ​t​o​ ​u​p​d​a​t​e
 	 */
 	refreshToUpdate: string
@@ -551,6 +559,10 @@ The completion in progress will stop
 	 * Assistant
 	 */
 	assistant: () => LocalizedString
+	/**
+	 * Auto
+	 */
+	automatic: () => LocalizedString
 	/**
 	 * Automatically check for updates
 	 */
@@ -886,6 +898,10 @@ The completion in progress will stop
 	 * Pulling model
 	 */
 	pullingModel: () => LocalizedString
+	/**
+	 * Random
+	 */
+	random: () => LocalizedString
 	/**
 	 * Refresh to update
 	 */

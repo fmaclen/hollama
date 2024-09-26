@@ -22,21 +22,21 @@
 	const DEFAULT_REPEAT_LAST_N = '64';
 	const DEFAULT_REPEAT_PENALTY = '1.1';
 	const DEFAULT_TEMPERATURE = '0.8';
-	const DEFAULT_SEED = 'Random';
-	const DEFAULT_STOP = '';
+	const DEFAULT_SEED = $LL.random();
+	const DEFAULT_STOP = $LL.automatic();
 	const DEFAULT_TFS_Z = '1';
 	const DEFAULT_NUM_PREDICT = '128';
 	const DEFAULT_TOP_K = '40';
 	const DEFAULT_TOP_P = '0.9';
 	const DEFAULT_MIN_P = '0.0';
-	const DEFAULT_NUM_BATCH = '';
-	const DEFAULT_NUM_GPU = 'Auto';
-	const DEFAULT_MAIN_GPU = 'Auto';
-	const DEFAULT_NUM_THREAD = 'Auto';
-	const DEFAULT_NUM_KEEP = 'Auto';
-	const DEFAULT_TYPICAL_P = '';
-	const DEFAULT_PRESENCE_PENALTY = '';
-	const DEFAULT_FREQUENCY_PENALTY = '';
+	const DEFAULT_NUM_BATCH = $LL.automatic();
+	const DEFAULT_NUM_GPU = $LL.automatic();
+	const DEFAULT_MAIN_GPU = $LL.automatic();
+	const DEFAULT_NUM_THREAD = $LL.automatic();
+	const DEFAULT_NUM_KEEP = $LL.automatic();
+	const DEFAULT_TYPICAL_P = $LL.automatic();
+	const DEFAULT_PRESENCE_PENALTY = $LL.automatic();
+	const DEFAULT_FREQUENCY_PENALTY = $LL.automatic();
 
 	export let session: Writable<Session>;
 

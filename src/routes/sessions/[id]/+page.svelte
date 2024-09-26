@@ -222,7 +222,13 @@
 		</div>
 	{/if}
 
-	<PromptEditor bind:model={$session.model} {editor} {handleSubmit} {stopCompletion} {scrollToBottom} />
+	<PromptEditor
+		bind:model={$session.model}
+		{editor}
+		{handleSubmit}
+		{stopCompletion}
+		{scrollToBottom}
+	/>
 </div>
 
 <style lang="postcss">
