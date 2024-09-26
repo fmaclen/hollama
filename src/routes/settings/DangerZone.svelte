@@ -18,7 +18,7 @@
 	}
 </script>
 
-<Fieldset context="settings">
+<Fieldset>
 	<P><strong>{$LL.dangerZone()}</strong></P>
 	<Button variant="outline" on:click={() => deleteStorage(StorageKey.HollamaSessions)}>
 		{$LL.deleteAllSessions()}

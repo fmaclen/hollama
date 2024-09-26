@@ -1,6 +1,8 @@
-import type { BaseTranslation } from '../i18n-types';
+import en from '../en';
+import type { BaseTranslation, Translation } from '../i18n-types';
 
-const en = {
+const tr = {
+	...(en as Translation),
 	allowConnections: 'Sunucu ayarlarını şuradan gelen bağlantıları kabul edecek şekilde değiştir',
 	allowMixedContent: 'Karışık içeriğe izin ver',
 	areYouSureYouWantToDeleteAllKnowledge: 'Tüm bilgileri silmek istediğinize emin misiniz?',
@@ -95,4 +97,4 @@ const en = {
 	you: 'Sen'
 } satisfies BaseTranslation;
 
-export default en;
+export default tr;

@@ -6,6 +6,7 @@
 	export let variant: 'default' | 'outline' | 'link' | 'icon' | undefined = 'default';
 	export let href: string | undefined = undefined;
 	export let isLoading: boolean | undefined = false;
+	export let isActive: boolean | undefined = false;
 </script>
 
 {#if href}
@@ -25,6 +26,7 @@
 		{...$$restProps}
 		class="button button--{variant} {className}"
 		class:button--is-loading={isLoading}
+		class:button--is-active={isActive}
 		type="button"
 		on:click
 	>
@@ -65,6 +67,10 @@
 			@apply px-2 py-2 text-muted;
 			@apply hover:text-base;
 			@apply active:text-active;
+		}
+
+		&--is-active {
+			@apply text-active;
 		}
 	}
 

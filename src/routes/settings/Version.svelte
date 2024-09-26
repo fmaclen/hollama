@@ -3,6 +3,7 @@
 	import { version } from '$app/environment';
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import FieldCheckbox from '$lib/components/FieldCheckbox.svelte';
 	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
@@ -14,22 +15,16 @@
 	$: if ($updateStatusStore) $updateStatusStore.showSidebarNotification = false;
 </script>
 
-<Fieldset context="settings">
+<Fieldset>
 	<P><strong>{$LL.currentVersion()}</strong></P>
 
 	<div class="field-version">
 		<div class="field-version__updates">
 			<Badge>{version}</Badge>
-
-			<label class="field-version__label">
-				<input
-					type="checkbox"
-					bind:checked={$settingsStore.autoCheckForUpdates}
-					class="field-version__checkbox"
-				/>
-				{$LL.automaticallyCheckForUpdates()}
-			</label>
-
+			<FieldCheckbox
+				label={$LL.automaticallyCheckForUpdates()}
+				bind:checked={$settingsStore.autoCheckForUpdates}
+			/>
 			<Button
 				variant="outline"
 				disabled={$updateStatusStore.isCheckingForUpdates}
@@ -92,14 +87,5 @@
 
 	.field-version__updates {
 		@apply flex items-stretch gap-x-2;
-	}
-
-	.field-version__label {
-		@apply inline-flex flex-grow items-center gap-x-2 rounded-md border border-shade-4 px-3 py-2 text-sm leading-tight;
-		@apply hover:border-shade-6 hover:text-active;
-	}
-
-	.field-version__checkbox {
-		@apply accent-accent;
 	}
 </style>
