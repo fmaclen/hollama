@@ -62,21 +62,27 @@
 		</svelte:fragment>
 	</Header>
 
-	<Fieldset context="editor">
-		<FieldInput name="name" label={$LL.name()} bind:value={name} />
+	<div class="knowledge__form">
+		<Fieldset>
+			<FieldInput name="name" label={$LL.name()} bind:value={name} />
 
-		{#key knowledge}
-			<FieldTextEditor label={$LL.content()} {handleSubmit} bind:value={content} />
-		{/key}
+			{#key knowledge}
+				<FieldTextEditor label={$LL.content()} {handleSubmit} bind:value={content} />
+			{/key}
 
-		<ButtonSubmit hasMetaKey={true} {handleSubmit} disabled={!name || !content}>
-			{$LL.save()}
-		</ButtonSubmit>
-	</Fieldset>
+			<ButtonSubmit hasMetaKey={true} {handleSubmit} disabled={!name || !content}>
+				{$LL.save()}
+			</ButtonSubmit>
+		</Fieldset>
+	</div>
 </div>
 
 <style lang="postcss">
 	.knowledge {
 		@apply flex h-full w-full flex-col overflow-hidden;
+	}
+
+	.knowledge__form {
+		@apply base-fieldset-container flex h-full;
 	}
 </style>
