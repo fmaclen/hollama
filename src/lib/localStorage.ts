@@ -51,10 +51,12 @@ export enum StorageKey {
 }
 
 export interface Settings {
+	apiType: 'ollama' | 'openai';
 	ollamaServer: string | null;
 	ollamaModel: string | null;
 	ollamaModels: ModelResponse[];
 	ollamaServerStatus: 'connected' | 'disconnected';
+	openaiApiKey: string | null;
 	lastUpdateCheck: number | null;
 	autoCheckForUpdates: boolean;
 	userTheme: 'light' | 'dark';
@@ -63,10 +65,12 @@ export interface Settings {
 }
 
 const defaultSettings: Settings = {
+	apiType: 'ollama',
 	ollamaServer: 'http://localhost:11434',
 	ollamaModel: null,
 	ollamaModels: [],
 	ollamaServerStatus: 'disconnected',
+	openaiApiKey: null,
 	lastUpdateCheck: null,
 	autoCheckForUpdates: false,
 	userTheme: 'light',
