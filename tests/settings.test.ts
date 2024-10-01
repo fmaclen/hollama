@@ -201,6 +201,22 @@ test.describe('Locales', () => {
 		});
 	});
 
+	test.describe('Japanese', () => {
+		test.use({ locale: 'ja-JP' });
+		test('default language is japanese', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('ja-JP');
+
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Server')).not.toBeVisible();
+			await expect(page.getByText('サーバー')).toBeVisible();
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"ja"'
+			);
+		});
+	});
+
 	test.describe('Turkish', () => {
 		test.use({ locale: 'tr-TR' });
 		test('default language is turkish', async ({ page }) => {
