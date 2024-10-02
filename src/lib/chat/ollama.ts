@@ -10,7 +10,7 @@ import type {
 import { get } from 'svelte/store';
 
 import { settingsStore } from '../localStorage';
-import type { ChatStrategy } from './chatStrategy';
+import type { ChatStrategy } from './index';
 
 function getServerFromSettings() {
 	const settings = get(settingsStore);
@@ -57,7 +57,7 @@ export class OllamaStrategy implements ChatStrategy {
 		}
 	}
 
-	async getTags(): Promise<ListResponse> {
+	async getModels(): Promise<ListResponse> {
 		const response = await fetch(`${getServerFromSettings()}/api/tags`);
 		if (!response.ok) throw new Error('Failed to fetch Ollama tags');
 
