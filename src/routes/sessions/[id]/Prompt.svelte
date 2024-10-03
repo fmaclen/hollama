@@ -5,6 +5,7 @@
 	import type { Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
+	import { isServerConnected } from '$lib/chat';
 	import Button from '$lib/components/Button.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Field from '$lib/components/Field.svelte';
@@ -112,9 +113,9 @@
 					{handleSubmit}
 					hasMetaKey={$editor.isCodeEditor}
 					disabled={!$editor.prompt ||
-						$settingsStore.ollamaServerStatus === 'disconnected' ||
-						$settingsStore.ollamaModels.length === 0 ||
-						!$settingsStore.ollamaModel}
+						!isServerConnected(model) ||
+						$settingsStore.models.length === 0 ||
+						!model}
 				>
 					{$LL.run()}
 				</ButtonSubmit>

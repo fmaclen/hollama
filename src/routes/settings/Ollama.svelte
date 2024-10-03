@@ -14,7 +14,6 @@
 	import Button from '$lib/components/Button.svelte';
 	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
-	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
 	import { settingsStore } from '$lib/localStorage';
@@ -25,7 +24,6 @@
 	const DETAULT_OLLAMA_SERVER = 'http://localhost:11434';
 
 	let ollamaServer = $settingsStore.ollamaServer || DETAULT_OLLAMA_SERVER;
-	let ollamaModel = $settingsStore.ollamaModel || '';
 	let ollamaTagResponse: ListResponse | null = null;
 	let modelTag: string | undefined;
 	let isPullInProgress = false;
@@ -33,8 +31,7 @@
 	$: settingsStore.update((settings) => ({
 		...settings,
 		ollamaServer,
-		ollamaModels: ollamaTagResponse?.models || [],
-		ollamaModel
+		ollamaModels: ollamaTagResponse?.models || []
 	}));
 
 	async function getModelsList(): Promise<void> {
@@ -172,8 +169,6 @@
 			{/if}
 		</svelte:fragment>
 	</FieldInput>
-
-	<FieldSelectModel />
 
 	<FieldInput
 		name="pull-model"

@@ -1,4 +1,3 @@
-import type { ModelResponse } from 'ollama/browser';
 import { writable } from 'svelte/store';
 
 import type { Locales } from '$i18n/i18n-types';
@@ -7,6 +6,7 @@ import { browser, version } from '$app/environment';
 import type { Session } from '$lib/sessions';
 
 import type { HollamaMetadata } from '../routes/api/metadata/+server';
+import type { Model } from './chat';
 import type { Knowledge } from './knowledge';
 
 function createLocalStorageStore<T>(key: string, defaultValue: T) {
@@ -51,12 +51,10 @@ export enum StorageKey {
 }
 
 export interface Settings {
-	apiType: 'ollama' | 'openai';
 	ollamaServer: string | null;
-	ollamaModel: string | null;
-	ollamaModels: ModelResponse[];
 	ollamaServerStatus: 'connected' | 'disconnected';
 	openaiApiKey: string | null;
+	models: Model[];
 	lastUpdateCheck: number | null;
 	autoCheckForUpdates: boolean;
 	userTheme: 'light' | 'dark';
@@ -65,12 +63,10 @@ export interface Settings {
 }
 
 const defaultSettings: Settings = {
-	apiType: 'ollama',
 	ollamaServer: 'http://localhost:11434',
-	ollamaModel: null,
-	ollamaModels: [],
 	ollamaServerStatus: 'disconnected',
 	openaiApiKey: null,
+	models: [],
 	lastUpdateCheck: null,
 	autoCheckForUpdates: false,
 	userTheme: 'light',

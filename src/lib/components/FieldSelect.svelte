@@ -18,7 +18,7 @@
 	export let allowSearch: boolean = true;
 	export let onChange: (value: Option) => void = () => {};
 
-	type Option = Selected<string> & { badge?: string };
+	type Option = Selected<string> & { badge?: string | string[] };
 	type OptionGroup = { label: string; options: Option[] };
 	type OptionOrGroup = Option | OptionGroup;
 
@@ -142,7 +142,13 @@
 											{option.label}
 										</span>
 										{#if option.badge}
-											<Badge>{option.badge}</Badge>
+											{#if Array.isArray(option.badge)}
+												{#each option.badge as badge}
+													<Badge>{badge}</Badge>
+												{/each}
+											{:else}
+												<Badge>{option.badge}</Badge>
+											{/if}
 										{/if}
 									</div>
 								</Combobox.Item>

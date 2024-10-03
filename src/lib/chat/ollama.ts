@@ -66,15 +66,21 @@ export class OllamaStrategy implements ChatStrategy {
 			throw new Error('Failed to parse Ollama tags', { cause: data });
 		}
 
-		// Sort alphabetically
-		data.models = data.models.sort((a, b) => {
-			const nameA = a.name;
-			const nameB = b.name;
-			// Compare ignoring case and accents
-			return nameA.localeCompare(nameB, undefined, { sensitivity: 'base' });
-		});
+		// Sort alphabetically and add the api property
+		data.models = data.models
+			.sort((a, b) => {
+				const nameA = a.name;
+				const nameB = b.name;
+				// Compare ignoring case and accents
+				return nameA.localeCompare(nameB, undefined, { sensitivity: 'base' });
+			})
+			.map((model) => ({ ...model, api: 'ollama' }));
 
 		return data;
+	}
+
+	isServerConnected(): boolean {
+		return get(settingsStore).ollamaServerStatus === 'connected';
 	}
 
 	async pull(

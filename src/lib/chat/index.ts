@@ -1,11 +1,13 @@
-import type { ChatRequest, ListResponse } from 'ollama/browser';
+import type { ChatRequest, ModelResponse } from 'ollama/browser';
+import { get } from 'svelte/store';
+
+import { settingsStore } from '$lib/localStorage';
 
 import { OllamaStrategy } from './ollama';
 import { OpenAIStrategy } from './openai';
 
-interface ModelStrategy {
+export interface Model extends ModelResponse {
 	api: 'ollama' | 'openai';
-	model: string;
 }
 
 export interface ChatStrategy {
@@ -13,28 +15,41 @@ export interface ChatStrategy {
 
 	getModels(): Promise<any>;
 
+	isServerConnected(): boolean;
+
 	pull?(payload: any, onChunk: (progress: any) => void): Promise<void>;
 }
 
-function getChatStrategy(model: ModelStrategy): ChatStrategy {
+function getChatStrategy(model: Model): ChatStrategy {
 	if (model.api === 'ollama') return new OllamaStrategy();
 	else if (model.api === 'openai') return new OpenAIStrategy();
 
-	throw new Error('Invalid API type specified');
+	throw new Error('Invalid model specified');
 }
 
-export async function chat(
-	model: ModelStrategy,
-	payload: ChatRequest,
-	abortSignal: AbortSignal,
-	onChunk: (content: string) => void
-): Promise<void> {
+interface ChatParams {
+	model: Model;
+	payload: ChatRequest;
+	abortSignal: AbortSignal;
+	onChunk: (content: string) => void;
+}
+
+export async function chat({ model, payload, abortSignal, onChunk }: ChatParams): Promise<void> {
 	const strategy = getChatStrategy(model);
 	return strategy.chat(payload, abortSignal, onChunk);
 }
 
-export async function listModels(): Promise<ListResponse> {
-	// TODO fix
-	const strategy = getChatStrategy({} as ModelStrategy);
-	return await strategy.getModels();
+export async function listModels(): Promise<Model[]> {
+	const ollamaModels = (await new OllamaStrategy().getModels()).models;
+	const openaiModels = (await new OpenAIStrategy().getModels()).models;
+
+	return [...ollamaModels, ...openaiModels];
+}
+
+export function isServerConnected(selectedModel: string): boolean {
+	const model: Model | undefined = get(settingsStore).models.find((m) => m.name === selectedModel);
+	if (!model) return false;
+
+	const strategy = getChatStrategy(model);
+	return strategy.isServerConnected();
 }

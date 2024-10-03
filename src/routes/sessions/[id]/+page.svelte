@@ -6,6 +6,7 @@
 
 	import LL from '$i18n/i18n-svelte';
 	import { beforeNavigate } from '$app/navigation';
+	import { chat, listModels } from '$lib/chat';
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
@@ -13,7 +14,6 @@
 	import Header from '$lib/components/Header.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import { settingsStore } from '$lib/localStorage';
-	import { ollamaChat, ollamaTags } from '$lib/ollama';
 	import {
 		formatSessionMetadata,
 		getSessionTitle,
@@ -73,9 +73,9 @@
 
 	async function handleSessionChange() {
 		try {
-			$settingsStore.ollamaModels = (await ollamaTags()).models;
+			$settingsStore.models = await listModels();
 		} catch {
-			$settingsStore.ollamaModels = [];
+			$settingsStore.models = [];
 			toast.warning($LL.cantConnectToOllamaServer());
 		}
 		$editor.view = 'messages';
@@ -136,9 +136,17 @@
 		};
 
 		try {
-			await ollamaChat(ollamaChatRequest, $editor.abortController.signal, async (chunk) => {
-				$editor.completion += chunk;
-				await scrollToBottom();
+			const model = (await listModels()).find((model) => model.name === $session.model);
+			if (!model) throw new Error('Model not found');
+
+			await chat({
+				model,
+				payload: ollamaChatRequest,
+				abortSignal: $editor.abortController.signal,
+				onChunk: async (chunk) => {
+					$editor.completion += chunk;
+					await scrollToBottom();
+				}
 			});
 
 			// After the completion save the session

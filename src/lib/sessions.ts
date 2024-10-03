@@ -2,6 +2,7 @@ import { get } from 'svelte/store';
 
 import { sessionsStore, settingsStore, sortStore } from '$lib/localStorage';
 
+import type { Model } from './chat';
 import type { Knowledge } from './knowledge';
 import type { OllamaOptions } from './ollama';
 import { formatTimestampToNow } from './utils';
@@ -35,6 +36,24 @@ export interface Editor {
 	abortController?: AbortController;
 }
 
+export const getLastUsedModels = (): Model[] => {
+	const currentSessions = get(sessionsStore);
+	const models = get(settingsStore)?.models;
+	const lastUsedModels: Model[] = [];
+
+	for (const session of currentSessions) {
+		if (lastUsedModels.find((m) => m.name === session.model)) continue;
+
+		const model = models.find((model) => model.name === session.model);
+		if (!model) continue;
+		lastUsedModels.push(model);
+
+		if (lastUsedModels.length >= 5) break;
+	}
+
+	return lastUsedModels;
+};
+
 export const loadSession = (id: string): Session => {
 	let session: Session | null = null;
 
@@ -62,8 +81,8 @@ export const loadSession = (id: string): Session => {
 	}
 
 	if (!session) {
-		// Get the current model
-		const model = get(settingsStore)?.ollamaModel || '';
+		// Use the last used model
+		const model = getLastUsedModels()[0]?.name || '';
 
 		// Create a new session
 		session = {
