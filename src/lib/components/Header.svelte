@@ -14,7 +14,7 @@
 
 <style lang="postcss">
 	.header {
-		@apply flex items-center justify-between border-b bg-shade-1 px-4 py-2 text-xs;
+		@apply flex min-h-10 items-center justify-between border-b bg-shade-1 px-4 text-xs;
 
 		&--confirm-deletion {
 			@apply confirm-deletion;

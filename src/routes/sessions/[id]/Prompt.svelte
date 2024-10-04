@@ -75,7 +75,7 @@
 
 			<Button
 				variant={$editor.isCodeEditor ? 'default' : 'outline'}
-				class="h-full"
+				class="prompt-editor__toggle"
 				on:click={toggleCodeEditor}
 			>
 				<UnfoldVertical class="base-icon" />
@@ -147,6 +147,10 @@
 
 	.prompt-editor__project {
 		@apply grid grid-cols-[auto,max-content,max-content] items-end gap-x-2;
+	}
+
+	:global(.prompt-editor__toggle) {
+		@apply h-full;
 	}
 
 	.prompt-editor--fullscreen {
