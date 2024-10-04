@@ -79,10 +79,10 @@
 
 <style lang="postcss">
 	.knowledge {
-		@apply flex h-full w-full flex-col overflow-hidden;
+		@apply flex h-full w-full flex-col;
 	}
 
 	.knowledge__form {
-		@apply base-fieldset-container flex h-full;
+		@apply base-fieldset-container overflow-scrollbar flex h-full;
 	}
 </style>
