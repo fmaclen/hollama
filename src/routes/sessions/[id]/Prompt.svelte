@@ -9,7 +9,6 @@
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Field from '$lib/components/Field.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
-	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import { settingsStore } from '$lib/localStorage';
 	import type { Editor } from '$lib/sessions';
@@ -156,7 +155,7 @@
 	}
 
 	.prompt-editor__form {
-		@apply overflow-scrollbar flex h-full gap-y-2 flex-col;
+		@apply overflow-scrollbar flex h-full flex-col gap-y-2;
 	}
 
 	.prompt-editor__textarea {

@@ -14,7 +14,7 @@
 
 <style lang="postcss">
 	.header {
-		@apply flex items-center justify-between border-b bg-shade-1 py-2 px-4 text-xs;
+		@apply flex items-center justify-between border-b bg-shade-1 px-4 py-2 text-xs;
 
 		&--confirm-deletion {
 			@apply confirm-deletion;
@@ -22,7 +22,7 @@
 	}
 
 	.header__headline {
-		@apply flex gap-2 items-center;
+		@apply flex items-center gap-2;
 	}
 
 	.header__nav {

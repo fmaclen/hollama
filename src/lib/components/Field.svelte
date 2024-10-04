@@ -12,7 +12,7 @@
 	export let isLabelVisible: boolean | undefined = true;
 </script>
 
-<div class="field" class:field--text-editor={isTextEditor} class:field--with-nav={hasNav} >
+<div class="field" class:field--text-editor={isTextEditor} class:field--with-nav={hasNav}>
 	<div
 		class="field-container"
 		class:field-container--text-editor={isTextEditor}
@@ -22,7 +22,9 @@
 			<Label.Root
 				for={name}
 				id={`${name}-label`}
-				class="field-label-root {isTextEditor ? 'field-label-root--text-editor' : ''} {isLabelVisible ? '' : 'field-label-root--no-label'}"
+				class="field-label-root {isTextEditor
+					? 'field-label-root--text-editor'
+					: ''} {isLabelVisible ? '' : 'field-label-root--no-label'}"
 			>
 				<slot name="label" />
 			</Label.Root>
