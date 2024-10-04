@@ -5,6 +5,7 @@
 	import DangerZone from './DangerZone.svelte';
 	import Interface from './Interface.svelte';
 	import Ollama from './Ollama.svelte';
+	import OpenAI from './OpenAI.svelte';
 	import Version from './Version.svelte';
 </script>
 
@@ -14,6 +15,7 @@
 	<div class="settings-fieldsets">
 		<Version />
 		<Ollama />
+		<OpenAI />
 		<Interface />
 		<DangerZone />
 	</div>

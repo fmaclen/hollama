@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
+	import { getLastUsedModels } from '$lib/chat';
 	import { settingsStore } from '$lib/localStorage';
-	import { getLastUsedModels } from '$lib/sessions';
 
 	import FieldSelect from './FieldSelect.svelte';
 

@@ -1,7 +1,7 @@
 import type { ChatRequest, ModelResponse } from 'ollama/browser';
 import { get } from 'svelte/store';
 
-import { settingsStore } from '$lib/localStorage';
+import { sessionsStore, settingsStore } from '$lib/localStorage';
 
 import { OllamaStrategy } from './ollama';
 import { OpenAIStrategy } from './openai';
@@ -53,3 +53,23 @@ export function isServerConnected(selectedModel: string): boolean {
 	const strategy = getChatStrategy(model);
 	return strategy.isServerConnected();
 }
+
+export const getLastUsedModels = (): Model[] => {
+	const currentSessions = get(sessionsStore);
+	const models = get(settingsStore)?.models;
+	if (!models) return [];
+
+	const lastUsedModels: Model[] = [];
+
+	for (const session of currentSessions) {
+		if (lastUsedModels.find((m) => m.name === session.model)) continue;
+
+		const model = models.find((model) => model.name === session.model);
+		if (!model) continue;
+		lastUsedModels.push(model);
+
+		if (lastUsedModels.length >= 5) break;
+	}
+
+	return lastUsedModels;
+};

@@ -5,7 +5,6 @@
 	import type { Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
-	import { isServerConnected } from '$lib/chat';
 	import Button from '$lib/components/Button.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Field from '$lib/components/Field.svelte';
@@ -20,6 +19,9 @@
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
+
+	let isOllama = false;
+	$: isOllama = $settingsStore.models?.find((m) => m.name === model)?.api === 'ollama';
 
 	function toggleCodeEditor() {
 		$editor.isCodeEditor = !$editor.isCodeEditor;
@@ -49,36 +51,38 @@
 			<div class="prompt-editor__project">
 				<FieldSelectModel bind:model />
 
-				<nav class="segmented-nav">
-					<div
-						class="segmented-nav__button"
-						class:segmented-nav__button--active={$editor.view === 'messages'}
-					>
-						<Button
-							aria-label={$LL.messages()}
-							variant="icon"
-							on:click={switchToMessages}
-							class="h-full"
-							isActive={$editor.view === 'messages'}
+				{#if isOllama}
+					<nav class="segmented-nav">
+						<div
+							class="segmented-nav__button"
+							class:segmented-nav__button--active={$editor.view === 'messages'}
 						>
-							<MessageSquareText class="base-icon" />
-						</Button>
-					</div>
-					<div
-						class="segmented-nav__button"
-						class:segmented-nav__button--active={$editor.view === 'controls'}
-					>
-						<Button
-							aria-label={$LL.controls()}
-							variant="icon"
-							on:click={() => ($editor.view = 'controls')}
-							class="h-full"
-							isActive={$editor.view === 'controls'}
+							<Button
+								aria-label={$LL.messages()}
+								variant="icon"
+								on:click={switchToMessages}
+								class="h-full"
+								isActive={$editor.view === 'messages'}
+							>
+								<MessageSquareText class="base-icon" />
+							</Button>
+						</div>
+						<div
+							class="segmented-nav__button"
+							class:segmented-nav__button--active={$editor.view === 'controls'}
 						>
-							<Settings_2 class="base-icon" />
-						</Button>
-					</div>
-				</nav>
+							<Button
+								aria-label={$LL.controls()}
+								variant="icon"
+								on:click={() => ($editor.view = 'controls')}
+								class="h-full"
+								isActive={$editor.view === 'controls'}
+							>
+								<Settings_2 class="base-icon" />
+							</Button>
+						</div>
+					</nav>
+				{/if}
 			</div>
 
 			{#if $editor.isCodeEditor}
@@ -112,10 +116,7 @@
 				<ButtonSubmit
 					{handleSubmit}
 					hasMetaKey={$editor.isCodeEditor}
-					disabled={!$editor.prompt ||
-						!isServerConnected(model) ||
-						$settingsStore.models.length === 0 ||
-						!model}
+					disabled={!$editor.prompt || !model}
 				>
 					{$LL.run()}
 				</ButtonSubmit>

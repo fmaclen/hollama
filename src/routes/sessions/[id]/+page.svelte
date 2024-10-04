@@ -124,6 +124,14 @@
 	}
 
 	async function handleCompletion(messages: Message[]) {
+		const model = (await listModels()).find((model) => model.name === $session.model);
+		if (!model) {
+			// TODO add translation
+			// @ts-ignore
+			toast.error($LL.modelNotFound());
+			return;
+		}
+
 		$editor.abortController = new AbortController();
 		$editor.isCompletionInProgress = true;
 		$editor.prompt = ''; // Reset the prompt form field
@@ -136,9 +144,6 @@
 		};
 
 		try {
-			const model = (await listModels()).find((model) => model.name === $session.model);
-			if (!model) throw new Error('Model not found');
-
 			await chat({
 				model,
 				payload: ollamaChatRequest,
