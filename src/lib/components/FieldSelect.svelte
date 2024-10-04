@@ -16,6 +16,7 @@
 	export let placeholder: string = '';
 	export let allowClear: boolean = true;
 	export let allowSearch: boolean = true;
+	export let isLabelVisible: boolean | undefined = true;
 	export let onChange: (value: Option) => void = () => {};
 
 	type Option = Selected<string> & { badge?: string };
@@ -81,7 +82,7 @@
 	}
 </script>
 
-<Field {name} disabled={isDisabled} hasNav={$$slots.nav}>
+<Field {name} disabled={isDisabled} hasNav={$$slots.nav} {isLabelVisible}>
 	<svelte:fragment slot="label">{label}</svelte:fragment>
 	<Combobox.Root
 		bind:touchedInput
@@ -96,7 +97,7 @@
 		<div class="field-select-input">
 			<Combobox.Input
 				spellcheck="false"
-				class="field-combobox-input"
+				class="field-combobox-input {isLabelVisible ? '' : 'field-combobox-input--no-label'}"
 				placeholder={selected?.value ? selected.label : placeholder}
 				id={name}
 				disabled={isDisabled}
@@ -192,6 +193,10 @@
 
 	:global(.field-combobox-input) {
 		@apply base-input pr-14 text-sm;
+	}
+
+	:global(.field-combobox-input--no-label) {
+		@apply py-2.5;
 	}
 
 	:global(.field-combobox-content) {
