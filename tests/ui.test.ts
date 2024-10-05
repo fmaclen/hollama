@@ -17,7 +17,7 @@ test.describe('FieldSelect', () => {
 
 		// Check initial state
 		await expect(modelCombobox).toBeVisible();
-		await expect(modelCombobox).toHaveAttribute('placeholder', 'Search');
+		await expect(modelCombobox).toHaveAttribute('placeholder', 'Available models');
 
 		// Open the dropdown
 		await modelCombobox.click();
@@ -75,7 +75,7 @@ test.describe('FieldSelect', () => {
 		// Click outside the comboboxto apply the cleared value
 		await page.keyboard.press('Escape');
 		await expect(modelCombobox).toHaveValue('');
-		await expect(modelCombobox).toHaveAttribute('placeholder', 'Search');
+		await expect(modelCombobox).toHaveAttribute('placeholder', 'Available models');
 		await expect(page.getByRole('option')).toHaveCount(0);
 		await expect(page.getByTitle('Clear')).not.toBeVisible();
 	});

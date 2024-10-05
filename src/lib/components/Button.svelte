@@ -64,7 +64,7 @@
 		}
 
 		&--icon {
-			@apply px-2 py-2 text-muted;
+			@apply px-2.5 py-2 text-muted;
 			@apply hover:text-base;
 			@apply active:text-active;
 		}
