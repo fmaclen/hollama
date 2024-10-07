@@ -52,7 +52,6 @@ export enum StorageKey {
 
 export interface Settings {
 	ollamaServer: string | null;
-	ollamaServerStatus: 'connected' | 'disconnected';
 	openaiApiKey: string | null;
 	models: Model[];
 	lastUpdateCheck: number | null;
@@ -64,7 +63,6 @@ export interface Settings {
 
 const defaultSettings: Settings = {
 	ollamaServer: 'http://localhost:11434',
-	ollamaServerStatus: 'disconnected',
 	openaiApiKey: null,
 	models: [],
 	lastUpdateCheck: null,

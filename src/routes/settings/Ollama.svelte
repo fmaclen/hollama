@@ -25,6 +25,7 @@
 
 	let ollamaServer = $settingsStore.ollamaServer || DETAULT_OLLAMA_SERVER;
 	let ollamaTagResponse: ListResponse | null = null;
+	let ollamaServerStatus: 'connected' | 'disconnected' = 'disconnected';
 	let modelTag: string | undefined;
 	let isPullInProgress = false;
 
@@ -37,10 +38,10 @@
 	async function getModelsList(): Promise<void> {
 		try {
 			ollamaTagResponse = await ollamaTags();
-			$settingsStore.ollamaServerStatus = 'connected';
+			ollamaServerStatus = 'connected';
 		} catch {
 			ollamaTagResponse = null;
-			$settingsStore.ollamaServerStatus = 'disconnected';
+			ollamaServerStatus = 'disconnected';
 		}
 	}
 
@@ -92,7 +93,7 @@
 				}
 			);
 			ollamaTagResponse = null;
-			$settingsStore.ollamaServerStatus = 'disconnected';
+			ollamaServerStatus = 'disconnected';
 		}
 		isPullInProgress = false;
 	}
@@ -120,7 +121,7 @@
 		on:keyup={getModelsList}
 	>
 		<svelte:fragment slot="status">
-			{#if $settingsStore.ollamaServerStatus === 'disconnected'}
+			{#if ollamaServerStatus === 'disconnected'}
 				<Badge variant="warning">{$LL.disconnected()}</Badge>
 			{:else}
 				<Badge variant="positive">{$LL.connected()}</Badge>
@@ -128,7 +129,7 @@
 		</svelte:fragment>
 
 		<svelte:fragment slot="help">
-			{#if ollamaURL && $settingsStore.ollamaServerStatus === 'disconnected'}
+			{#if ollamaURL && ollamaServerStatus === 'disconnected'}
 				<FieldHelp>
 					<P>
 						{$LL.allowConnections()}
@@ -175,16 +176,14 @@
 		label={$LL.pullModel()}
 		placeholder={$LL.pullModelPlaceholder()}
 		bind:value={modelTag}
-		disabled={isPullInProgress || $settingsStore.ollamaServerStatus === $LL.disconnected()}
+		disabled={isPullInProgress || ollamaServerStatus === $LL.disconnected()}
 	>
 		<svelte:fragment slot="nav">
 			<Button
 				aria-label="Download model"
 				class="h-full text-muted"
 				isLoading={isPullInProgress}
-				disabled={!modelTag ||
-					isPullInProgress ||
-					$settingsStore.ollamaServerStatus === $LL.disconnected()}
+				disabled={!modelTag || isPullInProgress || ollamaServerStatus === $LL.disconnected()}
 				on:click={pullModel}
 			>
 				<CloudDownload class="base-icon" />

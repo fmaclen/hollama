@@ -79,10 +79,6 @@ export class OllamaStrategy implements ChatStrategy {
 		return data;
 	}
 
-	isServerConnected(): boolean {
-		return get(settingsStore).ollamaServerStatus === 'connected';
-	}
-
 	async pull(
 		payload: PullRequest,
 		onChunk: (progress: ProgressResponse | StatusResponse | ErrorResponse) => void

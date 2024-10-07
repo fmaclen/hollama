@@ -36,8 +36,4 @@ export class OpenAIStrategy implements ChatStrategy {
 		const response = await this.openai.models.list();
 		return response.data;
 	}
-
-	isServerConnected(): boolean {
-		return true;
-	}
 }

@@ -7,6 +7,7 @@ import { OllamaStrategy } from './ollama';
 import { OpenAIStrategy } from './openai';
 
 export interface Model extends ModelResponse {
+	// TODO new interface
 	api: 'ollama' | 'openai';
 }
 
@@ -14,8 +15,6 @@ export interface ChatStrategy {
 	chat(payload: any, abortSignal: AbortSignal, onChunk: (content: string) => void): Promise<void>;
 
 	getModels(): Promise<any>;
-
-	isServerConnected(): boolean;
 
 	pull?(payload: any, onChunk: (progress: any) => void): Promise<void>;
 }
@@ -44,14 +43,6 @@ export async function listModels(): Promise<Model[]> {
 	const openaiModels = (await new OpenAIStrategy().getModels()).models;
 
 	return [...ollamaModels, ...openaiModels];
-}
-
-export function isServerConnected(selectedModel: string): boolean {
-	const model: Model | undefined = get(settingsStore).models.find((m) => m.name === selectedModel);
-	if (!model) return false;
-
-	const strategy = getChatStrategy(model);
-	return strategy.isServerConnected();
 }
 
 export const getLastUsedModels = (): Model[] => {
