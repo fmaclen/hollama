@@ -168,13 +168,13 @@ test.describe('Session', () => {
 		// Leave the conversation by visiting the sessions index
 		await sessionLink.click();
 		await expect(
-			page.getByText('Who would win in a fight between Emma Watson and Jessica Alba?')
-		).toBeVisible();
-		await expect(
 			page.getByText(
 				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
 			)
 		).not.toBeVisible();
+		await expect(
+			page.getByText('Who would win in a fight between Emma Watson and Jessica Alba?')
+		).toBeVisible();
 
 		// Navigate back to the conversation
 		await page.getByTestId('session-item').click();
@@ -786,6 +786,7 @@ test.describe('Session', () => {
 		await page.getByText('Settings', { exact: true }).click();
 
 		// Check that we've navigated to the settings page
+		await expect(page.getByText('Automatically check for updates')).toBeVisible();
 		expect(page.url()).toContain('/settings');
 
 		// Check that the completion has stopped
