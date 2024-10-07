@@ -12,7 +12,7 @@ export class OpenAIStrategy implements ChatStrategy {
 
 		this.openai = new OpenAI({
 			baseURL: settings.openaiServer,
-			apiKey: settings.openaiApiKey || undefined,
+			apiKey: settings.openaiApiKey || '',
 			dangerouslyAllowBrowser: true
 		});
 	}
