@@ -1,19 +1,22 @@
 import OpenAI from 'openai';
-import { get } from 'svelte/store';
 
-import { settingsStore } from '../localStorage';
+// import { get } from 'svelte/store';
+
+// import { settingsStore } from '../localStorage';
 import type { ChatStrategy } from './index';
 
 export class OpenAIStrategy implements ChatStrategy {
 	private openai: OpenAI;
 
 	constructor() {
-		const settings = get(settingsStore);
-		if (!settings) throw new Error('No OpenAI API key specified');
+		// const settings = get(settingsStore);
 		// if (!settings.openaiApiKey) throw new Error('No OpenAI API key specified');
-		settings.openaiApiKey = 'sk-proj-933434-1234567890';
 
-		this.openai = new OpenAI({ apiKey: settings.openaiApiKey, dangerouslyAllowBrowser: true });
+		this.openai = new OpenAI({
+			baseURL: 'http://localhost:11434/v1/',
+			apiKey: 'ollama',
+			dangerouslyAllowBrowser: true
+		});
 	}
 
 	async chat(
@@ -28,6 +31,7 @@ export class OpenAIStrategy implements ChatStrategy {
 		});
 
 		for await (const chunk of response) {
+			if (abortSignal.aborted) break;
 			onChunk(chunk.choices[0].delta.content || '');
 		}
 	}
