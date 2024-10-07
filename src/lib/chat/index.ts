@@ -39,8 +39,14 @@ export async function chat({ model, payload, abortSignal, onChunk }: ChatParams)
 }
 
 export async function listModels(): Promise<Model[]> {
-	const ollamaModels = (await new OllamaStrategy().getModels()).models;
-	const openaiModels = (await new OpenAIStrategy().getModels()).models;
+	const ollamaModels = await new OllamaStrategy()
+		.getModels()
+		.then((models) => models.models)
+		.catch(() => []);
+	const openaiModels = await new OpenAIStrategy()
+		.getModels()
+		.then((models) => models.models)
+		.catch(() => []);
 
 	return [...ollamaModels, ...openaiModels];
 }

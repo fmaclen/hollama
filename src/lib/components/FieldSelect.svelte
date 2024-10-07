@@ -145,9 +145,11 @@
 											</span>
 											{#if option.badge}
 												{#if Array.isArray(option.badge)}
-													{#each option.badge as badge}
-														<Badge>{badge}</Badge>
-													{/each}
+													<div class="field-select-badge">
+														{#each option.badge as badge}
+															<Badge>{badge}</Badge>
+														{/each}
+													</div>
 												{:else}
 													<Badge>{option.badge}</Badge>
 												{/if}
@@ -195,6 +197,10 @@
 
 	.field-select-empty {
 		@apply block w-full px-3 py-1 text-center text-sm text-muted;
+	}
+
+	.field-select-badge {
+		@apply flex gap-x-1;
 	}
 
 	/* Bits UI */

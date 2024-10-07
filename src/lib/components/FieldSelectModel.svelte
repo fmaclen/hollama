@@ -5,7 +5,7 @@
 
 	import FieldSelect from './FieldSelect.svelte';
 
-	export let model: string | undefined = $settingsStore.ollamaModel || '';
+	export let model: string | undefined;
 	export let isLabelVisible: boolean | undefined = true;
 
 	type ModelOption = {
@@ -23,7 +23,7 @@
 	$: models = $settingsStore.models.map((m) => ({
 		value: m.name,
 		label: m.name,
-		badge: m.details.parameter_size
+		badge: [m.details.parameter_size, m.api]
 	}));
 	$: lastUsedModels = getLastUsedModels().map((m) => ({
 		value: m.name,
