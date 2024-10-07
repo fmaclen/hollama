@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { CloudDownload } from 'lucide-svelte';
-	import type {
-		ErrorResponse,
-		ListResponse,
-		ProgressResponse,
-		StatusResponse
-	} from 'ollama/browser';
+	import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -25,7 +20,6 @@
 
 	let ollama = new OllamaStrategy();
 	let ollamaServer = $settingsStore.ollamaServer || DETAULT_OLLAMA_SERVER;
-	let ollamaTagResponse: ListResponse | null = null;
 	let ollamaServerStatus: 'connected' | 'disconnected' = 'disconnected';
 	let modelTag: string | undefined;
 	let isPullInProgress = false;
@@ -34,10 +28,9 @@
 
 	async function getModelsList(): Promise<void> {
 		try {
-			ollamaTagResponse = await ollama.getModels();
+			await ollama.getModels();
 			ollamaServerStatus = 'connected';
 		} catch {
-			ollamaTagResponse = null;
 			ollamaServerStatus = 'disconnected';
 		}
 	}
@@ -89,7 +82,6 @@
 					description: ''
 				}
 			);
-			ollamaTagResponse = null;
 			ollamaServerStatus = 'disconnected';
 		}
 		isPullInProgress = false;

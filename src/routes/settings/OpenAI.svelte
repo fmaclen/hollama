@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { ListResponse } from 'ollama/browser';
 	import { onMount } from 'svelte';
 
 	import LL from '$i18n/i18n-svelte';
@@ -19,17 +18,15 @@
 	let openai = new OpenAIStrategy();
 	let openaiServer = $settingsStore.openaiServer || DETAULT_OPENAI_SERVER;
 	let openaiApiKey = $settingsStore.openaiApiKey || '';
-	let openaiTagResponse: ListResponse | null = null;
 	let openaiServerStatus: 'connected' | 'disconnected' = 'disconnected';
 
 	$: settingsStore.update((settings) => ({ ...settings, openaiServer, openaiApiKey }));
 
 	async function getModelsList(): Promise<void> {
 		try {
-			openaiTagResponse = await openai.getModels();
+			await openai.getModels();
 			openaiServerStatus = 'connected';
 		} catch {
-			openaiTagResponse = null;
 			openaiServerStatus = 'disconnected';
 		}
 	}

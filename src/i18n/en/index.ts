@@ -68,6 +68,7 @@ const en = {
 	mirostat: 'Mirostat',
 	mirostatEta: 'Mirostat ETA',
 	mirostatTau: 'Mirostat Tau',
+	modelNotFound: 'Model not found',
 	modelOptions: 'Model options',
 	modelWasDownloaded: '{model:string} was downloaded',
 	motd: 'Motd',

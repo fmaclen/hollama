@@ -127,8 +127,6 @@
 	async function handleCompletion(messages: Message[]) {
 		const model = (await listModels()).find((model) => model.name === $session.model);
 		if (!model) {
-			// TODO add translation
-			// @ts-ignore
 			toast.error($LL.modelNotFound());
 			return;
 		}

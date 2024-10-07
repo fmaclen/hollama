@@ -290,6 +290,10 @@ type RootTranslation = {
 	 */
 	mirostatTau: string
 	/**
+	 * M​o​d​e​l​ ​n​o​t​ ​f​o​u​n​d
+	 */
+	modelNotFound: string
+	/**
 	 * M​o​d​e​l​ ​o​p​t​i​o​n​s
 	 */
 	modelOptions: string
@@ -819,6 +823,10 @@ The completion in progress will stop
 	 * Mirostat Tau
 	 */
 	mirostatTau: () => LocalizedString
+	/**
+	 * Model not found
+	 */
+	modelNotFound: () => LocalizedString
 	/**
 	 * Model options
 	 */
