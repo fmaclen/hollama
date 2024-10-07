@@ -55,7 +55,24 @@ test.describe('Session', () => {
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.keyboard.press('Shift+Enter');
 		await expect(page.getByTestId('session-metadata')).toHaveText('New session');
+		await expect(page.getByText('Run')).toBeEnabled();
 
+		// Unselect the model
+		await page.getByTitle('Clear').click();
+		await expect(page.getByText('Run')).toBeDisabled();
+
+		// Can't run the prompt without a model
+		await page.keyboard.press('Enter');
+		await expect(
+			page.locator('article', {
+				hasText:
+					'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+			})
+		).not.toBeVisible();
+
+		// Re-select the model
+		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.focus();
 		await page.keyboard.press('Enter');
 		await expect(
 			page.locator('article', {
@@ -168,13 +185,13 @@ test.describe('Session', () => {
 		// Leave the conversation by visiting the sessions index
 		await sessionLink.click();
 		await expect(
-			page.getByText('Who would win in a fight between Emma Watson and Jessica Alba?')
-		).toBeVisible();
-		await expect(
 			page.getByText(
 				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
 			)
 		).not.toBeVisible();
+		await expect(
+			page.getByText('Who would win in a fight between Emma Watson and Jessica Alba?')
+		).toBeVisible();
 
 		// Navigate back to the conversation
 		await page.getByTestId('session-item').click();
@@ -725,13 +742,9 @@ test.describe('Session', () => {
 			await route.abort('failed');
 		});
 		await page.getByTestId('new-session').click();
-		await expect(page.getByText('Run')).toBeDisabled();
 		await expect(
 			page.locator('ol[data-sonner-toaster] li', { hasText: "Can't connect to Ollama server" })
 		).toBeVisible();
-
-		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
-		await expect(page.getByText('Run')).toBeDisabled();
 	});
 
 	test('can navigate out of session during completion', async ({ page }) => {
@@ -786,6 +799,7 @@ test.describe('Session', () => {
 		await page.getByText('Settings', { exact: true }).click();
 
 		// Check that we've navigated to the settings page
+		await expect(page.getByText('Automatically check for updates')).toBeVisible();
 		expect(page.url()).toContain('/settings');
 
 		// Check that the completion has stopped

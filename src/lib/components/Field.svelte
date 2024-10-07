@@ -5,6 +5,11 @@
 	export let disabled: boolean | undefined = false;
 	export let isTextEditor: boolean | undefined = false;
 	export let hasNav: boolean | undefined = false;
+
+	// HACK: This is needed because Svelte named slots can't be conditionally rendered
+	// We should be able to remove this once we upgrade to Svelte 5
+	// REF https://svelte-5-preview.vercel.app/docs/snippets
+	export let isLabelVisible: boolean | undefined = true;
 </script>
 
 <div class="field" class:field--text-editor={isTextEditor} class:field--with-nav={hasNav}>
@@ -17,7 +22,9 @@
 			<Label.Root
 				for={name}
 				id={`${name}-label`}
-				class="field-label-root {isTextEditor ? 'field-label-root--text-editor' : ''}"
+				class="field-label-root {isTextEditor
+					? 'field-label-root--text-editor'
+					: ''} {isLabelVisible ? '' : 'field-label-root--no-label'}"
 			>
 				<slot name="label" />
 			</Label.Root>
@@ -60,6 +67,10 @@
 
 	:global(.field-label-root) {
 		@apply flex items-center gap-x-2 px-3 pb-0.5 pt-3 text-xs font-medium leading-none;
+	}
+
+	:global(.field-label-root--no-label) {
+		@apply hidden;
 	}
 
 	:global(.field-label-root--text-editor) {

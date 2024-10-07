@@ -45,7 +45,7 @@
 <Head title={[knowledge.name ? knowledge.name : $LL.newKnowledge(), $LL.knowledge()]} />
 <div class="knowledge">
 	<Header confirmDeletion={$shouldConfirmDeletion}>
-		<p data-testid="knowledge-id" class="text-sm font-bold leading-none">
+		<p data-testid="knowledge-id" class="font-bold leading-none">
 			{$LL.knowledge()}
 			<Button variant="link" href={`/knowledge/${knowledge.id}`}>
 				#{knowledge.id}
@@ -79,10 +79,10 @@
 
 <style lang="postcss">
 	.knowledge {
-		@apply flex h-full w-full flex-col overflow-hidden;
+		@apply flex h-full w-full flex-col;
 	}
 
 	.knowledge__form {
-		@apply base-fieldset-container flex h-full;
+		@apply base-fieldset-container overflow-scrollbar flex h-full;
 	}
 </style>

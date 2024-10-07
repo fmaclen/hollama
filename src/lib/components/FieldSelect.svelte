@@ -16,6 +16,7 @@
 	export let placeholder: string = '';
 	export let allowClear: boolean = true;
 	export let allowSearch: boolean = true;
+	export let isLabelVisible: boolean | undefined = true;
 	export let onChange: (value: Option) => void = () => {};
 
 	type Option = Selected<string> & { badge?: string | string[] };
@@ -81,7 +82,7 @@
 	}
 </script>
 
-<Field {name} disabled={isDisabled} hasNav={$$slots.nav}>
+<Field {name} disabled={isDisabled} hasNav={$$slots.nav} {isLabelVisible}>
 	<svelte:fragment slot="label">{label}</svelte:fragment>
 	<Combobox.Root
 		bind:touchedInput
@@ -96,7 +97,7 @@
 		<div class="field-select-input">
 			<Combobox.Input
 				spellcheck="false"
-				class="field-combobox-input"
+				class="field-combobox-input {isLabelVisible ? '' : 'field-combobox-input--no-label'}"
 				placeholder={selected?.value ? selected.label : placeholder}
 				id={name}
 				disabled={isDisabled}
@@ -129,29 +130,31 @@
 						<div class="field-combobox-group-label">{group.label}</div>
 						{#if group.options.length > 0}
 							{#each group.options as option}
-								<Combobox.Item
-									value={option.value}
-									label={option.label}
-									class="field-combobox-item"
-								>
-									<Combobox.ItemIndicator class="field-combobox-item-indicator">
-										<Check class="base-icon" />
-									</Combobox.ItemIndicator>
-									<div class="field-combobox-item-label">
-										<span class="field-combobox-item-label-option" title={option.label}>
-											{option.label}
-										</span>
-										{#if option.badge}
-											{#if Array.isArray(option.badge)}
-												{#each option.badge as badge}
-													<Badge>{badge}</Badge>
-												{/each}
-											{:else}
-												<Badge>{option.badge}</Badge>
+								{#if option.label}
+									<Combobox.Item
+										value={option.value}
+										label={option.label}
+										class="field-combobox-item"
+									>
+										<Combobox.ItemIndicator class="field-combobox-item-indicator">
+											<Check class="base-icon" />
+										</Combobox.ItemIndicator>
+										<div class="field-combobox-item-label">
+											<span class="field-combobox-item-label-option" title={option.label}>
+												{option.label}
+											</span>
+											{#if option.badge}
+												{#if Array.isArray(option.badge)}
+													{#each option.badge as badge}
+														<Badge>{badge}</Badge>
+													{/each}
+												{:else}
+													<Badge>{option.badge}</Badge>
+												{/if}
 											{/if}
-										{/if}
-									</div>
-								</Combobox.Item>
+										</div>
+									</Combobox.Item>
+								{/if}
 							{/each}
 						{:else}
 							<span class="field-select-empty">{$LL.noRecentModels()}</span>
@@ -200,12 +203,16 @@
 		@apply base-input pr-14 text-sm;
 	}
 
+	:global(.field-combobox-input--no-label) {
+		@apply py-2.5;
+	}
+
 	:global(.field-combobox-content) {
-		@apply overflow-scrollbar relative z-10 max-h-64 max-w-full rounded-md bg-shade-0 py-1 shadow-md;
+		@apply overflow-scrollbar relative z-10 max-h-64 max-w-full rounded-md bg-shade-0 shadow-md;
 	}
 
 	:global(.field-combobox-item) {
-		@apply grid grid-cols-[24px,auto,max-content] items-center px-3 py-1 text-sm;
+		@apply grid grid-cols-[24px,auto,max-content] items-center px-3 py-1.5 text-sm;
 	}
 
 	:global(.field-combobox-item[data-highlighted]) {
@@ -220,11 +227,7 @@
 		@apply overflow-hidden text-ellipsis text-nowrap;
 	}
 
-	:global(.field-combobox-group) {
-		@apply py-1;
-	}
-
 	:global(.field-combobox-group-label) {
-		@apply px-3 py-1 text-xs font-semibold text-muted;
+		@apply sticky top-0 border-b border-shade-3 bg-shade-2 px-3 py-2 text-xs font-semibold text-muted;
 	}
 </style>

@@ -5,7 +5,8 @@
 
 	import FieldSelect from './FieldSelect.svelte';
 
-	export let model: string | undefined;
+	export let model: string | undefined = $settingsStore.ollamaModel || '';
+	export let isLabelVisible: boolean | undefined = true;
 
 	type ModelOption = {
 		value: string;
@@ -35,8 +36,9 @@
 <FieldSelect
 	name="model"
 	{disabled}
-	placeholder={$LL.search()}
+	placeholder={isLabelVisible ? $LL.search() : $LL.availableModels()}
 	label={$LL.availableModels()}
+	{isLabelVisible}
 	options={[
 		{ label: $LL.lastUsedModels(), options: lastUsedModels },
 		{ label: $LL.otherModels(), options: otherModels }

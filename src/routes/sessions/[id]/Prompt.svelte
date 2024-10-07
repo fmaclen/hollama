@@ -9,7 +9,6 @@
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Field from '$lib/components/Field.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
-	import Fieldset from '$lib/components/Fieldset.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import { settingsStore } from '$lib/localStorage';
 	import type { Editor } from '$lib/sessions';
@@ -42,129 +41,132 @@
 </script>
 
 <div class="prompt-editor" class:prompt-editor--fullscreen={$editor.isCodeEditor}>
-	<button class="prompt-editor__toggle" on:click={toggleCodeEditor}>
-		<UnfoldVertical class="mx-auto my-2 h-3 w-3 opacity-50" />
-	</button>
-
 	<div class="prompt-editor__form">
-		<Fieldset>
-			<div class="prompt-editor__project">
-				<FieldSelectModel bind:model />
+		<div class="prompt-editor__project">
+			<FieldSelectModel isLabelVisible={false} bind:model />
 
-				{#if isOllama}
-					<nav class="segmented-nav">
-						<div
-							class="segmented-nav__button"
-							class:segmented-nav__button--active={$editor.view === 'messages'}
+			{#if isOllama}
+				<nav class="segmented-nav">
+					<div
+						class="segmented-nav__button"
+						class:segmented-nav__button--active={$editor.view === 'messages'}
+					>
+						<Button
+							aria-label={$LL.messages()}
+							variant="icon"
+							on:click={switchToMessages}
+							class="h-full"
+							isActive={$editor.view === 'messages'}
 						>
-							<Button
-								aria-label={$LL.messages()}
-								variant="icon"
-								on:click={switchToMessages}
-								class="h-full"
-								isActive={$editor.view === 'messages'}
-							>
-								<MessageSquareText class="base-icon" />
-							</Button>
-						</div>
-						<div
-							class="segmented-nav__button"
-							class:segmented-nav__button--active={$editor.view === 'controls'}
+							<MessageSquareText class="base-icon" />
+						</Button>
+					</div>
+					<div
+						class="segmented-nav__button"
+						class:segmented-nav__button--active={$editor.view === 'controls'}
+					>
+						<Button
+							aria-label={$LL.controls()}
+							variant="icon"
+							on:click={() => ($editor.view = 'controls')}
+							class="h-full"
+							isActive={$editor.view === 'controls'}
 						>
-							<Button
-								aria-label={$LL.controls()}
-								variant="icon"
-								on:click={() => ($editor.view = 'controls')}
-								class="h-full"
-								isActive={$editor.view === 'controls'}
-							>
-								<Settings_2 class="base-icon" />
-							</Button>
-						</div>
-					</nav>
-				{/if}
-			</div>
-
-			{#if $editor.isCodeEditor}
-				<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={$editor.prompt} />
-			{:else}
-				<Field name="prompt">
-					<textarea
-						name="prompt"
-						class="prompt-editor__textarea"
-						placeholder={$LL.promptPlaceholder()}
-						bind:this={$editor.promptTextarea}
-						bind:value={$editor.prompt}
-						on:keydown={handleKeyDown}
-					/>
-				</Field>
+							<Settings_2 class="base-icon" />
+						</Button>
+					</div>
+				</nav>
 			{/if}
 
-			<nav class="prompt-editor__toolbar">
-				{#if $editor.messageIndexToEdit !== null}
-					<Button
-						variant="outline"
-						on:click={() => {
-							$editor.prompt = '';
-							$editor.messageIndexToEdit = null;
-							$editor.isCodeEditor = false;
-						}}
-					>
-						{$LL.cancel()}
-					</Button>
-				{/if}
-				<ButtonSubmit
-					{handleSubmit}
-					hasMetaKey={$editor.isCodeEditor}
-					disabled={!$editor.prompt || !model}
-				>
-					{$LL.run()}
-				</ButtonSubmit>
+			<Button
+				variant={$editor.isCodeEditor ? 'default' : 'outline'}
+				class="prompt-editor__toggle"
+				on:click={toggleCodeEditor}
+			>
+				<UnfoldVertical class="base-icon" />
+			</Button>
+		</div>
 
-				{#if $editor.isCompletionInProgress}
-					<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
-						<div class="prompt-editor__stop">
-							<span class="prompt-editor__stop-icon">
-								<StopCircle class=" base-icon" />
-							</span>
-							<span class="prompt-editor__loading-icon">
-								<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />
-							</span>
-						</div>
-					</Button>
-				{/if}
-			</nav>
-		</Fieldset>
+		{#if $editor.isCodeEditor}
+			<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={$editor.prompt} />
+		{:else}
+			<Field name="prompt">
+				<textarea
+					name="prompt"
+					class="prompt-editor__textarea"
+					placeholder={$LL.promptPlaceholder()}
+					bind:this={$editor.promptTextarea}
+					bind:value={$editor.prompt}
+					on:keydown={handleKeyDown}
+				/>
+			</Field>
+		{/if}
+
+		<nav class="prompt-editor__toolbar">
+			{#if $editor.messageIndexToEdit !== null}
+				<Button
+					variant="outline"
+					on:click={() => {
+						$editor.prompt = '';
+						$editor.messageIndexToEdit = null;
+						$editor.isCodeEditor = false;
+					}}
+				>
+					{$LL.cancel()}
+				</Button>
+			{/if}
+			<ButtonSubmit
+				{handleSubmit}
+				hasMetaKey={$editor.isCodeEditor}
+				disabled={!$editor.prompt || !model}
+			>
+				{$LL.run()}
+			</ButtonSubmit>
+
+			{#if $editor.isCompletionInProgress}
+				<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
+					<div class="prompt-editor__stop">
+						<span class="prompt-editor__stop-icon">
+							<StopCircle class=" base-icon" />
+						</span>
+						<span class="prompt-editor__loading-icon">
+							<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />
+						</span>
+					</div>
+				</Button>
+			{/if}
+		</nav>
 	</div>
 </div>
 
 <style lang="postcss">
 	.prompt-editor {
-		@apply sticky bottom-0 z-10 mx-auto flex w-full flex-col border-t;
+		@apply sticky bottom-0 z-10 mx-auto flex w-full flex-col border-t bg-shade-1 p-3;
+		@apply md:p-4;
+		@apply lg:p-6;
 		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
 	}
 
 	.prompt-editor__project {
-		@apply grid grid-cols-[auto,max-content] items-end gap-x-2;
+		@apply grid grid-cols-[auto,max-content,max-content] items-end gap-x-2;
+	}
+
+	:global(.prompt-editor__toggle) {
+		@apply h-full;
 	}
 
 	.prompt-editor--fullscreen {
 		@apply min-h-[60dvh];
+		@apply md:min-h-[75dvh];
 	}
 
 	.prompt-editor__form {
-		@apply base-fieldset-container overflow-scrollbar flex h-full bg-shade-1;
-	}
-
-	.prompt-editor__toggle {
-		@apply border-b bg-shade-1;
-		@apply hover:bg-shade-2 active:bg-shade-2;
-		@apply 2xl:rounded-t-lg;
+		@apply overflow-scrollbar flex h-full flex-col gap-y-2;
 	}
 
 	.prompt-editor__textarea {
-		@apply base-input min-h-16 resize-none scroll-p-2 px-3 py-2;
-		@apply md:min-h-20;
+		field-sizing: content;
+		@apply base-input max-h-48 min-h-14 resize-none scroll-p-2 px-3 py-2;
 	}
 
 	.prompt-editor__toolbar {
@@ -199,11 +201,11 @@
 	}
 
 	.segmented-nav {
-		@apply flex h-full items-center rounded bg-shade-2 p-1;
+		@apply flex h-full items-center rounded bg-shade-2 p-0.5;
 	}
 
 	.segmented-nav__button {
-		@apply h-full rounded-sm px-1 text-shade-6;
+		@apply h-full rounded-sm text-shade-6;
 
 		&--active {
 			@apply bg-shade-0 text-neutral-50 shadow;

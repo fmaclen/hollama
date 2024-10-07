@@ -1,4 +1,4 @@
-`2024-9-26`
+`2024-10-1`
 
 ### Message of the day
 
@@ -9,6 +9,7 @@
 - **Desktop app** is now available for [Windows, macOS & Linux](https://github.com/fmaclen/hollama/releases)
 - **Change the model** on an existing session
 - **Advanced Ollama parameters** can be set at any time on every session
+- **こんにちは世界!** UI is now available in [Japanese](/settings)
 
 #### Previously, in Hollama
 

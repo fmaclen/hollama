@@ -30,6 +30,7 @@
 		options={[
 			{ value: 'en', label: 'English' },
 			{ value: 'es', label: 'Español' },
+			{ value: 'ja', label: '日本語' },
 			{ value: 'tr', label: 'Türkçe' }
 		]}
 	/>

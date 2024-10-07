@@ -106,6 +106,7 @@
 
 	function handleSubmit() {
 		if (!$editor.prompt) return;
+		if (!$session.model) return;
 		$editor.isCodeEditor = false;
 		$editor.view = 'messages';
 
@@ -209,7 +210,7 @@
 		title={[$editor.isNewSession ? $LL.newSession() : getSessionTitle($session), $LL.sessions()]}
 	/>
 	<Header confirmDeletion={$shouldConfirmDeletion}>
-		<p data-testid="session-id" class="text-sm font-bold leading-none">
+		<p data-testid="session-id" class="font-bold leading-none">
 			{$LL.session()}
 			<Button variant="link" href={`/sessions/${$session.id}`}>#{$session.id}</Button>
 		</p>
