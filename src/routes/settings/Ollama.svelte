@@ -10,6 +10,7 @@
 	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';
+	import { OllamaStrategy } from '$lib/chat/ollama';
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import FieldHelp from '$lib/components/FieldHelp.svelte';
@@ -17,27 +18,23 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
 	import { settingsStore } from '$lib/localStorage';
-	import { ollamaPull, ollamaTags } from '$lib/ollama';
 
 	let ollamaURL: URL | null = null;
 
 	const DETAULT_OLLAMA_SERVER = 'http://localhost:11434';
 
+	let ollama = new OllamaStrategy();
 	let ollamaServer = $settingsStore.ollamaServer || DETAULT_OLLAMA_SERVER;
 	let ollamaTagResponse: ListResponse | null = null;
 	let ollamaServerStatus: 'connected' | 'disconnected' = 'disconnected';
 	let modelTag: string | undefined;
 	let isPullInProgress = false;
 
-	$: settingsStore.update((settings) => ({
-		...settings,
-		ollamaServer,
-		ollamaModels: ollamaTagResponse?.models || []
-	}));
+	$: settingsStore.update((settings) => ({ ...settings, ollamaServer }));
 
 	async function getModelsList(): Promise<void> {
 		try {
-			ollamaTagResponse = await ollamaTags();
+			ollamaTagResponse = await ollama.getModels();
 			ollamaServerStatus = 'connected';
 		} catch {
 			ollamaTagResponse = null;
@@ -51,7 +48,7 @@
 		const toastId = toast.message($LL.pullingModel(), { description: modelTag });
 
 		try {
-			await ollamaPull(
+			await ollama.pull(
 				{ model: modelTag, stream: true },
 				(response: ProgressResponse | StatusResponse | ErrorResponse) => {
 					if ('status' in response && response.status === 'success') {

@@ -1,20 +1,18 @@
 import OpenAI from 'openai';
+import { get } from 'svelte/store';
 
-// import { get } from 'svelte/store';
-
-// import { settingsStore } from '../localStorage';
+import { settingsStore } from '../localStorage';
 import type { ChatStrategy } from './index';
 
 export class OpenAIStrategy implements ChatStrategy {
 	private openai: OpenAI;
 
 	constructor() {
-		// const settings = get(settingsStore);
-		// if (!settings.openaiApiKey) throw new Error('No OpenAI API key specified');
+		const settings = get(settingsStore);
 
 		this.openai = new OpenAI({
-			baseURL: 'http://localhost:11434/v1/',
-			apiKey: 'ollama',
+			baseURL: settings.openaiServer,
+			apiKey: settings.openaiApiKey || undefined,
 			dangerouslyAllowBrowser: true
 		});
 	}

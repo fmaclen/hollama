@@ -25,6 +25,10 @@ type RootTranslation = {
 	 */
 	allowMixedContent: string
 	/**
+	 * A​P​I​ ​k​e​y
+	 */
+	apiKey: string
+	/**
 	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​k​n​o​w​l​e​d​g​e​?
 	 */
 	areYouSureYouWantToDeleteAllKnowledge: string
@@ -57,6 +61,10 @@ type RootTranslation = {
 	 * A​v​a​i​l​a​b​l​e​ ​m​o​d​e​l​s
 	 */
 	availableModels: string
+	/**
+	 * B​a​s​e​ ​U​R​L
+	 */
+	baseUrl: string
 	/**
 	 * B​r​o​w​s​e​ ​t​h​e​ ​l​i​s​t​ ​o​f​ ​a​v​a​i​l​a​b​l​e​ ​m​o​d​e​l​s
 	 */
@@ -206,6 +214,10 @@ type RootTranslation = {
 	 */
 	goToReleases: string
 	/**
+	 * H​o​w​ ​t​o​ ​o​b​t​a​i​n​ ​a​n​ ​A​P​I​ ​k​e​y​ ​f​r​o​m​ ​O​p​e​n​A​I​?
+	 */
+	howToObtainOpenAIKey: string
+	/**
 	 * H​o​w​ ​t​o​ ​u​p​d​a​t​e​ ​D​o​c​k​e​r​ ​c​o​n​t​a​i​n​e​r​?
 	 */
 	howToUpdateDocker: string
@@ -302,6 +314,10 @@ type RootTranslation = {
 	 * N​e​w​ ​s​e​s​s​i​o​n
 	 */
 	newSession: string
+	/**
+	 * N​o​ ​A​P​I​ ​k​e​y
+	 */
+	noApiKey: string
 	/**
 	 * C​r​e​a​t​e​ ​n​e​w​ ​k​n​o​w​l​e​d​g​e​ ​o​r​ ​c​h​o​o​s​e​ ​o​n​e​ ​f​r​o​m​ ​t​h​e​ ​l​i​s​t
 	 */
@@ -540,6 +556,10 @@ export type TranslationFunctions = {
 	 */
 	allowMixedContent: () => LocalizedString
 	/**
+	 * API key
+	 */
+	apiKey: () => LocalizedString
+	/**
 	 * Are you sure you want to delete all knowledge?
 	 */
 	areYouSureYouWantToDeleteAllKnowledge: () => LocalizedString
@@ -572,6 +592,10 @@ The completion in progress will stop
 	 * Available models
 	 */
 	availableModels: () => LocalizedString
+	/**
+	 * Base URL
+	 */
+	baseUrl: () => LocalizedString
 	/**
 	 * Browse the list of available models
 	 */
@@ -720,6 +744,10 @@ The completion in progress will stop
 	 */
 	goToReleases: () => LocalizedString
 	/**
+	 * How to obtain an API key from OpenAI?
+	 */
+	howToObtainOpenAIKey: () => LocalizedString
+	/**
 	 * How to update Docker container?
 	 */
 	howToUpdateDocker: () => LocalizedString
@@ -815,6 +843,10 @@ The completion in progress will stop
 	 * New session
 	 */
 	newSession: () => LocalizedString
+	/**
+	 * No API key
+	 */
+	noApiKey: () => LocalizedString
 	/**
 	 * Create new knowledge or choose one from the list
 	 */
