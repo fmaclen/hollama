@@ -129,6 +129,43 @@
 		@apply text-link;
 	}
 
+	.markdown :global(table) {
+		@apply w-full border-separate border-spacing-0 rounded-md;
+	}
+
+	.markdown :global(th),
+	.markdown :global(td) {
+		@apply border-b border-l border-shade-3 px-3 py-1 text-left text-sm;
+	}
+
+	.markdown :global(th) {
+		@apply border-t;
+	}
+
+	.markdown :global(th:first-child) {
+		@apply rounded-tl-md;
+	}
+
+	.markdown :global(th:last-child) {
+		@apply rounded-tr-md border-r;
+	}
+
+	.markdown :global(td:last-child) {
+		@apply border-r;
+	}
+
+	.markdown :global(tbody tr:last-child td:first-child) {
+		@apply rounded-bl-md;
+	}
+
+	.markdown :global(tbody tr:last-child td:last-child) {
+		@apply rounded-br-md;
+	}
+
+	.markdown :global(th) {
+		@apply bg-shade-2;
+	}
+
 	/* Code */
 
 	.markdown :global(pre) {

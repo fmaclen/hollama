@@ -130,23 +130,25 @@
 						<div class="field-combobox-group-label">{group.label}</div>
 						{#if group.options.length > 0}
 							{#each group.options as option}
-								<Combobox.Item
-									value={option.value}
-									label={option.label}
-									class="field-combobox-item"
-								>
-									<Combobox.ItemIndicator class="field-combobox-item-indicator">
-										<Check class="base-icon" />
-									</Combobox.ItemIndicator>
-									<div class="field-combobox-item-label">
-										<span class="field-combobox-item-label-option" title={option.label}>
-											{option.label}
-										</span>
-										{#if option.badge}
-											<Badge>{option.badge}</Badge>
-										{/if}
-									</div>
-								</Combobox.Item>
+								{#if option.label}
+									<Combobox.Item
+										value={option.value}
+										label={option.label}
+										class="field-combobox-item"
+									>
+										<Combobox.ItemIndicator class="field-combobox-item-indicator">
+											<Check class="base-icon" />
+										</Combobox.ItemIndicator>
+										<div class="field-combobox-item-label">
+											<span class="field-combobox-item-label-option" title={option.label}>
+												{option.label}
+											</span>
+											{#if option.badge}
+												<Badge>{option.badge}</Badge>
+											{/if}
+										</div>
+									</Combobox.Item>
+								{/if}
 							{/each}
 						{:else}
 							<span class="field-select-empty">{$LL.noRecentModels()}</span>
@@ -200,11 +202,11 @@
 	}
 
 	:global(.field-combobox-content) {
-		@apply overflow-scrollbar relative z-10 max-h-64 max-w-full rounded-md bg-shade-0 py-1 shadow-md;
+		@apply overflow-scrollbar relative z-10 max-h-64 max-w-full rounded-md bg-shade-0 shadow-md;
 	}
 
 	:global(.field-combobox-item) {
-		@apply grid grid-cols-[24px,auto,max-content] items-center px-3 py-1 text-sm;
+		@apply grid grid-cols-[24px,auto,max-content] items-center px-3 py-1.5 text-sm;
 	}
 
 	:global(.field-combobox-item[data-highlighted]) {
@@ -219,11 +221,7 @@
 		@apply overflow-hidden text-ellipsis text-nowrap;
 	}
 
-	:global(.field-combobox-group) {
-		@apply py-1;
-	}
-
 	:global(.field-combobox-group-label) {
-		@apply px-3 py-1 text-xs font-semibold text-muted;
+		@apply sticky top-0 border-b border-shade-3 bg-shade-2 px-3 py-2 text-xs font-semibold text-muted;
 	}
 </style>
