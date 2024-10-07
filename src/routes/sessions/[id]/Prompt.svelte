@@ -10,7 +10,6 @@
 	import Field from '$lib/components/Field.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
-	import { settingsStore } from '$lib/localStorage';
 	import type { Editor } from '$lib/sessions';
 
 	export let editor: Writable<Editor>;
