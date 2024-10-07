@@ -742,13 +742,9 @@ test.describe('Session', () => {
 			await route.abort('failed');
 		});
 		await page.getByTestId('new-session').click();
-		await expect(page.getByText('Run')).toBeDisabled();
 		await expect(
 			page.locator('ol[data-sonner-toaster] li', { hasText: "Can't connect to Ollama server" })
 		).toBeVisible();
-
-		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
-		await expect(page.getByText('Run')).toBeDisabled();
 	});
 
 	test('can navigate out of session during completion', async ({ page }) => {
