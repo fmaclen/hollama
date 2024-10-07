@@ -113,10 +113,7 @@
 			<ButtonSubmit
 				{handleSubmit}
 				hasMetaKey={$editor.isCodeEditor}
-				disabled={!$editor.prompt ||
-					$settingsStore.ollamaServerStatus === 'disconnected' ||
-					$settingsStore.ollamaModels.length === 0 ||
-					!$settingsStore.ollamaModel}
+				disabled={!$editor.prompt || !model}
 			>
 				{$LL.run()}
 			</ButtonSubmit>

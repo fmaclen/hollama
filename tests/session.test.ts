@@ -55,7 +55,24 @@ test.describe('Session', () => {
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.keyboard.press('Shift+Enter');
 		await expect(page.getByTestId('session-metadata')).toHaveText('New session');
+		await expect(page.getByText('Run')).toBeEnabled();
 
+		// Unselect the model
+		await page.getByTitle('Clear').click();
+		await expect(page.getByText('Run')).toBeDisabled();
+
+		// Can't run the prompt without a model
+		await page.keyboard.press('Enter');
+		await expect(
+			page.locator('article', {
+				hasText:
+					'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+			})
+		).not.toBeVisible();
+
+		// Re-select the model
+		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.focus();
 		await page.keyboard.press('Enter');
 		await expect(
 			page.locator('article', {

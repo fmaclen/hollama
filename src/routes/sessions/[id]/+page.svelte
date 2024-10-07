@@ -106,6 +106,7 @@
 
 	function handleSubmit() {
 		if (!$editor.prompt) return;
+		if (!$session.model) return;
 		$editor.isCodeEditor = false;
 		$editor.view = 'messages';
 
