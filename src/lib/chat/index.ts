@@ -51,7 +51,7 @@ export async function listModels(): Promise<Model[]> {
 	return [...ollamaModels, ...openaiModels];
 }
 
-export const getLastUsedModels = (): Model[] => {
+export function getLastUsedModels(): Model[] {
 	const currentSessions = get(sessionsStore);
 	const models = get(settingsStore)?.models;
 	if (!models) return [];
@@ -69,4 +69,4 @@ export const getLastUsedModels = (): Model[] => {
 	}
 
 	return lastUsedModels;
-};
+}

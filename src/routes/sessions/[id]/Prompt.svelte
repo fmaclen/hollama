@@ -2,6 +2,7 @@
 	import { LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
+	import { toast } from 'svelte-sonner';
 	import type { Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
@@ -32,6 +33,14 @@
 		scrollToBottom(true);
 	}
 
+	function switchToControls() {
+		if (!isOllama) {
+			toast.warning($LL.controlsOnlyAvailableForOllama());
+			return;
+		}
+		$editor.view = 'controls';
+	}
+
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.shiftKey) return;
 		if (event.key !== 'Enter') return;
@@ -45,38 +54,36 @@
 		<div class="prompt-editor__project">
 			<FieldSelectModel isLabelVisible={false} bind:model />
 
-			{#if isOllama}
-				<nav class="segmented-nav">
-					<div
-						class="segmented-nav__button"
-						class:segmented-nav__button--active={$editor.view === 'messages'}
+			<nav class="segmented-nav">
+				<div
+					class="segmented-nav__button"
+					class:segmented-nav__button--active={$editor.view === 'messages'}
+				>
+					<Button
+						aria-label={$LL.messages()}
+						variant="icon"
+						on:click={switchToMessages}
+						class="h-full"
+						isActive={$editor.view === 'messages'}
 					>
-						<Button
-							aria-label={$LL.messages()}
-							variant="icon"
-							on:click={switchToMessages}
-							class="h-full"
-							isActive={$editor.view === 'messages'}
-						>
-							<MessageSquareText class="base-icon" />
-						</Button>
-					</div>
-					<div
-						class="segmented-nav__button"
-						class:segmented-nav__button--active={$editor.view === 'controls'}
+						<MessageSquareText class="base-icon" />
+					</Button>
+				</div>
+				<div
+					class="segmented-nav__button"
+					class:segmented-nav__button--active={$editor.view === 'controls'}
+				>
+					<Button
+						aria-label={$LL.controls()}
+						variant="icon"
+						on:click={switchToControls}
+						class="h-full"
+						isActive={$editor.view === 'controls'}
 					>
-						<Button
-							aria-label={$LL.controls()}
-							variant="icon"
-							on:click={() => ($editor.view = 'controls')}
-							class="h-full"
-							isActive={$editor.view === 'controls'}
-						>
-							<Settings_2 class="base-icon" />
-						</Button>
-					</div>
-				</nav>
-			{/if}
+						<Settings_2 class="base-icon" />
+					</Button>
+				</div>
+			</nav>
 
 			<Button
 				variant={$editor.isCodeEditor ? 'default' : 'outline'}

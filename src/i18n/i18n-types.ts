@@ -110,6 +110,10 @@ type RootTranslation = {
 	 */
 	controls: string
 	/**
+	 * A​d​v​a​n​c​e​d​ ​c​o​n​t​r​o​l​s​ ​a​r​e​ ​c​u​r​r​e​n​t​l​y​ ​o​n​l​y​ ​a​v​a​i​l​a​b​l​e​ ​f​o​r​ ​O​l​l​a​m​a​ ​m​o​d​e​l​s
+	 */
+	controlsOnlyAvailableForOllama: string
+	/**
 	 * C​o​p​y
 	 */
 	copy: string
@@ -644,6 +648,10 @@ The completion in progress will stop
 	 * Controls
 	 */
 	controls: () => LocalizedString
+	/**
+	 * Advanced controls are currently only available for Ollama models
+	 */
+	controlsOnlyAvailableForOllama: () => LocalizedString
 	/**
 	 * Copy
 	 */

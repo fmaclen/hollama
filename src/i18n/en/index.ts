@@ -24,6 +24,8 @@ const en = {
 	connected: 'Connected',
 	content: 'Content',
 	controls: 'Controls',
+	controlsOnlyAvailableForOllama:
+		'Advanced controls are currently only available for Ollama models',
 	copy: 'Copy',
 	couldntCheckForUpdates: "Couldn't check for updates automatically",
 	couldntConnectToOllamaServer: "Couldn't connect to Ollama server",

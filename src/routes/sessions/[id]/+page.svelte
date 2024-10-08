@@ -1,12 +1,11 @@
 <script lang="ts">
 	import type { ChatRequest } from 'ollama/browser';
 	import { afterUpdate, onMount, tick } from 'svelte';
-	import { toast } from 'svelte-sonner';
 	import { writable, type Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import { beforeNavigate } from '$app/navigation';
-	import { chat, listModels } from '$lib/chat';
+	import { chat, type Model } from '$lib/chat';
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
@@ -72,12 +71,6 @@
 	});
 
 	async function handleSessionChange() {
-		try {
-			$settingsStore.models = await listModels();
-		} catch {
-			$settingsStore.models = [];
-			toast.warning($LL.cantConnectToOllamaServer());
-		}
 		$editor.view = 'messages';
 		session = writable(loadSession(data.id));
 		scrollToBottom();
@@ -125,12 +118,6 @@
 	}
 
 	async function handleCompletion(messages: Message[]) {
-		const model = (await listModels()).find((model) => model.name === $session.model);
-		if (!model) {
-			toast.error($LL.modelNotFound());
-			return;
-		}
-
 		$editor.abortController = new AbortController();
 		$editor.isCompletionInProgress = true;
 		$editor.prompt = ''; // Reset the prompt form field
@@ -144,7 +131,7 @@
 
 		try {
 			await chat({
-				model,
+				model: $settingsStore.models.find((model) => model.name === $session.model) as Model,
 				payload: ollamaChatRequest,
 				abortSignal: $editor.abortController.signal,
 				onChunk: async (chunk) => {

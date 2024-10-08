@@ -13,10 +13,10 @@
 
 	let openaiURL: URL | null = null;
 
-	const DETAULT_OPENAI_SERVER = 'http://localhost:11434/v1/';
+	const DEFAULT_OPENAI_SERVER = 'https://api.openai.com/v1';
 
 	let openai = new OpenAIStrategy();
-	let openaiServer = $settingsStore.openaiServer || DETAULT_OPENAI_SERVER;
+	let openaiServer = $settingsStore.openaiServer || DEFAULT_OPENAI_SERVER;
 	let openaiApiKey = $settingsStore.openaiApiKey || '';
 	let openaiServerStatus: 'connected' | 'disconnected' = 'disconnected';
 
@@ -49,7 +49,7 @@
 	<FieldInput
 		name="baseUrl"
 		label={$LL.baseUrl()}
-		placeholder={DETAULT_OPENAI_SERVER}
+		placeholder={DEFAULT_OPENAI_SERVER}
 		bind:value={openaiServer}
 		on:keyup={getModelsList}
 	>
