@@ -67,6 +67,7 @@
 		label={$LL.apiKey()}
 		bind:value={openaiApiKey}
 		placeholder={$LL.noApiKey()}
+		type="password"
 	>
 		<svelte:fragment slot="help">
 			{#if openaiApiKey === 'ollama' || openaiServerStatus === 'disconnected'}
