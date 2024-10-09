@@ -69,6 +69,7 @@
 	"optionalDependencies": {
 		"@cloudflare/workerd-linux-64": "^1.20240909.0",
 		"@esbuild/darwin-x64": "^0.24.0",
+		"@esbuild/win32-x64": "^0.24.0",
 		"@rollup/rollup-linux-x64-gnu": "^4.21.3",
 		"@sveltejs/adapter-cloudflare": "^4.2.1"
 	},
