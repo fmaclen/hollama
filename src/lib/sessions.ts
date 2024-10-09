@@ -1,7 +1,8 @@
 import { get } from 'svelte/store';
 
-import { sessionsStore, settingsStore, sortStore } from '$lib/localStorage';
+import { sessionsStore, sortStore } from '$lib/localStorage';
 
+import { getLastUsedModels } from './chat';
 import type { Knowledge } from './knowledge';
 import type { OllamaOptions } from './ollama';
 import { formatTimestampToNow } from './utils';
@@ -62,8 +63,8 @@ export const loadSession = (id: string): Session => {
 	}
 
 	if (!session) {
-		// Get the current model
-		const model = get(settingsStore)?.ollamaModel || '';
+		// Use the last used model
+		const model = getLastUsedModels()[0]?.name || '';
 
 		// Create a new session
 		session = {
