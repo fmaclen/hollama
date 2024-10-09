@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { MonitorUp } from 'lucide-svelte';
+	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';
 	import { OpenAIStrategy } from '$lib/chat/openai';
-	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
@@ -22,11 +22,14 @@
 
 	async function getModelsList(): Promise<void> {
 		openaiServerStatus = 'connecting';
+		toast.warning($LL.connecting());
 		try {
 			await openai.getModels();
 			openaiServerStatus = 'connected';
+			toast.success($LL.connected());
 		} catch {
 			openaiServerStatus = 'disconnected';
+			toast.error($LL.disconnected());
 		}
 	}
 
@@ -43,17 +46,7 @@
 		label={$LL.baseUrl()}
 		placeholder={DEFAULT_OPENAI_SERVER}
 		bind:value={openaiServer}
-	>
-		<svelte:fragment slot="status">
-			{#if openaiServerStatus === 'disconnected'}
-				<Badge variant="warning">{$LL.disconnected()}</Badge>
-			{:else if openaiServerStatus === 'connecting'}
-				<Badge variant="warning">{$LL.connecting()}</Badge>
-			{:else}
-				<Badge variant="positive">{$LL.connected()}</Badge>
-			{/if}
-		</svelte:fragment>
-	</FieldInput>
+	/>
 
 	<FieldInput
 		name="apiKey"
