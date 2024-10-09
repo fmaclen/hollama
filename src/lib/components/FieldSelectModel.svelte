@@ -19,8 +19,8 @@
 	let lastUsedModels: ModelOption[] = [];
 	let otherModels: ModelOption[] = [];
 
-	$: disabled = !$settingsStore.models.length;
-	$: models = $settingsStore.models.map((m) => ({
+	$: disabled = !$settingsStore.models?.length;
+	$: models = $settingsStore.models?.map((m) => ({
 		value: m.name,
 		label: m.name,
 		badge: [m.details.parameter_size, m.api]
@@ -30,7 +30,7 @@
 		label: m.name,
 		badge: [m.details.parameter_size, m.api]
 	}));
-	$: otherModels = models.filter((m) => !lastUsedModels.some((lm) => lm.value === m.value));
+	$: otherModels = models?.filter((m) => !lastUsedModels.some((lm) => lm.value === m.value)) || [];
 </script>
 
 <FieldSelect
