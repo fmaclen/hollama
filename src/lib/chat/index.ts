@@ -43,10 +43,7 @@ export async function listModels(): Promise<Model[]> {
 		.getModels()
 		.then((models) => models.models)
 		.catch(() => []);
-	const openaiModels = await new OpenAIStrategy()
-		.getModels()
-		.then((models) => models.models)
-		.catch(() => []);
+	const openaiModels = await new OpenAIStrategy().getModels().catch(() => []);
 
 	return [...ollamaModels, ...openaiModels];
 }

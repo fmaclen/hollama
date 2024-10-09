@@ -22,6 +22,7 @@ const en = {
 	clear: 'Clear',
 	confirmDeletion: 'Confirm deletion',
 	connected: 'Connected',
+	connecting: 'Connecting...',
 	content: 'Content',
 	controls: 'Controls',
 	controlsOnlyAvailableForOllama:

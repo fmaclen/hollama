@@ -102,6 +102,10 @@ type RootTranslation = {
 	 */
 	connected: string
 	/**
+	 * C​o​n​n​e​c​t​i​n​g​.​.​.
+	 */
+	connecting: string
+	/**
 	 * C​o​n​t​e​n​t
 	 */
 	content: string
@@ -640,6 +644,10 @@ The completion in progress will stop
 	 * Connected
 	 */
 	connected: () => LocalizedString
+	/**
+	 * Connecting...
+	 */
+	connecting: () => LocalizedString
 	/**
 	 * Content
 	 */

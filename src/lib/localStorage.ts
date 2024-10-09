@@ -64,7 +64,7 @@ export interface Settings {
 
 const defaultSettings: Settings = {
 	ollamaServer: 'http://localhost:11434',
-	openaiServer: 'http://localhost:11434/v1/',
+	openaiServer: 'https://api.openai.com/v1',
 	openaiApiKey: null,
 	models: [],
 	lastUpdateCheck: null,

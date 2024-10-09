@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
-	import { getLastUsedModels } from '$lib/chat';
+	import { getLastUsedModels, type Model } from '$lib/chat';
 	import { settingsStore } from '$lib/localStorage';
 
 	import FieldSelect from './FieldSelect.svelte';
@@ -19,16 +19,23 @@
 	let lastUsedModels: ModelOption[] = [];
 	let otherModels: ModelOption[] = [];
 
+	function getBadges(model: Model): string[] {
+		const badges: string[] = [];
+		if (model.details?.parameter_size) badges.push(model.details.parameter_size);
+		if (model.api) badges.push(model.api);
+		return badges;
+	}
+
 	$: disabled = !$settingsStore.models?.length;
 	$: models = $settingsStore.models?.map((m) => ({
 		value: m.name,
 		label: m.name,
-		badge: [m.details.parameter_size, m.api]
+		badge: getBadges(m)
 	}));
 	$: lastUsedModels = getLastUsedModels().map((m) => ({
 		value: m.name,
 		label: m.name,
-		badge: [m.details.parameter_size, m.api]
+		badge: getBadges(m)
 	}));
 	$: otherModels = models?.filter((m) => !lastUsedModels.some((lm) => lm.value === m.value)) || [];
 </script>

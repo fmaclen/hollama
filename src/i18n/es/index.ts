@@ -25,6 +25,7 @@ const es = {
 	currentVersion: 'Versión actual',
 	confirmDeletion: 'Confirmar eliminación',
 	connected: 'Conectado',
+	connecting: 'Conectando...',
 	content: 'Contenido',
 	controls: 'Controles',
 	copy: 'Copiar',

@@ -17,6 +17,14 @@ export class OpenAIStrategy implements ChatStrategy {
 		});
 	}
 
+	config(params: { server: string; apiKey: string }): void {
+		this.openai = new OpenAI({
+			baseURL: params.server,
+			apiKey: params.apiKey,
+			dangerouslyAllowBrowser: true
+		});
+	}
+
 	async chat(
 		payload: any,
 		abortSignal: AbortSignal,
@@ -36,6 +44,9 @@ export class OpenAIStrategy implements ChatStrategy {
 
 	async getModels(): Promise<any> {
 		const response = await this.openai.models.list();
-		return response.data;
+		return response.data?.map((model) => ({
+			api: 'openai',
+			name: model.id
+		}));
 	}
 }
