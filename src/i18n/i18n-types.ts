@@ -98,6 +98,10 @@ type RootTranslation = {
 	 */
 	confirmDeletion: string
 	/**
+	 * C​o​n​n​e​c​t
+	 */
+	connect: string
+	/**
 	 * C​o​n​n​e​c​t​e​d
 	 */
 	connected: string
@@ -640,6 +644,10 @@ The completion in progress will stop
 	 * Confirm deletion
 	 */
 	confirmDeletion: () => LocalizedString
+	/**
+	 * Connect
+	 */
+	connect: () => LocalizedString
 	/**
 	 * Connected
 	 */

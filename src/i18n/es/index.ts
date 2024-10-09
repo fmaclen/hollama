@@ -24,6 +24,7 @@ const es = {
 	checkingForUpdates: 'Buscando actualizaciones...',
 	currentVersion: 'Versión actual',
 	confirmDeletion: 'Confirmar eliminación',
+	connect: 'Conectar',
 	connected: 'Conectado',
 	connecting: 'Conectando...',
 	content: 'Contenido',

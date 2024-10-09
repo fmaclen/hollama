@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MonitorUp } from 'lucide-svelte';
+	import { RefreshCw } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';
@@ -57,13 +57,14 @@
 	>
 		<svelte:fragment slot="nav">
 			<Button
-				aria-label="Connect"
+				variant="outline"
+				aria-label={$LL.connect()}
 				class="h-full text-muted"
 				isLoading={openaiServerStatus === 'connecting'}
 				disabled={openaiServerStatus === 'connecting' || !openaiServer || !openaiApiKey}
 				on:click={updateOpenAIConfig}
 			>
-				<MonitorUp class="base-icon" />
+				<RefreshCw class="base-icon" />
 			</Button>
 		</svelte:fragment>
 

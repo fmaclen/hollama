@@ -21,6 +21,7 @@ const en = {
 	checkNow: 'Check now',
 	clear: 'Clear',
 	confirmDeletion: 'Confirm deletion',
+	connect: 'Connect',
 	connected: 'Connected',
 	connecting: 'Connecting...',
 	content: 'Content',
