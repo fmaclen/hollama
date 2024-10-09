@@ -45,7 +45,12 @@ export async function listModels(): Promise<Model[]> {
 		.catch(() => []);
 	const openaiModels = await new OpenAIStrategy().getModels().catch(() => []);
 
-	return [...ollamaModels, ...openaiModels];
+	return [...ollamaModels, ...openaiModels].sort((a, b) => {
+		const nameA = a.name;
+		const nameB = b.name;
+		// Compare ignoring case and accents
+		return nameA.localeCompare(nameB, undefined, { sensitivity: 'base' });
+	});
 }
 
 export function getLastUsedModels(): Model[] {
