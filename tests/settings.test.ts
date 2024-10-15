@@ -232,4 +232,20 @@ test.describe('Locales', () => {
 			);
 		});
 	});
+
+	test.describe('Portuguese', () => {
+		test.use({ locale: 'tr-TR' });
+		test('default language is turkish', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('tr-TR');
+
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Server')).not.toBeVisible();
+			await expect(page.getByText('Sunucu')).toBeVisible();
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"tr"'
+			);
+		});
+	});	
 });
