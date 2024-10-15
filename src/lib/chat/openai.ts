@@ -1,8 +1,9 @@
 import OpenAI from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 import { get } from 'svelte/store';
 
 import { settingsStore } from '../localStorage';
-import type { ChatStrategy } from './index';
+import type { ChatRequest, ChatStrategy, Model } from './index';
 
 export class OpenAIStrategy implements ChatStrategy {
 	private openai: OpenAI;
@@ -26,13 +27,13 @@ export class OpenAIStrategy implements ChatStrategy {
 	}
 
 	async chat(
-		payload: any,
+		payload: ChatRequest,
 		abortSignal: AbortSignal,
 		onChunk: (content: string) => void
 	): Promise<void> {
 		const response = await this.openai.chat.completions.create({
 			model: payload.model,
-			messages: payload.messages,
+			messages: payload.messages as ChatCompletionMessageParam[],
 			stream: true
 		});
 
@@ -42,7 +43,7 @@ export class OpenAIStrategy implements ChatStrategy {
 		}
 	}
 
-	async getModels(): Promise<any> {
+	async getModels(): Promise<Model[]> {
 		const response = await this.openai.models.list();
 		return response.data?.map((model) => ({
 			api: 'openai',

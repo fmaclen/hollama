@@ -1,15 +1,13 @@
 import { get } from 'svelte/store';
 
+import type { OllamaOptions } from '$lib/chat/ollama';
 import { sessionsStore, sortStore } from '$lib/localStorage';
 
-import { getLastUsedModels } from './chat';
+import { getLastUsedModels, type Message as ChatMessage } from './chat';
 import type { Knowledge } from './knowledge';
-import type { OllamaOptions } from './ollama';
 import { formatTimestampToNow } from './utils';
 
-export interface Message {
-	role: 'user' | 'assistant' | 'system';
-	content: string;
+export interface Message extends ChatMessage {
 	knowledge?: Knowledge;
 	context?: number[];
 }

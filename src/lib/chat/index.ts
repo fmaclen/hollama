@@ -1,22 +1,44 @@
-import type { ChatRequest, ModelResponse } from 'ollama/browser';
+import type { ErrorResponse, ProgressResponse, PullRequest, StatusResponse } from 'ollama/browser';
 import { get } from 'svelte/store';
 
 import { sessionsStore, settingsStore } from '$lib/localStorage';
 
-import { OllamaStrategy } from './ollama';
+import { OllamaStrategy, type OllamaOptions } from './ollama';
 import { OpenAIStrategy } from './openai';
 
-export interface Model extends ModelResponse {
-	// TODO new interface
+export interface Model {
 	api: 'ollama' | 'openai';
+	name: string;
+	size?: number;
+	parameterSize?: string;
+	modifiedAt?: Date;
+}
+
+export interface Message {
+	role: 'user' | 'assistant' | 'system';
+	content: string;
+}
+
+export interface ChatRequest {
+	model: string;
+	messages: Message[];
+	stream?: boolean;
+	options?: Partial<OllamaOptions>;
 }
 
 export interface ChatStrategy {
-	chat(payload: any, abortSignal: AbortSignal, onChunk: (content: string) => void): Promise<void>;
+	chat(
+		payload: ChatRequest,
+		abortSignal: AbortSignal,
+		onChunk: (content: string) => void
+	): Promise<void>;
 
-	getModels(): Promise<any>;
+	getModels(): Promise<Model[]>;
 
-	pull?(payload: any, onChunk: (progress: any) => void): Promise<void>;
+	pull?(
+		payload: PullRequest,
+		onChunk: (progress: ProgressResponse | StatusResponse | ErrorResponse) => void
+	): Promise<void>;
 }
 
 function getChatStrategy(model: Model): ChatStrategy {
@@ -39,10 +61,7 @@ export async function chat({ model, payload, abortSignal, onChunk }: ChatParams)
 }
 
 export async function listModels(): Promise<Model[]> {
-	const ollamaModels = await new OllamaStrategy()
-		.getModels()
-		.then((models) => models.models)
-		.catch(() => []);
+	const ollamaModels = await new OllamaStrategy().getModels().catch(() => []);
 	const openaiModels = await new OpenAIStrategy().getModels().catch(() => []);
 
 	return [...ollamaModels, ...openaiModels].sort((a, b) => {

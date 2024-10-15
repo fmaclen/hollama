@@ -1,11 +1,10 @@
 <script lang="ts">
-	import type { ChatRequest } from 'ollama/browser';
 	import { afterUpdate, onMount, tick } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import { beforeNavigate } from '$app/navigation';
-	import { chat, type Model } from '$lib/chat';
+	import { chat, type ChatRequest, type Model } from '$lib/chat';
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';

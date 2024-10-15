@@ -21,8 +21,8 @@
 
 	function getBadges(model: Model): string[] {
 		const badges: string[] = [];
-		if (model.details?.parameter_size) badges.push(model.details.parameter_size);
-		if (model.api) badges.push(model.api);
+		if (model.parameterSize) badges.push(model.parameterSize);
+		badges.push(model.api);
 		return badges;
 	}
 

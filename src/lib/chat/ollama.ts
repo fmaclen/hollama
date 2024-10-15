@@ -10,7 +10,43 @@ import type {
 import { get } from 'svelte/store';
 
 import { settingsStore } from '../localStorage';
-import type { ChatStrategy } from './index';
+import type { ChatStrategy, Model } from './index';
+
+export interface OllamaOptions {
+	numa: boolean;
+	num_ctx: number;
+	num_batch: number;
+	num_gpu: number;
+	main_gpu: number;
+	low_vram: boolean;
+	f16_kv: boolean;
+	// logits_all: boolean; // REF https://github.com/ollama/ollama-js/issues/145
+	vocab_only: boolean;
+	use_mmap: boolean;
+	use_mlock: boolean;
+	// embedding_only: boolean; // REF https://github.com/ollama/ollama-js/issues/145
+	num_thread: number;
+
+	// Runtime options
+	num_keep: number;
+	seed: number;
+	num_predict: number;
+	top_k: number;
+	top_p: number;
+	min_p: number; // REF https://github.com/ollama/ollama-js/issues/145
+	tfs_z: number;
+	typical_p: number;
+	repeat_last_n: number;
+	temperature: number;
+	repeat_penalty: number;
+	presence_penalty: number;
+	frequency_penalty: number;
+	mirostat: number;
+	mirostat_tau: number;
+	mirostat_eta: number;
+	penalize_newline: boolean;
+	stop: string[];
+}
 
 function getServerFromSettings() {
 	const settings = get(settingsStore);
@@ -57,7 +93,7 @@ export class OllamaStrategy implements ChatStrategy {
 		}
 	}
 
-	async getModels(): Promise<ListResponse> {
+	async getModels(): Promise<Model[]> {
 		const response = await fetch(`${getServerFromSettings()}/api/tags`);
 		if (!response.ok) throw new Error('Failed to fetch Ollama tags');
 
@@ -66,9 +102,12 @@ export class OllamaStrategy implements ChatStrategy {
 			throw new Error('Failed to parse Ollama tags', { cause: data });
 		}
 
-		data.models = data.models.map((model) => ({ ...model, api: 'ollama' }));
-
-		return data;
+		return data.models.map((model) => ({
+			...model,
+			api: 'ollama',
+			parameterSize: model.details.parameter_size,
+			modifiedAt: new Date(model.modified_at)
+		}));
 	}
 
 	async pull(
