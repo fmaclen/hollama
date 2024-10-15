@@ -22,7 +22,7 @@
 
 	async function getModelsList(): Promise<void> {
 		openaiServerStatus = 'connecting';
-		const toastId = toast.message($LL.connecting());
+		const toastId = toast.loading($LL.connecting());
 		try {
 			await openai.getModels();
 			openaiServerStatus = 'connected';
