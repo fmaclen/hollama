@@ -7,20 +7,15 @@
 #### What's new?
 
 - **Desktop app** is now available for [Windows, macOS & Linux](https://github.com/fmaclen/hollama/releases)
-- **Change the model** on an existing session
-- **Advanced Ollama parameters** can be set at any time on every session
-- **こんにちは世界!** UI is now available in [Japanese](/settings)
+- **Olá mundo!** UI is now available in [Portuguese (Brasil)](/settings)
 
 #### Previously, in Hollama
 
-- **Multi-language support** UI is now available in [Spanish & Turkish](/settings)
+- **Model** and **advanced Ollama settings** can be changed at any time on an existing session
+- **Multi-language support**
 - **Enhanced models menu** now shows parameter size and highlights recently used models
 - **Download** [Ollama models](https://ollama.ai/models) from [Settings](/settings)
 - **Editable messages** in [Sessions](/sessions)
-- Customizable **system prompts**
-- **Code-editor** for prompting
-- **Mobile** friendly layout
-- **Light & dark** themes
 
 #### What's next?
 
