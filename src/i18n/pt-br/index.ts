@@ -6,8 +6,7 @@ const pt_br = {
 	allModels: 'Todos os modelos',
 	allowConnections: 'Altere a configuração do seu servidor para permitir conexões',
 	allowMixedContent: 'Permitir conteúdo misto',
-	areYouSureYouWantToDeleteAllKnowledge:
-		'Quer realmente eliminar todo o conhecimento?',
+	areYouSureYouWantToDeleteAllKnowledge: 'Quer realmente eliminar todo o conhecimento?',
 	areYouSureYouWantToDeleteAllSessions: 'Quer realmente eliminar todas as sessões?',
 	areYouSureYouWantToDeleteAllSettings: 'Quer realmente eliminar todos os ajustes?',
 	areYouSureYouWantToLeave: 'Quer realmente sair?\nA tarefa em andamento será interrompida',
@@ -67,8 +66,7 @@ const pt_br = {
 	noRecentModels: 'Nenhum modelo recentemente utilizado',
 	noSessionChosen: 'Crie uma nova Sessão ou escolha uma existente da lista',
 	notFound: 'A página buscada não existe',
-	ollamaConnectionError:
-		'Sem conexão com Ollama. É este [servidor en ejecución](/settings)?',
+	ollamaConnectionError: 'Sem conexão com Ollama. É este [servidor en ejecución](/settings)?',
 	ollamaLibrary: 'Biblioteca do Ollama',
 	otherModels: 'Outros modelos',
 	prompt: 'Prompt',
