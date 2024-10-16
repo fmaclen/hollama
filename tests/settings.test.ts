@@ -232,4 +232,20 @@ test.describe('Locales', () => {
 			);
 		});
 	});
+
+	test.describe('Portuguese', () => {
+		test.use({ locale: 'pt-BR' });
+		test('default language is portuguese', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('pt-BR');
+
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Server')).not.toBeVisible();
+			await expect(page.getByText('Servidor')).toBeVisible();
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"pt-br"'
+			);
+		});
+	});
 });

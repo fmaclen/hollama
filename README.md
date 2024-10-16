@@ -7,7 +7,7 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 - Large prompt fields
 - Markdown rendering with syntax highlighting
 - Code editor features
-- Customizable system prompts
+- Customizable system prompts & advanced Ollama parameters
 - Copy code snippets, messages or entire sessions
 - Edit & retry messages
 - Stores data locally on your browser
