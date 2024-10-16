@@ -26,6 +26,10 @@ type RootTranslation = {
 	 */
 	allowMixedContent: string
 	/**
+	 * A​P​I​ ​k​e​y
+	 */
+	apiKey: string
+	/**
 	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​k​n​o​w​l​e​d​g​e​?
 	 */
 	areYouSureYouWantToDeleteAllKnowledge: string
@@ -59,6 +63,10 @@ type RootTranslation = {
 	 */
 	availableModels: string
 	/**
+	 * B​a​s​e​ ​U​R​L
+	 */
+	baseUrl: string
+	/**
 	 * B​r​o​w​s​e​ ​t​h​e​ ​l​i​s​t​ ​o​f​ ​a​v​a​i​l​a​b​l​e​ ​m​o​d​e​l​s
 	 */
 	browseModels: string
@@ -91,9 +99,17 @@ type RootTranslation = {
 	 */
 	confirmDeletion: string
 	/**
+	 * C​o​n​n​e​c​t
+	 */
+	connect: string
+	/**
 	 * C​o​n​n​e​c​t​e​d
 	 */
 	connected: string
+	/**
+	 * C​o​n​n​e​c​t​i​n​g​.​.​.
+	 */
+	connecting: string
 	/**
 	 * C​o​n​t​e​n​t
 	 */
@@ -102,6 +118,10 @@ type RootTranslation = {
 	 * C​o​n​t​r​o​l​s
 	 */
 	controls: string
+	/**
+	 * A​d​v​a​n​c​e​d​ ​c​o​n​t​r​o​l​s​ ​a​r​e​ ​c​u​r​r​e​n​t​l​y​ ​o​n​l​y​ ​a​v​a​i​l​a​b​l​e​ ​f​o​r​ ​O​l​l​a​m​a​ ​m​o​d​e​l​s
+	 */
+	controlsOnlyAvailableForOllama: string
 	/**
 	 * C​o​p​y
 	 */
@@ -207,6 +227,10 @@ type RootTranslation = {
 	 */
 	goToReleases: string
 	/**
+	 * H​o​w​ ​t​o​ ​o​b​t​a​i​n​ ​a​n​ ​A​P​I​ ​k​e​y​ ​f​r​o​m​ ​O​p​e​n​A​I​?
+	 */
+	howToObtainOpenAIKey: string
+	/**
 	 * H​o​w​ ​t​o​ ​u​p​d​a​t​e​ ​D​o​c​k​e​r​ ​c​o​n​t​a​i​n​e​r​?
 	 */
 	howToUpdateDocker: string
@@ -279,6 +303,10 @@ type RootTranslation = {
 	 */
 	mirostatTau: string
 	/**
+	 * M​o​d​e​l​ ​n​o​t​ ​f​o​u​n​d
+	 */
+	modelNotFound: string
+	/**
 	 * M​o​d​e​l​ ​o​p​t​i​o​n​s
 	 */
 	modelOptions: string
@@ -303,6 +331,10 @@ type RootTranslation = {
 	 * N​e​w​ ​s​e​s​s​i​o​n
 	 */
 	newSession: string
+	/**
+	 * N​o​ ​A​P​I​ ​k​e​y
+	 */
+	noApiKey: string
 	/**
 	 * C​r​e​a​t​e​ ​n​e​w​ ​k​n​o​w​l​e​d​g​e​ ​o​r​ ​c​h​o​o​s​e​ ​o​n​e​ ​f​r​o​m​ ​t​h​e​ ​l​i​s​t
 	 */
@@ -541,6 +573,10 @@ export type TranslationFunctions = {
 	 */
 	allowMixedContent: () => LocalizedString
 	/**
+	 * API key
+	 */
+	apiKey: () => LocalizedString
+	/**
 	 * Are you sure you want to delete all knowledge?
 	 */
 	areYouSureYouWantToDeleteAllKnowledge: () => LocalizedString
@@ -574,6 +610,10 @@ The completion in progress will stop
 	 */
 	availableModels: () => LocalizedString
 	/**
+	 * Base URL
+	 */
+	baseUrl: () => LocalizedString
+	/**
 	 * Browse the list of available models
 	 */
 	browseModels: () => LocalizedString
@@ -606,9 +646,17 @@ The completion in progress will stop
 	 */
 	confirmDeletion: () => LocalizedString
 	/**
+	 * Connect
+	 */
+	connect: () => LocalizedString
+	/**
 	 * Connected
 	 */
 	connected: () => LocalizedString
+	/**
+	 * Connecting...
+	 */
+	connecting: () => LocalizedString
 	/**
 	 * Content
 	 */
@@ -617,6 +665,10 @@ The completion in progress will stop
 	 * Controls
 	 */
 	controls: () => LocalizedString
+	/**
+	 * Advanced controls are currently only available for Ollama models
+	 */
+	controlsOnlyAvailableForOllama: () => LocalizedString
 	/**
 	 * Copy
 	 */
@@ -721,6 +773,10 @@ The completion in progress will stop
 	 */
 	goToReleases: () => LocalizedString
 	/**
+	 * How to obtain an API key from OpenAI?
+	 */
+	howToObtainOpenAIKey: () => LocalizedString
+	/**
 	 * How to update Docker container?
 	 */
 	howToUpdateDocker: () => LocalizedString
@@ -793,6 +849,10 @@ The completion in progress will stop
 	 */
 	mirostatTau: () => LocalizedString
 	/**
+	 * Model not found
+	 */
+	modelNotFound: () => LocalizedString
+	/**
 	 * Model options
 	 */
 	modelOptions: () => LocalizedString
@@ -816,6 +876,10 @@ The completion in progress will stop
 	 * New session
 	 */
 	newSession: () => LocalizedString
+	/**
+	 * No API key
+	 */
+	noApiKey: () => LocalizedString
 	/**
 	 * Create new knowledge or choose one from the list
 	 */

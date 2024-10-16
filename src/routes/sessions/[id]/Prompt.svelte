@@ -2,6 +2,7 @@
 	import { LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
+	import { toast } from 'svelte-sonner';
 	import type { Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
@@ -10,6 +11,7 @@
 	import Field from '$lib/components/Field.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
+	import { settingsStore } from '$lib/localStorage';
 	import type { Editor } from '$lib/sessions';
 
 	export let editor: Writable<Editor>;
@@ -17,6 +19,9 @@
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
+
+	let isOllama = false;
+	$: isOllama = $settingsStore.models?.find((m) => m.name === model)?.api === 'ollama';
 
 	function toggleCodeEditor() {
 		$editor.isCodeEditor = !$editor.isCodeEditor;
@@ -26,6 +31,14 @@
 	function switchToMessages() {
 		$editor.view = 'messages';
 		scrollToBottom(true);
+	}
+
+	function switchToControls() {
+		if (!isOllama) {
+			toast.warning($LL.controlsOnlyAvailableForOllama());
+			return;
+		}
+		$editor.view = 'controls';
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
@@ -63,7 +76,7 @@
 					<Button
 						aria-label={$LL.controls()}
 						variant="icon"
-						on:click={() => ($editor.view = 'controls')}
+						on:click={switchToControls}
 						class="h-full"
 						isActive={$editor.view === 'controls'}
 					>

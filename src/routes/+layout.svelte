@@ -68,6 +68,7 @@
 		classes: {
 			toast:
 				'shadow-xl px-4 py-3 flex items-center gap-x-3 max-w-full w-full rounded mx-auto text-xs mx-0',
+			loading: 'text-shade-12 bg-shade-4',
 			error: 'text-red-50 bg-red-700',
 			success: 'text-emerald-50 bg-emerald-700',
 			warning: 'text-yellow-50 bg-yellow-700',
