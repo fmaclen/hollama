@@ -45,9 +45,11 @@ export class OpenAIStrategy implements ChatStrategy {
 
 	async getModels(): Promise<Model[]> {
 		const response = await this.openai.models.list();
-		return response.data?.map((model) => ({
-			api: 'openai',
-			name: model.id
-		}));
+		return response.data
+			?.filter((model) => model.id.startsWith('gpt'))
+			.map((model) => ({
+				api: 'openai',
+				name: model.id
+			}));
 	}
 }
