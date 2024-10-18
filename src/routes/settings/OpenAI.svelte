@@ -16,20 +16,20 @@
 	let openai = new OpenAIStrategy();
 	let openaiServer = $settingsStore.openaiServer || DEFAULT_OPENAI_SERVER;
 	let openaiApiKey = $settingsStore.openaiApiKey || '';
-	let openaiServerStatus: 'connected' | 'disconnected' | 'connecting' = 'disconnected';
+	let openaiServerStatus: 'success' | 'error' | 'loading';
 
 	$: settingsStore.update((settings) => ({ ...settings, openaiServer, openaiApiKey }));
 
 	async function getModelsList(): Promise<void> {
-		openaiServerStatus = 'connecting';
+		openaiServerStatus = 'loading';
 		const toastId = toast.loading($LL.connecting());
 		try {
 			await openai.getModels();
-			openaiServerStatus = 'connected';
-			toast.success($LL.connected(), { id: toastId });
+			openaiServerStatus = 'success';
+			toast.success($LL.openaiSyncSuccessful(), { id: toastId });
 		} catch {
-			openaiServerStatus = 'disconnected';
-			toast.error($LL.disconnected(), { id: toastId });
+			openaiServerStatus = 'error';
+			toast.error($LL.openaiSyncFailed(), { id: toastId });
 		}
 	}
 
@@ -60,8 +60,8 @@
 				variant="outline"
 				aria-label={$LL.connect()}
 				class="h-full text-muted"
-				isLoading={openaiServerStatus === 'connecting'}
-				disabled={openaiServerStatus === 'connecting' || !openaiServer || !openaiApiKey}
+				isLoading={openaiServerStatus === 'loading'}
+				disabled={openaiServerStatus === 'loading' || !openaiServer || !openaiApiKey}
 				on:click={updateOpenAIConfig}
 			>
 				<RefreshCw class="base-icon" />
@@ -69,7 +69,7 @@
 		</svelte:fragment>
 
 		<svelte:fragment slot="help">
-			{#if openaiApiKey === 'ollama' || openaiServerStatus === 'disconnected'}
+			{#if openaiApiKey === 'ollama' || openaiServerStatus === 'error'}
 				<FieldHelp>
 					<P>
 						<Button

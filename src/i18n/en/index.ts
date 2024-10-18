@@ -93,6 +93,8 @@ const en = {
 	numa: 'NUMA',
 	ollamaConnectionError: "Couldn't connect to Ollama. Is the [server running](/settings)?",
 	ollamaLibrary: "Ollama's library",
+	openaiSyncFailed: 'Failed to connect to OpenAI. Check your API key or network connection',
+	openaiSyncSuccessful: 'Sync was successful. OpenAI models are now available in Sessions',
 	otherModels: 'Other models',
 	penalizeNewline: 'Penalize newline',
 	presencePenalty: 'Presence penalty',

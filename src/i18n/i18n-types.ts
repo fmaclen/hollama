@@ -387,6 +387,14 @@ type RootTranslation = {
 	 */
 	ollamaLibrary: string
 	/**
+	 * F​a​i​l​e​d​ ​t​o​ ​c​o​n​n​e​c​t​ ​t​o​ ​O​p​e​n​A​I​.​ ​C​h​e​c​k​ ​y​o​u​r​ ​A​P​I​ ​k​e​y​ ​o​r​ ​n​e​t​w​o​r​k​ ​c​o​n​n​e​c​t​i​o​n
+	 */
+	openaiSyncFailed: string
+	/**
+	 * S​y​n​c​ ​w​a​s​ ​s​u​c​c​e​s​s​f​u​l​.​ ​O​p​e​n​A​I​ ​m​o​d​e​l​s​ ​a​r​e​ ​n​o​w​ ​a​v​a​i​l​a​b​l​e​ ​i​n​ ​S​e​s​s​i​o​n​s
+	 */
+	openaiSyncSuccessful: string
+	/**
 	 * O​t​h​e​r​ ​m​o​d​e​l​s
 	 */
 	otherModels: string
@@ -931,6 +939,14 @@ The completion in progress will stop
 	 * Ollama's library
 	 */
 	ollamaLibrary: () => LocalizedString
+	/**
+	 * Failed to connect to OpenAI. Check your API key or network connection
+	 */
+	openaiSyncFailed: () => LocalizedString
+	/**
+	 * Sync was successful. OpenAI models are now available in Sessions
+	 */
+	openaiSyncSuccessful: () => LocalizedString
 	/**
 	 * Other models
 	 */
