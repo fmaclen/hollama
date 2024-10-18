@@ -50,7 +50,7 @@
 	async function pullModel() {
 		if (!modelTag) return;
 		isPullInProgress = true;
-		const toastId = toast.message($LL.pullingModel(), { description: modelTag });
+		const toastId = toast.loading($LL.pullingModel(), { description: modelTag });
 
 		try {
 			await ollamaPull(
