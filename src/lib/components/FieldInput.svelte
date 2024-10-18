@@ -8,7 +8,7 @@
 	export let placeholder: LocalizedString | string | undefined = undefined;
 	export let disabled: boolean | undefined = false;
 	export let value: string | number | undefined = undefined;
-	export let type: 'text' | 'number' = 'text';
+	export let type: 'text' | 'number' | 'password' = 'text';
 
 	// Props for numeric inputs
 	export let min: number | undefined = undefined;
@@ -47,7 +47,7 @@
 			id={name}
 			{disabled}
 			{placeholder}
-			type="text"
+			{...{ type }}
 			bind:value
 			on:input
 			on:keyup
