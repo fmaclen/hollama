@@ -85,15 +85,13 @@
 		} catch (error) {
 			const typedError = error instanceof Error ? error : new Error(String(error));
 
-			toast.error(
-				typedError.message === 'Failed to fetch'
-					? $LL.couldntConnectToOllamaServer()
-					: typedError.message,
-				{
-					id: toastId,
-					description: ''
-				}
-			);
+			toast.error($LL.error(), {
+				id: toastId,
+				description:
+					typedError.message === 'Failed to fetch'
+						? $LL.couldntConnectToOllamaServer()
+						: typedError.message
+			});
 			ollamaTagResponse = null;
 			$settingsStore.ollamaServerStatus = 'disconnected';
 		}
