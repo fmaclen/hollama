@@ -348,10 +348,6 @@ type RootTranslation = {
 	 */
 	numa: string
 	/**
-	 * C​o​u​l​d​n​'​t​ ​c​o​n​n​e​c​t​ ​t​o​ ​O​l​l​a​m​a​.​ ​I​s​ ​t​h​e​ ​[​s​e​r​v​e​r​ ​r​u​n​n​i​n​g​]​(​/​s​e​t​t​i​n​g​s​)​?
-	 */
-	ollamaConnectionError: string
-	/**
 	 * O​l​l​a​m​a​'​s​ ​l​i​b​r​a​r​y
 	 */
 	ollamaLibrary: string
@@ -860,10 +856,6 @@ The completion in progress will stop
 	 * NUMA
 	 */
 	numa: () => LocalizedString
-	/**
-	 * Couldn't connect to Ollama. Is the [server running](/settings)?
-	 */
-	ollamaConnectionError: () => LocalizedString
 	/**
 	 * Ollama's library
 	 */

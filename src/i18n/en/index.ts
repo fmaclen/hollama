@@ -82,7 +82,6 @@ const en = {
 	numPredict: 'Num predict',
 	numThread: 'Number of threads',
 	numa: 'NUMA',
-	ollamaConnectionError: "Couldn't connect to Ollama. Is the [server running](/settings)?",
 	ollamaLibrary: "Ollama's library",
 	otherModels: 'Other models',
 	penalizeNewline: 'Penalize newline',

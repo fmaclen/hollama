@@ -65,7 +65,6 @@ const tr = {
 	noRecentModels: 'Son kullanılan bir model yoktur',
 	noSessionChosen: 'Yeni bir oturum oluştur veya listeden seç',
 	notFound: 'Aradığın sayfa mevcut değildir',
-	ollamaConnectionError: "Ollama'ya bağlanılamıyor. [Sunucu](/settings) çalışıyor mu?",
 	ollamaLibrary: 'Ollama kütüphanesi',
 	otherModels: 'Diğer modeller',
 	prompt: 'Komut (İstem)',

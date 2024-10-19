@@ -66,7 +66,6 @@ const pt_br = {
 	noRecentModels: 'Nenhum modelo recentemente utilizado',
 	noSessionChosen: 'Crie uma nova Sessão ou escolha uma existente da lista',
 	notFound: 'A página buscada não existe',
-	ollamaConnectionError: 'Sem conexão com Ollama. É este [servidor en ejecución](/settings)?',
 	ollamaLibrary: 'Biblioteca do Ollama',
 	otherModels: 'Outros modelos',
 	prompt: 'Prompt',

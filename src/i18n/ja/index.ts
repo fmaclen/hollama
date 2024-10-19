@@ -69,7 +69,6 @@ const ja = {
 	noRecentModels: '最近使ったモデルがありません',
 	noSessionChosen: '新しいセッションを作成するか、リストから既存のセッションを選択してください',
 	notFound: 'お探しのページは存在しません',
-	ollamaConnectionError: 'Ollamaに接続できませんでした。[サーバーは実行中](/settings)ですか？',
 	ollamaLibrary: 'Ollamaのライブラリ',
 	otherModels: 'その他のモデル',
 	penalizeNewline: '改行にペナルティを与える',

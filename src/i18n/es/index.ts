@@ -67,8 +67,6 @@ const es = {
 	noRecentModels: 'No hay modelos utilizados recientemente',
 	noSessionChosen: 'Crea una nueva sesión o elige una existente de la lista',
 	notFound: 'La página que estás buscando no existe',
-	ollamaConnectionError:
-		'No se pudo conectar a Ollama. ¿Está el [servidor en ejecución](/settings)?',
 	ollamaLibrary: 'Biblioteca de Ollama',
 	otherModels: 'Otros modelos',
 	prompt: 'Indicación',
