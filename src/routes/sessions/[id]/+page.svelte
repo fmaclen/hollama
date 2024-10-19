@@ -166,15 +166,12 @@
 	}
 
 	function handleError(error: Error) {
-		let content: string;
 		if (error.message === 'Failed to fetch') {
-			content = $LL.ollamaConnectionError();
+			toast.error($LL.genericError(), { description: $LL.cantConnectToOllamaServer() });
 		} else {
-			content = $LL.genericError({ error: error.toString() });
+			toast.error($LL.genericError(), { description: error.toString() });
 		}
-
-		const message: Message = { role: 'system', content };
-		$session.messages = [...$session.messages, message];
+		stopCompletion();
 	}
 
 	function handleScroll() {

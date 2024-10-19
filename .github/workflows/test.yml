@@ -7,16 +7,8 @@ jobs:
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-      pull-requests: write
-
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref }}
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -37,7 +29,3 @@ jobs:
         with:
           name: test-results
           path: test-results/
-
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: Update Playwright snapshots

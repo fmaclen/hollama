@@ -133,7 +133,7 @@ test('a model can be pulled from the ollama library', async ({ page }) => {
 	const errorResponse: ErrorResponse = { error: 'pull model manifest: file does not exist' };
 	await page.route('**/api/pull', (route) => route.fulfill({ json: errorResponse }));
 	await downloadButton.click();
-	await expect(page.getByText('Error', { exact: false })).toBeVisible();
+	await expect(page.getByText('Sorry, something went wrong', { exact: false })).toBeVisible();
 	await expect(
 		page.getByText('pull model manifest: file does not exist', { exact: false })
 	).toBeVisible();
@@ -229,6 +229,22 @@ test.describe('Locales', () => {
 			await expect(page.getByText('Sunucu')).toBeVisible();
 			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
 				'"userLanguage":"tr"'
+			);
+		});
+	});
+
+	test.describe('Portuguese', () => {
+		test.use({ locale: 'pt-BR' });
+		test('default language is portuguese', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('pt-BR');
+
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Server')).not.toBeVisible();
+			await expect(page.getByText('Servidor')).toBeVisible();
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"pt-br"'
 			);
 		});
 	});

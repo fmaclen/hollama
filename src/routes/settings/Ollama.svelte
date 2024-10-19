@@ -56,7 +56,7 @@
 					}
 
 					if ('error' in response) {
-						toast.error($LL.error(), { id: toastId, description: response.error });
+						toast.error($LL.genericError(), { id: toastId, description: response.error });
 						return;
 					}
 
@@ -73,15 +73,13 @@
 		} catch (error) {
 			const typedError = error instanceof Error ? error : new Error(String(error));
 
-			toast.error(
-				typedError.message === 'Failed to fetch'
-					? $LL.couldntConnectToOllamaServer()
-					: typedError.message,
-				{
-					id: toastId,
-					description: ''
-				}
-			);
+			toast.error($LL.genericError(), {
+				id: toastId,
+				description:
+					typedError.message === 'Failed to fetch'
+						? $LL.couldntConnectToOllamaServer()
+						: typedError.message
+			});
 			ollamaServerStatus = 'disconnected';
 		}
 		isPullInProgress = false;
