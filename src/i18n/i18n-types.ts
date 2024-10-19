@@ -187,13 +187,9 @@ type RootTranslation = {
 	 */
 	frequencyPenalty: string
 	/**
-	 * S​o​r​r​y​,​ ​s​o​m​e​t​h​i​n​g​ ​w​e​n​t​ ​w​r​o​n​g​.​
-​`​`​`​
-​{​e​r​r​o​r​}​
-​`​`​`
-	 * @param {string} error
+	 * S​o​r​r​y​,​ ​s​o​m​e​t​h​i​n​g​ ​w​e​n​t​ ​w​r​o​n​g
 	 */
-	genericError: RequiredParams<'error'>
+	genericError: string
 	/**
 	 * G​o​ ​t​o​ ​d​o​w​n​l​o​a​d​s
 	 */
@@ -347,10 +343,6 @@ type RootTranslation = {
 	 * N​U​M​A
 	 */
 	numa: string
-	/**
-	 * C​o​u​l​d​n​'​t​ ​c​o​n​n​e​c​t​ ​t​o​ ​O​l​l​a​m​a​.​ ​I​s​ ​t​h​e​ ​[​s​e​r​v​e​r​ ​r​u​n​n​i​n​g​]​(​/​s​e​t​t​i​n​g​s​)​?
-	 */
-	ollamaConnectionError: string
 	/**
 	 * O​l​l​a​m​a​'​s​ ​l​i​b​r​a​r​y
 	 */
@@ -702,12 +694,9 @@ The completion in progress will stop
 	 */
 	frequencyPenalty: () => LocalizedString
 	/**
-	 * Sorry, something went wrong.
-```
-{error}
-```
+	 * Sorry, something went wrong
 	 */
-	genericError: (arg: { error: string }) => LocalizedString
+	genericError: () => LocalizedString
 	/**
 	 * Go to downloads
 	 */
@@ -860,10 +849,6 @@ The completion in progress will stop
 	 * NUMA
 	 */
 	numa: () => LocalizedString
-	/**
-	 * Couldn't connect to Ollama. Is the [server running](/settings)?
-	 */
-	ollamaConnectionError: () => LocalizedString
 	/**
 	 * Ollama's library
 	 */
