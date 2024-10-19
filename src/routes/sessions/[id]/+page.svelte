@@ -45,7 +45,6 @@
 	let messagesWindow: HTMLDivElement;
 	let userScrolledUp = false;
 
-	$: $editor.isNewSession = !$session?.messages.length;
 	$: if (data.id) handleSessionChange();
 
 	onMount(() => {
@@ -70,8 +69,9 @@
 	});
 
 	async function handleSessionChange() {
-		$editor.view = 'messages';
 		session = writable(loadSession(data.id));
+		$editor.view = 'messages';
+		$editor.isNewSession = !$session?.messages.length;
 		scrollToBottom();
 	}
 
