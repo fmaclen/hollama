@@ -43,7 +43,7 @@ const es = {
 	emptyKnowledge: 'Sin conocimiento',
 	emptySessions: 'Sin sesiones',
 	error: 'Error',
-	genericError: 'Lo siento, algo salió mal.\n```\n{error:string}\n```',
+	genericError: 'Lo siento, algo salió mal',
 	goToDownloads: 'Ir a descargas',
 	goToKnowledge: 'Ir a conocimiento',
 	goToReleases: 'Ir a versiones',

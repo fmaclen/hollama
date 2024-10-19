@@ -41,7 +41,7 @@ const tr = {
 	emptyKnowledge: 'Bilgi yok',
 	emptySessions: 'Oturum yok',
 	error: 'Hata',
-	genericError: 'Üzgünüz, bir şeyler yanlış gitti.\n```\n{error:string}\n```',
+	genericError: 'Üzgünüz, bir şeyler yanlış gitti',
 	goToDownloads: 'İndirmelere git',
 	goToKnowledge: 'Bilgilere git',
 	goToReleases: 'Dağıtımlara git',

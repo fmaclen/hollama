@@ -187,13 +187,9 @@ type RootTranslation = {
 	 */
 	frequencyPenalty: string
 	/**
-	 * S​o​r​r​y​,​ ​s​o​m​e​t​h​i​n​g​ ​w​e​n​t​ ​w​r​o​n​g​.​
-​`​`​`​
-​{​e​r​r​o​r​}​
-​`​`​`
-	 * @param {string} error
+	 * S​o​r​r​y​,​ ​s​o​m​e​t​h​i​n​g​ ​w​e​n​t​ ​w​r​o​n​g
 	 */
-	genericError: RequiredParams<'error'>
+	genericError: string
 	/**
 	 * G​o​ ​t​o​ ​d​o​w​n​l​o​a​d​s
 	 */
@@ -698,12 +694,9 @@ The completion in progress will stop
 	 */
 	frequencyPenalty: () => LocalizedString
 	/**
-	 * Sorry, something went wrong.
-```
-{error}
-```
+	 * Sorry, something went wrong
 	 */
-	genericError: (arg: { error: string }) => LocalizedString
+	genericError: () => LocalizedString
 	/**
 	 * Go to downloads
 	 */

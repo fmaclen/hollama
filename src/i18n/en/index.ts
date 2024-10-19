@@ -43,7 +43,7 @@ const en = {
 	error: 'Error',
 	f16Kv: 'F16 KV',
 	frequencyPenalty: 'Frequency penalty',
-	genericError: 'Sorry, something went wrong.\n```\n{error:string}\n```',
+	genericError: 'Sorry, something went wrong',
 	goToDownloads: 'Go to downloads',
 	goToKnowledge: 'Go to knowledge',
 	goToReleases: 'Go to releases',

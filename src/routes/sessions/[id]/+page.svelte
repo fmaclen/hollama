@@ -170,9 +170,9 @@
 
 	function handleError(error: Error) {
 		if (error.message === 'Failed to fetch') {
-			toast.error($LL.error(), { description: $LL.cantConnectToOllamaServer() });
+			toast.error($LL.genericError(), { description: $LL.cantConnectToOllamaServer() });
 		} else {
-			toast.error($LL.error(), { description: $LL.genericError({ error: error.toString() }) });
+			toast.error($LL.genericError(), { description: error.toString() });
 		}
 		stopCompletion();
 	}

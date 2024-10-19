@@ -42,7 +42,7 @@ const pt_br = {
 	emptyKnowledge: 'Sem conhecimento',
 	emptySessions: 'Sem sesssões',
 	error: 'Erro',
-	genericError: 'Desculpe, algo ocorreu errado.\n```\n{error:string}\n```',
+	genericError: 'Desculpe, algo ocorreu errado',
 	goToDownloads: 'Ir para downloads',
 	goToKnowledge: 'Ir para conhecimento',
 	goToReleases: 'Ir para versões',

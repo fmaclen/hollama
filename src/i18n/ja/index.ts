@@ -43,7 +43,7 @@ const ja = {
 	emptyKnowledge: 'ナレッジがありません',
 	emptySessions: 'セッションがありません',
 	error: 'エラー',
-	genericError: '申し訳ございません、何か問題が発生しました。\n```\n{error:string}\n```',
+	genericError: '申し訳ございません、何か問題が発生しました',
 	goToDownloads: 'ダウンロードへ移動',
 	goToKnowledge: 'ナレッジへ移動',
 	goToReleases: 'リリースへ移動',

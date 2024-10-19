@@ -601,7 +601,6 @@ test.describe('Session', () => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
-		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(0);
 		await expect(promptTextarea).not.toHaveValue(
 			'Who would win in a fight between Emma Watson and Jessica Alba?'
 		);
@@ -618,12 +617,9 @@ test.describe('Session', () => {
 		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.locator('button', { hasText: 'Run' }).click();
-		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
-		await expect(
-			page.getByText("Couldn't connect to Ollama. Is the server running?")
-		).toBeVisible();
-		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).not.toBeVisible();
-		await expect(promptTextarea).not.toHaveValue(
+		await expect(page.getByText("Can't connect to Ollama server")).toBeVisible();
+		await expect(page.getByText('Ollama says: Not so fast!')).not.toBeVisible();
+		await expect(promptTextarea).toHaveValue(
 			'Who would win in a fight between Emma Watson and Jessica Alba?'
 		);
 
@@ -635,15 +631,15 @@ test.describe('Session', () => {
 				body: '{ incomplete'
 			});
 		});
-		await page.getByTitle('Retry').click();
-		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
-		await expect(page.getByText('Sorry, something went wrong.')).toBeVisible();
+		await page.locator('button', { hasText: 'Run' }).click();
 		await expect(
-			page.locator('code', {
-				hasText:
-					"SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)"
-			})
+			page.getByText(
+				"SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)"
+			)
 		).toBeVisible();
+		await expect(promptTextarea).toHaveValue(
+			'Who would win in a fight between Emma Watson and Jessica Alba?'
+		);
 
 		// Mock a 500 error response
 		await page.route('**/chat', async (route) => {
@@ -653,11 +649,9 @@ test.describe('Session', () => {
 				body: JSON.stringify({ error: 'Ollama says: Not so fast!' })
 			});
 		});
-		await page.getByTitle('Retry').click();
-		await expect(page.locator('article nav', { hasText: 'System' })).toHaveCount(1);
-		await expect(page.getByText('Sorry, something went wrong.')).toBeVisible();
-		await expect(page.locator('code', { hasText: 'Ollama says: Not so fast!' })).toBeVisible();
-		await expect(promptTextarea).not.toHaveValue(
+		await page.locator('button', { hasText: 'Run' }).click();
+		await expect(page.getByText('Ollama says: Not so fast!')).toBeVisible();
+		await expect(promptTextarea).toHaveValue(
 			'Who would win in a fight between Emma Watson and Jessica Alba?'
 		);
 	});
