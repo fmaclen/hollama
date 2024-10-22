@@ -41,9 +41,19 @@ export interface ChatStrategy {
 	): Promise<void>;
 }
 
+function getOpenAICredentials(): { server: string; apiKey: string } | null {
+	const { openaiServer, openaiApiKey } = get(settingsStore);
+	if (!openaiServer || !openaiApiKey) return null;
+	return { server: openaiServer, apiKey: openaiApiKey };
+}
+
 function getChatStrategy(model: Model): ChatStrategy {
 	if (model.api === 'ollama') return new OllamaStrategy();
-	else if (model.api === 'openai') return new OpenAIStrategy();
+	else if (model.api === 'openai') {
+		const credentials = getOpenAICredentials();
+		if (!credentials) throw new Error('OpenAI credentials not found');
+		return new OpenAIStrategy(credentials);
+	}
 
 	throw new Error('Invalid model specified');
 }
@@ -62,7 +72,11 @@ export async function chat({ model, payload, abortSignal, onChunk }: ChatParams)
 
 export async function listModels(): Promise<Model[]> {
 	const ollamaModels = await new OllamaStrategy().getModels().catch(() => []);
-	const openaiModels = await new OpenAIStrategy().getModels().catch(() => []);
+	const openaiModels: Model[] = [];
+
+	const openaiCredentials = getOpenAICredentials();
+	if (openaiCredentials)
+		openaiModels.push(...(await new OpenAIStrategy(openaiCredentials).getModels().catch(() => [])));
 
 	return [...ollamaModels, ...openaiModels].sort((a, b) => {
 		const nameA = a.name;

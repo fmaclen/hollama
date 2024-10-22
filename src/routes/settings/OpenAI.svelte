@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { RefreshCw } from 'lucide-svelte';
+	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';
@@ -13,12 +14,19 @@
 
 	const DEFAULT_OPENAI_SERVER = 'https://api.openai.com/v1';
 
-	let openai = new OpenAIStrategy();
+	let openai: OpenAIStrategy;
 	let openaiServer = $settingsStore.openaiServer || DEFAULT_OPENAI_SERVER;
 	let openaiApiKey = $settingsStore.openaiApiKey || '';
 	let openaiServerStatus: 'success' | 'error' | 'loading';
 
 	$: settingsStore.update((settings) => ({ ...settings, openaiServer, openaiApiKey }));
+
+	onMount(() => {
+		const server = $settingsStore.openaiServer;
+		const apiKey = $settingsStore.openaiApiKey;
+		if (!server || !apiKey) return;
+		openai = new OpenAIStrategy({ server, apiKey });
+	});
 
 	async function getModelsList(): Promise<void> {
 		openaiServerStatus = 'loading';
@@ -34,7 +42,12 @@
 	}
 
 	async function updateOpenAIConfig() {
-		openai.config({ server: openaiServer, apiKey: openaiApiKey });
+		if (!openaiServer || !openaiApiKey) return;
+
+		const credentials = { server: openaiServer, apiKey: openaiApiKey };
+		if (!openai) openai = new OpenAIStrategy(credentials);
+		else openai.config(credentials);
+
 		await getModelsList();
 	}
 </script>

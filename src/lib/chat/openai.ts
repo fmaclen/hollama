@@ -1,29 +1,22 @@
 import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
-import { get } from 'svelte/store';
 
-import { settingsStore } from '../localStorage';
 import type { ChatRequest, ChatStrategy, Model } from './index';
 
 export class OpenAIStrategy implements ChatStrategy {
 	private openai: OpenAI;
 
-	constructor() {
-		const settings = get(settingsStore);
-
-		this.openai = new OpenAI({
-			baseURL: settings.openaiServer,
-			apiKey: settings.openaiApiKey || '',
-			dangerouslyAllowBrowser: true
-		});
-	}
-
-	config(params: { server: string; apiKey: string }): void {
+	constructor(params: { server: string; apiKey: string }) {
 		this.openai = new OpenAI({
 			baseURL: params.server,
 			apiKey: params.apiKey,
 			dangerouslyAllowBrowser: true
 		});
+	}
+
+	config(params: { server: string; apiKey: string }): void {
+		this.openai.baseURL = params.server;
+		this.openai.apiKey = params.apiKey;
 	}
 
 	async chat(
