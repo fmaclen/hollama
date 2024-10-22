@@ -10,8 +10,8 @@ import {
 
 test.describe('FieldSelect', () => {
 	test('filters options, shows selected value, and allows clearing', async ({ page }) => {
-		await mockTagsResponse(page);
 		await page.goto('/sessions/qbhc0q');
+		await mockTagsResponse(page);
 
 		const modelCombobox = page.getByLabel('Available models');
 
@@ -82,8 +82,8 @@ test.describe('FieldSelect', () => {
 
 	test('models are correctly grouped and sorted', async ({ page }) => {
 		const newSessionButton = page.getByTestId('new-session');
-		await mockTagsResponse(page);
 		await page.goto('/settings');
+		await mockTagsResponse(page);
 
 		await page.getByText('Sessions', { exact: true }).click();
 		await newSessionButton.click();

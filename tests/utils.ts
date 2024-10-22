@@ -137,8 +137,7 @@ export async function chooseFromCombobox(
 	await page.getByText(option).click();
 }
 
-export async function chooseModelFromSettings(page: Page, modelName: string) {
-	await page.getByText('Settings', { exact: true }).click();
+export async function chooseModel(page: Page, modelName: string) {
 	await chooseFromCombobox(page, 'Available models', modelName);
 }
 
