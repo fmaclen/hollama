@@ -22,7 +22,7 @@
 	function getBadges(model: Model): string[] {
 		const badges: string[] = [];
 		if (model.parameterSize) badges.push(model.parameterSize);
-		badges.push(model.api === 'openai' ? 'OpenAI' : 'Ollama');
+		badges.push(model.api);
 		return badges;
 	}
 

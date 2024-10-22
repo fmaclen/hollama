@@ -147,7 +147,11 @@
 												{#if Array.isArray(option.badge)}
 													<div class="field-select-badge">
 														{#each option.badge as badge}
-															<Badge variant={badge === 'OpenAI' ? 'openai' : badge === 'Ollama' ? 'ollama' : undefined}>
+															<Badge
+																variant={badge === 'openai' || badge === 'ollama'
+																	? badge
+																	: undefined}
+															>
 																{badge}
 															</Badge>
 														{/each}
