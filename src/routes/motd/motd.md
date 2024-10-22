@@ -1,4 +1,4 @@
-`2024-10-1`
+`2024-10-22`
 
 ### Message of the day
 
@@ -8,6 +8,7 @@
 
 - **Desktop app** is now available for [Windows, macOS & Linux](https://github.com/fmaclen/hollama/releases)
 - **Olá mundo!** UI is now available in [Portuguese (Brasil)](/settings)
+- **你好，世界!** 界面现已支持 [中文（简体）](/settings)
 
 #### Previously, in Hollama
 

@@ -33,6 +33,7 @@
 			{ value: 'ja', label: '日本語' },
 			{ value: 'tr', label: 'Türkçe' },
 			{ value: 'pt-br', label: 'Português (Brasil)' }
+			{ value: 'zh-cn', label: '中文 (简体)' }
 		]}
 	/>
 </Fieldset>

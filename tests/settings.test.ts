@@ -248,4 +248,20 @@ test.describe('Locales', () => {
 			);
 		});
 	});
+
+	test.describe('Simplified Chinese', () => {
+		test.use({ locale: 'zh-CN' });
+		test('default language is simplified chinese', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('zh-CN');
+
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Server')).not.toBeVisible();
+			await expect(page.getByText('服务器')).toBeVisible();
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"zh-cn"'
+			);
+		});
+	});
 });

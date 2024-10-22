@@ -15,7 +15,8 @@ export const locales: Locales[] = [
 	'es',
 	'ja',
 	'pt-br',
-	'tr'
+	'tr',
+	'zh-cn',
 ]
 
 export const isLocale = (locale: string): locale is Locales => locales.includes(locale as Locales)
