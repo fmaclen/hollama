@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
-	import { getLastUsedModels, type Model } from '$lib/chat';
+	import { type Model } from '$lib/chat';
 	import { settingsStore } from '$lib/localStorage';
 
 	import FieldSelect from './FieldSelect.svelte';
@@ -19,25 +19,18 @@
 	let lastUsedModels: ModelOption[] = [];
 	let otherModels: ModelOption[] = [];
 
-	function getBadges(model: Model): string[] {
+	function formatModelToSelectOption(model: Model): ModelOption {
 		const badges: string[] = [];
 		if (model.parameterSize) badges.push(model.parameterSize);
 		badges.push(model.api);
-		return badges;
+
+		return { value: model.name, label: model.name, badge: badges };
 	}
 
 	$: disabled = !$settingsStore.models?.length;
-	$: models = $settingsStore.models?.map((m) => ({
-		value: m.name,
-		label: m.name,
-		badge: getBadges(m)
-	}));
-	$: lastUsedModels = getLastUsedModels().map((m) => ({
-		value: m.name,
-		label: m.name,
-		badge: getBadges(m)
-	}));
-	$: otherModels = models?.filter((m) => !lastUsedModels.some((lm) => lm.value === m.value)) || [];
+	$: models = $settingsStore.models?.map(formatModelToSelectOption);
+	$: lastUsedModels = $settingsStore.lastUsedModels?.map(formatModelToSelectOption);
+	$: otherModels = models?.filter((m) => !lastUsedModels?.some((lm) => lm.value === m.value)) || [];
 </script>
 
 <FieldSelect

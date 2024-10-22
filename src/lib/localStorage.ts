@@ -55,6 +55,7 @@ export interface Settings {
 	openaiServer: string | null;
 	openaiApiKey: string | null;
 	models: Model[];
+	lastUsedModels: Model[];
 	lastUpdateCheck: number | null;
 	autoCheckForUpdates: boolean;
 	userTheme: 'light' | 'dark';
@@ -67,6 +68,7 @@ const defaultSettings: Settings = {
 	openaiServer: 'https://api.openai.com/v1',
 	openaiApiKey: null,
 	models: [],
+	lastUsedModels: [],
 	lastUpdateCheck: null,
 	autoCheckForUpdates: false,
 	userTheme: 'light',
