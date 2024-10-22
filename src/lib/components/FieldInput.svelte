@@ -42,6 +42,10 @@
 			on:keyup
 		/>
 	{:else}
+		<!--
+			The {... { type }} syntax is due to this reference:
+			https://stackoverflow.com/questions/57392773/error-type-attribute-cannot-be-dynamic-if-input-uses-two-way-binding/75298645#75298645
+		-->
 		<input
 			class="field-input"
 			id={name}
