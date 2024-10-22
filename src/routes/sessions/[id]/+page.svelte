@@ -102,6 +102,7 @@
 		if (!$editor.prompt) return;
 		if (!$session.model) return;
 		$editor.isCodeEditor = false;
+		$editor.isNewSession = false;
 		$editor.view = 'messages';
 
 		if ($editor.messageIndexToEdit !== null) handleSubmitEditMessage();
@@ -165,6 +166,7 @@
 		$editor.completion = '';
 		$editor.isCompletionInProgress = false;
 		$session.messages = $session.messages.slice(0, -1); // Remove the "incomplete" AI response
+		$editor.isNewSession = !$session.messages.length;
 	}
 
 	function handleError(error: Error) {
