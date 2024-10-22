@@ -18,7 +18,7 @@ const localeTranslations = {
 	ja,
 	'pt-br': pt_br,
 	tr,
-	zh_cn,
+	'zh-cn': zh_cn,
 }
 
 export const loadLocale = (locale: Locales): void => {
