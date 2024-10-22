@@ -10,6 +10,7 @@ import es from './es'
 import ja from './ja'
 import pt_br from './pt-br'
 import tr from './tr'
+import zh_cn from './zh-cn'
 
 const localeTranslations = {
 	en,
@@ -17,6 +18,7 @@ const localeTranslations = {
 	ja,
 	'pt-br': pt_br,
 	tr,
+	'zh-cn': zh_cn,
 }
 
 export const loadLocale = (locale: Locales): void => {
