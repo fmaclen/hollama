@@ -48,7 +48,8 @@
 
 	$: if (data.id) handleSessionChange();
 
-	onMount(() => {
+	onMount(async () => {
+		await scrollToBottom();
 		messagesWindow.addEventListener('scroll', handleScroll);
 	});
 
