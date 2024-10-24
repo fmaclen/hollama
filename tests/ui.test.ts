@@ -3,15 +3,18 @@ import { expect, test } from '@playwright/test';
 import {
 	chooseFromCombobox,
 	MOCK_API_TAGS_RESPONSE,
+	MOCK_OPENAI_MODELS,
 	MOCK_SESSION_1_RESPONSE_1,
 	mockCompletionResponse,
+	mockOpenAITagsResponse,
 	mockTagsResponse
 } from './utils';
 
 test.describe('FieldSelect', () => {
 	test('filters options, shows selected value, and allows clearing', async ({ page }) => {
-		await page.goto('/sessions/qbhc0q');
+		await page.goto('/settings');
 		await mockTagsResponse(page);
+		await page.goto('/sessions/qbhc0q');
 
 		const modelCombobox = page.getByLabel('Available models');
 
@@ -128,5 +131,35 @@ test.describe('FieldSelect', () => {
 		});
 		await expect(otherModelsGroup).toHaveCount(1);
 		await expect(otherModelsGroup).toContainText(MOCK_API_TAGS_RESPONSE.models[2].name);
+	});
+
+	test('Ollama models have an ollama badge', async ({ page }) => {
+		await page.goto('/settings');
+		await mockTagsResponse(page);
+
+		await page.goto('/sessions/new');
+		await page.getByLabel('Available models').click();
+
+		for (const model of MOCK_API_TAGS_RESPONSE.models) {
+			const innerHTML = await page.getByRole('option', { name: model.name }).innerHTML();
+			expect(innerHTML).toContain(model.name);
+			expect(innerHTML).toContain('ollama');
+			expect(innerHTML).not.toContain('openai');
+		}
+	});
+
+	test('OpenAI models have an openai badge', async ({ page }) => {
+		await page.goto('/settings');
+		await mockOpenAITagsResponse(page);
+
+		await page.goto('/sessions/new');
+		await page.getByLabel('Available models').click();
+
+		for (const model of MOCK_OPENAI_MODELS.filter((m) => m.id.startsWith('gpt'))) {
+			const innerHTML = await page.getByRole('option', { name: model.id }).innerHTML();
+			expect(innerHTML).toContain(model.id);
+			expect(innerHTML).toContain('openai');
+			expect(innerHTML).not.toContain('ollama');
+		}
 	});
 });

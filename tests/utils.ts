@@ -128,6 +128,12 @@ export const MOCK_SESSION_2_RESPONSE_1: ChatResponse = {
 	eval_duration: 2181595000
 };
 
+export const MOCK_OPENAI_MODELS = [
+	{ id: 'gpt-3.5-turbo', object: 'model', created: 1677610602, owned_by: 'openai' },
+	{ id: 'gpt-4', object: 'model', created: 1687882411, owned_by: 'openai' },
+	{ id: 'text-davinci-003', object: 'model', created: 1669599635, owned_by: 'openai-internal' }
+];
+
 export async function chooseFromCombobox(
 	page: Page,
 	label: string | RegExp,
@@ -149,6 +155,16 @@ export async function mockTagsResponse(page: Page) {
 			body: JSON.stringify(MOCK_API_TAGS_RESPONSE)
 		});
 	});
+}
+
+export async function mockOpenAITagsResponse(page: Page) {
+	await page.route('**/v1/models', async (route: Route) => {
+		await route.fulfill({ json: { data: MOCK_OPENAI_MODELS } });
+	});
+
+	await page.getByLabel('Base URL').fill('https://api.openai.com/v1');
+	await page.getByLabel('API Key').fill('sk-validapikey');
+	await page.getByRole('button', { name: 'Connect' }).click();
 }
 
 export async function mockCompletionResponse(page: Page, response: ChatResponse) {
