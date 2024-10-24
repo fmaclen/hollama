@@ -19,7 +19,7 @@
 	export let isLabelVisible: boolean | undefined = true;
 	export let onChange: (value: Option) => void = () => {};
 
-	type Option = Selected<string> & { badge?: string };
+	type Option = Selected<string> & { badge?: string | string[] };
 	type OptionGroup = { label: string; options: Option[] };
 	type OptionOrGroup = Option | OptionGroup;
 
@@ -144,7 +144,21 @@
 												{option.label}
 											</span>
 											{#if option.badge}
-												<Badge>{option.badge}</Badge>
+												{#if Array.isArray(option.badge)}
+													<div class="field-select-badge">
+														{#each option.badge as badge}
+															<Badge
+																variant={badge === 'openai' || badge === 'ollama'
+																	? badge
+																	: undefined}
+															>
+																{badge}
+															</Badge>
+														{/each}
+													</div>
+												{:else}
+													<Badge>{option.badge}</Badge>
+												{/if}
 											{/if}
 										</div>
 									</Combobox.Item>
@@ -189,6 +203,10 @@
 
 	.field-select-empty {
 		@apply block w-full px-3 py-1 text-center text-sm text-muted;
+	}
+
+	.field-select-badge {
+		@apply flex gap-x-1;
 	}
 
 	/* Bits UI */

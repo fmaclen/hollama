@@ -1,14 +1,13 @@
 import { get } from 'svelte/store';
 
+import type { OllamaOptions } from '$lib/chat/ollama';
 import { sessionsStore, settingsStore, sortStore } from '$lib/localStorage';
 
+import { getLastUsedModels, type Message as ChatMessage } from './chat';
 import type { Knowledge } from './knowledge';
-import type { OllamaOptions } from './ollama';
 import { formatTimestampToNow } from './utils';
 
-export interface Message {
-	role: 'user' | 'assistant' | 'system';
-	content: string;
+export interface Message extends ChatMessage {
 	knowledge?: Knowledge;
 	context?: number[];
 }
@@ -62,8 +61,8 @@ export const loadSession = (id: string): Session => {
 	}
 
 	if (!session) {
-		// Get the current model
-		const model = get(settingsStore)?.ollamaModel || '';
+		// Use the last used model
+		const model = getLastUsedModels()[0]?.name || '';
 
 		// Create a new session
 		session = {
@@ -99,6 +98,10 @@ export const saveSession = (session: Session): void => {
 
 	// Update the store with the sorted sessions
 	sessionsStore.set(sortedSessions);
+
+	// Update the last used models
+	const lastUsedModels = getLastUsedModels();
+	settingsStore.update((settings) => ({ ...settings, lastUsedModels }));
 };
 
 export function formatSessionMetadata(session: Session) {

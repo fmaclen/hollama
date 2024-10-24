@@ -1,48 +1,36 @@
 <script lang="ts">
-	import type { Selected } from 'bits-ui';
-
 	import LL from '$i18n/i18n-svelte';
-	import { sessionsStore, settingsStore } from '$lib/localStorage';
+	import { type Model } from '$lib/chat';
+	import { settingsStore } from '$lib/localStorage';
 
 	import FieldSelect from './FieldSelect.svelte';
 
-	export let model: string | undefined = $settingsStore.ollamaModel || '';
+	export let model: string | undefined;
 	export let isLabelVisible: boolean | undefined = true;
 
 	type ModelOption = {
 		value: string;
 		label: string;
-		badge?: string;
+		badge?: string | string[];
 	};
 
-	$: disabled = !$settingsStore.ollamaModels.length;
-	$: models = $settingsStore.ollamaModels.map((m) => ({
-		value: m.name,
-		label: m.name,
-		badge: m.details.parameter_size
-	}));
-	$: lastUsedModels = (() => {
-		const currentSessions = $sessionsStore;
-		const lastUsedModels: ModelOption[] = [];
+	let disabled: boolean;
+	let models: ModelOption[] = [];
+	let lastUsedModels: ModelOption[] = [];
+	let otherModels: ModelOption[] = [];
 
-		for (const session of currentSessions) {
-			if (!lastUsedModels.find((m) => m.value === session.model))
-				lastUsedModels.push({
-					value: session.model,
-					label: session.model,
-					badge: models.find((model) => model.value === session.model)?.badge
-				});
+	function formatModelToSelectOption(model: Model): ModelOption {
+		const badges: string[] = [];
+		if (model.parameterSize) badges.push(model.parameterSize);
+		badges.push(model.api);
 
-			if (lastUsedModels.length >= 5) break;
-		}
-
-		return lastUsedModels;
-	})();
-	$: otherModels = models.filter((m) => !lastUsedModels.some((lm) => lm.value === m.value));
-
-	function handleChange(e: Selected<string>) {
-		$settingsStore.ollamaModel = e.value;
+		return { value: model.name, label: model.name, badge: badges };
 	}
+
+	$: disabled = !$settingsStore.models?.length;
+	$: models = $settingsStore.models?.map(formatModelToSelectOption);
+	$: lastUsedModels = $settingsStore.lastUsedModels?.map(formatModelToSelectOption);
+	$: otherModels = models?.filter((m) => !lastUsedModels?.some((lm) => lm.value === m.value)) || [];
 </script>
 
 <FieldSelect
@@ -55,6 +43,5 @@
 		{ label: $LL.lastUsedModels(), options: lastUsedModels },
 		{ label: $LL.otherModels(), options: otherModels }
 	]}
-	onChange={handleChange}
 	bind:value={model}
 />

@@ -1,8 +1,7 @@
 import { expect, test, type Dialog, type Locator } from '@playwright/test';
 
 import {
-	chooseFromCombobox,
-	chooseModelFromSettings,
+	chooseModel,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_SESSION_1_RESPONSE_1,
 	MOCK_SESSION_1_RESPONSE_2,
@@ -48,7 +47,7 @@ test.describe('Session', () => {
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
 
-		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(page.getByText('Run')).toBeEnabled();
 
@@ -71,7 +70,7 @@ test.describe('Session', () => {
 		).not.toBeVisible();
 
 		// Re-select the model
-		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.focus();
 		await page.keyboard.press('Enter');
 		await expect(
@@ -91,7 +90,7 @@ test.describe('Session', () => {
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
 
-		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
@@ -116,7 +115,7 @@ test.describe('Session', () => {
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
 
-		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
@@ -153,7 +152,6 @@ test.describe('Session', () => {
 		await expect(settingsLink).toHaveClass(/ layout__a--active/);
 		await expect(sessionLink).not.toHaveClass(/ layout__a--active/);
 
-		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await sessionLink.click();
 		await expect(page.getByText('No sessions')).toBeVisible();
 		await expect(settingsLink).not.toHaveClass(/ layout__a--active/);
@@ -166,6 +164,7 @@ test.describe('Session', () => {
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
 		await page
@@ -203,9 +202,9 @@ test.describe('Session', () => {
 
 		// Create a new session
 		await mockCompletionResponse(page, MOCK_SESSION_2_RESPONSE_1);
-		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[1].name);
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[1].name);
 		await promptTextarea.fill('What does the fox say?');
 		await page.getByText('Run').click();
 		await expect(
@@ -240,12 +239,12 @@ test.describe('Session', () => {
 
 	test('deletes a session from the header and sidebar', async ({ page }) => {
 		await page.goto('/');
-		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
 		await expect(page.getByText('No sessions')).toBeVisible();
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
 		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.message.content)).toBeVisible();
@@ -272,6 +271,7 @@ test.describe('Session', () => {
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
 		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.message.content)).toBeVisible();
@@ -349,10 +349,10 @@ test.describe('Session', () => {
 
 	test('can copy the raw text of a message or code snippets to clipboard', async ({ page }) => {
 		await page.goto('/');
-		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
 		await expect(
@@ -394,10 +394,10 @@ test.describe('Session', () => {
 	test('can copy the whole session content to clipboard', async ({ page }) => {
 		await page.goto('/');
 		await page.evaluate(() => navigator.clipboard.writeText(''));
-		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await expect(page.locator('.header').getByTitle('Copy')).toHaveCount(0);
 
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
@@ -441,7 +441,7 @@ test.describe('Session', () => {
 		await expect(sessionMetadata).toHaveText('New session');
 
 		// Mock a response that takes a while to generate
-		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.route('**/chat', () => {});
 		await promptTextarea.fill('Hello world!');
 		await sendButton.click();
@@ -468,9 +468,9 @@ test.describe('Session', () => {
 		const promptEditorToggle = page.locator('.prompt-editor__toggle');
 
 		await page.goto('/');
-		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(textEditorLocator(page, 'Prompt')).not.toBeVisible();
 		await expect(promptEditor).not.toHaveClass(/ prompt-editor--fullscreen/);
@@ -508,10 +508,10 @@ test.describe('Session', () => {
 	test('can edit the first message and the next get removed', async ({ page }) => {
 		const messagesCount = page.locator('.article');
 		await page.goto('/');
-		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
@@ -561,10 +561,10 @@ test.describe('Session', () => {
 		const userMessage = page.locator('article', { hasText: 'You' });
 
 		await page.goto('/');
-		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
 
@@ -614,7 +614,7 @@ test.describe('Session', () => {
 		await page.route('**/chat', async (route) => {
 			await route.abort('failed');
 		});
-		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.locator('button', { hasText: 'Run' }).click();
 		await expect(page.getByText("Can't connect to Ollama server")).toBeVisible();
@@ -658,10 +658,10 @@ test.describe('Session', () => {
 
 	test('ai completion can be retried', async ({ page }) => {
 		await page.goto('/');
-		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		expect(await page.getByTitle('Retry').count()).toBe(0);
 
@@ -701,7 +701,7 @@ test.describe('Session', () => {
 		const initialClientHeight = await sessionHistory.evaluate((el) => el.clientHeight);
 		const initialScrollTop = await sessionHistory.evaluate((el) => el.scrollTop);
 
-		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_3);
 		await page.getByText('Run').click();
@@ -724,7 +724,7 @@ test.describe('Session', () => {
 
 		await expect(page.getByTestId('disconnected-server')).not.toBeVisible();
 
-		await chooseFromCombobox(page, 'Available models', MOCK_API_TAGS_RESPONSE.models[0].name);
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(page.getByText('Run')).toBeEnabled();
 		await expect(
@@ -736,6 +736,8 @@ test.describe('Session', () => {
 			await route.abort('failed');
 		});
 		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await page.getByText('Run').click();
 		await expect(
 			page.locator('ol[data-sonner-toaster] li', { hasText: "Can't connect to Ollama server" })
 		).toBeVisible();
@@ -748,9 +750,9 @@ test.describe('Session', () => {
 		page.on('dialog', async (dialog) => await dialogHandler(dialog));
 
 		await page.goto('/');
-		await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		// Start a streamed completion
 		await page.route('**/chat', () => {});
