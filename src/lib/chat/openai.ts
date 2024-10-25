@@ -31,6 +31,7 @@ export class OpenAIStrategy implements ChatStrategy {
 		});
 
 		for await (const chunk of response) {
+			console.warn('chunk', chunk);
 			if (abortSignal.aborted) break;
 			onChunk(chunk.choices[0].delta.content || '');
 		}

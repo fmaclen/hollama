@@ -6,7 +6,7 @@ import {
 	MOCK_OPENAI_MODELS,
 	MOCK_SESSION_1_RESPONSE_1,
 	mockCompletionResponse,
-	mockOpenAITagsResponse,
+	mockOpenAIModelsResponse,
 	mockTagsResponse
 } from './utils';
 
@@ -150,7 +150,7 @@ test.describe('FieldSelect', () => {
 
 	test('OpenAI models have an openai badge', async ({ page }) => {
 		await page.goto('/settings');
-		await mockOpenAITagsResponse(page);
+		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
 		await page.goto('/sessions/new');
 		await page.getByLabel('Available models').click();

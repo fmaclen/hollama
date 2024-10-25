@@ -1,5 +1,6 @@
 import type { Locator, Page, Route } from '@playwright/test';
 import type { ChatResponse, ListResponse } from 'ollama/browser';
+import type OpenAI from 'openai';
 
 import type { Knowledge } from '$lib/knowledge';
 
@@ -128,7 +129,21 @@ export const MOCK_SESSION_2_RESPONSE_1: ChatResponse = {
 	eval_duration: 2181595000
 };
 
-export const MOCK_OPENAI_MODELS = [
+export const MOCK_OPENAI_COMPLETION_RESPONSE_1: OpenAI.Chat.Completions.ChatCompletionChunk = {
+	model: 'gpt-3.5-turbo',
+	created: 1677610602,
+	id: 'chatcmpl-78901234567890123456789012345678',
+	object: 'chat.completion.chunk',
+	choices: [
+		{
+			index: 0,
+			delta: { role: 'assistant', content: MOCK_SESSION_1_RESPONSE_1.message.content },
+			finish_reason: null
+		}
+	]
+};
+
+export const MOCK_OPENAI_MODELS: OpenAI.Models.Model[] = [
 	{ id: 'gpt-3.5-turbo', object: 'model', created: 1677610602, owned_by: 'openai' },
 	{ id: 'gpt-4', object: 'model', created: 1687882411, owned_by: 'openai' },
 	{ id: 'text-davinci-003', object: 'model', created: 1669599635, owned_by: 'openai-internal' }
@@ -157,9 +172,9 @@ export async function mockTagsResponse(page: Page) {
 	});
 }
 
-export async function mockOpenAITagsResponse(page: Page) {
+export async function mockOpenAIModelsResponse(page: Page, models: OpenAI.Models.Model[]) {
 	await page.route('**/v1/models', async (route: Route) => {
-		await route.fulfill({ json: { data: MOCK_OPENAI_MODELS } });
+		await route.fulfill({ json: { data: models } });
 	});
 
 	await page.getByLabel('Base URL').fill('https://api.openai.com/v1');
@@ -174,6 +189,21 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
 			contentType: 'application/json',
 			body: JSON.stringify(response)
 		});
+	});
+}
+
+export async function mockOpenAICompletionResponse(
+	page: Page,
+	response: OpenAI.Chat.Completions.ChatCompletionChunk
+) {
+	await page.route('**/v1/chat/completions', async (route: Route) => {
+		console.warn(
+			JSON.parse(
+				`{"id":"chatcmpl-AMF0QqQELr8CkCrS6BRvmjNfLDrhS","object":"chat.completion.chunk","created":1729864262,"model":"gpt-3.5-turbo-0125","system_fingerprint":null,"choices":[{"index":0,"delta":{"role":"assistant","content":"","refusal":null},"logprobs":null,"finish_reason":null}]}`
+			)
+		);
+		console.warn('response', response);
+		await route.fulfill({ json: { data: response } });
 	});
 }
 

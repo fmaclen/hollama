@@ -1,6 +1,12 @@
 import { expect, test } from '@playwright/test';
 
-import { mockOpenAITagsResponse } from './utils';
+import {
+	MOCK_OPENAI_COMPLETION_RESPONSE_1,
+	MOCK_OPENAI_MODELS,
+	MOCK_SESSION_1_RESPONSE_1,
+	mockOpenAICompletionResponse,
+	mockOpenAIModelsResponse
+} from './utils';
 
 test.describe('OpenAI Integration', () => {
 	test.beforeEach(async ({ page }) => {
@@ -8,7 +14,7 @@ test.describe('OpenAI Integration', () => {
 	});
 
 	test('fetches data from OpenAI with a correct API Key', async ({ page }) => {
-		await mockOpenAITagsResponse(page);
+		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 		await expect(page.getByText('Sync was successful')).toBeVisible();
 	});
 
@@ -48,7 +54,7 @@ test.describe('OpenAI Integration', () => {
 	});
 
 	test('models list is sorted correctly', async ({ page }) => {
-		await mockOpenAITagsResponse(page);
+		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
 		await page.goto('/sessions/new');
 		await page.getByLabel('Available models').click();
@@ -59,35 +65,38 @@ test.describe('OpenAI Integration', () => {
 	});
 
 	test('OpenAI model is added to recently used list after use', async ({ page }) => {
-		await mockOpenAITagsResponse(page);
+		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
 		await page.goto('/sessions/new');
 		await page.getByLabel('Available models').click();
 		await page.getByRole('option', { name: 'gpt-3.5-turbo' }).click();
 
+		// Check that the model was not in the recently used list
+		await expect(page.getByText('Recently used models', { exact: true })).not.toBeVisible();
+
 		// Simulate sending a message (you might need to adjust this based on your actual UI)
 		await page.locator('.prompt-editor__textarea').fill('Hello, AI!');
 		await page.getByRole('button', { name: 'Run' }).click();
 
-		// Navigate back to model selection
-		await page.goto('/sessions/new');
 		await page.getByLabel('Available models').click();
-
 		await expect(page.getByText('Recently used models', { exact: true })).toBeVisible();
 		await expect(page.getByRole('option', { name: 'gpt-3.5-turbo' })).toBeVisible();
 	});
 
 	// TODO fix. Add mocked completion response
 	test('OpenAI model is saved to localStorage for specific session', async ({ page }) => {
-		await mockOpenAITagsResponse(page);
+		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
 		await page.goto('/sessions/new');
 		await page.getByLabel('Available models').click();
 		await page.getByRole('option', { name: 'gpt-3.5-turbo' }).click();
 
+		await mockOpenAICompletionResponse(page, MOCK_OPENAI_COMPLETION_RESPONSE_1);
+
 		// Simulate sending a message
 		await page.locator('.prompt-editor__textarea').fill('Hello, AI!');
 		await page.getByRole('button', { name: 'Run' }).click();
+		await expect(page.getByText(MOCK_SESSION_1_RESPONSE_1.message.content)).toBeVisible();
 
 		// Check localStorage
 		const sessions = await page.evaluate(() => localStorage.getItem('hollama-sessions'));
@@ -95,7 +104,9 @@ test.describe('OpenAI Integration', () => {
 	});
 
 	test('only GPT models are available in FieldModelSelect', async ({ page }) => {
-		await mockOpenAITagsResponse(page);
+		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
+		expect(MOCK_OPENAI_MODELS).toHaveLength(3);
+		expect(MOCK_OPENAI_MODELS[2].id).toContain('text-davinci-003');
 
 		await page.goto('/sessions/new');
 		await page.getByLabel('Available models').click();
