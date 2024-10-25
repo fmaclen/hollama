@@ -264,4 +264,20 @@ test.describe('Locales', () => {
 			);
 		});
 	});
+
+	test.describe('Vietnamese', () => {
+		test.use({ locale: 'vi' });
+		test('default language is vietnamese', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('vi');
+
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Server')).not.toBeVisible();
+			await expect(page.getByText('Máy chủ')).toBeVisible();
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"vi"'
+			);
+		});
+	});
 });
