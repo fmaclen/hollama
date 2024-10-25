@@ -162,6 +162,8 @@ export async function chooseModel(page: Page, modelName: string) {
 	await chooseFromCombobox(page, 'Available models', modelName);
 }
 
+// Ollama mock functions
+
 export async function mockTagsResponse(page: Page) {
 	await page.route('**/api/tags', async (route: Route) => {
 		await route.fulfill({
@@ -172,16 +174,6 @@ export async function mockTagsResponse(page: Page) {
 	});
 }
 
-export async function mockOpenAIModelsResponse(page: Page, models: OpenAI.Models.Model[]) {
-	await page.route('**/v1/models', async (route: Route) => {
-		await route.fulfill({ json: { data: models } });
-	});
-
-	await page.getByLabel('Base URL').fill('https://api.openai.com/v1');
-	await page.getByLabel('API Key').fill('sk-validapikey');
-	await page.getByRole('button', { name: 'Connect' }).click();
-}
-
 export async function mockCompletionResponse(page: Page, response: ChatResponse) {
 	await page.route('**/api/chat', async (route: Route) => {
 		await route.fulfill({
@@ -190,6 +182,18 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
 			body: JSON.stringify(response)
 		});
 	});
+}
+
+// OpenAI mock functions
+
+export async function mockOpenAIModelsResponse(page: Page, models: OpenAI.Models.Model[]) {
+	await page.route('**/v1/models', async (route: Route) => {
+		await route.fulfill({ json: { data: models } });
+	});
+
+	await page.getByLabel('Base URL').fill('https://api.openai.com/v1');
+	await page.getByLabel('API Key').fill('sk-validapikey');
+	await page.getByRole('button', { name: 'Connect' }).click();
 }
 
 export async function mockOpenAICompletionResponse(
@@ -208,6 +212,8 @@ export async function mockOpenAICompletionResponse(
 		});
 	});
 }
+
+// Knowledge mock functions
 
 export const MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1: ChatResponse = {
 	model: 'gemma:7b',
