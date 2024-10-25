@@ -194,16 +194,18 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
 
 export async function mockOpenAICompletionResponse(
 	page: Page,
-	response: OpenAI.Chat.Completions.ChatCompletionChunk
+	responseChunks: OpenAI.Chat.Completions.ChatCompletionChunk
 ) {
 	await page.route('**/v1/chat/completions', async (route: Route) => {
-		console.warn(
-			JSON.parse(
-				`{"id":"chatcmpl-AMF0QqQELr8CkCrS6BRvmjNfLDrhS","object":"chat.completion.chunk","created":1729864262,"model":"gpt-3.5-turbo-0125","system_fingerprint":null,"choices":[{"index":0,"delta":{"role":"assistant","content":"","refusal":null},"logprobs":null,"finish_reason":null}]}`
-			)
-		);
-		console.warn('response', response);
-		await route.fulfill({ json: { data: response } });
+		const encoder = new TextEncoder();
+		const chunks = encoder.encode(`data: ${JSON.stringify(responseChunks)}\n\n`);
+		const buffer = Buffer.from(chunks);
+
+		await route.fulfill({
+			status: 200,
+			contentType: 'text/event-stream;charset=UTF-8',
+			body: buffer
+		});
 	});
 }
 
