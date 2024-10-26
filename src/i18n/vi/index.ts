@@ -44,7 +44,6 @@ const vi = {
 	emptyKnowledge: 'Không có kiến thức',
 	emptySessions: 'Không có phiên',
 	error: 'Lỗi',
-
 	genericError: 'Xin lỗi, đã xảy ra sự cố',
 	goToDownloads: 'Đi đến mục tải xuống',
 	goToKnowledge: 'Đi đến kiến thức',
@@ -61,7 +60,6 @@ const vi = {
 	light: 'Giao diện Sáng',
 	lowVram: 'VRAM thấp',
 	mainGpu: 'GPU chính',
-	// messageOfTheDay: 'Thông điệp trong ngày',
 	messages: 'Tin nhắn',
 	modelOptions: 'Tùy chọn mô hình',
 	modelWasDownloaded: '{model:string} đã được tải xuống',
