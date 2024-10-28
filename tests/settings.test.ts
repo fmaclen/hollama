@@ -1,41 +1,10 @@
 import { expect, test } from '@playwright/test';
 import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 
-import { MOCK_API_TAGS_RESPONSE, mockTagsResponse } from './utils';
+import { mockTagsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
-});
-
-test('displays model list and updates settings store', async ({ page }) => {
-	await page.goto('/');
-	await expect(page.getByText('Connected')).toBeVisible();
-
-	// Check if the model list contains the expected models
-	const modelComboBox = page.getByLabel('Available models');
-	await expect(modelComboBox).toBeVisible();
-	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[0].name)).not.toBeVisible();
-	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name)).not.toBeVisible();
-	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[2].name)).not.toBeVisible();
-
-	await modelComboBox.click();
-	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[0].name)).toBeVisible();
-	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name)).toBeVisible();
-	await expect(page.getByText(MOCK_API_TAGS_RESPONSE.models[2].name)).toBeVisible();
-
-	await page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name).click();
-
-	// Check if the settings store is updated with the selected model
-	const localStorageValue = await page.evaluate(() =>
-		window.localStorage.getItem('hollama-settings')
-	);
-	if (!localStorageValue) throw new Error('No local storage value');
-	const parsedLocalStorageValue = JSON.parse(localStorageValue);
-	expect(parsedLocalStorageValue.ollamaModel).toBe(MOCK_API_TAGS_RESPONSE.models[1].name);
-	// Check that the models are sorted alphabetically (excluding 3rd party repositories)
-	expect(parsedLocalStorageValue.ollamaModels[0].name).toBe(MOCK_API_TAGS_RESPONSE.models[1].name);
-	expect(parsedLocalStorageValue.ollamaModels[1].name).toBe(MOCK_API_TAGS_RESPONSE.models[2].name);
-	expect(parsedLocalStorageValue.ollamaModels[2].name).toBe(MOCK_API_TAGS_RESPONSE.models[0].name);
 });
 
 test('handles server status updates correctly', async ({ page }) => {
@@ -63,24 +32,16 @@ test('handles server status updates correctly', async ({ page }) => {
 
 test('deletes all settings and resets to default values', async ({ page }) => {
 	await page.goto('/');
-	// const modelSelect = page.getByLabel('Available models');
-	// await expect(modelSelect).toHaveValue('');
-	const comboBox = page.getByLabel('Available models');
-	await expect(comboBox).toHaveValue('');
 
 	await page.getByLabel('Server').fill('http://localhost:3000');
-	await comboBox.click();
-	await page.getByText(MOCK_API_TAGS_RESPONSE.models[1].name).click();
 	await page.reload();
 	await expect(page.getByLabel('Server')).toHaveValue('http://localhost:3000');
-	await expect(comboBox).toHaveValue(MOCK_API_TAGS_RESPONSE.models[1].name);
 
-	// Check if the settings store is updated with the selected model
+	// Check if the settings store is updated with the selected server
 	let localStorageValue = await page.evaluate(() =>
 		window.localStorage.getItem('hollama-settings')
 	);
 	expect(localStorageValue).toContain('"ollamaServer":"http://localhost:3000"');
-	expect(localStorageValue).toContain(`"ollamaModel":"${MOCK_API_TAGS_RESPONSE.models[1].name}"`);
 
 	// Click the delete button
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete server settings?'));
@@ -94,7 +55,6 @@ test('deletes all settings and resets to default values', async ({ page }) => {
 	// Check if the settings has been reset to defaults
 	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(localStorageValue).toContain('"ollamaServer":"http://localhost:11434"');
-	expect(localStorageValue).toContain('"ollamaModel":""');
 });
 
 test('a model can be pulled from the ollama library', async ({ page }) => {

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import {
 	chooseFromCombobox,
-	chooseModelFromSettings,
+	chooseModel,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_KNOWLEDGE,
 	MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1,
@@ -112,6 +112,8 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	);
 	const knowledgeItems = page.getByTestId('knowledge-item');
 
+	await mockTagsResponse(page);
+
 	await page.goto('/');
 	await page.getByText('Knowledge', { exact: true }).click();
 	await expect(noKnowledgeMessage).toBeVisible();
@@ -126,6 +128,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	// Check the knowledge is available in the session
 	await page.getByText('Sessions').click();
 	await page.getByTestId('new-session').click();
+	await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 	await page.getByLabel('Controls').click();
 	await page
 		.locator('fieldset:has-text("System prompt") input[aria-labelledby="knowledge-label"]')
@@ -147,6 +150,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	// Check is no longer in the session
 	await page.getByText('Sessions').click();
 	await page.getByTestId('new-session').click();
+	await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 	await page.getByLabel('Controls').click();
 	await page.getByLabel('Knowledge', { exact: true }).click();
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[0].name })).not.toBeVisible();
@@ -185,7 +189,6 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 
 	await mockTagsResponse(page);
 	await page.goto('/');
-	await chooseModelFromSettings(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 	await seedKnowledgeAndReload(page);
 	await page.getByText('Knowledge', { exact: true }).click();
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(MOCK_KNOWLEDGE.length);
@@ -193,6 +196,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	await mockCompletionResponse(page, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1);
 	await page.getByText('Sessions').click();
 	await page.getByTestId('new-session').click();
+	await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 	await expect(sessionArticle).not.toBeVisible();
 
 	// Create a new session with knowledge
@@ -269,8 +273,11 @@ test('can use shortcut to create knowledge from session', async ({ page }) => {
 	const sessionId = page.getByTestId('session-id');
 	const knowledgeId = page.getByTestId('knowledge-id');
 
+	await mockTagsResponse(page);
+
 	await page.goto('/sessions');
 	await page.getByTestId('new-session').click();
+	await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 	await page.getByLabel('Controls').click();
 	const knowledgeCombobox = page.locator(
 		'fieldset:has-text("System prompt") input[aria-labelledby="knowledge-label"]'

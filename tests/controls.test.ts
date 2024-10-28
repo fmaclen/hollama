@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import {
 	chooseFromCombobox,
+	chooseModel,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_SESSION_1_RESPONSE_1,
 	MOCK_SESSION_1_RESPONSE_2,
@@ -50,6 +51,7 @@ test('can navigate between session messages and controls', async ({ page }) => {
 	await sessionHistory.evaluate((el) => el.scrollTop);
 
 	// Switch to Controls
+	await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 	await page.getByLabel('Controls').click();
 	await expect(page.getByText('Zulu')).not.toBeVisible();
 	await expect(page.getByText('System prompt')).toBeVisible();

@@ -8,7 +8,7 @@
 	export let placeholder: LocalizedString | string | undefined = undefined;
 	export let disabled: boolean | undefined = false;
 	export let value: string | number | undefined = undefined;
-	export let type: 'text' | 'number' = 'text';
+	export let type: 'text' | 'number' | 'password' = 'text';
 
 	// Props for numeric inputs
 	export let min: number | undefined = undefined;
@@ -42,12 +42,16 @@
 			on:keyup
 		/>
 	{:else}
+		<!--
+			The {... { type }} syntax is due to this reference:
+			https://stackoverflow.com/questions/57392773/error-type-attribute-cannot-be-dynamic-if-input-uses-two-way-binding/75298645#75298645
+		-->
 		<input
 			class="field-input"
 			id={name}
 			{disabled}
 			{placeholder}
-			type="text"
+			{...{ type }}
 			bind:value
 			on:input
 			on:keyup

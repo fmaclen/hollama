@@ -45,6 +45,7 @@
 		"lucide-svelte": "^0.372.0",
 		"markdown-it": "^14.1.0",
 		"ollama": "^0.5.9",
+		"openai": "^4.66.1",
 		"postcss": "^8.4.32",
 		"postcss-import": "^16.1.0",
 		"postcss-load-config": "^5.0.2",
@@ -67,6 +68,8 @@
 	},
 	"optionalDependencies": {
 		"@cloudflare/workerd-linux-64": "^1.20240909.0",
+		"@esbuild/darwin-x64": "^0.24.0",
+		"@esbuild/win32-x64": "^0.24.0",
 		"@rollup/rollup-linux-x64-gnu": "^4.21.3",
 		"@sveltejs/adapter-cloudflare": "^4.2.1"
 	},

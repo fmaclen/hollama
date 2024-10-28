@@ -1,5 +1,6 @@
-import type { Locator, Page, Route } from '@playwright/test';
+import { expect, type Locator, type Page, type Route } from '@playwright/test';
 import type { ChatResponse, ListResponse } from 'ollama/browser';
+import type OpenAI from 'openai';
 
 import type { Knowledge } from '$lib/knowledge';
 
@@ -128,6 +129,26 @@ export const MOCK_SESSION_2_RESPONSE_1: ChatResponse = {
 	eval_duration: 2181595000
 };
 
+export const MOCK_OPENAI_COMPLETION_RESPONSE_1: OpenAI.Chat.Completions.ChatCompletionChunk = {
+	model: 'gpt-3.5-turbo',
+	created: 1677610602,
+	id: 'chatcmpl-78901234567890123456789012345678',
+	object: 'chat.completion.chunk',
+	choices: [
+		{
+			index: 0,
+			delta: { role: 'assistant', content: MOCK_SESSION_1_RESPONSE_1.message.content },
+			finish_reason: null
+		}
+	]
+};
+
+export const MOCK_OPENAI_MODELS: OpenAI.Models.Model[] = [
+	{ id: 'gpt-3.5-turbo', object: 'model', created: 1677610602, owned_by: 'openai' },
+	{ id: 'gpt-4', object: 'model', created: 1687882411, owned_by: 'openai' },
+	{ id: 'text-davinci-003', object: 'model', created: 1669599635, owned_by: 'openai-internal' }
+];
+
 export async function chooseFromCombobox(
 	page: Page,
 	label: string | RegExp,
@@ -137,10 +158,11 @@ export async function chooseFromCombobox(
 	await page.getByText(option).click();
 }
 
-export async function chooseModelFromSettings(page: Page, modelName: string) {
-	await page.getByText('Settings', { exact: true }).click();
+export async function chooseModel(page: Page, modelName: string) {
 	await chooseFromCombobox(page, 'Available models', modelName);
 }
+
+// Ollama mock functions
 
 export async function mockTagsResponse(page: Page) {
 	await page.route('**/api/tags', async (route: Route) => {
@@ -161,6 +183,39 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
 		});
 	});
 }
+
+// OpenAI mock functions
+
+export async function mockOpenAIModelsResponse(page: Page, models: OpenAI.Models.Model[]) {
+	await page.route('**/v1/models', async (route: Route) => {
+		await route.fulfill({ json: { data: models } });
+	});
+
+	await page.getByLabel('Base URL').fill('https://api.openai.com/v1');
+	await page.getByLabel('API Key').fill('sk-validapikey');
+	await page.getByRole('button', { name: 'Connect' }).click();
+
+	await expect(page.getByText('Sync was successful')).toBeVisible();
+}
+
+export async function mockOpenAICompletionResponse(
+	page: Page,
+	responseChunks: OpenAI.Chat.Completions.ChatCompletionChunk
+) {
+	await page.route('**/v1/chat/completions', async (route: Route) => {
+		const encoder = new TextEncoder();
+		const chunks = encoder.encode(`data: ${JSON.stringify(responseChunks)}\n\n`);
+		const buffer = Buffer.from(chunks);
+
+		await route.fulfill({
+			status: 200,
+			contentType: 'text/event-stream;charset=UTF-8',
+			body: buffer
+		});
+	});
+}
+
+// Knowledge mock functions
 
 export const MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1: ChatResponse = {
 	model: 'gemma:7b',

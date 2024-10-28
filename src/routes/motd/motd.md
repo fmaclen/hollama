@@ -1,4 +1,4 @@
-`2024-10-22`
+`2024-10-25`
 
 ### Message of the day
 
@@ -6,9 +6,8 @@
 
 #### What's new?
 
-- **Desktop app** is now available for [Windows, macOS & Linux](https://github.com/fmaclen/hollama/releases)
-- **Olá mundo!** UI is now available in [Portuguese (Brasil)](/settings)
-- **你好，世界!** 界面现已支持 [中文（简体）](/settings)
+**OpenAI models** ✨ are now _(optionally)_ available in Sessions.
+Set your own API key in [Settings](/settings)
 
 #### Previously, in Hollama
 
@@ -17,6 +16,7 @@
 - **Enhanced models menu** now shows parameter size and highlights recently used models
 - **Download** [Ollama models](https://ollama.ai/models) from [Settings](/settings)
 - **Editable messages** in [Sessions](/sessions)
+- **Desktop app** is now available for [Windows, macOS & Linux](https://github.com/fmaclen/hollama/releases)
 
 #### What's next?
 

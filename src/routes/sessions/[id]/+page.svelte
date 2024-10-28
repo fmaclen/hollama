@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { ChatRequest } from 'ollama/browser';
 	import { afterUpdate, onMount, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { writable, type Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import { beforeNavigate } from '$app/navigation';
+	import { chat, type ChatRequest, type Model } from '$lib/chat';
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
@@ -13,7 +13,6 @@
 	import Header from '$lib/components/Header.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import { settingsStore } from '$lib/localStorage';
-	import { ollamaChat, ollamaTags } from '$lib/ollama';
 	import {
 		formatSessionMetadata,
 		getSessionTitle,
@@ -47,10 +46,10 @@
 	let messagesWindow: HTMLDivElement;
 	let userScrolledUp = false;
 
-	$: $editor.isNewSession = !$session?.messages.length;
 	$: if (data.id) handleSessionChange();
 
-	onMount(() => {
+	onMount(async () => {
+		await scrollToBottom();
 		messagesWindow.addEventListener('scroll', handleScroll);
 	});
 
@@ -72,14 +71,9 @@
 	});
 
 	async function handleSessionChange() {
-		try {
-			$settingsStore.ollamaModels = (await ollamaTags()).models;
-		} catch {
-			$settingsStore.ollamaModels = [];
-			toast.warning($LL.cantConnectToOllamaServer());
-		}
-		$editor.view = 'messages';
 		session = writable(loadSession(data.id));
+		$editor.view = 'messages';
+		$editor.isNewSession = !$session?.messages.length;
 		scrollToBottom();
 	}
 
@@ -108,6 +102,7 @@
 		if (!$editor.prompt) return;
 		if (!$session.model) return;
 		$editor.isCodeEditor = false;
+		$editor.isNewSession = false;
 		$editor.view = 'messages';
 
 		if ($editor.messageIndexToEdit !== null) handleSubmitEditMessage();
@@ -137,9 +132,14 @@
 		};
 
 		try {
-			await ollamaChat(ollamaChatRequest, $editor.abortController.signal, async (chunk) => {
-				$editor.completion += chunk;
-				await scrollToBottom();
+			await chat({
+				model: $settingsStore.models.find((model) => model.name === $session.model) as Model,
+				payload: ollamaChatRequest,
+				abortSignal: $editor.abortController.signal,
+				onChunk: async (chunk) => {
+					$editor.completion += chunk;
+					await scrollToBottom();
+				}
 			});
 
 			// After the completion save the session
@@ -166,6 +166,7 @@
 		$editor.completion = '';
 		$editor.isCompletionInProgress = false;
 		$session.messages = $session.messages.slice(0, -1); // Remove the "incomplete" AI response
+		$editor.isNewSession = !$session.messages.length;
 	}
 
 	function handleError(error: Error) {
