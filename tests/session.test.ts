@@ -732,7 +732,7 @@ test.describe('Session', () => {
 		).not.toBeVisible();
 
 		// Mock a net::ERR_CONNECTION_REFUSED
-		await page.route('**/tags', async (route) => {
+		await page.route('**/chat', async (route) => {
 			await route.abort('failed');
 		});
 		await page.getByTestId('new-session').click();
