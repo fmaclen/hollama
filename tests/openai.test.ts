@@ -5,7 +5,8 @@ import {
 	MOCK_OPENAI_MODELS,
 	MOCK_SESSION_1_RESPONSE_1,
 	mockOpenAICompletionResponse,
-	mockOpenAIModelsResponse
+	mockOpenAIModelsResponse,
+	mockTagsResponse
 } from './utils';
 
 test.describe('OpenAI Integration', () => {
@@ -49,6 +50,7 @@ test.describe('OpenAI Integration', () => {
 	});
 
 	test('models list is sorted correctly', async ({ page }) => {
+		await mockTagsResponse(page);
 		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
 		await page.getByText('Sessions', { exact: true }).click();
@@ -56,8 +58,8 @@ test.describe('OpenAI Integration', () => {
 		await page.getByLabel('Available models').click();
 
 		const modelOptions = page.locator('div[role="option"]');
-		await expect(modelOptions.nth(0)).toHaveText('gpt-3.5-turbo');
-		await expect(modelOptions.nth(1)).toHaveText('gpt-4');
+		await expect(modelOptions.nth(1)).toHaveText('gpt-3.5-turbo');
+		await expect(modelOptions.nth(2)).toHaveText('gpt-4');
 	});
 
 	test('OpenAI model is added to recently used list after use', async ({ page }) => {
