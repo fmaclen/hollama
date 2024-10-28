@@ -1,4 +1,4 @@
-import type { Locator, Page, Route } from '@playwright/test';
+import { expect, type Locator, type Page, type Route } from '@playwright/test';
 import type { ChatResponse, ListResponse } from 'ollama/browser';
 import type OpenAI from 'openai';
 
@@ -194,6 +194,8 @@ export async function mockOpenAIModelsResponse(page: Page, models: OpenAI.Models
 	await page.getByLabel('Base URL').fill('https://api.openai.com/v1');
 	await page.getByLabel('API Key').fill('sk-validapikey');
 	await page.getByRole('button', { name: 'Connect' }).click();
+
+	await expect(page.getByText('Sync was successful')).toBeVisible();
 }
 
 export async function mockOpenAICompletionResponse(

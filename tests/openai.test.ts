@@ -13,11 +13,6 @@ test.describe('OpenAI Integration', () => {
 		await page.goto('/settings');
 	});
 
-	test('fetches data from OpenAI with a correct API Key', async ({ page }) => {
-		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
-		await expect(page.getByText('Sync was successful')).toBeVisible();
-	});
-
 	test('fails to fetch data with an incorrect API key', async ({ page }) => {
 		await page.route('**/v1/models', (route) => {
 			route.fulfill({ status: 401, json: { error: { message: 'Invalid API key' } } });
@@ -56,7 +51,8 @@ test.describe('OpenAI Integration', () => {
 	test('models list is sorted correctly', async ({ page }) => {
 		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
-		await page.goto('/sessions/new');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
 		await page.getByLabel('Available models').click();
 
 		const modelOptions = page.locator('div[role="option"]');
@@ -67,7 +63,8 @@ test.describe('OpenAI Integration', () => {
 	test('OpenAI model is added to recently used list after use', async ({ page }) => {
 		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
-		await page.goto('/sessions/new');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
 		await page.getByLabel('Available models').click();
 		await page.getByRole('option', { name: 'gpt-3.5-turbo' }).click();
 
@@ -87,7 +84,8 @@ test.describe('OpenAI Integration', () => {
 	test('OpenAI model is saved to localStorage for specific session', async ({ page }) => {
 		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
-		await page.goto('/sessions/new');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
 		await page.getByLabel('Available models').click();
 		await page.getByRole('option', { name: 'gpt-3.5-turbo' }).click();
 
@@ -108,7 +106,8 @@ test.describe('OpenAI Integration', () => {
 		expect(MOCK_OPENAI_MODELS).toHaveLength(3);
 		expect(MOCK_OPENAI_MODELS[2].id).toContain('text-davinci-003');
 
-		await page.goto('/sessions/new');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
 		await page.getByLabel('Available models').click();
 
 		await expect(page.getByRole('option', { name: 'gpt-3.5-turbo' })).toBeVisible();
