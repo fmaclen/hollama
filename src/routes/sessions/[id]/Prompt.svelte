@@ -9,16 +9,22 @@
 	import Button from '$lib/components/Button.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
-	import { settingsStore } from '$lib/localStorage';
+	import { knowledgeStore, settingsStore } from '$lib/localStorage';
 	import type { Editor } from '$lib/sessions';
+
+	import AttachmentsToolbar from './AttachmentsToolbar.svelte';
 
 	export let editor: Writable<Editor>;
 	export let model: string;
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
+
+	let attachments: any[] = [];
+	let knowledge = $knowledgeStore;
 
 	let isOllama = false;
 	$: isOllama = $settingsStore.models?.find((m) => m.name === model)?.api === 'ollama';
@@ -110,6 +116,12 @@
 		{/if}
 
 		<nav class="prompt-editor__toolbar">
+			<AttachmentsToolbar
+				onClick={() => {
+					attachments = [...attachments, {}];
+				}}
+			/>
+
 			{#if $editor.messageIndexToEdit !== null}
 				<Button
 					variant="outline"
@@ -143,6 +155,19 @@
 				</Button>
 			{/if}
 		</nav>
+		{#each attachments as attachment}
+			<FieldSelect
+				label={$LL.knowledge()}
+				placeholder={$LL.knowledge()}
+				name="knowledge"
+				isLabelVisible={false}
+				options={knowledge.map((k) => ({
+					label: k.name,
+					value: k.id
+				}))}
+				value={attachment.id}
+			/>
+		{/each}
 	</div>
 </div>
 
@@ -177,7 +202,7 @@
 	}
 
 	.prompt-editor__toolbar {
-		@apply flex items-stretch gap-x-2;
+		@apply flex items-center justify-between gap-x-2;
 	}
 
 	.prompt-editor__stop {
