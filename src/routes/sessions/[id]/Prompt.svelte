@@ -2,6 +2,7 @@
 	import { LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
+	import Trash_2 from 'lucide-svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
 	import type { Writable } from 'svelte/store';
 
@@ -9,13 +10,14 @@
 	import Button from '$lib/components/Button.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Field from '$lib/components/Field.svelte';
-	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
-	import { knowledgeStore, settingsStore } from '$lib/localStorage';
+	import { settingsStore } from '$lib/localStorage';
 	import type { Editor } from '$lib/sessions';
+	import { generateStorageId } from '$lib/utils';
 
 	import AttachmentsToolbar from './AttachmentsToolbar.svelte';
+	import Knowledge from './Knowledge.svelte';
 
 	export let editor: Writable<Editor>;
 	export let model: string;
@@ -24,7 +26,7 @@
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
 
 	let attachments: any[] = [];
-	let knowledge = $knowledgeStore;
+	$: console.log(attachments);
 
 	let isOllama = false;
 	$: isOllama = $settingsStore.models?.find((m) => m.name === model)?.api === 'ollama';
@@ -115,10 +117,26 @@
 			</Field>
 		{/if}
 
+		{#each attachments as attachment}
+			<div class="flex w-full justify-between">
+				<div class="w-full">
+					<Knowledge systemPrompt={attachment} showLabel={false} />
+				</div>
+				<Button
+					variant="icon"
+					on:click={() => {
+						attachments = attachments.filter((a) => a.fieldId !== attachment.fieldId);
+					}}
+				>
+					<Trash_2 class="base-icon" />
+				</Button>
+			</div>
+		{/each}
+
 		<nav class="prompt-editor__toolbar">
 			<AttachmentsToolbar
 				onClick={() => {
-					attachments = [...attachments, {}];
+					attachments = [...attachments, { fieldId: generateStorageId() }];
 				}}
 			/>
 
@@ -155,19 +173,6 @@
 				</Button>
 			{/if}
 		</nav>
-		{#each attachments as attachment}
-			<FieldSelect
-				label={$LL.knowledge()}
-				placeholder={$LL.knowledge()}
-				name="knowledge"
-				isLabelVisible={false}
-				options={knowledge.map((k) => ({
-					label: k.name,
-					value: k.id
-				}))}
-				value={attachment.id}
-			/>
-		{/each}
 	</div>
 </div>
 
