@@ -12,24 +12,29 @@
 	import Field from '$lib/components/Field.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
+	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { settingsStore } from '$lib/localStorage';
-	import type { Editor } from '$lib/sessions';
+	import type { Editor, Message, Session } from '$lib/sessions';
 	import { generateStorageId } from '$lib/utils';
 
 	import AttachmentsToolbar from './AttachmentsToolbar.svelte';
-	import Knowledge from './Knowledge.svelte';
+	import KnowledgeSelect from './Knowledge.svelte';
 
 	export let editor: Writable<Editor>;
-	export let model: string;
+	export let session: Writable<Session>;
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
 
-	let attachments: any[] = [];
-	$: console.log(attachments);
+	type KnowledgeAttachment = {
+		fieldId: string;
+		knowledge?: Knowledge;
+	};
+
+	let attachments: KnowledgeAttachment[] = [];
 
 	let isOllama = false;
-	$: isOllama = $settingsStore.models?.find((m) => m.name === model)?.api === 'ollama';
+	$: isOllama = $settingsStore.models?.find((m) => m.name === $session.model)?.api === 'ollama';
 
 	function toggleCodeEditor() {
 		$editor.isCodeEditor = !$editor.isCodeEditor;
@@ -53,6 +58,33 @@
 		if (event.shiftKey) return;
 		if (event.key !== 'Enter') return;
 		event.preventDefault();
+		submit();
+	}
+
+	function handleSelectKnowledge(fieldId: string, knowledgeId: string) {
+		attachments = attachments.map((a) =>
+			a.fieldId === fieldId ? { ...a, knowledge: loadKnowledge(knowledgeId) } : a
+		);
+	}
+
+	function handleDeleteAttachment(fieldId: string) {
+		attachments = attachments.filter((a) => a.fieldId !== fieldId);
+	}
+
+	function submit() {
+		if (attachments.length) {
+			const systemPrompt: Message[] = [];
+			attachments.forEach((a) => {
+				if (a.knowledge)
+					systemPrompt.push({
+						role: 'system',
+						knowledge: a.knowledge,
+						content: a.knowledge.content
+					});
+			});
+			$session.systemPrompt = systemPrompt;
+		}
+
 		handleSubmit();
 	}
 </script>
@@ -60,7 +92,7 @@
 <div class="prompt-editor" class:prompt-editor--fullscreen={$editor.isCodeEditor}>
 	<div class="prompt-editor__form">
 		<div class="prompt-editor__project">
-			<FieldSelectModel isLabelVisible={false} bind:model />
+			<FieldSelectModel isLabelVisible={false} bind:model={$session.model} />
 
 			<nav class="segmented-nav">
 				<div
@@ -103,7 +135,7 @@
 		</div>
 
 		{#if $editor.isCodeEditor}
-			<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={$editor.prompt} />
+			<FieldTextEditor label={$LL.prompt()} handleSubmit={submit} bind:value={$editor.prompt} />
 		{:else}
 			<Field name="prompt">
 				<textarea
@@ -120,14 +152,13 @@
 		{#each attachments as attachment}
 			<div class="flex w-full justify-between">
 				<div class="w-full">
-					<Knowledge systemPrompt={attachment} showLabel={false} />
+					<KnowledgeSelect
+						knowledge={attachment.knowledge}
+						showLabel={false}
+						onChange={(knowledgeId) => handleSelectKnowledge(attachment.fieldId, knowledgeId)}
+					/>
 				</div>
-				<Button
-					variant="icon"
-					on:click={() => {
-						attachments = attachments.filter((a) => a.fieldId !== attachment.fieldId);
-					}}
-				>
+				<Button variant="icon" on:click={() => handleDeleteAttachment(attachment.fieldId)}>
 					<Trash_2 class="base-icon" />
 				</Button>
 			</div>
@@ -153,9 +184,9 @@
 				</Button>
 			{/if}
 			<ButtonSubmit
-				{handleSubmit}
+				handleSubmit={submit}
 				hasMetaKey={$editor.isCodeEditor}
-				disabled={!$editor.prompt || !model}
+				disabled={!$editor.prompt || !$session.model}
 			>
 				{$LL.run()}
 			</ButtonSubmit>

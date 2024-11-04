@@ -8,8 +8,6 @@
 	import P from '$lib/components/P.svelte';
 	import type { Session } from '$lib/sessions';
 
-	import Knowledge from './Knowledge.svelte';
-
 	const DEFAULT_MIROSTAT = '0';
 	const DEFAULT_MIROSTAT_ETA = '0.1';
 	const DEFAULT_MIROSTAT_TAU = '5.0';
@@ -41,11 +39,6 @@
 </script>
 
 <div class="controls">
-	<Fieldset>
-		<P><strong>{$LL.systemPrompt()}</strong></P>
-		<Knowledge systemPrompt={$session.systemPrompt} showNav={true} />
-	</Fieldset>
-
 	<Fieldset>
 		<P><strong>{$LL.modelOptions()}</strong></P>
 		<div class="control-inputs">

@@ -16,7 +16,7 @@ export interface Session {
 	id: string;
 	model: string;
 	messages: Message[];
-	systemPrompt: Message;
+	systemPrompt: Message | Message[];
 	options: Partial<OllamaOptions>;
 	updatedAt?: string;
 }

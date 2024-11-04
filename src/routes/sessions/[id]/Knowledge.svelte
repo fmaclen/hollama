@@ -5,33 +5,19 @@
 	import Button from '$lib/components/Button.svelte';
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import FieldSelect from '$lib/components/FieldSelect.svelte';
-	import { loadKnowledge } from '$lib/knowledge';
+	import { type Knowledge } from '$lib/knowledge';
 	import { knowledgeStore } from '$lib/localStorage';
-	import type { Message } from '$lib/sessions';
 	import { Sitemap } from '$lib/sitemap';
 
-	export let systemPrompt: Message;
+	export let knowledge: Knowledge | undefined;
 	export let showNav: boolean = false;
 	export let showLabel: boolean = true;
+	export let onChange: ((knowledgeId: string) => void) | undefined = undefined;
 
 	let knowledgeId: string | undefined;
 
 	$: {
-		if (systemPrompt.knowledge && !knowledgeId) {
-			// Initial load: set knowledgeId if knowledge exists
-			knowledgeId = systemPrompt.knowledge.id;
-		} else if (knowledgeId !== systemPrompt.knowledge?.id) {
-			// Knowledge selection changed
-			if (knowledgeId) {
-				const knowledge = loadKnowledge(knowledgeId);
-				systemPrompt.knowledge = knowledge;
-				systemPrompt.content = knowledge.content;
-			} else {
-				// Clear knowledge if knowledgeId is undefined
-				systemPrompt.knowledge = undefined;
-				systemPrompt.content = '';
-			}
-		}
+		if (knowledge) knowledgeId = knowledge.id;
 	}
 </script>
 
@@ -43,6 +29,7 @@
 	placeholder={!$knowledgeStore.length ? $LL.emptyKnowledge() : !showLabel ? $LL.knowledge() : ''}
 	options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
 	bind:value={knowledgeId}
+	onChange={(option) => onChange?.(option.value)}
 >
 	<svelte:fragment slot="nav">
 		{#if showNav}

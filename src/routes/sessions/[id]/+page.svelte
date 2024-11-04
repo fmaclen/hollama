@@ -128,7 +128,11 @@
 		const ollamaChatRequest: ChatRequest = {
 			model: $session.model,
 			options: $session.options,
-			messages: $session.systemPrompt.content ? [$session.systemPrompt, ...messages] : messages
+			messages: Array.isArray($session.systemPrompt)
+				? $session.systemPrompt.filter((m) => m.content).concat(messages)
+				: $session.systemPrompt.content
+					? [$session.systemPrompt, ...messages]
+					: messages
 		};
 
 		try {
@@ -221,13 +225,7 @@
 		</div>
 	{/if}
 
-	<PromptEditor
-		bind:model={$session.model}
-		{editor}
-		{handleSubmit}
-		{stopCompletion}
-		{scrollToBottom}
-	/>
+	<PromptEditor bind:session {editor} {handleSubmit} {stopCompletion} {scrollToBottom} />
 </div>
 
 <style lang="postcss">
