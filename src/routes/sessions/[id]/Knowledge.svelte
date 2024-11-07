@@ -17,9 +17,7 @@
 
 	let knowledgeId: string | undefined;
 
-	$: {
-		if (knowledge) knowledgeId = knowledge.id;
-	}
+	$: if (knowledge) knowledgeId = knowledge.id;
 </script>
 
 <FieldSelect

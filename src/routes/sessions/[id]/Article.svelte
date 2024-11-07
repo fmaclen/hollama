@@ -80,16 +80,7 @@
 		</nav>
 
 		<div class="markdown">
-			{#if message.knowledge}
-				<!-- <Button
-					variant="outline"
-					href={generateNewUrl(Sitemap.KNOWLEDGE, message.knowledge.id)}
-					aria-label={$LL.goToKnowledge()}
-				>
-					{message.knowledge.name}
-					<Brain class="base-icon -mr-1 ml-2" />
-				</Button> -->
-			{:else if message.content}
+			{#if message.content}
 				<Markdown markdown={message.content} />
 			{/if}
 		</div>
