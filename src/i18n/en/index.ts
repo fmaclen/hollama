@@ -138,7 +138,7 @@ const en = {
 	version: 'Version',
 	vocabOnly: 'Vocab only',
 	writePromptToStart: 'Write a prompt to start a new session',
-	you: 'You',
+	you: 'You'
 } satisfies BaseTranslation;
 
 export default en;

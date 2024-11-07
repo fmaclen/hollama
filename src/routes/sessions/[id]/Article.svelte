@@ -110,7 +110,7 @@
 
 	.article__interactive,
 	.attachment__interactive {
-		@apply opacity-100 -mr-2;
+		@apply -mr-2 opacity-100;
 		@apply md:-mr-3;
 
 		@media (hover: hover) {
