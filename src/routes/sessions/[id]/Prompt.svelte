@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { Brain, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
 	import Trash_2 from 'lucide-svelte/icons/trash-2';
@@ -18,15 +18,14 @@
 	import { generateStorageId } from '$lib/utils';
 
 	import type { KnowledgeAttachment } from './+page.svelte';
-	import AttachmentsToolbar from './AttachmentsToolbar.svelte';
 	import KnowledgeSelect from './Knowledge.svelte';
 
 	export let editor: Writable<Editor>;
 	export let session: Writable<Session>;
+	export let attachments: Writable<KnowledgeAttachment[]>;
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
-	export let attachments: Writable<KnowledgeAttachment[]>;
 
 	let isOllama = false;
 	$: isOllama = $settingsStore.models?.find((m) => m.name === $session.model)?.api === 'ollama';
@@ -154,18 +153,23 @@
 						allowClear={false}
 					/>
 				</div>
-				<Button variant="icon" on:click={() => handleDeleteAttachment(attachment.fieldId)}>
+				<Button variant="outline" on:click={() => handleDeleteAttachment(attachment.fieldId)}>
 					<Trash_2 class="base-icon" />
 				</Button>
 			</div>
 		{/each}
 
 		<nav class="prompt-editor__toolbar">
-			<AttachmentsToolbar
-				onClick={() => {
-					$attachments = [...$attachments, { fieldId: generateStorageId() }];
-				}}
-			/>
+			<div class="attachments-toolbar">
+				<Button
+					variant="outline"
+					on:click={() => {
+						$attachments = [...$attachments, { fieldId: generateStorageId() }];
+					}}
+				>
+					<Brain class="base-icon" />
+				</Button>
+			</div>
 
 			{#if $editor.messageIndexToEdit !== null}
 				<Button
@@ -179,16 +183,9 @@
 					{$LL.cancel()}
 				</Button>
 			{/if}
-			<ButtonSubmit
-				handleSubmit={submit}
-				hasMetaKey={$editor.isCodeEditor}
-				disabled={!$editor.prompt || !$session.model}
-			>
-				{$LL.run()}
-			</ButtonSubmit>
 
 			{#if $editor.isCompletionInProgress}
-				<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
+				<Button title={$LL.stopCompletion()} variant="outline" on:click={stopCompletion}>
 					<div class="prompt-editor__stop">
 						<span class="prompt-editor__stop-icon">
 							<StopCircle class=" base-icon" />
@@ -199,6 +196,14 @@
 					</div>
 				</Button>
 			{/if}
+
+			<ButtonSubmit
+				handleSubmit={submit}
+				hasMetaKey={$editor.isCodeEditor}
+				disabled={!$editor.prompt || !$session.model}
+			>
+				{$LL.run()}
+			</ButtonSubmit>
 		</nav>
 	</div>
 </div>
@@ -274,5 +279,9 @@
 		&--active {
 			@apply bg-shade-0 text-neutral-50 shadow;
 		}
+	}
+
+	.attachments-toolbar {
+		@apply flex h-full w-full;
 	}
 </style>

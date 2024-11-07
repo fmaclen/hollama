@@ -498,6 +498,10 @@ type RootTranslation = {
 	 */
 	stop: string
 	/**
+	 * S​t​o​p​ ​c​o​m​p​l​e​t​i​o​n
+	 */
+	stopCompletion: string
+	/**
 	 * S​t​o​p​ ​r​e​s​p​o​n​s​e
 	 */
 	stopResponse: string
@@ -1043,6 +1047,10 @@ The completion in progress will stop
 	 * Stop sequence
 	 */
 	stop: () => LocalizedString
+	/**
+	 * Stop completion
+	 */
+	stopCompletion: () => LocalizedString
 	/**
 	 * Stop response
 	 */
