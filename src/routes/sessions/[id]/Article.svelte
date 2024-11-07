@@ -110,7 +110,8 @@
 
 	.article__interactive,
 	.attachment__interactive {
-		@apply opacity-100;
+		@apply opacity-100 -mr-2;
+		@apply md:-mr-3;
 
 		@media (hover: hover) {
 			/* The interactive elements should be visible by default on mobile
@@ -135,7 +136,7 @@
 
 	.attachment {
 		@apply mx-auto mb-2 flex w-full max-w-[80ch] gap-2 rounded-md border border-shade-3;
-		@apply flex items-center justify-between px-3 py-2;
+		@apply flex items-center justify-between px-3 py-1;
 		@apply md:px-4;
 		@apply lg:px-6;
 	}
