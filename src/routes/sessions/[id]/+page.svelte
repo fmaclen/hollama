@@ -218,6 +218,8 @@
 		await tick();
 		requestAnimationFrame(() => (messagesWindow.scrollTop = messagesWindow.scrollHeight));
 	}
+
+	$: $attachments.length && scrollToBottom();
 </script>
 
 <div class="session">
