@@ -38,11 +38,6 @@
 	import Messages from './Messages.svelte';
 	import PromptEditor from './Prompt.svelte';
 
-	type KnowledgeAttachment = {
-		fieldId: string;
-		knowledge?: Knowledge;
-	};
-
 	const shouldConfirmDeletion = writable(false);
 
 	export let data: PageData;
