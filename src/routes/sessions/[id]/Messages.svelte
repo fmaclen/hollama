@@ -17,6 +17,10 @@
 		$editor.prompt = message.content;
 		$editor.promptTextarea?.focus();
 	}
+
+	function handleDeleteAttachment(message: Message) {
+		$session.messages = $session.messages.filter((m) => m !== message);
+	}
 </script>
 
 {#if $editor.isNewSession}
@@ -29,7 +33,8 @@
 			{message}
 			retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
 			{handleRetry}
-			handleEditMessage={() => handleEditMessage(message)}
+			{handleEditMessage}
+			{handleDeleteAttachment}
 		/>
 	{/key}
 {/each}

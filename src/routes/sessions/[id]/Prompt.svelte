@@ -12,11 +12,12 @@
 	import Field from '$lib/components/Field.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
-	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
+	import { loadKnowledge } from '$lib/knowledge';
 	import { settingsStore } from '$lib/localStorage';
 	import type { Editor, Message, Session } from '$lib/sessions';
 	import { generateStorageId } from '$lib/utils';
 
+	import type { KnowledgeAttachment } from './+page.svelte';
 	import AttachmentsToolbar from './AttachmentsToolbar.svelte';
 	import KnowledgeSelect from './Knowledge.svelte';
 
@@ -25,13 +26,7 @@
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
-
-	type KnowledgeAttachment = {
-		fieldId: string;
-		knowledge?: Knowledge;
-	};
-
-	let attachments: KnowledgeAttachment[] = [];
+	export let attachments: Writable<KnowledgeAttachment[]>;
 
 	let isOllama = false;
 	$: isOllama = $settingsStore.models?.find((m) => m.name === $session.model)?.api === 'ollama';
@@ -62,19 +57,19 @@
 	}
 
 	function handleSelectKnowledge(fieldId: string, knowledgeId: string) {
-		attachments = attachments.map((a) =>
+		$attachments = $attachments.map((a) =>
 			a.fieldId === fieldId ? { ...a, knowledge: loadKnowledge(knowledgeId) } : a
 		);
 	}
 
 	function handleDeleteAttachment(fieldId: string) {
-		attachments = attachments.filter((a) => a.fieldId !== fieldId);
+		$attachments = $attachments.filter((a) => a.fieldId !== fieldId);
 	}
 
 	function submit() {
-		if (attachments.length) {
+		if ($attachments.length) {
 			const systemPrompt: Message[] = [];
-			attachments.forEach((a) => {
+			$attachments.forEach((a) => {
 				if (a.knowledge)
 					systemPrompt.push({
 						role: 'system',
@@ -149,13 +144,14 @@
 			</Field>
 		{/if}
 
-		{#each attachments as attachment}
+		{#each $attachments as attachment}
 			<div class="flex w-full justify-between">
 				<div class="w-full">
 					<KnowledgeSelect
 						knowledge={attachment.knowledge}
 						showLabel={false}
 						onChange={(knowledgeId) => handleSelectKnowledge(attachment.fieldId, knowledgeId)}
+						allowClear={false}
 					/>
 				</div>
 				<Button variant="icon" on:click={() => handleDeleteAttachment(attachment.fieldId)}>
@@ -167,7 +163,7 @@
 		<nav class="prompt-editor__toolbar">
 			<AttachmentsToolbar
 				onClick={() => {
-					attachments = [...attachments, { fieldId: generateStorageId() }];
+					$attachments = [...$attachments, { fieldId: generateStorageId() }];
 				}}
 			/>
 

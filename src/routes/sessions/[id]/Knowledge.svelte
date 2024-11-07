@@ -12,6 +12,7 @@
 	export let knowledge: Knowledge | undefined;
 	export let showNav: boolean = false;
 	export let showLabel: boolean = true;
+	export let allowClear: boolean = true;
 	export let onChange: ((knowledgeId: string) => void) | undefined = undefined;
 
 	let knowledgeId: string | undefined;
@@ -30,6 +31,7 @@
 	options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
 	bind:value={knowledgeId}
 	onChange={(option) => onChange?.(option.value)}
+	{allowClear}
 >
 	<svelte:fragment slot="nav">
 		{#if showNav}
