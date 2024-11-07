@@ -172,8 +172,9 @@
 	}
 
 	.prompt-editor__textarea {
-		field-sizing: content;
 		@apply base-input max-h-48 min-h-14 resize-none scroll-p-2 px-3 py-2;
+		field-sizing: content;
+		font-variant-ligatures: none;
 	}
 
 	.prompt-editor__toolbar {

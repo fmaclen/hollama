@@ -177,6 +177,7 @@
 		@apply rounded-md bg-amber-50 p-1 text-xs text-orange-600;
 		@apply dark:bg-amber-950 dark:text-orange-500;
 		@apply md:text-sm;
+		font-variant-ligatures: none;
 	}
 
 	.markdown :global(pre code) {
