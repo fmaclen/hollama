@@ -13,11 +13,10 @@
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import { loadKnowledge } from '$lib/knowledge';
-	import { settingsStore } from '$lib/localStorage';
+	import { knowledgeStore, settingsStore } from '$lib/localStorage';
 	import type { Editor, Message, Session } from '$lib/sessions';
 	import { generateStorageId } from '$lib/utils';
 
-	import type { KnowledgeAttachment } from './+page.svelte';
 	import Knowledge from './Knowledge.svelte';
 
 	type KnowledgeAttachment = {
@@ -33,9 +32,14 @@
 
 	let isOllama = false;
 	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
-	let isOllama = false;
+	let knowledgeOptions: Writable<Knowledge[]> = writable([]);
+
 	$: isOllama = $settingsStore.models?.find((m) => m.name === $session.model)?.api === 'ollama';
 	$: $attachments.length && scrollToBottom(true);
+	$: if ($knowledgeStore)
+		$knowledgeOptions = $knowledgeStore?.filter(
+			(k) => !$attachments.find((a) => a.knowledge?.id === k.id)
+		);
 
 	function toggleCodeEditor() {
 		$editor.isCodeEditor = !$editor.isCodeEditor;
@@ -156,6 +160,7 @@
 				<div class="w-full">
 					<Knowledge
 						knowledge={attachment.knowledge}
+						options={$knowledgeOptions}
 						showLabel={false}
 						onChange={(knowledgeId) => handleSelectKnowledge(attachment.fieldId, knowledgeId)}
 						allowClear={false}

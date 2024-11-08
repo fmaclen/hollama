@@ -10,6 +10,7 @@
 	import { Sitemap } from '$lib/sitemap';
 
 	export let knowledge: Knowledge | undefined;
+	export let options: Knowledge[] = [];
 	export let showNav: boolean = false;
 	export let showLabel: boolean = true;
 	export let allowClear: boolean = true;
@@ -26,7 +27,7 @@
 	name="knowledge"
 	disabled={!$knowledgeStore.length}
 	placeholder={!$knowledgeStore.length ? $LL.emptyKnowledge() : !showLabel ? $LL.knowledge() : ''}
-	options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
+	options={options?.map((k) => ({ value: k.id, label: k.name }))}
 	bind:value={knowledgeId}
 	onChange={(option) => onChange?.(option.value)}
 	{allowClear}
