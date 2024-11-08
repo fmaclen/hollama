@@ -295,6 +295,6 @@
 	}
 
 	.attachments-toolbar {
-		@apply flex h-full w-full;
+		@apply flex h-full;
 	}
 </style>
