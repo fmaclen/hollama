@@ -9,16 +9,11 @@
 	import { knowledgeStore } from '$lib/localStorage';
 	import { Sitemap } from '$lib/sitemap';
 
-	export let knowledge: Knowledge | undefined;
 	export let options: Knowledge[] = [];
 	export let showNav: boolean = false;
 	export let showLabel: boolean = true;
 	export let allowClear: boolean = true;
 	export let onChange: ((knowledgeId: string) => void) | undefined = undefined;
-
-	let knowledgeId: string | undefined;
-
-	$: if (knowledge) knowledgeId = knowledge.id;
 </script>
 
 <FieldSelect
@@ -28,7 +23,6 @@
 	disabled={!$knowledgeStore.length}
 	placeholder={!$knowledgeStore.length ? $LL.emptyKnowledge() : !showLabel ? $LL.knowledge() : ''}
 	options={options?.map((k) => ({ value: k.id, label: k.name }))}
-	bind:value={knowledgeId}
 	onChange={(option) => onChange?.(option.value)}
 	{allowClear}
 >
