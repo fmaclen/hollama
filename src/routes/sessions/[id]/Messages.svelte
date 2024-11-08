@@ -34,8 +34,8 @@
 			{message}
 			retryIndex={['assistant', 'system'].includes(message.role) ? i : undefined}
 			{handleRetry}
-			{handleEditMessage}
-			{handleDeleteAttachment}
+			handleEditMessage={() => handleEditMessage(message)}
+			handleDeleteAttachment={() => handleDeleteAttachment(message)}
 		/>
 	{/key}
 {/each}
