@@ -20,12 +20,18 @@
 	import type { KnowledgeAttachment } from './+page.svelte';
 	import Knowledge from './Knowledge.svelte';
 
+	type KnowledgeAttachment = {
+		fieldId: string;
+		knowledge?: Knowledge;
+	};
+
 	export let editor: Writable<Editor>;
 	export let session: Writable<Session>;
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
 
+	let isOllama = false;
 	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
 	let isOllama = false;
 	$: isOllama = $settingsStore.models?.find((m) => m.name === $session.model)?.api === 'ollama';

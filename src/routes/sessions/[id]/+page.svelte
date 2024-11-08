@@ -1,12 +1,3 @@
-<script context="module" lang="ts">
-	import type { Knowledge } from '$lib/knowledge';
-
-	export type KnowledgeAttachment = {
-		fieldId: string;
-		knowledge?: Knowledge;
-	};
-</script>
-
 <script lang="ts">
 	import { afterUpdate, onMount, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
