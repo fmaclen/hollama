@@ -54,7 +54,6 @@
 	});
 	let messagesWindow: HTMLDivElement;
 	let userScrolledUp = false;
-	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
 
 	$: if (data.id) handleSessionChange();
 
@@ -89,12 +88,6 @@
 
 	async function handleSubmitNewMessage() {
 		const message: Message = { role: 'user', content: $editor.prompt };
-		// Push the system prompt message or messages to the session
-		if ($session.systemPrompt) {
-			if (Array.isArray($session.systemPrompt))
-				$session.messages = [...$session.messages, ...$session.systemPrompt];
-			else $session.messages = [...$session.messages, $session.systemPrompt];
-		}
 		$session.messages = [...$session.messages, message];
 		await scrollToBottom(true); // Force scroll after submitting prompt
 		await handleCompletion($session.messages);
@@ -120,7 +113,6 @@
 		$editor.isCodeEditor = false;
 		$editor.isNewSession = false;
 		$editor.view = 'messages';
-		$attachments = [];
 
 		if ($editor.messageIndexToEdit !== null) handleSubmitEditMessage();
 		else handleSubmitNewMessage();
@@ -145,13 +137,7 @@
 		const ollamaChatRequest: ChatRequest = {
 			model: $session.model,
 			options: $session.options,
-			messages: $session.systemPrompt
-				? Array.isArray($session.systemPrompt)
-					? $session.systemPrompt.filter((m) => m.content).concat(messages)
-					: $session.systemPrompt.content
-						? [$session.systemPrompt, ...messages]
-						: messages
-				: messages
+			messages
 		};
 
 		try {
@@ -175,7 +161,6 @@
 			$editor.completion = '';
 			$editor.shouldFocusTextarea = true;
 			$editor.isCompletionInProgress = false;
-			$session.systemPrompt = undefined;
 			await scrollToBottom();
 		} catch (error) {
 			const typedError = error instanceof Error ? error : new Error(String(error));
@@ -189,7 +174,6 @@
 		$editor.abortController?.abort();
 		$editor.completion = '';
 		$editor.isCompletionInProgress = false;
-		$session.systemPrompt = undefined;
 		$session.messages = $session.messages.slice(0, -1); // Remove the "incomplete" AI response
 		$editor.isNewSession = !$session.messages.length;
 	}
@@ -213,8 +197,6 @@
 		await tick();
 		requestAnimationFrame(() => (messagesWindow.scrollTop = messagesWindow.scrollHeight));
 	}
-
-	$: $attachments.length && scrollToBottom();
 </script>
 
 <div class="session">
@@ -248,14 +230,7 @@
 		</div>
 	{/if}
 
-	<PromptEditor
-		bind:session
-		{editor}
-		{handleSubmit}
-		{stopCompletion}
-		{scrollToBottom}
-		{attachments}
-	/>
+	<PromptEditor bind:session {editor} {handleSubmit} {stopCompletion} {scrollToBottom} />
 </div>
 
 <style lang="postcss">

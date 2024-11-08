@@ -3,7 +3,7 @@
 
 	import LL from '$i18n/i18n-svelte';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
-	import type { Editor, Message, Session } from '$lib/sessions';
+	import { saveSession, type Editor, type Message, type Session } from '$lib/sessions';
 
 	import Article from './Article.svelte';
 
@@ -20,6 +20,7 @@
 
 	function handleDeleteAttachment(message: Message) {
 		$session.messages = $session.messages.filter((m) => m !== message);
+		saveSession($session);
 	}
 </script>
 

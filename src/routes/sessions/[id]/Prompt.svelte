@@ -4,7 +4,7 @@
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
 	import Trash_2 from 'lucide-svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
-	import type { Writable } from 'svelte/store';
+	import { writable, type Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -18,17 +18,18 @@
 	import { generateStorageId } from '$lib/utils';
 
 	import type { KnowledgeAttachment } from './+page.svelte';
-	import KnowledgeSelect from './Knowledge.svelte';
+	import Knowledge from './Knowledge.svelte';
 
 	export let editor: Writable<Editor>;
 	export let session: Writable<Session>;
-	export let attachments: Writable<KnowledgeAttachment[]>;
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
 
+	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
 	let isOllama = false;
 	$: isOllama = $settingsStore.models?.find((m) => m.name === $session.model)?.api === 'ollama';
+	$: $attachments.length && scrollToBottom(true);
 
 	function toggleCodeEditor() {
 		$editor.isCodeEditor = !$editor.isCodeEditor;
@@ -67,16 +68,17 @@
 
 	function submit() {
 		if ($attachments.length) {
-			const systemPrompt: Message[] = [];
+			const attachmentMessages: Message[] = [];
 			$attachments.forEach((a) => {
 				if (a.knowledge)
-					systemPrompt.push({
-						role: 'system',
+					attachmentMessages.push({
+						role: 'user',
 						knowledge: a.knowledge,
 						content: a.knowledge.content
 					});
 			});
-			$session.systemPrompt = systemPrompt;
+			$session.messages = [...$session.messages, ...attachmentMessages];
+			$attachments = [];
 		}
 
 		handleSubmit();
@@ -146,7 +148,7 @@
 		{#each $attachments as attachment}
 			<div class="flex w-full justify-between">
 				<div class="w-full">
-					<KnowledgeSelect
+					<Knowledge
 						knowledge={attachment.knowledge}
 						showLabel={false}
 						onChange={(knowledgeId) => handleSelectKnowledge(attachment.fieldId, knowledgeId)}

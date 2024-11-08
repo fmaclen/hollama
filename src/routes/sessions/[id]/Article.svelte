@@ -16,8 +16,13 @@
 	export let handleEditMessage: ((message: Message) => void) | undefined = undefined;
 	export let handleDeleteAttachment: ((message: Message) => void) | undefined = undefined;
 
-	const isKnowledgeAttachment = message.role === 'system' && message.knowledge?.name;
-	const isUserRole = message.role === 'user';
+	let isKnowledgeAttachment: boolean | undefined;
+	let isUserRole: boolean | undefined;
+
+	$: if (message) {
+		isKnowledgeAttachment = message.knowledge?.name !== undefined;
+		isUserRole = message.role === 'user' && !isKnowledgeAttachment;
+	}
 </script>
 
 {#if isKnowledgeAttachment}
