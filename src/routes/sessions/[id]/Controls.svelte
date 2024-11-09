@@ -6,7 +6,11 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
+	import { loadKnowledge } from '$lib/knowledge';
+	import { knowledgeStore } from '$lib/localStorage';
 	import type { Session } from '$lib/sessions';
+
+	import Knowledge from './Knowledge.svelte';
 
 	const DEFAULT_MIROSTAT = '0';
 	const DEFAULT_MIROSTAT_ETA = '0.1';
@@ -36,9 +40,38 @@
 	// HACK: Stop is a `string[]` so we are hardcoding it to a single value for now
 	let stop: string = $session.options.stop?.[0] ?? '';
 	$: if (stop) $session.options.stop = [stop];
+
+	let knowledgeId: string | undefined;
+
+	$: {
+		if ($session.systemPrompt.knowledge && !knowledgeId) {
+			// Initial load: set knowledgeId if knowledge exists
+			knowledgeId = $session.systemPrompt.knowledge.id;
+		} else if (knowledgeId !== $session.systemPrompt.knowledge?.id) {
+			// Knowledge selection changed
+			if (knowledgeId) {
+				const knowledge = loadKnowledge(knowledgeId);
+				$session.systemPrompt.knowledge = knowledge;
+				$session.systemPrompt.content = knowledge.content;
+			} else {
+				// Clear knowledge if knowledgeId is undefined
+				$session.systemPrompt.knowledge = undefined;
+				$session.systemPrompt.content = '';
+			}
+		}
+	}
+
+	function handleKnowledgeChange(id: string) {
+		knowledgeId = id;
+	}
 </script>
 
 <div class="controls">
+	<Fieldset>
+		<P><strong>{$LL.systemPrompt()}</strong></P>
+		<Knowledge bind:options={$knowledgeStore} showNav={true} onChange={handleKnowledgeChange} />
+	</Fieldset>
+
 	<Fieldset>
 		<P><strong>{$LL.modelOptions()}</strong></P>
 		<div class="control-inputs">

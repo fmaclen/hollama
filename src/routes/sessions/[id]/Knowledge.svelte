@@ -6,7 +6,6 @@
 	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import { type Knowledge } from '$lib/knowledge';
-	import { knowledgeStore } from '$lib/localStorage';
 	import { Sitemap } from '$lib/sitemap';
 
 	export let options: Knowledge[] = [];
@@ -20,8 +19,8 @@
 	label={$LL.knowledge()}
 	isLabelVisible={showLabel}
 	name="knowledge"
-	disabled={!$knowledgeStore.length}
-	placeholder={!$knowledgeStore.length ? $LL.emptyKnowledge() : !showLabel ? $LL.knowledge() : ''}
+	disabled={!options.length}
+	placeholder={!options.length ? $LL.emptyKnowledge() : !showLabel ? $LL.knowledge() : ''}
 	options={options?.map((k) => ({ value: k.id, label: k.name }))}
 	onChange={(option) => onChange?.(option.value)}
 	{allowClear}

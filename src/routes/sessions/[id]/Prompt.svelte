@@ -156,8 +156,8 @@
 		{/if}
 
 		{#each $attachments as attachment}
-			<div class="flex w-full justify-between">
-				<div class="w-full">
+			<div class="attachment">
+				<div class="attachment__knowledge">
 					<Knowledge
 						knowledge={attachment.knowledge}
 						options={$knowledgeOptions}
@@ -296,5 +296,13 @@
 
 	.attachments-toolbar {
 		@apply flex h-full;
+	}
+
+	.attachment {
+		@apply flex w-full justify-between;
+	}
+
+	.attachment__knowledge {
+		@apply w-full;
 	}
 </style>
