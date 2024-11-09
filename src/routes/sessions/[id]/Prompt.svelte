@@ -184,39 +184,47 @@
 				</Button>
 			</div>
 
-			{#if $editor.messageIndexToEdit !== null}
-				<Button
-					variant="outline"
-					on:click={() => {
-						$editor.prompt = '';
-						$editor.messageIndexToEdit = null;
-						$editor.isCodeEditor = false;
-					}}
+			<div class="prompt-editor__submit">
+				{#if $editor.messageIndexToEdit !== null}
+					<Button
+						class="h-full"
+						variant="outline"
+						on:click={() => {
+							$editor.prompt = '';
+							$editor.messageIndexToEdit = null;
+							$editor.isCodeEditor = false;
+						}}
+					>
+						{$LL.cancel()}
+					</Button>
+				{/if}
+
+				<ButtonSubmit
+					{handleSubmit}
+					hasMetaKey={$editor.isCodeEditor}
+					disabled={!$editor.prompt || !$session.model}
 				>
-					{$LL.cancel()}
-				</Button>
-			{/if}
+					{$LL.run()}
+				</ButtonSubmit>
 
-			{#if $editor.isCompletionInProgress}
-				<Button title={$LL.stopCompletion()} variant="outline" on:click={stopCompletion}>
-					<div class="prompt-editor__stop">
-						<span class="prompt-editor__stop-icon">
-							<StopCircle class=" base-icon" />
-						</span>
-						<span class="prompt-editor__loading-icon">
-							<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />
-						</span>
-					</div>
-				</Button>
-			{/if}
-
-			<ButtonSubmit
-				handleSubmit={submit}
-				hasMetaKey={$editor.isCodeEditor}
-				disabled={!$editor.prompt || !$session.model}
-			>
-				{$LL.run()}
-			</ButtonSubmit>
+				{#if $editor.isCompletionInProgress}
+					<Button
+						class="h-full"
+						title={$LL.stopCompletion()}
+						variant="outline"
+						on:click={stopCompletion}
+					>
+						<div class="prompt-editor__stop">
+							<span class="prompt-editor__stop-icon">
+								<StopCircle class=" base-icon" />
+							</span>
+							<span class="prompt-editor__loading-icon">
+								<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />
+							</span>
+						</div>
+					</Button>
+				{/if}
+			</div>
 		</nav>
 	</div>
 </div>
@@ -267,6 +275,10 @@
 		.prompt-editor__loading-icon {
 			@apply opacity-0;
 		}
+	}
+
+	.prompt-editor__submit {
+		@apply flex h-full items-center gap-x-2;
 	}
 
 	.prompt-editor__stop-icon,
