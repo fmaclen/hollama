@@ -84,7 +84,13 @@
 					attachmentMessages.push({
 						role: 'user',
 						knowledge: a.knowledge,
-						content: a.knowledge.content
+						content: `
+CONTEXT
+---
+${a.knowledge.name}
+---
+${a.knowledge.content}
+`
 					});
 			});
 			$session.messages = [...$session.messages, ...attachmentMessages];
