@@ -168,6 +168,7 @@ ${a.knowledge.content}
 						value={attachment.knowledge?.id}
 						options={$knowledgeOptions}
 						showLabel={false}
+						fieldId={`attachment-${attachment.fieldId}`}
 						onChange={(knowledgeId) =>
 							knowledgeId && handleSelectKnowledge(attachment.fieldId, knowledgeId)}
 						allowClear={false}
