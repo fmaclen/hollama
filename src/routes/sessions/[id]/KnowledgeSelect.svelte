@@ -8,6 +8,7 @@
 	import { type Knowledge } from '$lib/knowledge';
 	import { Sitemap } from '$lib/sitemap';
 
+	export let value: string | undefined = undefined;
 	export let options: Knowledge[] = [];
 	export let showNav: boolean = false;
 	export let showLabel: boolean = true;
@@ -16,6 +17,7 @@
 </script>
 
 <FieldSelect
+	bind:value
 	label={$LL.knowledge()}
 	isLabelVisible={showLabel}
 	name="knowledge"

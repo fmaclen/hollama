@@ -12,12 +12,12 @@
 	import Field from '$lib/components/Field.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
-	import { loadKnowledge } from '$lib/knowledge';
+	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { knowledgeStore, settingsStore } from '$lib/localStorage';
 	import type { Editor, Message, Session } from '$lib/sessions';
 	import { generateStorageId } from '$lib/utils';
 
-	import Knowledge from './Knowledge.svelte';
+	import KnowledgeSelect from './KnowledgeSelect.svelte';
 
 	type KnowledgeAttachment = {
 		fieldId: string;
@@ -73,7 +73,7 @@
 	}
 
 	function handleDeleteAttachment(fieldId: string) {
-		$attachments = $attachments.filter((a) => a.fieldId !== fieldId);
+		$attachments = [...$attachments.filter((a) => a.fieldId !== fieldId)];
 	}
 
 	function submit() {
@@ -161,14 +161,15 @@ ${a.knowledge.content}
 			</Field>
 		{/if}
 
-		{#each $attachments as attachment}
+		{#each $attachments as attachment (attachment.fieldId)}
 			<div class="attachment">
 				<div class="attachment__knowledge">
-					<Knowledge
-						knowledge={attachment.knowledge}
+					<KnowledgeSelect
+						value={attachment.knowledge?.id}
 						options={$knowledgeOptions}
 						showLabel={false}
-						onChange={(knowledgeId) => handleSelectKnowledge(attachment.fieldId, knowledgeId)}
+						onChange={(knowledgeId) =>
+							knowledgeId && handleSelectKnowledge(attachment.fieldId, knowledgeId)}
 						allowClear={false}
 					/>
 				</div>

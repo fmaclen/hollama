@@ -64,6 +64,7 @@
 	}
 
 	function handleOpenChange(wasMenuOpened: boolean) {
+		return;
 		if (!wasMenuOpened) {
 			if (inputValue) {
 				inputValue = selected?.label ?? '';

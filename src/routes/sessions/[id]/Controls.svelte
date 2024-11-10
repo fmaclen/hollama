@@ -10,7 +10,7 @@
 	import { knowledgeStore } from '$lib/localStorage';
 	import type { Session } from '$lib/sessions';
 
-	import Knowledge from './Knowledge.svelte';
+	import Knowledge from './KnowledgeSelect.svelte';
 
 	const DEFAULT_MIROSTAT = '0';
 	const DEFAULT_MIROSTAT_ETA = '0.1';
@@ -60,16 +60,12 @@
 			}
 		}
 	}
-
-	function handleKnowledgeChange(id: string) {
-		knowledgeId = id;
-	}
 </script>
 
 <div class="controls">
 	<Fieldset>
 		<P><strong>{$LL.systemPrompt()}</strong></P>
-		<Knowledge bind:options={$knowledgeStore} showNav={true} onChange={handleKnowledgeChange} />
+		<Knowledge bind:value={knowledgeId} bind:options={$knowledgeStore} showNav={true} />
 	</Fieldset>
 
 	<Fieldset>
