@@ -10,7 +10,7 @@
 	import { knowledgeStore } from '$lib/localStorage';
 	import type { Session } from '$lib/sessions';
 
-	import Knowledge from './KnowledgeSelect.svelte';
+	import KnowledgeSelect from './KnowledgeSelect.svelte';
 
 	const DEFAULT_MIROSTAT = '0';
 	const DEFAULT_MIROSTAT_ETA = '0.1';
