@@ -113,7 +113,7 @@ export function formatSessionMetadata(session: Session) {
 
 export function getSessionTitle(session: Session) {
 	const firstUserMessage = session.messages.find(
-		(m) => m.role === 'user' && m.content && m.knowledge === undefined
+		(m) => m.role === 'user' && m.content && !m.knowledge
 	);
 	return firstUserMessage?.content || '';
 }
