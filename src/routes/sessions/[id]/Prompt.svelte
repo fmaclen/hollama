@@ -161,24 +161,28 @@ ${a.knowledge.content}
 			</Field>
 		{/if}
 
-		{#each $attachments as attachment (attachment.fieldId)}
-			<div class="attachment">
-				<div class="attachment__knowledge">
-					<KnowledgeSelect
-						value={attachment.knowledge?.id}
-						options={$knowledgeOptions}
-						showLabel={false}
-						fieldId={`attachment-${attachment.fieldId}`}
-						onChange={(knowledgeId) =>
-							knowledgeId && handleSelectKnowledge(attachment.fieldId, knowledgeId)}
-						allowClear={false}
-					/>
-				</div>
-				<Button variant="outline" on:click={() => handleDeleteAttachment(attachment.fieldId)}>
-					<Trash_2 class="base-icon" />
-				</Button>
+		{#if $attachments.length}
+			<div class="attachments">
+				{#each $attachments as attachment (attachment.fieldId)}
+					<div class="attachment">
+						<div class="attachment__knowledge">
+							<KnowledgeSelect
+								value={attachment.knowledge?.id}
+								options={$knowledgeOptions}
+								showLabel={false}
+								fieldId={`attachment-${attachment.fieldId}`}
+								onChange={(knowledgeId) =>
+									knowledgeId && handleSelectKnowledge(attachment.fieldId, knowledgeId)}
+								allowClear={false}
+							/>
+						</div>
+						<Button variant="outline" on:click={() => handleDeleteAttachment(attachment.fieldId)}>
+							<Trash_2 class="base-icon" />
+						</Button>
+					</div>
+				{/each}
 			</div>
-		{/each}
+		{/if}
 
 		<nav class="prompt-editor__toolbar">
 			<div class="attachments-toolbar">
@@ -316,6 +320,10 @@ ${a.knowledge.content}
 
 	.attachments-toolbar {
 		@apply flex h-full;
+	}
+
+	.attachments {
+		@apply overflow-scrollbar flex max-h-48 flex-col gap-y-1;
 	}
 
 	.attachment {
