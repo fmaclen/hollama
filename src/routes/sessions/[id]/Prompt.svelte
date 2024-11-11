@@ -32,14 +32,9 @@
 
 	let isOllama = false;
 	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
-	let knowledgeOptions: Writable<Knowledge[]> = writable([]);
 
 	$: isOllama = $settingsStore.models?.find((m) => m.name === $session.model)?.api === 'ollama';
 	$: $attachments.length && scrollToBottom(true);
-	$: if ($knowledgeStore)
-		$knowledgeOptions = $knowledgeStore?.filter(
-			(k) => !$attachments.find((a) => a.knowledge?.id === k.id)
-		);
 
 	function toggleCodeEditor() {
 		$editor.isCodeEditor = !$editor.isCodeEditor;
@@ -168,7 +163,15 @@ ${a.knowledge.content}
 						<div class="attachment__knowledge">
 							<KnowledgeSelect
 								value={attachment.knowledge?.id}
-								options={$knowledgeOptions}
+								options={$knowledgeStore?.filter(
+									(k) =>
+										// Only filter out knowledge that's selected in OTHER attachments
+										!$attachments.find(
+											(a) =>
+												a.fieldId !== attachment.fieldId && // Skip current attachment
+												a.knowledge?.id === k.id
+										)
+								)}
 								showLabel={false}
 								fieldId={`attachment-${attachment.fieldId}`}
 								onChange={(knowledgeId) =>
