@@ -65,7 +65,7 @@
 <div class="controls">
 	<Fieldset>
 		<P><strong>{$LL.systemPrompt()}</strong></P>
-		<Knowledge
+		<KnowledgeSelect
 			bind:value={knowledgeId}
 			bind:options={$knowledgeStore}
 			showNav={true}
