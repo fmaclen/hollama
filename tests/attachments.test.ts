@@ -109,7 +109,13 @@ test.describe('Knowledge Attachments', () => {
 		expect(requestData?.messages[0]).toMatchObject({
 			role: 'user',
 			knowledge: MOCK_KNOWLEDGE[0],
-			content: expect.stringContaining(MOCK_KNOWLEDGE[0].name)
+			content: `
+CONTEXT
+---
+${MOCK_KNOWLEDGE[0].name}
+---
+${MOCK_KNOWLEDGE[0].content}
+`
 		});
 
 		// Verify attachments are cleared after submission
@@ -150,6 +156,50 @@ test.describe('Knowledge Attachments', () => {
 		await page.getByLabel('Messages').click();
 		await expect(knowledgeAttachments).toHaveCount(1);
 		await expect(knowledgeAttachments.first().locator('.field-combobox-input')).toHaveValue(
+			MOCK_KNOWLEDGE[0].name
+		);
+	});
+
+	test('displays and deletes knowledge attachments in message history', async ({ page }) => {
+		// Add knowledge attachment
+		await knowledgeAttachmentButton.click();
+		await chooseFromCombobox(page, 'Knowledge', MOCK_KNOWLEDGE[0].name, true);
+
+		// Setup completion response mock
+		await mockCompletionResponse(page, MOCK_ATTACHMENTS_RESPONSE);
+
+		// Submit message with attachment
+		await page.locator('.prompt-editor__textarea').fill('Use the context please');
+		await page.getByText('Run').click();
+
+		// Verify knowledge attachment appears in message history
+		const attachmentInHistory = page.locator('article.attachment');
+		await expect(attachmentInHistory).toBeVisible();
+		await expect(attachmentInHistory.locator('.attachment__name')).toContainText(
+			MOCK_KNOWLEDGE[0].name
+		);
+
+		// Delete the attachment from history
+		await attachmentInHistory.getByRole('button').click();
+
+		// Verify attachment is removed from history
+		await expect(attachmentInHistory).not.toBeVisible();
+
+		// Verify it can be selected again for a new message
+		await knowledgeAttachmentButton.click();
+		await chooseFromCombobox(page, 'Knowledge', MOCK_KNOWLEDGE[0].name, true);
+		await expect(knowledgeAttachments).toHaveCount(1);
+		await expect(knowledgeAttachments.first().locator('.field-combobox-input')).toHaveValue(
+			MOCK_KNOWLEDGE[0].name
+		);
+
+		// Submit a new message with the attachment
+		await page.locator('.prompt-editor__textarea').fill('Use the context please');
+		await page.getByText('Run').click();
+
+		// Verify that attachment is positioned third in the message history
+		const messageHistory = page.locator('article');
+		await expect(messageHistory.nth(2).locator('.attachment__name')).toContainText(
 			MOCK_KNOWLEDGE[0].name
 		);
 	});

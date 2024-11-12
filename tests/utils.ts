@@ -160,7 +160,7 @@ export async function chooseFromCombobox(
 		? page.getByPlaceholder(label, { exact: true })
 		: page.getByLabel(label, { exact: true });
 	await locator.click();
-	await page.getByText(option).click();
+	await page.getByText(option, { exact: true }).click();
 }
 
 export async function chooseModel(page: Page, modelName: string) {
