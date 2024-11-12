@@ -25,8 +25,8 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await expect(page.locator('.text-editor')).not.toBeVisible();
 
 	await page.locator('.prompt-editor__toggle').click();
-	await expect(page.locator('.prompt-editor__textarea')).not.toBeVisible();
 	await expect(page.locator('.text-editor')).toBeVisible();
+	await expect(page.locator('.prompt-editor__textarea')).not.toBeVisible();
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'session-new.png' });
 
 	// Stage 2 sessions
