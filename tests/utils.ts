@@ -156,7 +156,9 @@ export async function chooseFromCombobox(
 	// If true, use the placeholder instead of the label
 	usePlaceholder: boolean = false
 ) {
-	const locator = usePlaceholder ? page.getByPlaceholder(label) : page.getByLabel(label);
+	const locator = usePlaceholder
+		? page.getByPlaceholder(label, { exact: true })
+		: page.getByLabel(label, { exact: true });
 	await locator.click();
 	await page.getByText(option).click();
 }
