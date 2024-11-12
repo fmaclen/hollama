@@ -81,8 +81,17 @@ test.describe('Knowledge Attachments', () => {
 		// Setup completion response mock
 		await mockCompletionResponse(page, MOCK_ATTACHMENTS_RESPONSE);
 
+		// Define a type for the request data
+		type RequestData = {
+			messages: Array<{
+				role: string;
+				knowledge: (typeof MOCK_KNOWLEDGE)[0];
+				content: string;
+			}>;
+		};
+
 		// Capture request data
-		let requestData: any;
+		let requestData: RequestData | undefined;
 		await page.route('**/api/chat', async (route) => {
 			requestData = JSON.parse(route.request().postData() || '{}');
 			await route.fulfill({
@@ -97,7 +106,7 @@ test.describe('Knowledge Attachments', () => {
 		await page.getByText('Run').click();
 
 		// Verify request includes knowledge context
-		expect(requestData.messages[0]).toMatchObject({
+		expect(requestData?.messages[0]).toMatchObject({
 			role: 'user',
 			knowledge: MOCK_KNOWLEDGE[0],
 			content: expect.stringContaining(MOCK_KNOWLEDGE[0].name)
