@@ -179,7 +179,11 @@ ${a.knowledge.content}
 								allowClear={false}
 							/>
 						</div>
-						<Button variant="outline" on:click={() => handleDeleteAttachment(attachment.fieldId)}>
+						<Button
+							variant="outline"
+							on:click={() => handleDeleteAttachment(attachment.fieldId)}
+							data-testid="knowledge-attachment-delete"
+						>
 							<Trash_2 class="base-icon" />
 						</Button>
 					</div>
@@ -194,6 +198,7 @@ ${a.knowledge.content}
 					on:click={() => {
 						$attachments = [...$attachments, { fieldId: generateStorageId() }];
 					}}
+					data-testid="knowledge-attachment"
 				>
 					<Brain class="base-icon" />
 				</Button>
@@ -215,7 +220,7 @@ ${a.knowledge.content}
 				{/if}
 
 				<ButtonSubmit
-					{handleSubmit}
+					handleSubmit={submit}
 					hasMetaKey={$editor.isCodeEditor}
 					disabled={!$editor.prompt || !$session.model}
 				>

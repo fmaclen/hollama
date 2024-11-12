@@ -152,9 +152,12 @@ export const MOCK_OPENAI_MODELS: OpenAI.Models.Model[] = [
 export async function chooseFromCombobox(
 	page: Page,
 	label: string | RegExp,
-	option: string | RegExp
+	option: string | RegExp,
+	// If true, use the placeholder instead of the label
+	usePlaceholder: boolean = false
 ) {
-	await page.getByLabel(label, { exact: true }).click();
+	const locator = usePlaceholder ? page.getByPlaceholder(label) : page.getByLabel(label);
+	await locator.click();
 	await page.getByText(option).click();
 }
 
