@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { Brain, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
+	import Trash_2 from 'lucide-svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
-	import type { Writable } from 'svelte/store';
+	import { writable, type Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -11,17 +12,29 @@
 	import Field from '$lib/components/Field.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
-	import { settingsStore } from '$lib/localStorage';
-	import type { Editor } from '$lib/sessions';
+	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
+	import { knowledgeStore, settingsStore } from '$lib/localStorage';
+	import type { Editor, Message, Session } from '$lib/sessions';
+	import { generateStorageId } from '$lib/utils';
+
+	import KnowledgeSelect from './KnowledgeSelect.svelte';
+
+	type KnowledgeAttachment = {
+		fieldId: string;
+		knowledge?: Knowledge;
+	};
 
 	export let editor: Writable<Editor>;
-	export let model: string;
+	export let session: Writable<Session>;
 	export let handleSubmit: () => void;
 	export let stopCompletion: () => void;
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
 
 	let isOllama = false;
-	$: isOllama = $settingsStore.models?.find((m) => m.name === model)?.api === 'ollama';
+	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
+
+	$: isOllama = $settingsStore.models?.find((m) => m.name === $session.model)?.api === 'ollama';
+	$: $attachments.length && scrollToBottom(true);
 
 	function toggleCodeEditor() {
 		$editor.isCodeEditor = !$editor.isCodeEditor;
@@ -45,6 +58,40 @@
 		if (event.shiftKey) return;
 		if (event.key !== 'Enter') return;
 		event.preventDefault();
+		submit();
+	}
+
+	function handleSelectKnowledge(fieldId: string, knowledgeId: string) {
+		$attachments = $attachments.map((a) =>
+			a.fieldId === fieldId ? { ...a, knowledge: loadKnowledge(knowledgeId) } : a
+		);
+	}
+
+	function handleDeleteAttachment(fieldId: string) {
+		$attachments = [...$attachments.filter((a) => a.fieldId !== fieldId)];
+	}
+
+	function submit() {
+		if ($attachments.length) {
+			const attachmentMessages: Message[] = [];
+			$attachments.forEach((a) => {
+				if (a.knowledge)
+					attachmentMessages.push({
+						role: 'user',
+						knowledge: a.knowledge,
+						content: `
+CONTEXT
+---
+${a.knowledge.name}
+---
+${a.knowledge.content}
+`
+					});
+			});
+			$session.messages = [...$session.messages, ...attachmentMessages];
+			$attachments = [];
+		}
+
 		handleSubmit();
 	}
 </script>
@@ -52,7 +99,7 @@
 <div class="prompt-editor" class:prompt-editor--fullscreen={$editor.isCodeEditor}>
 	<div class="prompt-editor__form">
 		<div class="prompt-editor__project">
-			<FieldSelectModel isLabelVisible={false} bind:model />
+			<FieldSelectModel isLabelVisible={false} bind:model={$session.model} />
 
 			<nav class="segmented-nav">
 				<div
@@ -95,7 +142,7 @@
 		</div>
 
 		{#if $editor.isCodeEditor}
-			<FieldTextEditor label={$LL.prompt()} {handleSubmit} bind:value={$editor.prompt} />
+			<FieldTextEditor label={$LL.prompt()} handleSubmit={submit} bind:value={$editor.prompt} />
 		{:else}
 			<Field name="prompt">
 				<textarea
@@ -109,39 +156,95 @@
 			</Field>
 		{/if}
 
+		{#if $attachments.length}
+			<div class="attachments">
+				{#each $attachments as attachment (attachment.fieldId)}
+					<div class="attachment">
+						<div class="attachment__knowledge">
+							<KnowledgeSelect
+								value={attachment.knowledge?.id}
+								options={$knowledgeStore?.filter(
+									(k) =>
+										// Only filter out knowledge that's selected in OTHER attachments
+										!$attachments.find(
+											(a) =>
+												a.fieldId !== attachment.fieldId && // Skip current attachment
+												a.knowledge?.id === k.id
+										)
+								)}
+								showLabel={false}
+								fieldId={`attachment-${attachment.fieldId}`}
+								onChange={(knowledgeId) =>
+									knowledgeId && handleSelectKnowledge(attachment.fieldId, knowledgeId)}
+								allowClear={false}
+							/>
+						</div>
+						<Button
+							variant="outline"
+							on:click={() => handleDeleteAttachment(attachment.fieldId)}
+							data-testid="knowledge-attachment-delete"
+						>
+							<Trash_2 class="base-icon" />
+						</Button>
+					</div>
+				{/each}
+			</div>
+		{/if}
+
 		<nav class="prompt-editor__toolbar">
-			{#if $editor.messageIndexToEdit !== null}
+			<div class="attachments-toolbar">
 				<Button
 					variant="outline"
 					on:click={() => {
-						$editor.prompt = '';
-						$editor.messageIndexToEdit = null;
-						$editor.isCodeEditor = false;
+						$attachments = [...$attachments, { fieldId: generateStorageId() }];
 					}}
+					data-testid="knowledge-attachment"
 				>
-					{$LL.cancel()}
+					<Brain class="base-icon" />
 				</Button>
-			{/if}
-			<ButtonSubmit
-				{handleSubmit}
-				hasMetaKey={$editor.isCodeEditor}
-				disabled={!$editor.prompt || !model}
-			>
-				{$LL.run()}
-			</ButtonSubmit>
+			</div>
 
-			{#if $editor.isCompletionInProgress}
-				<Button title="Stop completion" variant="outline" on:click={stopCompletion}>
-					<div class="prompt-editor__stop">
-						<span class="prompt-editor__stop-icon">
-							<StopCircle class=" base-icon" />
-						</span>
-						<span class="prompt-editor__loading-icon">
-							<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />
-						</span>
-					</div>
-				</Button>
-			{/if}
+			<div class="prompt-editor__submit">
+				{#if $editor.messageIndexToEdit !== null}
+					<Button
+						class="h-full"
+						variant="outline"
+						on:click={() => {
+							$editor.prompt = '';
+							$editor.messageIndexToEdit = null;
+							$editor.isCodeEditor = false;
+						}}
+					>
+						{$LL.cancel()}
+					</Button>
+				{/if}
+
+				<ButtonSubmit
+					handleSubmit={submit}
+					hasMetaKey={$editor.isCodeEditor}
+					disabled={!$editor.prompt || !$session.model}
+				>
+					{$LL.run()}
+				</ButtonSubmit>
+
+				{#if $editor.isCompletionInProgress}
+					<Button
+						class="h-full"
+						title={$LL.stopCompletion()}
+						variant="outline"
+						on:click={stopCompletion}
+					>
+						<div class="prompt-editor__stop">
+							<span class="prompt-editor__stop-icon">
+								<StopCircle class=" base-icon" />
+							</span>
+							<span class="prompt-editor__loading-icon">
+								<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />
+							</span>
+						</div>
+					</Button>
+				{/if}
+			</div>
 		</nav>
 	</div>
 </div>
@@ -178,7 +281,7 @@
 	}
 
 	.prompt-editor__toolbar {
-		@apply flex items-stretch gap-x-2;
+		@apply flex items-center justify-between gap-x-2;
 	}
 
 	.prompt-editor__stop {
@@ -193,6 +296,10 @@
 		.prompt-editor__loading-icon {
 			@apply opacity-0;
 		}
+	}
+
+	.prompt-editor__submit {
+		@apply flex h-full items-center gap-x-2;
 	}
 
 	.prompt-editor__stop-icon,
@@ -218,5 +325,21 @@
 		&--active {
 			@apply bg-shade-0 text-neutral-50 shadow;
 		}
+	}
+
+	.attachments-toolbar {
+		@apply flex h-full;
+	}
+
+	.attachments {
+		@apply overflow-scrollbar flex max-h-48 flex-col gap-y-1;
+	}
+
+	.attachment {
+		@apply flex w-full justify-between;
+	}
+
+	.attachment__knowledge {
+		@apply w-full;
 	}
 </style>

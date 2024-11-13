@@ -27,7 +27,7 @@
 	import type { PageData } from './$types';
 	import Controls from './Controls.svelte';
 	import Messages from './Messages.svelte';
-	import PromptEditor from './Prompt.svelte';
+	import Prompt from './Prompt.svelte';
 
 	const shouldConfirmDeletion = writable(false);
 
@@ -221,13 +221,7 @@
 		</div>
 	{/if}
 
-	<PromptEditor
-		bind:model={$session.model}
-		{editor}
-		{handleSubmit}
-		{stopCompletion}
-		{scrollToBottom}
-	/>
+	<Prompt bind:session {editor} {handleSubmit} {stopCompletion} {scrollToBottom} />
 </div>
 
 <style lang="postcss">

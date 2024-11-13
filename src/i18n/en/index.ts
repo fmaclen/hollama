@@ -121,6 +121,7 @@ const en = {
 	settings: 'Settings',
 	somethingWentWrong: 'Sorry, something went wrong',
 	stop: 'Stop sequence',
+	stopCompletion: 'Stop completion',
 	stopResponse: 'Stop response',
 	success: 'Success',
 	system: 'System',

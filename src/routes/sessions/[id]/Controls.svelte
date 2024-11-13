@@ -1,19 +1,16 @@
 <script lang="ts">
-	import { Brain } from 'lucide-svelte';
 	import type { Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
-	import Button from '$lib/components/Button.svelte';
-	import { generateNewUrl } from '$lib/components/ButtonNew';
 	import FieldCheckbox from '$lib/components/FieldCheckbox.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
-	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
 	import { loadKnowledge } from '$lib/knowledge';
 	import { knowledgeStore } from '$lib/localStorage';
 	import type { Session } from '$lib/sessions';
-	import { Sitemap } from '$lib/sitemap';
+
+	import KnowledgeSelect from './KnowledgeSelect.svelte';
 
 	const DEFAULT_MIROSTAT = '0';
 	const DEFAULT_MIROSTAT_ETA = '0.1';
@@ -68,25 +65,7 @@
 <div class="controls">
 	<Fieldset>
 		<P><strong>{$LL.systemPrompt()}</strong></P>
-		<FieldSelect
-			label={$LL.knowledge()}
-			name="knowledge"
-			disabled={!$knowledgeStore.length}
-			placeholder={!$knowledgeStore.length ? $LL.emptyKnowledge() : ''}
-			options={$knowledgeStore?.map((k) => ({ value: k.id, label: k.name }))}
-			bind:value={knowledgeId}
-		>
-			<svelte:fragment slot="nav">
-				<Button
-					aria-label={$LL.newKnowledge()}
-					variant="outline"
-					href={generateNewUrl(Sitemap.KNOWLEDGE)}
-					class="h-full text-muted"
-				>
-					<Brain class="base-icon" />
-				</Button>
-			</svelte:fragment>
-		</FieldSelect>
+		<KnowledgeSelect bind:value={knowledgeId} bind:options={$knowledgeStore} showNav={true} />
 	</Fieldset>
 
 	<Fieldset>

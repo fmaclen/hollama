@@ -1,4 +1,4 @@
-`2024-10-25`
+`2024-11-12`
 
 ### Message of the day
 
@@ -6,8 +6,8 @@
 
 #### What's new?
 
-**OpenAI models** ✨ are now _(optionally)_ available in Sessions.
-Set your own API key in [Settings](/settings)
+- **[Knowledge](/knowledge)** can now be used as context at any point in a Session.
+- **OpenAI models** ✨ are now _(optionally)_ available in Sessions. Set your own API key in [Settings](/settings)
 
 #### Previously, in Hollama
 

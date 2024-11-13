@@ -112,6 +112,8 @@ export function formatSessionMetadata(session: Session) {
 }
 
 export function getSessionTitle(session: Session) {
-	const hasKnowledge = session.messages[0]?.knowledge;
-	return hasKnowledge ? session.messages[1]?.content : session.messages[0]?.content;
+	const firstUserMessage = session.messages.find(
+		(m) => m.role === 'user' && m.content && !m.knowledge
+	);
+	return firstUserMessage?.content || '';
 }

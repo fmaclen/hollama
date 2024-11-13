@@ -7,7 +7,7 @@
 	export let hasMetaKey: boolean = false;
 </script>
 
-<Button class="w-full text-left" on:click={handleSubmit} {disabled}>
+<Button class="text-left" on:click={handleSubmit} {disabled}>
 	<slot />
 
 	{#if browser}
