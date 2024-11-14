@@ -1,5 +1,7 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
+	import { OllamaStrategy } from '$lib/chat/ollama';
+	import { OpenAIStrategy } from '$lib/chat/openai';
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import FieldCheckbox from '$lib/components/FieldCheckbox.svelte';
@@ -10,10 +12,18 @@
 
 	export let server: Server;
 
+	let ollama = new OllamaStrategy(server);
+	// let openai = new OpenAIStrategy();
+
 	$: isOpenAiFamily = ['openai', 'openai-compatible'].includes(server.provider);
 
-	function verifyServer() {
-		console.log('syncWithServer');
+	async function verifyServer() {
+		switch (server.provider) {
+			// case 'openai':
+			// 	server.isVerified = await openai.verifyServer();
+			case 'ollama':
+				server.isVerified = (await ollama.verifyServer()) ? new Date() : null;
+		}
 	}
 
 	function deleteServer() {
@@ -22,7 +32,7 @@
 </script>
 
 <fieldset class="server">
-	<legend class="h-full flex items-stretch gap-x-2">
+	<legend class="flex h-full items-stretch gap-x-2">
 		{#if ['openai', 'ollama'].includes(server.provider)}
 			<Badge variant={server.provider} />
 		{/if}
@@ -30,10 +40,10 @@
 	</legend>
 	<Fieldset>
 		<nav class="server__nav">
-			<Button variant={!server.isVerified ? 'default' : 'outline'} on:click={verifyServer}
-				>Verify</Button
-			>
-			<FieldCheckbox label={'Use server'} bind:checked={server.isEnabled} />
+			<Button variant={!server.isVerified ? 'default' : 'outline'} on:click={verifyServer}>
+				Verify
+			</Button>
+			<FieldCheckbox label={'Use models from this server'} bind:checked={server.isEnabled} />
 			<Button variant="outline" on:click={deleteServer}>Delete</Button>
 		</nav>
 
@@ -55,7 +65,12 @@
 				placeholder="gpt"
 				bind:value={server.modelFilter}
 			/>
-			<FieldInput name="name" label={$LL.name()} bind:value={server.name} placeholder={'my-llama-server'} />
+			<FieldInput
+				name="name"
+				label={$LL.name()}
+				bind:value={server.name}
+				placeholder={'my-llama-server'}
+			/>
 		</div>
 	</Fieldset>
 </fieldset>

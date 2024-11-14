@@ -3,7 +3,7 @@ import { get } from 'svelte/store';
 import type { OllamaOptions } from '$lib/chat/ollama';
 import { sessionsStore, settingsStore, sortStore } from '$lib/localStorage';
 
-import { getLastUsedModels, type Message as ChatMessage } from './chat';
+import { getLastUsedModels, type Message as ChatMessage, type Model } from './chat';
 import type { Knowledge } from './knowledge';
 import { formatTimestampToNow } from './utils';
 
@@ -14,7 +14,7 @@ export interface Message extends ChatMessage {
 
 export interface Session {
 	id: string;
-	model: string;
+	model?: Model;
 	messages: Message[];
 	systemPrompt: Message;
 	options: Partial<OllamaOptions>;
@@ -62,7 +62,7 @@ export const loadSession = (id: string): Session => {
 
 	if (!session) {
 		// Use the last used model
-		const model = getLastUsedModels()[0]?.name || '';
+		const model = getLastUsedModels()[0];
 
 		// Create a new session
 		session = {
@@ -107,7 +107,7 @@ export const saveSession = (session: Session): void => {
 export function formatSessionMetadata(session: Session) {
 	const subtitles: string[] = [];
 	if (session.updatedAt) subtitles.push(formatTimestampToNow(session.updatedAt));
-	subtitles.push(session.model);
+	if (session.model) subtitles.push(session.model.name);
 	return subtitles.join(' • ');
 }
 

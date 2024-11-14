@@ -30,10 +30,12 @@
 	export let stopCompletion: () => void;
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
 
+	let chosenModel: string;
 	let isOllama = false;
 	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
 
-	$: isOllama = $settingsStore.models?.find((m) => m.name === $session.model)?.api === 'ollama';
+	$: if (chosenModel) $session.model = $settingsStore.models.find((m) => m.name === chosenModel);
+	$: isOllama = $settingsStore.servers.find((s) => s.id === $session.model?.serverId)?.provider === 'ollama';
 	$: $attachments.length && scrollToBottom(true);
 
 	function toggleCodeEditor() {
@@ -99,7 +101,7 @@ ${a.knowledge.content}
 <div class="prompt-editor" class:prompt-editor--fullscreen={$editor.isCodeEditor}>
 	<div class="prompt-editor__form">
 		<div class="prompt-editor__project">
-			<FieldSelectModel isLabelVisible={false} bind:model={$session.model} />
+			<FieldSelectModel isLabelVisible={false} bind:model={chosenModel} />
 
 			<nav class="segmented-nav">
 				<div
