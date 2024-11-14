@@ -1,13 +1,10 @@
 import { writable } from 'svelte/store';
 
-import type { Locales } from '$i18n/i18n-types';
-import { env } from '$env/dynamic/public';
-import { browser, version } from '$app/environment';
+import { browser } from '$app/environment';
 import type { Session } from '$lib/sessions';
 
-import type { HollamaMetadata } from '../routes/api/metadata/+server';
-import type { Model } from './chat';
 import type { Knowledge } from './knowledge';
+import { DEFAULT_SETTINGS, type Settings } from './settings';
 
 function createLocalStorageStore<T>(key: string, defaultValue: T) {
 	const initialValue: T = browser
@@ -50,39 +47,9 @@ export enum StorageKey {
 	HollamaKnowledge = `${LOCAL_STORAGE_PREFIX}-knowledge`
 }
 
-export interface Settings {
-	ollamaServer: string | null;
-	openaiServer: string | null;
-	openaiApiKey: string | null;
-	models: Model[];
-	lastUsedModels: Model[];
-	lastUpdateCheck: number | null;
-	autoCheckForUpdates: boolean;
-	userTheme: 'light' | 'dark';
-	userLanguage: Locales | null;
-	hollamaMetadata: HollamaMetadata;
-}
-
-const defaultSettings: Settings = {
-	ollamaServer: 'http://localhost:11434',
-	openaiServer: 'https://api.openai.com/v1',
-	openaiApiKey: null,
-	models: [],
-	lastUsedModels: [],
-	lastUpdateCheck: null,
-	autoCheckForUpdates: false,
-	userTheme: 'light',
-	userLanguage: null,
-	hollamaMetadata: {
-		currentVersion: version,
-		isDesktop: env.PUBLIC_ADAPTER === 'electron-node',
-		isDocker: env.PUBLIC_ADAPTER === 'docker-node'
-	}
-};
-
 export const settingsStore = createLocalStorageStore<Settings>(
 	StorageKey.HollamaSettings,
-	defaultSettings
+	DEFAULT_SETTINGS
 );
 export const sessionsStore = createLocalStorageStore<Session[]>(StorageKey.HollamaSessions, []);
 export const knowledgeStore = createLocalStorageStore<Knowledge[]>(StorageKey.HollamaKnowledge, []);
