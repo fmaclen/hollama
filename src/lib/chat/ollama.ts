@@ -98,11 +98,13 @@ export class OllamaStrategy implements ChatStrategy {
 			throw new Error('Failed to parse Ollama tags', { cause: data });
 		}
 
-		return data.models.map((model) => ({
-			...model,
-			serverId: this.server.id,
-			parameterSize: model.details.parameter_size,
-			modifiedAt: new Date(model.modified_at)
+		return data.models
+			?.filter((model) => model.name.startsWith(this.server.modelFilter || ''))
+			.map((model) => ({
+				...model,
+				serverId: this.server.id,
+				parameterSize: model.details.parameter_size,
+				modifiedAt: new Date(model.modified_at)
 		}));
 	}
 
