@@ -24,12 +24,8 @@
 					models.push(...(await new OllamaStrategy(server).getModels().catch(() => [])));
 					break;
 				case 'openai':
-					if (!server.apiKey) continue;
-					models.push(
-						...(await new OpenAIStrategy({ server: server.baseUrl, apiKey: server.apiKey })
-							.getModels()
-							.catch(() => []))
-					);
+				case 'openai-compatible':
+					models.push(...(await new OpenAIStrategy(server).getModels().catch(() => [])));
 					break;
 			}
 		}

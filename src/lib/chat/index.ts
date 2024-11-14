@@ -52,12 +52,12 @@ export interface ChatStrategy {
 // 	throw new Error('Invalid model specified');
 // }
 
-interface ChatParams {
-	model: Model;
-	payload: ChatRequest;
-	abortSignal: AbortSignal;
-	onChunk: (content: string) => void;
-}
+// interface ChatParams {
+// 	model: Model;
+// 	payload: ChatRequest;
+// 	abortSignal: AbortSignal;
+// 	onChunk: (content: string) => void;
+// }
 
 // export async function chat({ model, payload, abortSignal, onChunk }: ChatParams): Promise<void> {
 // 	const strategy = getChatStrategy(model);

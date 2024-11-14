@@ -143,8 +143,8 @@
 				case 'ollama':
 					strategy = new OllamaStrategy(server);
 					break;
-				// case 'openai':
-				// 	strategy = new OpenAIStrategy($session.model.serverId);
+				case 'openai':
+					strategy = new OpenAIStrategy(server);
 			}
 
 			if (!strategy) throw new Error('Invalid strategy');

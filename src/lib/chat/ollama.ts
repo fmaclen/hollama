@@ -101,7 +101,6 @@ export class OllamaStrategy implements ChatStrategy {
 		return data.models.map((model) => ({
 			...model,
 			serverId: this.server.id,
-			api: 'ollama',
 			parameterSize: model.details.parameter_size,
 			modifiedAt: new Date(model.modified_at)
 		}));

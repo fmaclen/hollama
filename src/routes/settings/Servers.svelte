@@ -6,6 +6,7 @@
 	import P from '$lib/components/P.svelte';
 	import { settingsStore } from '$lib/localStorage';
 	import type { Server } from '$lib/settings';
+	import { writable } from 'svelte/store';
 
 	import Connection from './Connection.svelte';
 
@@ -41,7 +42,7 @@
 			case 'openai':
 				return 'https://api.openai.com/v1';
 			case 'openai-compatible':
-				return 'http://localhost:8080';
+				return 'http://localhost:8080/v1';
 			default:
 				return '';
 		}
@@ -66,8 +67,9 @@
 	</div>
 
 	<div class="servers">
-		{#each $settingsStore.servers as server}
-			<Connection {server} />
+		{#each $settingsStore.servers as server, index}
+			{@const serverStore = writable(server)}
+			<Connection server={serverStore} {index} />
 		{/each}
 	</div>
 </Fieldset>

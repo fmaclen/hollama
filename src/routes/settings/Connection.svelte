@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { writable, type Writable } from 'svelte/store';
+
 	import LL from '$i18n/i18n-svelte';
 	import { OllamaStrategy } from '$lib/chat/ollama';
 	import { OpenAIStrategy } from '$lib/chat/openai';
@@ -10,65 +12,67 @@
 	import { settingsStore } from '$lib/localStorage';
 	import type { Server } from '$lib/settings';
 
-	export let server: Server;
+	export let server: Writable<Server>;
+	export let index: number;
 
-	let ollama = new OllamaStrategy(server);
-	// let openai = new OpenAIStrategy();
+	let strategy: OllamaStrategy | OpenAIStrategy;
 
-	$: isOpenAiFamily = ['openai', 'openai-compatible'].includes(server.provider);
+	$: isOpenAiFamily = ['openai', 'openai-compatible'].includes($server.provider);
+	$: if ($server) $settingsStore.servers.splice(index, 1, $server);
 
 	async function verifyServer() {
-		switch (server.provider) {
-			// case 'openai':
-			// 	server.isVerified = await openai.verifyServer();
-			case 'ollama':
-				server.isVerified = (await ollama.verifyServer()) ? new Date() : null;
-		}
+		strategy = isOpenAiFamily ? new OpenAIStrategy($server) : new OllamaStrategy($server);
+		$server.isVerified = (await strategy.verifyServer()) ? new Date() : null;
 	}
 
 	function deleteServer() {
-		$settingsStore.servers = $settingsStore.servers.filter((s) => s.id !== server.id);
+		$settingsStore.servers = $settingsStore.servers.filter((s) => s.id !== $server.id);
 	}
 </script>
 
 <fieldset class="server">
 	<legend class="flex h-full items-stretch gap-x-2">
-		{#if ['openai', 'ollama'].includes(server.provider)}
-			<Badge variant={server.provider} />
+		{#if ['openai', 'ollama'].includes($server.provider)}
+			<Badge variant={$server.provider} />
 		{/if}
-		<Badge>{server.name ? server.name : server.provider?.toUpperCase()}</Badge>
+		<Badge>{$server.name ? $server.name : $server.provider?.toUpperCase()}</Badge>
 	</legend>
 	<Fieldset>
 		<nav class="server__nav">
-			<Button variant={!server.isVerified ? 'default' : 'outline'} on:click={verifyServer}>
+			<Button variant={!$server.isVerified ? 'default' : 'outline'} on:click={verifyServer}>
 				Verify
 			</Button>
-			<FieldCheckbox label={'Use models from this server'} bind:checked={server.isEnabled} />
+			<FieldCheckbox label={'Use models from this server'} bind:checked={$server.isEnabled} />
 			<Button variant="outline" on:click={deleteServer}>Delete</Button>
 		</nav>
 
 		<div class="server__grid">
 			<div class="server__host" class:server__host--openai={isOpenAiFamily}>
 				<FieldInput
-					name="server"
+					name={`server-${index}`}
 					label={'Base URL'}
-					placeholder={server.baseUrl}
-					bind:value={server.baseUrl}
+					placeholder={$server.baseUrl}
+					bind:value={$server.baseUrl}
 				/>
 				{#if isOpenAiFamily}
-					<FieldInput name="apiKey" label={$LL.apiKey()} bind:value={server.apiKey} />
+					<FieldInput
+						type="password"
+						name={`apiKey-${index}`}
+						label={$LL.apiKey()}
+						bind:value={$server.apiKey}
+					/>
 				{/if}
 			</div>
 			<FieldInput
-				name="modelsFilter"
+				name={`modelsFilter-${index}`}
 				label={'Models filter'}
 				placeholder="gpt"
-				bind:value={server.modelFilter}
+				bind:value={$server.modelFilter}
 			/>
 			<FieldInput
-				name="name"
+				name={`name-${index}`}
 				label={$LL.name()}
-				bind:value={server.name}
+				bind:value={$server.name}
 				placeholder={'my-llama-server'}
 			/>
 		</div>
