@@ -140,6 +140,7 @@ const en = {
 	typicalP: 'Typical P',
 	useMlock: 'Use MLOCK',
 	useMmap: 'Use MMAP',
+	useModelsFromThisServer: 'Use models from this server',
 	verify: 'Verify',
 	version: 'Version',
 	vocabOnly: 'Vocab only',

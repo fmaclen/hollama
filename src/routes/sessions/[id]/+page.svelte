@@ -139,7 +139,7 @@
 
 		try {
 			let strategy: ChatStrategy | undefined = undefined;
-			switch (server.provider) {
+			switch (server.connectionType) {
 				case 'ollama':
 					strategy = new OllamaStrategy(server);
 					break;

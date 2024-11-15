@@ -572,6 +572,10 @@ type RootTranslation = {
 	 */
 	useMmap: string
 	/**
+	 * U​s​e​ ​m​o​d​e​l​s​ ​f​r​o​m​ ​t​h​i​s​ ​s​e​r​v​e​r
+	 */
+	useModelsFromThisServer: string
+	/**
 	 * V​e​r​i​f​y
 	 */
 	verify: string
@@ -1143,6 +1147,10 @@ The completion in progress will stop
 	 * Use MMAP
 	 */
 	useMmap: () => LocalizedString
+	/**
+	 * Use models from this server
+	 */
+	useModelsFromThisServer: () => LocalizedString
 	/**
 	 * Verify
 	 */

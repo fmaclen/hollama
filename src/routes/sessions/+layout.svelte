@@ -19,7 +19,7 @@
 		for (const server of $settingsStore.servers) {
 			if (!server.isEnabled) continue;
 
-			switch (server.provider) {
+			switch (server.connectionType) {
 				case 'ollama':
 					models.push(...(await new OllamaStrategy(server).getModels().catch(() => [])));
 					break;

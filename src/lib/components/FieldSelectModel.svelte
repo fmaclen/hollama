@@ -22,7 +22,7 @@
 	function formatModelToSelectOption(model: Model): ModelOption {
 		const badges: string[] = [];
 		if (model.parameterSize) badges.push(model.parameterSize);
-		badges.push($settingsStore.servers.find((s) => s.id === model.serverId)?.provider || '');
+		badges.push($settingsStore.servers.find((s) => s.id === model.serverId)?.connectionType || '');
 
 		return { value: model.name, label: model.name, badge: badges };
 	}

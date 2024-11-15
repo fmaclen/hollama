@@ -18,7 +18,7 @@
 
 	let strategy: OllamaStrategy | OpenAIStrategy;
 
-	$: isOpenAiFamily = ['openai', 'openai-compatible'].includes($server.provider);
+	$: isOpenAiFamily = ['openai', 'openai-compatible'].includes($server.connectionType);
 	$: if ($server) $settingsStore.servers.splice(index, 1, $server);
 
 	async function verifyServer() {
@@ -34,14 +34,14 @@
 
 <fieldset class="server">
 	<legend class="flex h-full items-stretch gap-x-2">
-		{#if ['openai', 'ollama'].includes($server.provider)}
-			<Badge variant={$server.provider === 'openai' ? 'openai' : 'ollama'} />
+		{#if ['openai', 'ollama'].includes($server.connectionType)}
+			<Badge variant={$server.connectionType === 'openai' ? 'openai' : 'ollama'} />
 		{/if}
-		<Badge>{$server.name ? $server.name : $server.provider?.toUpperCase()}</Badge>
+		<Badge>{$server.name ? $server.name : $server.connectionType?.toUpperCase()}</Badge>
 	</legend>
 	<Fieldset>
 		<nav class="server__nav">
-			<FieldCheckbox label={'Use models from this server'} bind:checked={$server.isEnabled} />
+			<FieldCheckbox label={$LL.useModelsFromThisServer()} bind:checked={$server.isEnabled} />
 			<Button
 				class="max-h-full"
 				variant="outline"

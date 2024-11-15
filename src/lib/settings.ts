@@ -8,7 +8,7 @@ import type { Model } from './chat';
 export interface Server {
 	id: string;
 	baseUrl: string;
-	provider: 'ollama' | 'openai' | 'openai-compatible';
+	connectionType: 'ollama' | 'openai' | 'openai-compatible';
 	isVerified: Date | null;
 	isEnabled: boolean;
 	name?: string;
@@ -20,7 +20,7 @@ const DEFAULT_SERVER: Server = {
 	id: crypto.randomUUID(),
 	name: '',
 	baseUrl: 'http://localhost:11434',
-	provider: 'ollama',
+	connectionType: 'ollama',
 	isVerified: null,
 	isEnabled: false
 };

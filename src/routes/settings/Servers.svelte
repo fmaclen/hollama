@@ -11,33 +11,33 @@
 
 	import Connection from './Connection.svelte';
 
-	const SUPPORTED_PROVIDERS = [
+	const SUPPORTED_CONNECTION_TYPES = [
 		{ value: 'ollama', label: 'Ollama' },
 		{ value: 'openai', label: 'OpenAI: Official API' },
 		{ value: 'openai-compatible', label: 'OpenAI: Compatible servers (i.e. llama.cpp)' }
 	];
 
-	const newProvider: Writable<'ollama' | 'openai' | 'openai-compatible' | undefined> =
+	const newConnectionType: Writable<'ollama' | 'openai' | 'openai-compatible' | undefined> =
 		writable(undefined);
 
 	function addServer() {
-		if (!$newProvider) return;
+		if (!$newConnectionType) return;
 
 		const newServer: Server = {
 			id: crypto.randomUUID(),
-			provider: $newProvider,
+			connectionType: $newConnectionType,
 			baseUrl: getDefaultBaseUrl(),
 			isEnabled: false,
 			isVerified: null,
-			modelFilter: $newProvider === 'openai' ? 'gpt' : ''
+			modelFilter: $newConnectionType === 'openai' ? 'gpt' : ''
 		};
 
 		$settingsStore.servers = [...($settingsStore.servers || []), newServer];
-		$newProvider = undefined;
+		$newConnectionType = undefined;
 	}
 
 	function getDefaultBaseUrl(): string {
-		switch ($newProvider) {
+		switch ($newConnectionType) {
 			case 'ollama':
 				return 'http://localhost:11434';
 			case 'openai':
@@ -57,14 +57,14 @@
 
 	<div class="servers__add">
 		<FieldSelect
-			name="provider"
+			name="connectionType"
 			isLabelVisible={false}
 			label={$LL.connectionType()}
 			placeholder={$LL.connectionType()}
-			options={SUPPORTED_PROVIDERS}
-			bind:value={$newProvider}
+			options={SUPPORTED_CONNECTION_TYPES}
+			bind:value={$newConnectionType}
 		/>
-		<Button disabled={!$newProvider} on:click={addServer}>
+		<Button disabled={!$newConnectionType} on:click={addServer}>
 			{$LL.addConnection()}
 		</Button>
 	</div>
