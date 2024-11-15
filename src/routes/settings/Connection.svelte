@@ -32,15 +32,15 @@
 	}
 </script>
 
-<fieldset class="server">
-	<legend class="flex h-full items-stretch gap-x-2">
+<fieldset class="connection">
+	<legend class="connection__legend">
 		{#if ['openai', 'ollama'].includes($server.connectionType)}
 			<Badge variant={$server.connectionType === 'openai' ? 'openai' : 'ollama'} />
 		{/if}
 		<Badge>{$server.name ? $server.name : $server.connectionType?.toUpperCase()}</Badge>
 	</legend>
 	<Fieldset>
-		<nav class="server__nav">
+		<nav class="connection__nav">
 			<FieldCheckbox label={$LL.useModelsFromThisServer()} bind:checked={$server.isEnabled} />
 			<Button
 				class="max-h-full"
@@ -55,8 +55,8 @@
 			</Button>
 		</nav>
 
-		<div class="server__grid">
-			<div class="server__host" class:server__host--openai={isOpenAiFamily}>
+		<div class="connection__grid">
+			<div class="connection__host" class:connection__host--openai={isOpenAiFamily}>
 				<FieldInput
 					name={`server-${index}`}
 					label={$LL.baseUrl()}
@@ -89,19 +89,23 @@
 </fieldset>
 
 <style lang="postcss">
-	.server {
+	.connection {
 		@apply rounded-md border border-shade-4 p-4;
 	}
 
-	.server__nav {
+	.connection__legend {
+		@apply flex h-full items-stretch gap-x-2;
+	}
+
+	.connection__nav {
 		@apply flex items-stretch gap-x-2;
 	}
 
-	.server__grid {
+	.connection__grid {
 		@apply grid grid-cols-2 gap-2;
 	}
 
-	.server__host {
+	.connection__host {
 		@apply col-span-2;
 
 		&--openai {
