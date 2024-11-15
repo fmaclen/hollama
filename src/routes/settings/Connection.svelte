@@ -15,7 +15,8 @@
 	import { settingsStore } from '$lib/localStorage';
 	import type { Server } from '$lib/settings';
 
-	import OllamaPullModel from './OllamaPullModel.svelte';
+	import OllamaBaseURLHelp from './ollama/BaseURLHelp.svelte';
+	import OllamaPullModel from './ollama/PullModel.svelte';
 
 	export let server: Writable<Server>;
 	export let index: number;
@@ -24,6 +25,7 @@
 	let isLoading = false;
 
 	$: isOpenAiFamily = ['openai', 'openai-compatible'].includes($server.connectionType);
+	$: isOllamaFamily = ['ollama'].includes($server.connectionType);
 	$: if ($server) $settingsStore.servers.splice(index, 1, $server);
 
 	async function verifyServer() {
@@ -57,6 +59,7 @@
 	<Fieldset>
 		<nav class="connection__nav">
 			<FieldCheckbox label={$LL.useModelsFromThisServer()} bind:checked={$server.isEnabled} />
+
 			<Button
 				class="max-h-full"
 				variant="outline"
@@ -65,6 +68,7 @@
 			>
 				<Trash_2 class="base-icon" />
 			</Button>
+
 			<Button
 				disabled={isLoading}
 				variant={!$server.isVerified ? 'default' : 'outline'}
@@ -85,7 +89,14 @@
 					label={$LL.baseUrl()}
 					placeholder={$server.baseUrl}
 					bind:value={$server.baseUrl}
-				/>
+				>
+					<svelte:fragment slot="help">
+						{#if isOllamaFamily}
+							<OllamaBaseURLHelp server={$server} />
+						{/if}
+					</svelte:fragment>
+				</FieldInput>
+
 				{#if isOpenAiFamily}
 					<FieldInput
 						type="password"
@@ -101,6 +112,7 @@
 				placeholder="gpt"
 				bind:value={$server.modelFilter}
 			/>
+
 			<FieldInput
 				name={`name-${index}`}
 				label={$LL.name()}
@@ -109,7 +121,7 @@
 			/>
 		</div>
 
-		{#if $server.connectionType === 'ollama'}
+		{#if isOllamaFamily}
 			<OllamaPullModel server={$server} />
 		{/if}
 	</Fieldset>
