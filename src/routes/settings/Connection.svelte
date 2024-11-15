@@ -166,7 +166,7 @@
 	}
 
 	.connection__legend {
-		@apply flex h-full items-stretch gap-x-2;
+		@apply flex items-stretch gap-x-2;
 	}
 
 	.connection__nav {
