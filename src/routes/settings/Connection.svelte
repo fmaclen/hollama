@@ -10,8 +10,10 @@
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import FieldCheckbox from '$lib/components/FieldCheckbox.svelte';
+	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
+	import P from '$lib/components/P.svelte';
 	import { settingsStore } from '$lib/localStorage';
 	import type { Server } from '$lib/settings';
 
@@ -104,7 +106,23 @@
 						name={`apiKey-${index}`}
 						label={$LL.apiKey()}
 						bind:value={$server.apiKey}
-					/>
+					>
+						<svelte:fragment slot="help">
+							{#if $server.connectionType === 'openai'}
+								<FieldHelp>
+									<P>
+										<Button
+											variant="link"
+											href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key"
+											target="_blank"
+										>
+											{$LL.howToObtainOpenAIKey()}
+										</Button>
+									</P>
+								</FieldHelp>
+							{/if}
+						</svelte:fragment>
+					</FieldInput>
 				{/if}
 			</div>
 			<FieldInput
