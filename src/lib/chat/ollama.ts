@@ -56,7 +56,6 @@ export class OllamaStrategy implements ChatStrategy {
 		abortSignal: AbortSignal,
 		onChunk: (content: string) => void
 	): Promise<void> {
-
 		const response = await fetch(`${this.server.baseUrl}/api/chat`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'text/event-stream' },
@@ -105,7 +104,7 @@ export class OllamaStrategy implements ChatStrategy {
 				serverId: this.server.id,
 				parameterSize: model.details.parameter_size,
 				modifiedAt: new Date(model.modified_at)
-		}));
+			}));
 	}
 
 	async pull(

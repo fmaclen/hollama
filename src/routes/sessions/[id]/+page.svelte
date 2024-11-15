@@ -5,7 +5,7 @@
 
 	import LL from '$i18n/i18n-svelte';
 	import { beforeNavigate } from '$app/navigation';
-	import { type ChatRequest, type ChatStrategy, type Model } from '$lib/chat';
+	import { type ChatRequest, type ChatStrategy } from '$lib/chat';
 	import { OllamaStrategy } from '$lib/chat/ollama';
 	import { OpenAIStrategy } from '$lib/chat/openai';
 	import Button from '$lib/components/Button.svelte';

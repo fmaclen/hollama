@@ -35,7 +35,9 @@
 	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
 
 	$: if (chosenModel) $session.model = $settingsStore.models.find((m) => m.name === chosenModel);
-	$: isOllama = $settingsStore.servers.find((s) => s.id === $session.model?.serverId)?.connectionType === 'ollama';
+	$: isOllama =
+		$settingsStore.servers.find((s) => s.id === $session.model?.serverId)?.connectionType ===
+		'ollama';
 	$: $attachments.length && scrollToBottom(true);
 
 	function toggleCodeEditor() {

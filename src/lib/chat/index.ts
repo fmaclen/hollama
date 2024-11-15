@@ -2,9 +2,9 @@ import type { ErrorResponse, ProgressResponse, PullRequest, StatusResponse } fro
 import { get } from 'svelte/store';
 
 import { sessionsStore, settingsStore } from '$lib/localStorage';
+import type { Model } from '$lib/settings';
 
 import { type OllamaOptions } from './ollama';
-import type { Model } from '$lib/settings';
 
 export interface Message {
 	role: 'user' | 'assistant' | 'system';
