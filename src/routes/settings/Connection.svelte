@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { writable, type Writable } from 'svelte/store';
+	import Trash_2 from 'lucide-svelte/icons/trash-2';
+	import { type Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import { OllamaStrategy } from '$lib/chat/ollama';
@@ -23,6 +24,7 @@
 	async function verifyServer() {
 		strategy = isOpenAiFamily ? new OpenAIStrategy($server) : new OllamaStrategy($server);
 		$server.isVerified = (await strategy.verifyServer()) ? new Date() : null;
+		if ($server.isVerified) $server.isEnabled = true;
 	}
 
 	function deleteServer() {
@@ -33,24 +35,31 @@
 <fieldset class="server">
 	<legend class="flex h-full items-stretch gap-x-2">
 		{#if ['openai', 'ollama'].includes($server.provider)}
-			<Badge variant={$server.provider} />
+			<Badge variant={$server.provider === 'openai' ? 'openai' : 'ollama'} />
 		{/if}
 		<Badge>{$server.name ? $server.name : $server.provider?.toUpperCase()}</Badge>
 	</legend>
 	<Fieldset>
 		<nav class="server__nav">
-			<Button variant={!$server.isVerified ? 'default' : 'outline'} on:click={verifyServer}>
-				Verify
-			</Button>
 			<FieldCheckbox label={'Use models from this server'} bind:checked={$server.isEnabled} />
-			<Button variant="outline" on:click={deleteServer}>Delete</Button>
+			<Button
+				class="max-h-full"
+				variant="outline"
+				on:click={deleteServer}
+				aria-label={$LL.deleteServer()}
+			>
+				<Trash_2 class="base-icon" />
+			</Button>
+			<Button variant={!$server.isVerified ? 'default' : 'outline'} on:click={verifyServer}>
+				{$server.isVerified ? $LL.reVerify() : $LL.verify()}
+			</Button>
 		</nav>
 
 		<div class="server__grid">
 			<div class="server__host" class:server__host--openai={isOpenAiFamily}>
 				<FieldInput
 					name={`server-${index}`}
-					label={'Base URL'}
+					label={$LL.baseUrl()}
 					placeholder={$server.baseUrl}
 					bind:value={$server.baseUrl}
 				/>
@@ -65,7 +74,7 @@
 			</div>
 			<FieldInput
 				name={`modelsFilter-${index}`}
-				label={'Models filter'}
+				label={$LL.modelsFilter()}
 				placeholder="gpt"
 				bind:value={$server.modelFilter}
 			/>
@@ -85,7 +94,7 @@
 	}
 
 	.server__nav {
-		@apply flex items-center gap-x-2;
+		@apply flex items-stretch gap-x-2;
 	}
 
 	.server__grid {

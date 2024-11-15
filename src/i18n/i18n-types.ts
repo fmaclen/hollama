@@ -20,6 +20,10 @@ export type Translations = RootTranslation
 
 type RootTranslation = {
 	/**
+	 * A​d​d​ ​c​o​n​n​e​c​t​i​o​n
+	 */
+	addConnection: string
+	/**
 	 * C​h​a​n​g​e​ ​y​o​u​r​ ​s​e​r​v​e​r​ ​s​e​t​t​i​n​g​s​ ​t​o​ ​a​l​l​o​w​ ​c​o​n​n​e​c​t​i​o​n​s​ ​f​r​o​m
 	 */
 	allowConnections: string
@@ -109,6 +113,10 @@ type RootTranslation = {
 	 */
 	connected: string
 	/**
+	 * C​o​n​n​e​c​t​i​o​n​ ​t​y​p​e
+	 */
+	connectionType: string
+	/**
 	 * C​o​n​n​e​c​t​i​n​g​.​.​.
 	 */
 	connecting: string
@@ -168,6 +176,10 @@ type RootTranslation = {
 	 * D​e​l​e​t​e​ ​k​n​o​w​l​e​d​g​e
 	 */
 	deleteKnowledge: string
+	/**
+	 * D​e​l​e​t​e​ ​s​e​r​v​e​r
+	 */
+	deleteServer: string
 	/**
 	 * D​e​l​e​t​e​ ​s​e​s​s​i​o​n
 	 */
@@ -314,6 +326,10 @@ type RootTranslation = {
 	 */
 	modelWasDownloaded: RequiredParams<'model'>
 	/**
+	 * M​o​d​e​l​ ​n​a​m​e​s​ ​f​i​l​t​e​r
+	 */
+	modelsFilter: string
+	/**
 	 * M​o​t​d
 	 */
 	motd: string
@@ -450,6 +466,10 @@ type RootTranslation = {
 	 */
 	run: string
 	/**
+	 * R​e​-​v​e​r​i​f​y
+	 */
+	reVerify: string
+	/**
 	 * R​u​n​t​i​m​e​ ​o​p​t​i​o​n​s
 	 */
 	runtimeOptions: string
@@ -474,9 +494,9 @@ type RootTranslation = {
 	 */
 	seeDocs: string
 	/**
-	 * S​e​r​v​e​r
+	 * S​e​r​v​e​r​s
 	 */
-	server: string
+	servers: string
 	/**
 	 * S​e​s​s​i​o​n
 	 */
@@ -552,6 +572,10 @@ type RootTranslation = {
 	 */
 	useMmap: string
 	/**
+	 * V​e​r​i​f​y
+	 */
+	verify: string
+	/**
 	 * V​e​r​s​i​o​n
 	 */
 	version: string
@@ -570,6 +594,10 @@ type RootTranslation = {
 }
 
 export type TranslationFunctions = {
+	/**
+	 * Add connection
+	 */
+	addConnection: () => LocalizedString
 	/**
 	 * Change your server settings to allow connections from
 	 */
@@ -660,6 +688,10 @@ The completion in progress will stop
 	 */
 	connected: () => LocalizedString
 	/**
+	 * Connection type
+	 */
+	connectionType: () => LocalizedString
+	/**
 	 * Connecting...
 	 */
 	connecting: () => LocalizedString
@@ -719,6 +751,10 @@ The completion in progress will stop
 	 * Delete knowledge
 	 */
 	deleteKnowledge: () => LocalizedString
+	/**
+	 * Delete server
+	 */
+	deleteServer: () => LocalizedString
 	/**
 	 * Delete session
 	 */
@@ -864,6 +900,10 @@ The completion in progress will stop
 	 */
 	modelWasDownloaded: (arg: { model: string }) => LocalizedString
 	/**
+	 * Model names filter
+	 */
+	modelsFilter: () => LocalizedString
+	/**
 	 * Motd
 	 */
 	motd: () => LocalizedString
@@ -1000,6 +1040,10 @@ The completion in progress will stop
 	 */
 	run: () => LocalizedString
 	/**
+	 * Re-verify
+	 */
+	reVerify: () => LocalizedString
+	/**
 	 * Runtime options
 	 */
 	runtimeOptions: () => LocalizedString
@@ -1024,9 +1068,9 @@ The completion in progress will stop
 	 */
 	seeDocs: () => LocalizedString
 	/**
-	 * Server
+	 * Servers
 	 */
-	server: () => LocalizedString
+	servers: () => LocalizedString
 	/**
 	 * Session
 	 */
@@ -1099,6 +1143,10 @@ The completion in progress will stop
 	 * Use MMAP
 	 */
 	useMmap: () => LocalizedString
+	/**
+	 * Verify
+	 */
+	verify: () => LocalizedString
 	/**
 	 * Version
 	 */

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { writable, type Writable } from 'svelte/store';
+
 	import LL from '$i18n/i18n-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import FieldSelect from '$lib/components/FieldSelect.svelte';
@@ -6,7 +8,6 @@
 	import P from '$lib/components/P.svelte';
 	import { settingsStore } from '$lib/localStorage';
 	import type { Server } from '$lib/settings';
-	import { writable } from 'svelte/store';
 
 	import Connection from './Connection.svelte';
 
@@ -16,27 +17,27 @@
 		{ value: 'openai-compatible', label: 'OpenAI: Compatible servers (i.e. llama.cpp)' }
 	];
 
-	let newProvider: 'ollama' | 'openai' | 'openai-compatible' | undefined;
+	const newProvider: Writable<'ollama' | 'openai' | 'openai-compatible' | undefined> =
+		writable(undefined);
 
 	function addServer() {
-		if (!newProvider) return;
+		if (!$newProvider) return;
 
 		const newServer: Server = {
 			id: crypto.randomUUID(),
-			provider: newProvider,
+			provider: $newProvider,
 			baseUrl: getDefaultBaseUrl(),
 			isEnabled: false,
 			isVerified: null,
-			modelFilter: newProvider === 'openai' ? 'gpt' : ''
+			modelFilter: $newProvider === 'openai' ? 'gpt' : ''
 		};
 
 		$settingsStore.servers = [...($settingsStore.servers || []), newServer];
-
-		newProvider = undefined;
+		$newProvider = undefined;
 	}
 
 	function getDefaultBaseUrl(): string {
-		switch (newProvider) {
+		switch ($newProvider) {
 			case 'ollama':
 				return 'http://localhost:11434';
 			case 'openai':
@@ -51,19 +52,21 @@
 
 <Fieldset>
 	<P>
-		<strong>Servers</strong>
+		<strong>{$LL.servers()}</strong>
 	</P>
 
 	<div class="servers__add">
 		<FieldSelect
 			name="provider"
 			isLabelVisible={false}
-			label={'FIXME: label should be an optional prop, isLabelVisible should be removed'}
-			placeholder="Connection type"
+			label={$LL.connectionType()}
+			placeholder={$LL.connectionType()}
 			options={SUPPORTED_PROVIDERS}
-			bind:value={newProvider}
+			bind:value={$newProvider}
 		/>
-		<Button variant="outline" on:click={addServer}>Add</Button>
+		<Button disabled={!$newProvider} on:click={addServer}>
+			{$LL.addConnection()}
+		</Button>
 	</div>
 
 	<div class="servers">
@@ -80,6 +83,6 @@
 	}
 
 	.servers__add {
-		@apply grid grid-cols-[auto_max-content] gap-2 mb-4;
+		@apply mb-4 grid grid-cols-[auto_max-content] gap-2;
 	}
 </style>

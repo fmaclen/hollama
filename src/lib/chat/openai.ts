@@ -9,7 +9,6 @@ export class OpenAIStrategy implements ChatStrategy {
 	private openai: OpenAI;
 
 	constructor(private server: Server) {
-		console.log('server', server);
 		this.openai = new OpenAI({
 			baseURL: this.server.baseUrl,
 			apiKey: this.server.apiKey || '',
