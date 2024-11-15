@@ -358,6 +358,10 @@ type RootTranslation = {
 	 */
 	noRecentModels: string
 	/**
+	 * N​o​ ​s​e​r​v​e​r​ ​c​o​n​n​e​c​t​i​o​n​s​,​ ​a​d​d​ ​o​n​e​ ​t​o​ ​s​t​a​r​t
+	 */
+	noServerConnections: string
+	/**
 	 * C​r​e​a​t​e​ ​a​ ​n​e​w​ ​s​e​s​s​i​o​n​ ​o​r​ ​c​h​o​o​s​e​ ​a​n​ ​e​x​i​s​t​i​n​g​ ​o​n​e​ ​f​r​o​m​ ​t​h​e​ ​l​i​s​t
 	 */
 	noSessionChosen: string
@@ -935,6 +939,10 @@ The completion in progress will stop
 	 * No recently used models
 	 */
 	noRecentModels: () => LocalizedString
+	/**
+	 * No server connections, add one to start
+	 */
+	noServerConnections: () => LocalizedString
 	/**
 	 * Create a new session or choose an existing one from the list
 	 */

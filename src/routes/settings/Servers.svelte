@@ -3,6 +3,7 @@
 
 	import LL from '$i18n/i18n-svelte';
 	import Button from '$lib/components/Button.svelte';
+	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
@@ -55,21 +56,29 @@
 		<strong>{$LL.servers()}</strong>
 	</P>
 
-	<div class="servers__add">
-		<FieldSelect
-			name="connectionType"
-			isLabelVisible={false}
-			label={$LL.connectionType()}
-			placeholder={$LL.connectionType()}
-			options={SUPPORTED_CONNECTION_TYPES}
-			bind:value={$newConnectionType}
-		/>
-		<Button disabled={!$newConnectionType} on:click={addServer}>
-			{$LL.addConnection()}
-		</Button>
+	<div class="connections">
+		<div class="connections__add">
+			<FieldSelect
+				name="connectionType"
+				isLabelVisible={false}
+				label={$LL.connectionType()}
+				placeholder={$LL.connectionType()}
+				options={SUPPORTED_CONNECTION_TYPES}
+				bind:value={$newConnectionType}
+			/>
+			<Button disabled={!$newConnectionType} on:click={addServer}>
+				{$LL.addConnection()}
+			</Button>
+		</div>
 	</div>
 
 	<div class="servers">
+		{#if !$settingsStore.servers.length}
+			<div class="servers__empty">
+				<EmptyMessage>{$LL.noServerConnections()}</EmptyMessage>
+			</div>
+		{/if}
+
 		{#each $settingsStore.servers as server, index}
 			{@const serverStore = writable(server)}
 			<Connection server={serverStore} {index} />
@@ -78,11 +87,20 @@
 </Fieldset>
 
 <style lang="postcss">
+	.connections {
+		@apply flex flex-col gap-y-2 mb-4;
+	}
+
+	.connections__add {
+
+		@apply grid grid-cols-[auto_max-content] gap-2;
+	}
+
 	.servers {
 		@apply flex flex-col gap-y-4;
 	}
 
-	.servers__add {
-		@apply mb-4 grid grid-cols-[auto_max-content] gap-2;
+	.servers__empty {
+		@apply col-span-full flex justify-center rounded-md border border-shade-3 p-4;
 	}
 </style>

@@ -86,6 +86,7 @@ const en = {
 	noApiKey: 'No API key',
 	noKnowledgeChosen: 'Create new knowledge or choose one from the list',
 	noRecentModels: 'No recently used models',
+	noServerConnections: 'No server connections, add one to start',
 	noSessionChosen: 'Create a new session or choose an existing one from the list',
 	notFound: 'The page you are looking for does not exist',
 	numBatch: 'Num batch',
