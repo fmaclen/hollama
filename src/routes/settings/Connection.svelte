@@ -16,7 +16,7 @@
 	import type { Server } from '$lib/settings';
 
 	import OllamaBaseURLHelp from './ollama/BaseURLHelp.svelte';
-	import OllamaPullModel from './ollama/PullModel.svelte';
+	import PullModel from './ollama/PullModel.svelte';
 
 	export let server: Writable<Server>;
 	export let index: number;
@@ -56,6 +56,7 @@
 		{/if}
 		<Badge>{$server.name ? $server.name : $server.connectionType?.toUpperCase()}</Badge>
 	</legend>
+
 	<Fieldset>
 		<nav class="connection__nav">
 			<FieldCheckbox label={$LL.useModelsFromThisServer()} bind:checked={$server.isEnabled} />
@@ -122,7 +123,7 @@
 		</div>
 
 		{#if isOllamaFamily}
-			<OllamaPullModel server={$server} />
+			<PullModel server={$server} />
 		{/if}
 	</Fieldset>
 </fieldset>
