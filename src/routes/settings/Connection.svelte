@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { LoaderCircle } from 'lucide-svelte';
 	import Trash_2 from 'lucide-svelte/icons/trash-2';
+	import { toast } from 'svelte-sonner';
 	import { type Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
@@ -17,14 +19,25 @@
 	export let index: number;
 
 	let strategy: OllamaStrategy | OpenAIStrategy;
+	let isLoading = false;
 
 	$: isOpenAiFamily = ['openai', 'openai-compatible'].includes($server.connectionType);
 	$: if ($server) $settingsStore.servers.splice(index, 1, $server);
 
 	async function verifyServer() {
+		isLoading = true;
+		const toastId = toast.loading($LL.connecting());
+
 		strategy = isOpenAiFamily ? new OpenAIStrategy($server) : new OllamaStrategy($server);
 		$server.isVerified = (await strategy.verifyServer()) ? new Date() : null;
-		if ($server.isVerified) $server.isEnabled = true;
+
+		if ($server.isVerified) {
+			$server.isEnabled = true;
+			toast.success($LL.connectionIsVerified(), { id: toastId });
+		} else {
+			toast.error($LL.connectionFailedToVerify(), { id: toastId });
+		}
+		isLoading = false;
 	}
 
 	function deleteServer() {
@@ -50,8 +63,16 @@
 			>
 				<Trash_2 class="base-icon" />
 			</Button>
-			<Button variant={!$server.isVerified ? 'default' : 'outline'} on:click={verifyServer}>
-				{$server.isVerified ? $LL.reVerify() : $LL.verify()}
+			<Button
+				disabled={isLoading}
+				variant={!$server.isVerified ? 'default' : 'outline'}
+				on:click={verifyServer}
+			>
+				{#if isLoading}
+					<LoaderCircle class="base-icon animate-spin" />
+				{:else}
+					{$server.isVerified ? $LL.reVerify() : $LL.verify()}
+				{/if}
 			</Button>
 		</nav>
 

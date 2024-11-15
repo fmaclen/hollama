@@ -26,6 +26,8 @@ const en = {
 	connected: 'Connected',
 	connectionType: 'Connection type',
 	connecting: 'Connecting...',
+	connectionIsVerified: 'Connection has been verified and is ready to use',
+	connectionFailedToVerify: 'Connection failed to verify, check the connection settings and try again',
 	content: 'Content',
 	controls: 'Controls',
 	controlsOnlyAvailableForOllama:
@@ -97,8 +99,6 @@ const en = {
 	numThread: 'Number of threads',
 	numa: 'NUMA',
 	ollamaLibrary: "Ollama's library",
-	openaiSyncFailed: 'Failed to connect to OpenAI. Check your API key or network connection',
-	openaiSyncSuccessful: 'Sync was successful. OpenAI models are now available in Sessions',
 	otherModels: 'Other models',
 	penalizeNewline: 'Penalize newline',
 	presencePenalty: 'Presence penalty',

@@ -121,6 +121,14 @@ type RootTranslation = {
 	 */
 	connecting: string
 	/**
+	 * C​o​n​n​e​c​t​i​o​n​ ​h​a​s​ ​b​e​e​n​ ​v​e​r​i​f​i​e​d​ ​a​n​d​ ​i​s​ ​r​e​a​d​y​ ​t​o​ ​u​s​e
+	 */
+	connectionIsVerified: string
+	/**
+	 * C​o​n​n​e​c​t​i​o​n​ ​f​a​i​l​e​d​ ​t​o​ ​v​e​r​i​f​y​,​ ​c​h​e​c​k​ ​t​h​e​ ​c​o​n​n​e​c​t​i​o​n​ ​s​e​t​t​i​n​g​s​ ​a​n​d​ ​t​r​y​ ​a​g​a​i​n
+	 */
+	connectionFailedToVerify: string
+	/**
 	 * C​o​n​t​e​n​t
 	 */
 	content: string
@@ -401,14 +409,6 @@ type RootTranslation = {
 	 * O​l​l​a​m​a​'​s​ ​l​i​b​r​a​r​y
 	 */
 	ollamaLibrary: string
-	/**
-	 * F​a​i​l​e​d​ ​t​o​ ​c​o​n​n​e​c​t​ ​t​o​ ​O​p​e​n​A​I​.​ ​C​h​e​c​k​ ​y​o​u​r​ ​A​P​I​ ​k​e​y​ ​o​r​ ​n​e​t​w​o​r​k​ ​c​o​n​n​e​c​t​i​o​n
-	 */
-	openaiSyncFailed: string
-	/**
-	 * S​y​n​c​ ​w​a​s​ ​s​u​c​c​e​s​s​f​u​l​.​ ​O​p​e​n​A​I​ ​m​o​d​e​l​s​ ​a​r​e​ ​n​o​w​ ​a​v​a​i​l​a​b​l​e​ ​i​n​ ​S​e​s​s​i​o​n​s
-	 */
-	openaiSyncSuccessful: string
 	/**
 	 * O​t​h​e​r​ ​m​o​d​e​l​s
 	 */
@@ -704,6 +704,14 @@ The completion in progress will stop
 	 */
 	connecting: () => LocalizedString
 	/**
+	 * Connection has been verified and is ready to use
+	 */
+	connectionIsVerified: () => LocalizedString
+	/**
+	 * Connection failed to verify, check the connection settings and try again
+	 */
+	connectionFailedToVerify: () => LocalizedString
+	/**
 	 * Content
 	 */
 	content: () => LocalizedString
@@ -983,14 +991,6 @@ The completion in progress will stop
 	 * Ollama's library
 	 */
 	ollamaLibrary: () => LocalizedString
-	/**
-	 * Failed to connect to OpenAI. Check your API key or network connection
-	 */
-	openaiSyncFailed: () => LocalizedString
-	/**
-	 * Sync was successful. OpenAI models are now available in Sessions
-	 */
-	openaiSyncSuccessful: () => LocalizedString
 	/**
 	 * Other models
 	 */
