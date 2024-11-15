@@ -15,6 +15,8 @@
 	import { settingsStore } from '$lib/localStorage';
 	import type { Server } from '$lib/settings';
 
+	import OllamaPullModel from './OllamaPullModel.svelte';
+
 	export let server: Writable<Server>;
 	export let index: number;
 
@@ -106,6 +108,10 @@
 				placeholder={'my-llama-server'}
 			/>
 		</div>
+
+		{#if $server.connectionType === 'ollama'}
+			<OllamaPullModel server={$server} />
+		{/if}
 	</Fieldset>
 </fieldset>
 
