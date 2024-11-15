@@ -130,14 +130,28 @@
 				label={$LL.modelsFilter()}
 				placeholder="gpt"
 				bind:value={$server.modelFilter}
-			/>
+			>
+				<svelte:fragment slot="help">
+					<FieldHelp>
+						<P>
+							{$LL.modelsFilterHelp()}
+						</P>
+					</FieldHelp>
+				</svelte:fragment>
+			</FieldInput>
 
 			<FieldInput
 				name={`name-${index}`}
 				label={$LL.name()}
 				bind:value={$server.name}
 				placeholder={'my-llama-server'}
-			/>
+			>
+				<svelte:fragment slot="help">
+					<FieldHelp>
+						<P>{$LL.connectionNameHelp()}</P>
+					</FieldHelp>
+				</svelte:fragment>
+			</FieldInput>
 		</div>
 
 		{#if isOllamaFamily}

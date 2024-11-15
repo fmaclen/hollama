@@ -25,9 +25,11 @@ const en = {
 	connect: 'Connect',
 	connected: 'Connected',
 	connectionType: 'Connection type',
+	connectionNameHelp: 'Identifies the connection in the models list',
 	connecting: 'Connecting...',
 	connectionIsVerified: 'Connection has been verified and is ready to use',
-	connectionFailedToVerify: 'Connection failed to verify, check the connection settings and try again',
+	connectionFailedToVerify:
+		'Connection failed to verify, check the connection settings and try again',
 	content: 'Content',
 	controls: 'Controls',
 	controlsOnlyAvailableForOllama:
@@ -81,6 +83,7 @@ const en = {
 	modelOptions: 'Model options',
 	modelWasDownloaded: '{model:string} was downloaded',
 	modelsFilter: 'Model names filter',
+	modelsFilterHelp: "Hides model names that don't start with the filter",
 	motd: 'Motd',
 	name: 'Name',
 	newKnowledge: 'New knowledge',

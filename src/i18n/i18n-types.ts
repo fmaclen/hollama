@@ -117,6 +117,10 @@ type RootTranslation = {
 	 */
 	connectionType: string
 	/**
+	 * I​d​e​n​t​i​f​i​e​s​ ​t​h​e​ ​c​o​n​n​e​c​t​i​o​n​ ​i​n​ ​t​h​e​ ​m​o​d​e​l​s​ ​l​i​s​t
+	 */
+	connectionNameHelp: string
+	/**
 	 * C​o​n​n​e​c​t​i​n​g​.​.​.
 	 */
 	connecting: string
@@ -337,6 +341,10 @@ type RootTranslation = {
 	 * M​o​d​e​l​ ​n​a​m​e​s​ ​f​i​l​t​e​r
 	 */
 	modelsFilter: string
+	/**
+	 * H​i​d​e​s​ ​m​o​d​e​l​ ​n​a​m​e​s​ ​t​h​a​t​ ​d​o​n​'​t​ ​s​t​a​r​t​ ​w​i​t​h​ ​t​h​e​ ​f​i​l​t​e​r
+	 */
+	modelsFilterHelp: string
 	/**
 	 * M​o​t​d
 	 */
@@ -700,6 +708,10 @@ The completion in progress will stop
 	 */
 	connectionType: () => LocalizedString
 	/**
+	 * Identifies the connection in the models list
+	 */
+	connectionNameHelp: () => LocalizedString
+	/**
 	 * Connecting...
 	 */
 	connecting: () => LocalizedString
@@ -919,6 +931,10 @@ The completion in progress will stop
 	 * Model names filter
 	 */
 	modelsFilter: () => LocalizedString
+	/**
+	 * Hides model names that don't start with the filter
+	 */
+	modelsFilterHelp: () => LocalizedString
 	/**
 	 * Motd
 	 */
