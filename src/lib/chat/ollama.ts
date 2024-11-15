@@ -8,9 +8,9 @@ import type {
 	StatusResponse
 } from 'ollama/browser';
 
-import type { Server } from '$lib/settings';
+import type { Model, Server } from '$lib/settings';
 
-import type { ChatStrategy, Model } from './index';
+import type { ChatStrategy } from './index';
 
 export interface OllamaOptions {
 	numa: boolean;

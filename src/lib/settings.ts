@@ -3,7 +3,14 @@ import { env } from '$env/dynamic/public';
 import { version } from '$app/environment';
 
 import type { HollamaMetadata } from '../routes/api/metadata/+server';
-import type { Model } from './chat';
+
+export interface Model {
+	serverId: string;
+	name: string;
+	size?: number;
+	parameterSize?: string;
+	modifiedAt?: Date;
+}
 
 export interface Server {
 	id: string;
