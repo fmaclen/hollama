@@ -1,7 +1,7 @@
 <script lang="ts">
 	import hljs from 'highlight.js';
 	import MarkdownIt from 'markdown-it/lib/index.mjs';
-	import { onMount } from 'svelte';
+	import { mount, onMount } from 'svelte';
 
 	import 'highlight.js/styles/github.min.css';
 
@@ -36,7 +36,10 @@
 		preElements.forEach((preElement) => {
 			const codeElement = preElement.querySelector('code');
 			if (codeElement)
-				new ButtonCopy({ target: preElement, props: { content: codeElement.innerText } });
+				mount(ButtonCopy, {
+					target: preElement,
+					props: { content: codeElement.innerText }
+				});
 		});
 	});
 </script>
