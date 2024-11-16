@@ -92,7 +92,7 @@ const es = {
 	search: 'Buscar',
 	searchEmpty: 'No se encontraron resultados',
 	seeDocs: 'Ver documentación',
-	server: 'Servidor',
+	servers: 'Servidores',
 	session: 'Sesión',
 	sessions: 'Sesiones',
 	settings: 'Ajustes',

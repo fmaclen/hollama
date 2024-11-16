@@ -89,7 +89,7 @@ const zh_cn = {
 	search: '搜索',
 	searchEmpty: '无结果',
 	seeDocs: '查看文档',
-	server: '服务器',
+	servers: '服务器',
 	session: '会话',
 	sessions: '会话',
 	settings: '设置',

@@ -89,7 +89,7 @@ const vi = {
 	searchEmpty: 'Không tìm thấy kết quả',
 	seed: 'Seed',
 	seeDocs: 'Xem tài liệu',
-	server: 'Máy chủ',
+	servers: 'Máy chủ',
 	session: 'Phiên',
 	sessions: 'Các phiên',
 	settings: 'Cài đặt',

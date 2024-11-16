@@ -87,7 +87,7 @@ const ja = {
 	search: '検索',
 	searchEmpty: '結果が見つかりませんでした',
 	seeDocs: 'ドキュメントを参照する',
-	server: 'サーバー',
+	servers: 'サーバー',
 	session: 'セッション',
 	sessions: 'セッション',
 	settings: '設定',

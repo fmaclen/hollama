@@ -80,7 +80,7 @@ const tr = {
 	search: 'Ara',
 	searchEmpty: 'Sonuç bulunamadı',
 	seeDocs: 'Belgeleri göster',
-	server: 'Sunucu',
+	servers: 'Sunucular',
 	session: 'Oturum',
 	sessions: 'Oturumlar',
 	settings: 'Ayarlar',

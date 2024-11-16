@@ -81,7 +81,7 @@ const pt_br = {
 	search: 'Buscar',
 	searchEmpty: 'Nenhum resultado encontrado',
 	seeDocs: 'Ver documentação',
-	server: 'Servidor',
+	servers: 'Servidores',
 	session: 'Sessão',
 	sessions: 'Sessões',
 	settings: 'Ajustes',

@@ -116,8 +116,8 @@ test('can switch language to spanish and back to english', async ({ page }) => {
 	await expect(idiomaCombobox).not.toBeVisible();
 	await expect(languageCombobox).toBeVisible();
 	await expect(languageCombobox).toHaveValue('English');
-	await expect(page.getByText('Server')).toBeVisible();
-	await expect(page.getByText('Servidor')).not.toBeVisible();
+	await expect(page.getByText('Servers')).toBeVisible();
+	await expect(page.getByText('Servidores')).not.toBeVisible();
 
 	await languageCombobox.click();
 
@@ -132,16 +132,16 @@ test('can switch language to spanish and back to english', async ({ page }) => {
 	);
 	expect(localStorageValue).toContain('"userLanguage":"es"');
 
-	await expect(page.getByText('Servidor')).toBeVisible();
-	await expect(page.getByText('Server')).not.toBeVisible();
+	await expect(page.getByText('Servidores')).toBeVisible();
+	await expect(page.getByText('Servers')).not.toBeVisible();
 
 	await idiomaCombobox.click();
 	await page.getByRole('option', { name: 'English' }).click();
 
 	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(localStorageValue).toContain('"userLanguage":"en"');
-	await expect(page.getByText('Server')).toBeVisible();
-	await expect(page.getByText('Servidor')).not.toBeVisible();
+	await expect(page.getByText('Servers')).toBeVisible();
+	await expect(page.getByText('Servidores')).not.toBeVisible();
 });
 
 test.describe('Locales', () => {
@@ -153,8 +153,8 @@ test.describe('Locales', () => {
 
 			await page.evaluate(() => window.localStorage.clear());
 			await page.reload();
-			await expect(page.getByText('Server')).not.toBeVisible();
-			await expect(page.getByText('Servidor')).toBeVisible();
+			await expect(page.getByText('Servers')).not.toBeVisible();
+			await expect(page.getByText('Servidores')).toBeVisible();
 			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
 				'"userLanguage":"es"'
 			);
@@ -169,7 +169,7 @@ test.describe('Locales', () => {
 
 			await page.evaluate(() => window.localStorage.clear());
 			await page.reload();
-			await expect(page.getByText('Server')).not.toBeVisible();
+			await expect(page.getByText('Servers')).not.toBeVisible();
 			await expect(page.getByText('サーバー')).toBeVisible();
 			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
 				'"userLanguage":"ja"'
@@ -185,8 +185,8 @@ test.describe('Locales', () => {
 
 			await page.evaluate(() => window.localStorage.clear());
 			await page.reload();
-			await expect(page.getByText('Server')).not.toBeVisible();
-			await expect(page.getByText('Sunucu')).toBeVisible();
+			await expect(page.getByText('Servers')).not.toBeVisible();
+			await expect(page.getByText('Sunucular')).toBeVisible();
 			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
 				'"userLanguage":"tr"'
 			);
@@ -201,8 +201,8 @@ test.describe('Locales', () => {
 
 			await page.evaluate(() => window.localStorage.clear());
 			await page.reload();
-			await expect(page.getByText('Server')).not.toBeVisible();
-			await expect(page.getByText('Servidor')).toBeVisible();
+			await expect(page.getByText('Servers')).not.toBeVisible();
+			await expect(page.getByText('Servidores')).toBeVisible();
 			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
 				'"userLanguage":"pt-br"'
 			);
@@ -217,7 +217,7 @@ test.describe('Locales', () => {
 
 			await page.evaluate(() => window.localStorage.clear());
 			await page.reload();
-			await expect(page.getByText('Server')).not.toBeVisible();
+			await expect(page.getByText('Servers')).not.toBeVisible();
 			await expect(page.getByText('服务器')).toBeVisible();
 			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
 				'"userLanguage":"zh-cn"'
@@ -233,7 +233,7 @@ test.describe('Locales', () => {
 
 			await page.evaluate(() => window.localStorage.clear());
 			await page.reload();
-			await expect(page.getByText('Server')).not.toBeVisible();
+			await expect(page.getByText('Servers')).not.toBeVisible();
 			await expect(page.getByText('Máy chủ')).toBeVisible();
 			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
 				'"userLanguage":"vi"'
