@@ -46,8 +46,6 @@
 				return '';
 		}
 	}
-
-	$inspect(newConnectionType);
 </script>
 
 <Fieldset>
