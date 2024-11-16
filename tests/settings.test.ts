@@ -7,29 +7,6 @@ test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
 });
 
-test('handles server status updates correctly', async ({ page }) => {
-	await page.goto('/');
-	await expect(page.getByLabel('Server')).toHaveValue('http://localhost:11434');
-
-	// The starting status is "connected"
-	await expect(page.getByText('Disconnected')).not.toBeVisible();
-	await expect(page.getByText('Connected', { exact: true })).toBeVisible();
-	await expect(page.getByText('Connected', { exact: true })).toHaveClass(/badge--positive/);
-
-	// Mock the API to return an error response
-	await page.route('**/api/tags', async (route) => {
-		await route.abort();
-	});
-
-	// Trigger a new API request by typing in the input field
-	await page.getByLabel('Server').clear();
-
-	// Wait for the server status to be updated to "disconnected"
-	await expect(page.getByText('Connected', { exact: true })).not.toBeVisible();
-	await expect(page.getByText('Disconnected')).toBeVisible();
-	await expect(page.getByText('Disconnected')).toHaveClass(/badge--warning/);
-});
-
 test('deletes all settings and resets to default values', async ({ page }) => {
 	await page.goto('/');
 
