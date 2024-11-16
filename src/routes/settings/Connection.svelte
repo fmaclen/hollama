@@ -2,7 +2,6 @@
 	import { LoaderCircle } from 'lucide-svelte';
 	import Trash_2 from 'lucide-svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
-	import { type Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import { OllamaStrategy } from '$lib/chat/ollama';
@@ -14,31 +13,31 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
-	import { settingsStore } from '$lib/localStorage';
-	import type { Server } from '$lib/settings';
+	import { serversStore } from '$lib/localStorage';
+	import type { Server } from '$lib/servers';
 
 	import OllamaBaseURLHelp from './ollama/BaseURLHelp.svelte';
 	import PullModel from './ollama/PullModel.svelte';
 
-	export let server: Writable<Server>;
+	export let server: Server;
 	export let index: number;
 
 	let strategy: OllamaStrategy | OpenAIStrategy;
 	let isLoading = false;
 
-	$: isOpenAiFamily = ['openai', 'openai-compatible'].includes($server.connectionType);
-	$: isOllamaFamily = ['ollama'].includes($server.connectionType);
-	$: if ($server) $settingsStore.servers.splice(index, 1, $server);
+	$: isOpenAiFamily = ['openai', 'openai-compatible'].includes(server.connectionType);
+	$: isOllamaFamily = ['ollama'].includes(server.connectionType);
+	$: if (server) $serversStore.splice(index, 1, server);
 
 	async function verifyServer() {
 		isLoading = true;
 		const toastId = toast.loading($LL.connecting());
 
-		strategy = isOpenAiFamily ? new OpenAIStrategy($server) : new OllamaStrategy($server);
-		$server.isVerified = (await strategy.verifyServer()) ? new Date() : null;
+		strategy = isOpenAiFamily ? new OpenAIStrategy(server) : new OllamaStrategy(server);
+		server.isVerified = (await strategy.verifyServer()) ? new Date() : null;
 
-		if ($server.isVerified) {
-			$server.isEnabled = true;
+		if (server.isVerified) {
+			server.isEnabled = true;
 			toast.success($LL.connectionIsVerified(), { id: toastId });
 		} else {
 			toast.error($LL.connectionFailedToVerify(), { id: toastId });
@@ -47,21 +46,21 @@
 	}
 
 	function deleteServer() {
-		$settingsStore.servers = $settingsStore.servers.filter((s) => s.id !== $server.id);
+		$serversStore = $serversStore.filter((s) => s.id !== server.id);
 	}
 </script>
 
 <fieldset class="connection">
 	<legend class="connection__legend">
-		{#if ['openai', 'ollama'].includes($server.connectionType)}
-			<Badge variant={$server.connectionType === 'openai' ? 'openai' : 'ollama'} />
+		{#if ['openai', 'ollama'].includes(server.connectionType)}
+			<Badge variant={server.connectionType === 'openai' ? 'openai' : 'ollama'} />
 		{/if}
-		<Badge>{$server.name ? $server.name : $server.connectionType?.toUpperCase()}</Badge>
+		<Badge>{server.name ? server.name : server.connectionType?.toUpperCase()}</Badge>
 	</legend>
 
 	<Fieldset>
 		<nav class="connection__nav">
-			<FieldCheckbox label={$LL.useModelsFromThisServer()} bind:checked={$server.isEnabled} />
+			<FieldCheckbox label={$LL.useModelsFromThisServer()} bind:checked={server.isEnabled} />
 
 			<Button
 				class="max-h-full"
@@ -74,13 +73,13 @@
 
 			<Button
 				disabled={isLoading}
-				variant={!$server.isVerified ? 'default' : 'outline'}
+				variant={!server.isVerified ? 'default' : 'outline'}
 				on:click={verifyServer}
 			>
 				{#if isLoading}
 					<LoaderCircle class="base-icon animate-spin" />
 				{:else}
-					{$server.isVerified ? $LL.reVerify() : $LL.verify()}
+					{server.isVerified ? $LL.reVerify() : $LL.verify()}
 				{/if}
 			</Button>
 		</nav>
@@ -90,12 +89,12 @@
 				<FieldInput
 					name={`server-${index}`}
 					label={$LL.baseUrl()}
-					placeholder={$server.baseUrl}
-					bind:value={$server.baseUrl}
+					placeholder={server.baseUrl}
+					bind:value={server.baseUrl}
 				>
 					<svelte:fragment slot="help">
 						{#if isOllamaFamily}
-							<OllamaBaseURLHelp server={$server} />
+							<OllamaBaseURLHelp server={server} />
 						{/if}
 					</svelte:fragment>
 				</FieldInput>
@@ -105,10 +104,10 @@
 						type="password"
 						name={`apiKey-${index}`}
 						label={$LL.apiKey()}
-						bind:value={$server.apiKey}
+						bind:value={server.apiKey}
 					>
 						<svelte:fragment slot="help">
-							{#if $server.connectionType === 'openai'}
+							{#if server.connectionType === 'openai'}
 								<FieldHelp>
 									<P>
 										<Button
@@ -129,7 +128,7 @@
 				name={`modelsFilter-${index}`}
 				label={$LL.modelsFilter()}
 				placeholder="gpt"
-				bind:value={$server.modelFilter}
+				bind:value={server.modelFilter}
 			>
 				<svelte:fragment slot="help">
 					<FieldHelp>
@@ -143,7 +142,7 @@
 			<FieldInput
 				name={`name-${index}`}
 				label={$LL.name()}
-				bind:value={$server.name}
+				bind:value={server.name}
 				placeholder={'my-llama-server'}
 			>
 				<svelte:fragment slot="help">
@@ -155,7 +154,7 @@
 		</div>
 
 		{#if isOllamaFamily}
-			<PullModel server={$server} />
+			<PullModel server={server} />
 		{/if}
 	</Fieldset>
 </fieldset>

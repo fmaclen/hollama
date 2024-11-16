@@ -1,14 +1,12 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
-
 	import LL from '$i18n/i18n-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
-	import { settingsStore } from '$lib/localStorage';
-	import type { Server } from '$lib/settings';
+	import { serversStore } from '$lib/localStorage';
+	import type { Server } from '$lib/servers';
 
 	import Connection from './Connection.svelte';
 
@@ -32,7 +30,7 @@
 			modelFilter: newConnectionType === 'openai' ? 'gpt' : ''
 		};
 
-		$settingsStore.servers = [...($settingsStore.servers || []), newServer];
+		$serversStore = [...($serversStore || []), newServer];
 		newConnectionType = undefined;
 	}
 
@@ -50,43 +48,39 @@
 	}
 </script>
 
-<!-- HACK: for some reason FieldSelect and Connection components are not re-rendering when `$settingsStore.servers` or `newConnectionType` changes -->
-{#key $settingsStore.servers}
-	<Fieldset>
-		<P>
-			<strong>{$LL.servers()}</strong>
-		</P>
+<Fieldset>
+	<P>
+		<strong>{$LL.servers()}</strong>
+	</P>
 
-		<div class="connections">
-			<div class="connections__add">
-				<FieldSelect
-					name="connectionType"
-					isLabelVisible={false}
-					label={$LL.connectionType()}
-					placeholder={$LL.connectionType()}
-					options={SUPPORTED_CONNECTION_TYPES}
-					bind:value={newConnectionType}
-				/>
-				<Button disabled={!newConnectionType} on:click={addServer}>
-					{$LL.addConnection()}
-				</Button>
+	<div class="connections">
+		<div class="connections__add">
+			<FieldSelect
+				name="connectionType"
+				isLabelVisible={false}
+				label={$LL.connectionType()}
+				placeholder={$LL.connectionType()}
+				options={SUPPORTED_CONNECTION_TYPES}
+				bind:value={newConnectionType}
+			/>
+			<Button disabled={!newConnectionType} on:click={addServer}>
+				{$LL.addConnection()}
+			</Button>
+		</div>
+	</div>
+
+	<div class="servers">
+		{#if !$serversStore}
+			<div class="servers__empty">
+				<EmptyMessage>{$LL.noServerConnections()}</EmptyMessage>
 			</div>
-		</div>
+		{/if}
 
-		<div class="servers">
-			{#if !$settingsStore.servers.length}
-				<div class="servers__empty">
-					<EmptyMessage>{$LL.noServerConnections()}</EmptyMessage>
-				</div>
-			{/if}
-
-			{#each $settingsStore.servers as server, index}
-				{@const serverStore = writable(server)}
-				<Connection server={serverStore} {index} />
-			{/each}
-		</div>
-	</Fieldset>
-{/key}
+		{#each $serversStore as server, index}
+			<Connection {server} {index} />
+		{/each}
+	</div>
+</Fieldset>
 
 <style lang="postcss">
 	.connections {

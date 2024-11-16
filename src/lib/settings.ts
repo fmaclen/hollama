@@ -12,28 +12,7 @@ export interface Model {
 	modifiedAt?: Date;
 }
 
-export interface Server {
-	id: string;
-	baseUrl: string;
-	connectionType: 'ollama' | 'openai' | 'openai-compatible';
-	isVerified: Date | null;
-	isEnabled: boolean;
-	name?: string;
-	modelFilter?: string;
-	apiKey?: string;
-}
-
-const DEFAULT_SERVER: Server = {
-	id: crypto.randomUUID(),
-	name: '',
-	baseUrl: 'http://localhost:11434',
-	connectionType: 'ollama',
-	isVerified: null,
-	isEnabled: false
-};
-
 export interface Settings {
-	servers: Server[];
 	models: Model[];
 	lastUsedModels: Model[];
 	lastUpdateCheck: number | null;
@@ -44,7 +23,6 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-	servers: [DEFAULT_SERVER],
 	models: [],
 	lastUsedModels: [],
 	lastUpdateCheck: null,

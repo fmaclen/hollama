@@ -4,6 +4,7 @@ import { browser } from '$app/environment';
 import type { Session } from '$lib/sessions';
 
 import type { Knowledge } from './knowledge';
+import type { Server } from './servers';
 import { DEFAULT_SETTINGS, type Settings } from './settings';
 
 function createLocalStorageStore<T>(key: string, defaultValue: T) {
@@ -43,6 +44,7 @@ export function deleteStoreItem<T extends { id: string }>(store: T[], id: string
 export const LOCAL_STORAGE_PREFIX = 'hollama';
 export enum StorageKey {
 	HollamaSettings = `${LOCAL_STORAGE_PREFIX}-settings`,
+	HollamaServers = `${LOCAL_STORAGE_PREFIX}-servers`,
 	HollamaSessions = `${LOCAL_STORAGE_PREFIX}-sessions`,
 	HollamaKnowledge = `${LOCAL_STORAGE_PREFIX}-knowledge`
 }
@@ -51,5 +53,6 @@ export const settingsStore = createLocalStorageStore<Settings>(
 	StorageKey.HollamaSettings,
 	DEFAULT_SETTINGS
 );
+export const serversStore = createLocalStorageStore<Server[]>(StorageKey.HollamaServers, []);
 export const sessionsStore = createLocalStorageStore<Session[]>(StorageKey.HollamaSessions, []);
 export const knowledgeStore = createLocalStorageStore<Knowledge[]>(StorageKey.HollamaKnowledge, []);

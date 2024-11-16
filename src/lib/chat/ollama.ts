@@ -8,7 +8,8 @@ import type {
 	StatusResponse
 } from 'ollama/browser';
 
-import type { Model, Server } from '$lib/settings';
+import type { Server } from '$lib/servers';
+import type { Model } from '$lib/settings';
 
 import type { ChatStrategy } from './index';
 
