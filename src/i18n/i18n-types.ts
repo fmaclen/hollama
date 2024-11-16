@@ -544,6 +544,10 @@ type RootTranslation = {
 	 */
 	typicalP: string
 	/**
+	 * U​R​L
+	 */
+	url: string
+	/**
 	 * U​s​e​ ​M​L​O​C​K
 	 */
 	useMlock: string
@@ -1091,6 +1095,10 @@ The completion in progress will stop
 	 * Typical P
 	 */
 	typicalP: () => LocalizedString
+	/**
+	 * URL
+	 */
+	url: () => LocalizedString
 	/**
 	 * Use MLOCK
 	 */

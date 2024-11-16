@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Brain, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { Brain, Link, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
 	import Trash_2 from 'lucide-svelte/icons/trash-2';
@@ -10,6 +10,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
 	import Field from '$lib/components/Field.svelte';
+	import FieldInput from '$lib/components/FieldInput.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
@@ -19,10 +20,22 @@
 
 	import KnowledgeSelect from './KnowledgeSelect.svelte';
 
-	type KnowledgeAttachment = {
+	type BaseAttachment = {
 		fieldId: string;
+		type: 'knowledge' | 'link' | 'image';
+	};
+
+	type KnowledgeAttachment = BaseAttachment & {
+		type: 'knowledge';
 		knowledge?: Knowledge;
 	};
+
+	type LinkAttachment = BaseAttachment & {
+		type: 'link';
+		url?: string;
+	};
+
+	type Attachment = KnowledgeAttachment | LinkAttachment;
 
 	export let editor: Writable<Editor>;
 	export let session: Writable<Session>;
@@ -31,7 +44,7 @@
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
 
 	let isOllama = false;
-	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
+	let attachments: Writable<Attachment[]> = writable([]);
 
 	$: isOllama = $settingsStore.models?.find((m) => m.name === $session.model)?.api === 'ollama';
 	$: $attachments.length && scrollToBottom(true);
@@ -63,7 +76,9 @@
 
 	function handleSelectKnowledge(fieldId: string, knowledgeId: string) {
 		$attachments = $attachments.map((a) =>
-			a.fieldId === fieldId ? { ...a, knowledge: loadKnowledge(knowledgeId) } : a
+			a.fieldId === fieldId && a.type === 'knowledge'
+				? { ...a, knowledge: loadKnowledge(knowledgeId) }
+				: a
 		);
 	}
 
@@ -75,7 +90,7 @@
 		if ($attachments.length) {
 			const attachmentMessages: Message[] = [];
 			$attachments.forEach((a) => {
-				if (a.knowledge)
+				if (a.type === 'knowledge' && a.knowledge)
 					attachmentMessages.push({
 						role: 'user',
 						knowledge: a.knowledge,
@@ -160,25 +175,38 @@ ${a.knowledge.content}
 			<div class="attachments">
 				{#each $attachments as attachment (attachment.fieldId)}
 					<div class="attachment">
-						<div class="attachment__knowledge">
-							<KnowledgeSelect
-								value={attachment.knowledge?.id}
-								options={$knowledgeStore?.filter(
-									(k) =>
-										// Only filter out knowledge that's selected in OTHER attachments
-										!$attachments.find(
-											(a) =>
-												a.fieldId !== attachment.fieldId && // Skip current attachment
-												a.knowledge?.id === k.id
-										)
-								)}
-								showLabel={false}
-								fieldId={`attachment-${attachment.fieldId}`}
-								onChange={(knowledgeId) =>
-									knowledgeId && handleSelectKnowledge(attachment.fieldId, knowledgeId)}
-								allowClear={false}
-							/>
-						</div>
+						{#if attachment.type === 'knowledge'}
+							<div class="attachment__knowledge">
+								<KnowledgeSelect
+									value={attachment.knowledge?.id}
+									options={$knowledgeStore?.filter(
+										(k) =>
+											// Only filter out knowledge that's selected in OTHER attachments
+											!$attachments.find(
+												(a) =>
+													a.fieldId !== attachment.fieldId && // Skip current attachment
+													a.type === 'knowledge' &&
+													a.knowledge?.id === k.id
+											)
+									)}
+									showLabel={false}
+									fieldId={`attachment-${attachment.fieldId}`}
+									onChange={(knowledgeId) =>
+										knowledgeId && handleSelectKnowledge(attachment.fieldId, knowledgeId)}
+									allowClear={false}
+								/>
+							</div>
+						{:else if attachment.type === 'link'}
+							<div class="attachment__link">
+								<FieldInput
+									name={`attachment-${attachment.fieldId}`}
+									bind:value={attachment.url}
+									placeholder={$LL.url()}
+									label={$LL.url()}
+									isLabelVisible={false}
+								/>
+							</div>
+						{/if}
 						<Button
 							variant="outline"
 							on:click={() => handleDeleteAttachment(attachment.fieldId)}
@@ -194,13 +222,22 @@ ${a.knowledge.content}
 		<nav class="prompt-editor__toolbar">
 			<div class="attachments-toolbar">
 				<Button
-					variant="outline"
+					variant="icon"
 					on:click={() => {
-						$attachments = [...$attachments, { fieldId: generateStorageId() }];
+						$attachments = [...$attachments, { fieldId: generateStorageId(), type: 'knowledge' }];
 					}}
 					data-testid="knowledge-attachment"
 				>
 					<Brain class="base-icon" />
+				</Button>
+
+				<Button
+					variant="icon"
+					on:click={() => {
+						$attachments = [...$attachments, { fieldId: generateStorageId(), type: 'link' }];
+					}}
+				>
+					<Link class="base-icon" />
 				</Button>
 			</div>
 
@@ -329,6 +366,7 @@ ${a.knowledge.content}
 
 	.attachments-toolbar {
 		@apply flex h-full;
+		@apply rounded-md border border-shade-4 px-1 text-sm font-medium leading-tight;
 	}
 
 	.attachments {
@@ -336,10 +374,11 @@ ${a.knowledge.content}
 	}
 
 	.attachment {
-		@apply flex w-full justify-between;
+		@apply flex w-full justify-between gap-x-2;
 	}
 
-	.attachment__knowledge {
+	.attachment__knowledge,
+	.attachment__link {
 		@apply w-full;
 	}
 </style>

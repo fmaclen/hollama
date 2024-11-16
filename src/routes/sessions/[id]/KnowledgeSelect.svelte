@@ -28,16 +28,15 @@
 	onChange={(option) => onChange?.(option.value)}
 	{allowClear}
 >
-	<svelte:fragment slot="nav">
-		{#if showNav}
-			<Button
-				aria-label={$LL.newKnowledge()}
-				variant="outline"
-				href={generateNewUrl(Sitemap.KNOWLEDGE)}
-				class="h-full text-muted"
-			>
-				<Brain class="base-icon" />
-			</Button>
-		{/if}
-	</svelte:fragment>
+	{#if showNav}
+		<Button
+			slot="nav"
+			aria-label={$LL.newKnowledge()}
+			variant="outline"
+			href={generateNewUrl(Sitemap.KNOWLEDGE)}
+			class="h-full text-muted"
+		>
+			<Brain class="base-icon" />
+		</Button>
+	{/if}
 </FieldSelect>
