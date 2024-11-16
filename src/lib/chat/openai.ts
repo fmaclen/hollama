@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
-import type { Server } from '$lib/settings';
+import type { Server } from '$lib/servers';
 
 import type { ChatRequest, ChatStrategy, Model } from './index';
 

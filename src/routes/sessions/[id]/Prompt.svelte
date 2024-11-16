@@ -13,7 +13,7 @@
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { knowledgeStore, settingsStore } from '$lib/localStorage';
+	import { knowledgeStore, serversStore, settingsStore } from '$lib/localStorage';
 	import type { Editor, Message, Session } from '$lib/sessions';
 	import { generateStorageId } from '$lib/utils';
 
@@ -36,8 +36,7 @@
 
 	$: if (chosenModel) $session.model = $settingsStore.models.find((m) => m.name === chosenModel);
 	$: isOllama =
-		$settingsStore.servers.find((s) => s.id === $session.model?.serverId)?.connectionType ===
-		'ollama';
+		$serversStore.find((s) => s.id === $session.model?.serverId)?.connectionType === 'ollama';
 	$: $attachments.length && scrollToBottom(true);
 
 	function toggleCodeEditor() {
@@ -156,7 +155,7 @@ ${a.knowledge.content}
 					bind:this={$editor.promptTextarea}
 					bind:value={$editor.prompt}
 					on:keydown={handleKeyDown}
-				/>
+				></textarea>
 			</Field>
 		{/if}
 

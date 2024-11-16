@@ -14,7 +14,7 @@
 	import Head from '$lib/components/Head.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
-	import { settingsStore } from '$lib/localStorage';
+	import { serversStore } from '$lib/localStorage';
 	import {
 		formatSessionMetadata,
 		getSessionTitle,
@@ -127,7 +127,7 @@
 		$editor.prompt = ''; // Reset the prompt form field
 		$editor.completion = '';
 
-		const server = $settingsStore.servers.find((s) => s.id === $session.model?.serverId);
+		const server = $serversStore.find((s) => s.id === $session.model?.serverId);
 		if (!server) throw new Error('Server not found');
 		if (!$session.model?.name) throw new Error('No model');
 

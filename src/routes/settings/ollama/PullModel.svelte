@@ -9,12 +9,17 @@
 	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import P from '$lib/components/P.svelte';
-	import type { Server } from '$lib/settings';
+	import type { Server } from '$lib/servers';
 
-	export let server: Server;
-	let strategy = new OllamaStrategy(server);
-	let modelTag: string | undefined;
-	let isPullInProgress = false;
+	interface Props {
+		server: Server;
+	}
+
+	let { server }: Props = $props();
+	let modelTag: string | undefined = $state();
+	let isPullInProgress = $state(false);
+
+	const strategy = new OllamaStrategy(server);
 
 	async function pullModel() {
 		if (!modelTag) return;

@@ -3,8 +3,9 @@ import { get } from 'svelte/store';
 import type { OllamaOptions } from '$lib/chat/ollama';
 import { sessionsStore, settingsStore, sortStore } from '$lib/localStorage';
 
-import { getLastUsedModels, type Message as ChatMessage, type Model } from './chat';
+import { getLastUsedModels, type Message as ChatMessage } from './chat';
 import type { Knowledge } from './knowledge';
+import type { Model } from './settings';
 import { formatTimestampToNow } from './utils';
 
 export interface Message extends ChatMessage {

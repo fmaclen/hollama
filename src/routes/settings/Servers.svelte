@@ -16,7 +16,7 @@
 		{ value: 'openai-compatible', label: 'OpenAI: Compatible servers (i.e. llama.cpp)' }
 	];
 
-	let newConnectionType: 'ollama' | 'openai' | 'openai-compatible' | undefined = undefined;
+	let newConnectionType: 'ollama' | 'openai' | 'openai-compatible' | undefined = $state();
 
 	function addServer() {
 		if (!newConnectionType) return;
@@ -27,10 +27,10 @@
 			baseUrl: getDefaultBaseUrl(),
 			isEnabled: false,
 			isVerified: null,
-			modelFilter: newConnectionType === 'openai' ? 'gpt' : ''
+			modelFilter: newConnectionType === 'openai' ? 'gpt' : undefined
 		};
 
-		$serversStore = [...($serversStore || []), newServer];
+		serversStore.update((servers) => [...servers, newServer]);
 		newConnectionType = undefined;
 	}
 
@@ -46,6 +46,8 @@
 				return '';
 		}
 	}
+
+	$inspect(newConnectionType);
 </script>
 
 <Fieldset>
@@ -76,8 +78,8 @@
 			</div>
 		{/if}
 
-		{#each $serversStore as server, index}
-			<Connection {server} {index} />
+		{#each $serversStore as server, index (server.id)}
+			<Connection {index} />
 		{/each}
 	</div>
 </Fieldset>

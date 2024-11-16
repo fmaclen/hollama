@@ -2,21 +2,22 @@
 	import { onMount } from 'svelte';
 
 	import LL from '$i18n/i18n-svelte';
-	import { getLastUsedModels, type Model } from '$lib/chat';
+	import { getLastUsedModels } from '$lib/chat';
+	import { type Model } from '$lib/settings';
 	import { OllamaStrategy } from '$lib/chat/ollama';
 	import { OpenAIStrategy } from '$lib/chat/openai';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
-	import { sessionsStore, settingsStore } from '$lib/localStorage';
+	import { sessionsStore, settingsStore, serversStore } from '$lib/localStorage';
 	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
 	import { Sitemap } from '$lib/sitemap';
 
 	async function listModels(): Promise<Model[]> {
 		const models: Model[] = [];
 
-		for (const server of $settingsStore.servers) {
+		for (const server of $serversStore) {
 			if (!server.isEnabled) continue;
 
 			switch (server.connectionType) {

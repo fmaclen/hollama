@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
-	import { settingsStore } from '$lib/localStorage';
+	import { settingsStore, serversStore } from '$lib/localStorage';
 	import { type Model } from '$lib/settings';
 
 	import FieldSelect from './FieldSelect.svelte';
@@ -22,7 +22,7 @@
 	function formatModelToSelectOption(model: Model): ModelOption {
 		const badges: string[] = [];
 		if (model.parameterSize) badges.push(model.parameterSize);
-		badges.push($settingsStore.servers.find((s) => s.id === model.serverId)?.connectionType || '');
+		badges.push($serversStore.find((s) => s.id === model.serverId)?.connectionType || '');
 
 		return { value: model.name, label: model.name, badge: badges };
 	}

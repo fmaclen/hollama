@@ -6,11 +6,15 @@
 	import Button from '$lib/components/Button.svelte';
 	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import P from '$lib/components/P.svelte';
-	import { type Server } from '$lib/settings';
+	import type { Server } from '$lib/servers';
 
-	export let server: Server;
+	interface Props {
+		server: Server;
+	}
 
-	let ollamaURL: URL | null = null;
+	let { server }: Props = $props();
+
+	let ollamaURL: URL | null = $state(null);
 
 	onMount(async () => {
 		// Get the current URL and set the default server

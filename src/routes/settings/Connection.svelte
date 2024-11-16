@@ -19,15 +19,24 @@
 	import OllamaBaseURLHelp from './ollama/BaseURLHelp.svelte';
 	import PullModel from './ollama/PullModel.svelte';
 
-	export let server: Server;
-	export let index: number;
+	interface Props {
+		index: number;
+	}
 
+	let { index }: Props = $props();
+	let server: Server = $state($serversStore[index]);
 	let strategy: OllamaStrategy | OpenAIStrategy;
-	let isLoading = false;
+	let isLoading = $state(false);
 
-	$: isOpenAiFamily = ['openai', 'openai-compatible'].includes(server.connectionType);
-	$: isOllamaFamily = ['ollama'].includes(server.connectionType);
-	$: if (server) $serversStore.splice(index, 1, server);
+	const isOpenAiFamily = $derived(['openai', 'openai-compatible'].includes(server.connectionType));
+	const isOllamaFamily = $derived(['ollama'].includes(server.connectionType));
+
+	$effect(() => {
+		serversStore.update((servers) => {
+			servers.splice(index, 1, server);
+			return servers;
+		});
+	});
 
 	async function verifyServer() {
 		isLoading = true;
@@ -46,7 +55,7 @@
 	}
 
 	function deleteServer() {
-		$serversStore = $serversStore.filter((s) => s.id !== server.id);
+		serversStore.update((servers) => servers.filter((s) => s.id !== server.id));
 	}
 </script>
 
@@ -94,7 +103,7 @@
 				>
 					<svelte:fragment slot="help">
 						{#if isOllamaFamily}
-							<OllamaBaseURLHelp server={server} />
+							<OllamaBaseURLHelp {server} />
 						{/if}
 					</svelte:fragment>
 				</FieldInput>
@@ -154,7 +163,7 @@
 		</div>
 
 		{#if isOllamaFamily}
-			<PullModel server={server} />
+			<PullModel {server} />
 		{/if}
 	</Fieldset>
 </fieldset>
