@@ -144,7 +144,9 @@
 					strategy = new OllamaStrategy(server);
 					break;
 				case 'openai':
+				case 'openai-compatible':
 					strategy = new OpenAIStrategy(server);
+					break;
 			}
 
 			if (!strategy) throw new Error('Invalid strategy');
