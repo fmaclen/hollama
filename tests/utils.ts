@@ -168,8 +168,23 @@ export async function chooseModel(page: Page, modelName: string) {
 }
 
 // Ollama mock functions
+const DEFAULT_OLLAMA_SERVER = {
+	id: crypto.randomUUID(),
+	connectionType: 'ollama',
+	baseUrl: 'http://localhost:11434',
+	isEnabled: true,
+	isVerified: new Date(),
+	modelFilter: undefined
+};
 
 export async function mockTagsResponse(page: Page) {
+	await page.goto('/');
+
+	await page.evaluate(
+		(data) => window.localStorage.setItem('hollama-servers', JSON.stringify(data)),
+		[DEFAULT_OLLAMA_SERVER]
+	);
+
 	await page.route('**/api/tags', async (route: Route) => {
 		await route.fulfill({
 			status: 200,
