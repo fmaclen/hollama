@@ -57,6 +57,7 @@ const en = {
 	howToUpdateDocker: 'How to update Docker container?',
 	interface: 'Interface',
 	internalServerError: 'There was an internal server error, please try again later',
+	invalidUrl: 'The URL is invalid',
 	isCurrentVersionLatest: 'You are on the latest version',
 	isLatestVersion: 'A newer version is available',
 	knowledge: 'Knowledge',

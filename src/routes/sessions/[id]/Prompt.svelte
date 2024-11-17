@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Brain, Link, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { Brain, Link, LoaderCircle, Search, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
 	import Trash_2 from 'lucide-svelte/icons/trash-2';
@@ -16,7 +16,7 @@
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { knowledgeStore, settingsStore } from '$lib/localStorage';
 	import type { Editor, Message, Session } from '$lib/sessions';
-	import { generateStorageId } from '$lib/utils';
+	import { generateStorageId, isValidUrl } from '$lib/utils';
 
 	import KnowledgeSelect from './KnowledgeSelect.svelte';
 
@@ -79,6 +79,16 @@
 			a.fieldId === fieldId && a.type === 'knowledge'
 				? { ...a, knowledge: loadKnowledge(knowledgeId) }
 				: a
+		);
+	}
+
+	function handleInputUrl(fieldId: string, url?: string) {
+		if (!url || !isValidUrl(url)) {
+			toast.error($LL.invalidUrl());
+			return;
+		}
+		$attachments = $attachments.map((a) =>
+			a.fieldId === fieldId && a.type === 'link' ? { ...a, url } : a
 		);
 	}
 
@@ -206,6 +216,12 @@ ${a.knowledge.content}
 									isLabelVisible={false}
 								/>
 							</div>
+							<Button
+								variant="default"
+								on:click={() => handleInputUrl(attachment.fieldId, attachment.url)}
+							>
+								<Search class="base-icon" />
+							</Button>
 						{/if}
 						<Button
 							variant="outline"
@@ -370,7 +386,7 @@ ${a.knowledge.content}
 	}
 
 	.attachments {
-		@apply overflow-scrollbar flex max-h-48 flex-col gap-y-1;
+		@apply overflow-scrollbar flex max-h-48 flex-col gap-y-2;
 	}
 
 	.attachment {

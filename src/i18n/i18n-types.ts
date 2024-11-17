@@ -241,6 +241,10 @@ type RootTranslation = {
 	 */
 	internalServerError: string
 	/**
+	 * T​h​e​ ​U​R​L​ ​i​s​ ​i​n​v​a​l​i​d
+	 */
+	invalidUrl: string
+	/**
 	 * Y​o​u​ ​a​r​e​ ​o​n​ ​t​h​e​ ​l​a​t​e​s​t​ ​v​e​r​s​i​o​n
 	 */
 	isCurrentVersionLatest: string
@@ -795,6 +799,10 @@ The completion in progress will stop
 	 * There was an internal server error, please try again later
 	 */
 	internalServerError: () => LocalizedString
+	/**
+	 * The URL is invalid
+	 */
+	invalidUrl: () => LocalizedString
 	/**
 	 * You are on the latest version
 	 */

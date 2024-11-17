@@ -21,6 +21,7 @@
 	bind:value
 	label={$LL.knowledge()}
 	isLabelVisible={showLabel}
+	hasNav={showNav}
 	name={fieldId}
 	disabled={!options.length}
 	placeholder={!options.length ? $LL.emptyKnowledge() : !showLabel ? $LL.knowledge() : ''}
@@ -28,15 +29,17 @@
 	onChange={(option) => onChange?.(option.value)}
 	{allowClear}
 >
-	{#if showNav}
-		<Button
-			slot="nav"
-			aria-label={$LL.newKnowledge()}
-			variant="outline"
-			href={generateNewUrl(Sitemap.KNOWLEDGE)}
-			class="h-full text-muted"
-		>
-			<Brain class="base-icon" />
-		</Button>
-	{/if}
+	<svelte:fragment slot="nav">
+		{#if showNav}
+			<Button
+				slot="nav"
+				aria-label={$LL.newKnowledge()}
+				variant="outline"
+				href={generateNewUrl(Sitemap.KNOWLEDGE)}
+				class="h-full text-muted"
+			>
+				<Brain class="base-icon" />
+			</Button>
+		{/if}
+	</svelte:fragment>
 </FieldSelect>
