@@ -58,6 +58,8 @@ const en = {
 	interface: 'Interface',
 	internalServerError: 'There was an internal server error, please try again later',
 	invalidUrl: 'The URL is invalid',
+	failedToExtractContent: 'Failed to extract content from URL',
+	failedToFetchUrl: 'Failed to fetch URL',
 	isCurrentVersionLatest: 'You are on the latest version',
 	isLatestVersion: 'A newer version is available',
 	knowledge: 'Knowledge',

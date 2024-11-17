@@ -245,6 +245,14 @@ type RootTranslation = {
 	 */
 	invalidUrl: string
 	/**
+	 * F​a​i​l​e​d​ ​t​o​ ​e​x​t​r​a​c​t​ ​c​o​n​t​e​n​t​ ​f​r​o​m​ ​U​R​L
+	 */
+	failedToExtractContent: string
+	/**
+	 * F​a​i​l​e​d​ ​t​o​ ​f​e​t​c​h​ ​U​R​L
+	 */
+	failedToFetchUrl: string
+	/**
 	 * Y​o​u​ ​a​r​e​ ​o​n​ ​t​h​e​ ​l​a​t​e​s​t​ ​v​e​r​s​i​o​n
 	 */
 	isCurrentVersionLatest: string
@@ -803,6 +811,14 @@ The completion in progress will stop
 	 * The URL is invalid
 	 */
 	invalidUrl: () => LocalizedString
+	/**
+	 * Failed to extract content from URL
+	 */
+	failedToExtractContent: () => LocalizedString
+	/**
+	 * Failed to fetch URL
+	 */
+	failedToFetchUrl: () => LocalizedString
 	/**
 	 * You are on the latest version
 	 */

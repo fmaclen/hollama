@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Readability } from '@mozilla/readability';
 	import { Brain, Link, LoaderCircle, Search, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
@@ -33,6 +34,7 @@
 	type LinkAttachment = BaseAttachment & {
 		type: 'link';
 		url?: string;
+		content?: string;
 	};
 
 	type Attachment = KnowledgeAttachment | LinkAttachment;
@@ -82,14 +84,37 @@
 		);
 	}
 
-	function handleInputUrl(fieldId: string, url?: string) {
+	async function handleInputUrl(fieldId: string, url?: string) {
 		if (!url || !isValidUrl(url)) {
 			toast.error($LL.invalidUrl());
 			return;
 		}
-		$attachments = $attachments.map((a) =>
-			a.fieldId === fieldId && a.type === 'link' ? { ...a, url } : a
-		);
+
+		try {
+			// Use a CORS proxy service
+			const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+			const response = await fetch(proxyUrl);
+			console.log('response', response);
+			const html = await response.text();
+			console.log('html', html);
+
+			const parser = new DOMParser();
+			const doc = parser.parseFromString(html, 'text/html');
+			console.log('doc', doc);
+
+			const article = new Readability(doc).parse()?.textContent.trim();
+			console.log('article', article);
+			if (article) {
+				$attachments = $attachments.map((a) =>
+					a.fieldId === fieldId && a.type === 'link' ? { ...a, url, content: article } : a
+				);
+			} else {
+				toast.error($LL.failedToExtractContent());
+			}
+		} catch (error) {
+			console.error('Error extracting content:', error);
+			toast.error($LL.failedToFetchUrl());
+		}
 	}
 
 	function handleDeleteAttachment(fieldId: string) {
