@@ -1,6 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+import type { Model } from '$lib/settings';
+
 import {
+	DEFAULT_OLLAMA_SERVER,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_KNOWLEDGE,
 	mockTagsResponse,
@@ -30,6 +33,10 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'session-new.png' });
 
 	// Stage 2 sessions
+	const models: Model[] = MOCK_API_TAGS_RESPONSE.models.map((model) => ({
+		name: model.name,
+		serverId: DEFAULT_OLLAMA_SERVER.id
+	}));
 	await page.evaluate(
 		({ modelA, modelB }) =>
 			window.localStorage.setItem(
@@ -71,7 +78,10 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 					}
 				])
 			),
-		{ modelA: MOCK_API_TAGS_RESPONSE.models[0].name, modelB: MOCK_API_TAGS_RESPONSE.models[1].name }
+		{
+			modelA: models[0],
+			modelB: models[1]
+		}
 	);
 
 	await page.reload();
