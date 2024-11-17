@@ -17,6 +17,7 @@
 	export let allowClear: boolean = true;
 	export let allowSearch: boolean = true;
 	export let isLabelVisible: boolean | undefined = true;
+	export let hasNav: boolean | undefined = false;
 	export let onChange: (value: Option) => void = () => {};
 
 	type Option = Selected<string> & { badge?: string | string[] };
@@ -82,7 +83,7 @@
 	}
 </script>
 
-<Field {name} disabled={isDisabled} hasNav={$$slots.nav} {isLabelVisible}>
+<Field {name} disabled={isDisabled} {hasNav} {isLabelVisible}>
 	<svelte:fragment slot="label">{label}</svelte:fragment>
 	<Combobox.Root
 		bind:touchedInput

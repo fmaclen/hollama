@@ -5,6 +5,7 @@
 
 	export let name: string;
 	export let label: LocalizedString;
+	export let isLabelVisible: boolean = true;
 	export let placeholder: LocalizedString | string | undefined = undefined;
 	export let disabled: boolean | undefined = false;
 	export let value: string | number | undefined = undefined;
@@ -16,7 +17,7 @@
 	export let step: number | undefined = undefined;
 </script>
 
-<Field {name} hasNav={$$slots.nav} {disabled}>
+<Field {name} hasNav={$$slots.nav} {disabled} {isLabelVisible}>
 	<svelte:fragment slot="label">
 		{label}
 
@@ -47,7 +48,7 @@
 			https://stackoverflow.com/questions/57392773/error-type-attribute-cannot-be-dynamic-if-input-uses-two-way-binding/75298645#75298645
 		-->
 		<input
-			class="field-input"
+			class="field-input {isLabelVisible ? '' : 'field-input--no-label'}"
 			id={name}
 			{disabled}
 			{placeholder}
@@ -74,5 +75,9 @@
 
 	.field-label-status {
 		@apply -mt-2 ml-auto max-h-1;
+	}
+
+	:global(.field-input--no-label) {
+		@apply py-2.5;
 	}
 </style>

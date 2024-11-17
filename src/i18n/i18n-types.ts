@@ -241,6 +241,18 @@ type RootTranslation = {
 	 */
 	internalServerError: string
 	/**
+	 * T​h​e​ ​U​R​L​ ​i​s​ ​i​n​v​a​l​i​d
+	 */
+	invalidUrl: string
+	/**
+	 * F​a​i​l​e​d​ ​t​o​ ​e​x​t​r​a​c​t​ ​c​o​n​t​e​n​t​ ​f​r​o​m​ ​U​R​L
+	 */
+	failedToExtractContent: string
+	/**
+	 * F​a​i​l​e​d​ ​t​o​ ​f​e​t​c​h​ ​U​R​L
+	 */
+	failedToFetchUrl: string
+	/**
 	 * Y​o​u​ ​a​r​e​ ​o​n​ ​t​h​e​ ​l​a​t​e​s​t​ ​v​e​r​s​i​o​n
 	 */
 	isCurrentVersionLatest: string
@@ -544,6 +556,10 @@ type RootTranslation = {
 	 */
 	typicalP: string
 	/**
+	 * U​R​L
+	 */
+	url: string
+	/**
 	 * U​s​e​ ​M​L​O​C​K
 	 */
 	useMlock: string
@@ -791,6 +807,18 @@ The completion in progress will stop
 	 * There was an internal server error, please try again later
 	 */
 	internalServerError: () => LocalizedString
+	/**
+	 * The URL is invalid
+	 */
+	invalidUrl: () => LocalizedString
+	/**
+	 * Failed to extract content from URL
+	 */
+	failedToExtractContent: () => LocalizedString
+	/**
+	 * Failed to fetch URL
+	 */
+	failedToFetchUrl: () => LocalizedString
 	/**
 	 * You are on the latest version
 	 */
@@ -1091,6 +1119,10 @@ The completion in progress will stop
 	 * Typical P
 	 */
 	typicalP: () => LocalizedString
+	/**
+	 * URL
+	 */
+	url: () => LocalizedString
 	/**
 	 * Use MLOCK
 	 */

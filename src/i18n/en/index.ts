@@ -57,6 +57,9 @@ const en = {
 	howToUpdateDocker: 'How to update Docker container?',
 	interface: 'Interface',
 	internalServerError: 'There was an internal server error, please try again later',
+	invalidUrl: 'The URL is invalid',
+	failedToExtractContent: 'Failed to extract content from URL',
+	failedToFetchUrl: 'Failed to fetch URL',
 	isCurrentVersionLatest: 'You are on the latest version',
 	isLatestVersion: 'A newer version is available',
 	knowledge: 'Knowledge',
@@ -133,6 +136,7 @@ const en = {
 	tryingToConnectNotLocalhost:
 		'If you want to connect to an Ollama server that is not available on {hostname:string} or {ip:string} try',
 	typicalP: 'Typical P',
+	url: 'URL',
 	useMlock: 'Use MLOCK',
 	useMmap: 'Use MMAP',
 	version: 'Version',
