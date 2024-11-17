@@ -3,6 +3,7 @@ import type { ChatResponse, ListResponse } from 'ollama/browser';
 import type OpenAI from 'openai';
 
 import type { Knowledge } from '$lib/knowledge';
+import { ConnectionType } from '$lib/connections';
 
 export const MOCK_API_TAGS_RESPONSE: ListResponse = {
 	models: [
@@ -168,23 +169,25 @@ export async function chooseModel(page: Page, modelName: string) {
 }
 
 // Ollama mock functions
-const DEFAULT_OLLAMA_SERVER = {
+export const DEFAULT_OLLAMA_SERVER: Server = {
 	id: crypto.randomUUID(),
-	connectionType: 'ollama',
+	connectionType: ConnectionType.Ollama,
 	baseUrl: 'http://localhost:11434',
 	isEnabled: true,
-	isVerified: new Date(),
+	isVerified: null,
 	modelFilter: undefined
 };
 
 export async function mockTagsResponse(page: Page) {
 	await page.goto('/');
 
+	// Add the default server to the servers list
 	await page.evaluate(
 		(data) => window.localStorage.setItem('hollama-servers', JSON.stringify(data)),
 		[DEFAULT_OLLAMA_SERVER]
 	);
 
+	// Mock the tags response
 	await page.route('**/api/tags', async (route: Route) => {
 		await route.fulfill({
 			status: 200,
@@ -192,6 +195,17 @@ export async function mockTagsResponse(page: Page) {
 			body: JSON.stringify(MOCK_API_TAGS_RESPONSE)
 		});
 	});
+
+
+	// Reload the page to load the servers list
+	await page.reload();
+
+	// Fetch list of models
+	await expect(page.getByText('Verify')).toBeVisible();
+	await expect(page.getByText('Connection has been verified and is ready to use')).not.toBeVisible();
+
+	await page.getByText('Verify').click();
+	await expect(page.getByText('Connection has been verified and is ready to use')).toBeVisible();
 }
 
 export async function mockCompletionResponse(page: Page, response: ChatResponse) {

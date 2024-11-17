@@ -12,6 +12,7 @@
 	import Field from '$lib/components/Field.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
+	import { ConnectionType } from '$lib/connections';
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { knowledgeStore, serversStore, settingsStore } from '$lib/localStorage';
 	import type { Editor, Message, Session } from '$lib/sessions';
@@ -31,12 +32,13 @@
 	export let scrollToBottom: (shouldForceScroll: boolean) => void;
 
 	let chosenModel: string;
-	let isOllama = false;
+	let isOllamaFamily = false;
 	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
 
 	$: if (chosenModel) $session.model = $settingsStore.models.find((m) => m.name === chosenModel);
-	$: isOllama =
-		$serversStore.find((s) => s.id === $session.model?.serverId)?.connectionType === 'ollama';
+	$: isOllamaFamily =
+		$serversStore.find((s) => s.id === $session.model?.serverId)?.connectionType ===
+		ConnectionType.Ollama;
 	$: $attachments.length && scrollToBottom(true);
 
 	function toggleCodeEditor() {
@@ -50,7 +52,7 @@
 	}
 
 	function switchToControls() {
-		if (!isOllama) {
+		if (!isOllamaFamily) {
 			toast.warning($LL.controlsOnlyAvailableForOllama());
 			return;
 		}

@@ -9,7 +9,7 @@
 	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import P from '$lib/components/P.svelte';
-	import type { Server } from '$lib/servers';
+	import type { Server } from '$lib/connections';
 
 	interface Props {
 		server: Server;

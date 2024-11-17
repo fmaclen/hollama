@@ -6,7 +6,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import FieldHelp from '$lib/components/FieldHelp.svelte';
 	import P from '$lib/components/P.svelte';
-	import type { Server } from '$lib/servers';
+	import type { Server } from '$lib/connections';
 
 	interface Props {
 		server: Server;

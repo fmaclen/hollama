@@ -14,7 +14,7 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
 	import { serversStore } from '$lib/localStorage';
-	import type { Server } from '$lib/servers';
+	import { ConnectionType, type Server } from '$lib/connections';
 
 	import OllamaBaseURLHelp from './ollama/BaseURLHelp.svelte';
 	import PullModel from './ollama/PullModel.svelte';
@@ -28,8 +28,10 @@
 	let strategy: OllamaStrategy | OpenAIStrategy;
 	let isLoading = $state(false);
 
-	const isOpenAiFamily = $derived(['openai', 'openai-compatible'].includes(server.connectionType));
-	const isOllamaFamily = $derived(['ollama'].includes(server.connectionType));
+	const isOpenAiFamily = $derived(
+		[ConnectionType.OpenAI, ConnectionType.OpenAICompatible].includes(server.connectionType)
+	);
+	const isOllamaFamily = $derived([ConnectionType.Ollama].includes(server.connectionType));
 
 	$effect(() => {
 		serversStore.update((servers) => {
@@ -61,8 +63,12 @@
 
 <fieldset class="connection">
 	<legend class="connection__legend">
-		{#if ['openai', 'ollama'].includes(server.connectionType)}
-			<Badge variant={server.connectionType === 'openai' ? 'openai' : 'ollama'} />
+		{#if [ConnectionType.OpenAI, ConnectionType.Ollama].includes(server.connectionType)}
+			<Badge
+				variant={server.connectionType === ConnectionType.OpenAI
+					? ConnectionType.OpenAI
+					: ConnectionType.Ollama}
+			/>
 		{/if}
 		<Badge>{server.name ? server.name : server.connectionType?.toUpperCase()}</Badge>
 	</legend>

@@ -6,17 +6,17 @@
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
 	import { serversStore } from '$lib/localStorage';
-	import type { Server } from '$lib/servers';
+	import { ConnectionType, type Server } from '$lib/connections';
 
 	import Connection from './Connection.svelte';
 
 	const SUPPORTED_CONNECTION_TYPES = [
-		{ value: 'ollama', label: 'Ollama' },
-		{ value: 'openai', label: 'OpenAI: Official API' },
-		{ value: 'openai-compatible', label: 'OpenAI: Compatible servers (i.e. llama.cpp)' }
+		{ value: ConnectionType.Ollama, label: 'Ollama' },
+		{ value: ConnectionType.OpenAI, label: 'OpenAI: Official API' },
+		{ value: ConnectionType.OpenAICompatible, label: 'OpenAI: Compatible servers (i.e. llama.cpp)' }
 	];
 
-	let newConnectionType: 'ollama' | 'openai' | 'openai-compatible' | undefined = $state();
+	let newConnectionType: ConnectionType | undefined = $state();
 
 	function addServer() {
 		if (!newConnectionType) return;
@@ -27,7 +27,7 @@
 			baseUrl: getDefaultBaseUrl(),
 			isEnabled: false,
 			isVerified: null,
-			modelFilter: newConnectionType === 'openai' ? 'gpt' : undefined
+			modelFilter: newConnectionType === ConnectionType.OpenAI ? 'gpt' : undefined
 		};
 
 		serversStore.update((servers) => [...servers, newServer]);
@@ -36,11 +36,11 @@
 
 	function getDefaultBaseUrl(): string {
 		switch (newConnectionType) {
-			case 'ollama':
+			case ConnectionType.Ollama:
 				return 'http://localhost:11434';
-			case 'openai':
+			case ConnectionType.OpenAI:
 				return 'https://api.openai.com/v1';
-			case 'openai-compatible':
+			case ConnectionType.OpenAICompatible:
 				return 'http://localhost:8080/v1';
 			default:
 				return '';
