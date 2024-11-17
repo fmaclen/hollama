@@ -5,8 +5,8 @@
 	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
+	import { ConnectionType, getDefaultServer, type Server } from '$lib/connections';
 	import { serversStore } from '$lib/localStorage';
-	import { ConnectionType, type Server } from '$lib/connections';
 
 	import Connection from './Connection.svelte';
 
@@ -20,31 +20,9 @@
 
 	function addServer() {
 		if (!newConnectionType) return;
-
-		const newServer: Server = {
-			id: crypto.randomUUID(),
-			connectionType: newConnectionType,
-			baseUrl: getDefaultBaseUrl(),
-			isEnabled: false,
-			isVerified: null,
-			modelFilter: newConnectionType === ConnectionType.OpenAI ? 'gpt' : undefined
-		};
-
-		serversStore.update((servers) => [...servers, newServer]);
+		const server = getDefaultServer(newConnectionType);
+		serversStore.update((servers) => [...servers, server]);
 		newConnectionType = undefined;
-	}
-
-	function getDefaultBaseUrl(): string {
-		switch (newConnectionType) {
-			case ConnectionType.Ollama:
-				return 'http://localhost:11434';
-			case ConnectionType.OpenAI:
-				return 'https://api.openai.com/v1';
-			case ConnectionType.OpenAICompatible:
-				return 'http://localhost:8080/v1';
-			default:
-				return '';
-		}
 	}
 </script>
 

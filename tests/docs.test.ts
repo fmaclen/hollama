@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import type { Model } from '$lib/settings';
 
 import {
-	DEFAULT_OLLAMA_SERVER,
+	MOCK_DEFAULT_SERVER_ID,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_KNOWLEDGE,
 	mockTagsResponse,
@@ -35,7 +35,7 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	// Stage 2 sessions
 	const models: Model[] = MOCK_API_TAGS_RESPONSE.models.map((model) => ({
 		name: model.name,
-		serverId: DEFAULT_OLLAMA_SERVER.id
+		serverId: MOCK_DEFAULT_SERVER_ID
 	}));
 	await page.evaluate(
 		({ modelA, modelB }) =>

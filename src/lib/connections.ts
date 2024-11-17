@@ -15,11 +15,26 @@ export interface Server {
 	apiKey?: string;
 }
 
-// const DEFAULT_SERVER: Server = {
-// 	id: crypto.randomUUID(),
-// 	name: '',
-// 	baseUrl: 'http://localhost:11434',
-// 	connectionType: ConnectionType.Ollama,
-// 	isVerified: null,
-// 	isEnabled: false
-// };
+export function getDefaultServer(connectionType: ConnectionType): Server {
+	let baseUrl: string = '';
+	let modelFilter: string | undefined = undefined;
+
+	switch (connectionType) {
+		case ConnectionType.Ollama:
+			baseUrl = 'http://localhost:11434';
+		case ConnectionType.OpenAI:
+			baseUrl = 'https://api.openai.com/v1';
+			modelFilter = 'gpt';
+		case ConnectionType.OpenAICompatible:
+			baseUrl = 'http://localhost:8080/v1';
+	}
+
+	return {
+		id: crypto.randomUUID(),
+		baseUrl,
+		connectionType,
+		modelFilter,
+		isVerified: null,
+		isEnabled: false
+	};
+}

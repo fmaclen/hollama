@@ -2,8 +2,8 @@ import { expect, type Locator, type Page, type Route } from '@playwright/test';
 import type { ChatResponse, ListResponse } from 'ollama/browser';
 import type OpenAI from 'openai';
 
+import { ConnectionType, getDefaultServer } from '$lib/connections';
 import type { Knowledge } from '$lib/knowledge';
-import { ConnectionType } from '$lib/connections';
 
 export const MOCK_API_TAGS_RESPONSE: ListResponse = {
 	models: [
@@ -150,6 +150,8 @@ export const MOCK_OPENAI_MODELS: OpenAI.Models.Model[] = [
 	{ id: 'text-davinci-003', object: 'model', created: 1669599635, owned_by: 'openai-internal' }
 ];
 
+export const MOCK_DEFAULT_SERVER_ID = 'abc123';
+
 export async function chooseFromCombobox(
 	page: Page,
 	label: string | RegExp,
@@ -168,23 +170,13 @@ export async function chooseModel(page: Page, modelName: string) {
 	await chooseFromCombobox(page, 'Available models', modelName);
 }
 
-// Ollama mock functions
-export const DEFAULT_OLLAMA_SERVER: Server = {
-	id: crypto.randomUUID(),
-	connectionType: ConnectionType.Ollama,
-	baseUrl: 'http://localhost:11434',
-	isEnabled: true,
-	isVerified: null,
-	modelFilter: undefined
-};
-
 export async function mockTagsResponse(page: Page) {
 	await page.goto('/');
 
 	// Add the default server to the servers list
 	await page.evaluate(
 		(data) => window.localStorage.setItem('hollama-servers', JSON.stringify(data)),
-		[DEFAULT_OLLAMA_SERVER]
+		[{ ...getDefaultServer(ConnectionType.Ollama), id: MOCK_DEFAULT_SERVER_ID }]
 	);
 
 	// Mock the tags response
@@ -196,13 +188,14 @@ export async function mockTagsResponse(page: Page) {
 		});
 	});
 
-
 	// Reload the page to load the servers list
 	await page.reload();
 
 	// Fetch list of models
 	await expect(page.getByText('Verify')).toBeVisible();
-	await expect(page.getByText('Connection has been verified and is ready to use')).not.toBeVisible();
+	await expect(
+		page.getByText('Connection has been verified and is ready to use')
+	).not.toBeVisible();
 
 	await page.getByText('Verify').click();
 	await expect(page.getByText('Connection has been verified and is ready to use')).toBeVisible();
