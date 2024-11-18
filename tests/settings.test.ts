@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 
-import { chooseFromCombobox, mockTagsResponse } from './utils';
+import { mockTagsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
@@ -42,9 +42,7 @@ test('deletes all settings and resets to default values', async ({ page }) => {
 	await expect(page.getByText('Base URL')).not.toBeVisible();
 
 	// Check the settings have been reset to defaults
-	localStorageSettings = await page.evaluate(() =>
-		window.localStorage.getItem('hollama-settings')
-	);
+	localStorageSettings = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(localStorageSettings).not.toContain('"userTheme":"dark"');
 	await expect(page.getByText('Dark')).toBeVisible();
 	await expect(page.getByText('Light')).not.toBeVisible();

@@ -5,7 +5,7 @@
 	import FieldSelect from '$lib/components/FieldSelect.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
-	import { ConnectionType, getDefaultServer, type Server } from '$lib/connections';
+	import { ConnectionType, getDefaultServer } from '$lib/connections';
 	import { serversStore } from '$lib/localStorage';
 
 	import Connection from './Connection.svelte';

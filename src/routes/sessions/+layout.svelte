@@ -3,15 +3,15 @@
 
 	import LL from '$i18n/i18n-svelte';
 	import { getLastUsedModels } from '$lib/chat';
-	import { type Model } from '$lib/settings';
 	import { OllamaStrategy } from '$lib/chat/ollama';
 	import { OpenAIStrategy } from '$lib/chat/openai';
 	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
-	import { sessionsStore, settingsStore, serversStore } from '$lib/localStorage';
+	import { serversStore, sessionsStore, settingsStore } from '$lib/localStorage';
 	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
+	import { type Model } from '$lib/settings';
 	import { Sitemap } from '$lib/sitemap';
 
 	async function listModels(): Promise<Model[]> {

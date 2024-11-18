@@ -13,8 +13,8 @@
 	import FieldInput from '$lib/components/FieldInput.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
-	import { serversStore } from '$lib/localStorage';
 	import { ConnectionType, type Server } from '$lib/connections';
+	import { serversStore } from '$lib/localStorage';
 
 	import OllamaBaseURLHelp from './ollama/BaseURLHelp.svelte';
 	import PullModel from './ollama/PullModel.svelte';
