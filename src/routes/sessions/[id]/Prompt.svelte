@@ -35,7 +35,7 @@
 	let isOllamaFamily = false;
 	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
 
-	$: if (chosenModel) $session.model = $settingsStore.models.find((m) => m.name === chosenModel);
+	$: $session.model = $settingsStore.models.find((m) => m.name === chosenModel);
 	$: isOllamaFamily =
 		$serversStore.find((s) => s.id === $session.model?.serverId)?.connectionType ===
 		ConnectionType.Ollama;
