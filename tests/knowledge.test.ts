@@ -211,10 +211,19 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	});
 
 	await page.locator('button', { hasText: 'Run' }).click();
+	const DEFAULT_OLLAMA_OPTIONS = {
+		penalize_newline: false,
+		numa: false,
+		low_vram: false,
+		f16_kv: false,
+		vocab_only: false,
+		use_mmap: false,
+		use_mlock: false
+	};
 	expect(requestPostData).toContain(
 		JSON.stringify({
 			model: MOCK_API_TAGS_RESPONSE.models[0].name,
-			options: {},
+			options: DEFAULT_OLLAMA_OPTIONS,
 			messages: [
 				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
 				{ role: 'user', content: 'What is this about?' }
@@ -234,7 +243,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	expect(requestPostData).toContain(
 		JSON.stringify({
 			model: MOCK_API_TAGS_RESPONSE.models[0].name,
-			options: {},
+			options: DEFAULT_OLLAMA_OPTIONS,
 			messages: [
 				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
 				{ role: 'user', content: 'What is this about?' }
@@ -257,7 +266,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	expect(requestPostData).toContain(
 		JSON.stringify({
 			model: MOCK_API_TAGS_RESPONSE.models[0].name,
-			options: {},
+			options: DEFAULT_OLLAMA_OPTIONS,
 			messages: [
 				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
 				{ role: 'user', content: 'What is this about?' },

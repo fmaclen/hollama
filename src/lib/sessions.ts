@@ -15,10 +15,10 @@ export interface Message extends ChatMessage {
 
 export interface Session {
 	id: string;
-	model?: Model;
 	messages: Message[];
 	systemPrompt: Message;
 	options: Partial<OllamaOptions>;
+	model?: Model;
 	updatedAt?: string;
 }
 
