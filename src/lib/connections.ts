@@ -22,11 +22,14 @@ export function getDefaultServer(connectionType: ConnectionType): Server {
 	switch (connectionType) {
 		case ConnectionType.Ollama:
 			baseUrl = 'http://localhost:11434';
+			break;
 		case ConnectionType.OpenAI:
 			baseUrl = 'https://api.openai.com/v1';
 			modelFilter = 'gpt';
+			break;
 		case ConnectionType.OpenAICompatible:
 			baseUrl = 'http://localhost:8080/v1';
+			break;
 	}
 
 	return {

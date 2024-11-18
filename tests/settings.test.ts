@@ -1,24 +1,31 @@
 import { expect, test } from '@playwright/test';
 import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 
-import { mockTagsResponse } from './utils';
+import { chooseFromCombobox, mockTagsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
 	await mockTagsResponse(page);
 });
 
 test('deletes all settings and resets to default values', async ({ page }) => {
-	await page.goto('/');
-
-	await page.getByLabel('Server').fill('http://localhost:3000');
-	await page.reload();
-	await expect(page.getByLabel('Server')).toHaveValue('http://localhost:3000');
+	await expect(page.getByLabel('Base URL')).toHaveValue('http://localhost:11434');
 
 	// Check if the settings store is updated with the selected server
-	let localStorageValue = await page.evaluate(() =>
+	let localStorageServers = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-servers')
+	);
+	expect(localStorageServers).toContain('"baseUrl":"http://localhost:11434"');
+
+	// Change theme to dark mode
+	await page.getByText('Dark').click();
+	await expect(page.getByText('Light')).toBeVisible();
+	await expect(page.getByText('Dark')).not.toBeVisible();
+
+	// Check the settings have been saved to localStorage
+	let localStorageSettings = await page.evaluate(() =>
 		window.localStorage.getItem('hollama-settings')
 	);
-	expect(localStorageValue).toContain('"ollamaServer":"http://localhost:3000"');
+	expect(localStorageSettings).toContain('"userTheme":"dark"');
 
 	// Click the delete button
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete server settings?'));
@@ -26,12 +33,21 @@ test('deletes all settings and resets to default values', async ({ page }) => {
 
 	// Wait for page reload
 	await page.waitForFunction(() => {
-		return window.localStorage.getItem('hollama-settings') !== null;
+		return window.localStorage.getItem('hollama-servers') !== null;
 	});
 
-	// Check if the settings has been reset to defaults
-	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
-	expect(localStorageValue).toContain('"ollamaServer":"http://localhost:11434"');
+	// Check the servers have been removed completely
+	localStorageServers = await page.evaluate(() => window.localStorage.getItem('hollama-servers'));
+	expect(localStorageServers).not.toContain('"baseUrl":"http://localhost:11434"');
+	await expect(page.getByText('Base URL')).not.toBeVisible();
+
+	// Check the settings have been reset to defaults
+	localStorageSettings = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-settings')
+	);
+	expect(localStorageSettings).not.toContain('"userTheme":"dark"');
+	await expect(page.getByText('Dark')).toBeVisible();
+	await expect(page.getByText('Light')).not.toBeVisible();
 });
 
 test('a model can be pulled from the ollama library', async ({ page }) => {

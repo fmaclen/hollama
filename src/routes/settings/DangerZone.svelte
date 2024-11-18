@@ -13,6 +13,7 @@
 		};
 		if (confirm(dialogText[item])) {
 			localStorage.removeItem(item);
+			if (item === StorageKey.HollamaSettings) localStorage.removeItem(StorageKey.HollamaServers);
 			location.reload();
 		}
 	}
