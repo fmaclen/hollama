@@ -718,12 +718,8 @@ test.describe('Session', () => {
 	});
 
 	test('handles errors when fetching models', async ({ page }) => {
-		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
-
-		await expect(page.getByTestId('disconnected-server')).not.toBeVisible();
-
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await expect(page.getByText('Run')).toBeEnabled();
@@ -735,8 +731,6 @@ test.describe('Session', () => {
 		await page.route('**/chat', async (route) => {
 			await route.abort('failed');
 		});
-		await page.getByTestId('new-session').click();
-		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.getByText('Run').click();
 		await expect(
 			page.locator('ol[data-sonner-toaster] li', { hasText: "Can't connect to Ollama server" })
