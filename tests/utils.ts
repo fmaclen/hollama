@@ -215,22 +215,14 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
 
 export async function mockOpenAIModelsResponse(page: Page, models: OpenAI.Models.Model[]) {
 	await page.goto('/');
-
-	// Add the default server to the servers list
-	await page.evaluate(
-		(data) => window.localStorage.setItem('hollama-servers', JSON.stringify(data)),
-		[{ ...getDefaultServer(ConnectionType.OpenAI), id: MOCK_DEFAULT_SERVER_ID }]
-	);
-
+	await chooseFromCombobox(page, 'Connection type', 'OpenAI: Official API');
+	await page.getByText('Add connection').click();
+	await page.getByLabel('API Key').fill('sk-validapikey');
 	await page.route('**/v1/models', async (route: Route) => {
 		await route.fulfill({ json: { data: models } });
 	});
-
-	await page.getByLabel('Base URL').fill('https://api.openai.com/v1');
-	await page.getByLabel('API Key').fill('sk-validapikey');
-	await page.getByRole('button', { name: 'Connect' }).click();
-
-	await expect(page.getByText('Sync was successful')).toBeVisible();
+	await page.getByRole('button', { name: 'Verify', exact: true }).click();
+	await expect(page.getByText('Connection has been verified and is ready to use')).toBeVisible();
 }
 
 export async function mockOpenAICompletionResponse(

@@ -92,7 +92,6 @@ test.describe('OpenAI Integration', () => {
 		await page.getByTestId('new-session').click();
 		await page.getByLabel('Available models').click();
 		await page.getByRole('option', { name: 'gpt-3.5-turbo' }).click();
-
 		await mockOpenAICompletionResponse(page, MOCK_OPENAI_COMPLETION_RESPONSE_1);
 
 		// Simulate sending a message
@@ -102,18 +101,18 @@ test.describe('OpenAI Integration', () => {
 
 		// Check localStorage
 		const sessions = await page.evaluate(() => localStorage.getItem('hollama-sessions'));
-		expect(sessions).toContain('"model":"gpt-3.5-turbo"');
+		expect(sessions).toContain('"name":"gpt-3.5-turbo"');
 	});
 
 	test('only GPT models are available in FieldModelSelect', async ({ page }) => {
 		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 		expect(MOCK_OPENAI_MODELS).toHaveLength(3);
 		expect(MOCK_OPENAI_MODELS[2].id).toContain('text-davinci-003');
+		await expect(page.getByLabel('Model names filter')).toHaveValue('gpt');
 
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
 		await page.getByLabel('Available models').click();
-
 		await expect(page.getByRole('option', { name: 'gpt-3.5-turbo' })).toBeVisible();
 		await expect(page.getByRole('option', { name: 'gpt-4' })).toBeVisible();
 		await expect(page.getByRole('option', { name: 'text-davinci-003' })).not.toBeVisible();
