@@ -31,12 +31,13 @@ test.describe('OpenAI Integration', () => {
 
 	test('handles network connection error', async ({ page }) => {
 		await page.route('**/v1/models', (route) => route.abort('failed'));
+		await chooseFromCombobox(page, 'Connection type', 'OpenAI: Official API');
+		await page.getByText('Add connection').click();
+		await expect(page.getByLabel('Base URL')).toHaveValue('https://api.openai.com/v1');
 
-		await page.getByLabel('Base URL').fill('https://api.openai.com/v1');
 		await page.getByLabel('API Key').fill('sk-validapikey');
-		await page.getByRole('button', { name: 'Connect' }).click();
-
-		await expect(page.getByText('Failed to connect to OpenAI')).toBeVisible();
+		await page.getByRole('button', { name: 'Verify' }).click();
+		await expect(page.getByText('Connection failed to verify, check the connection settings and try again')).toBeVisible();
 	});
 
 	test('cannot send fetch requests without apiKey or baseUrl set', async ({ page }) => {
