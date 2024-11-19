@@ -87,7 +87,7 @@
 			</Button>
 
 			<Button
-				disabled={isLoading}
+				disabled={isLoading || !server.baseUrl}
 				variant={!server.isVerified ? 'default' : 'outline'}
 				on:click={verifyServer}
 			>

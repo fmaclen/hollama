@@ -40,17 +40,15 @@ test.describe('OpenAI Integration', () => {
 		await expect(page.getByText('Connection failed to verify, check the connection settings and try again')).toBeVisible();
 	});
 
-	test('cannot send fetch requests without apiKey or baseUrl set', async ({ page }) => {
-		const connectButton = page.getByRole('button', { name: 'Connect' });
-
-		await expect(connectButton).toBeDisabled();
-
-		await page.getByLabel('Base URL').fill('https://api.openai.com/v1');
-		await expect(connectButton).toBeDisabled();
+	test('cannot send fetch requests without a baseUrl set', async ({ page }) => {
+		await chooseFromCombobox(page, 'Connection type', 'OpenAI: Official API');
+		await page.getByText('Add connection').click();
+		const verifyButton = page.getByRole('button', { name: 'Verify' });
+		await expect(verifyButton).toBeEnabled();
+		await expect(page.getByLabel('Base URL')).toHaveValue('https://api.openai.com/v1');
 
 		await page.getByLabel('Base URL').clear();
-		await page.getByLabel('API Key').fill('sk-validapikey');
-		await expect(connectButton).toBeDisabled();
+		await expect(verifyButton).toBeDisabled();
 	});
 
 	test('models list is sorted correctly', async ({ page }) => {
