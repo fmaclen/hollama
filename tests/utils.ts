@@ -214,6 +214,14 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
 // OpenAI mock functions
 
 export async function mockOpenAIModelsResponse(page: Page, models: OpenAI.Models.Model[]) {
+	await page.goto('/');
+
+	// Add the default server to the servers list
+	await page.evaluate(
+		(data) => window.localStorage.setItem('hollama-servers', JSON.stringify(data)),
+		[{ ...getDefaultServer(ConnectionType.OpenAI), id: MOCK_DEFAULT_SERVER_ID }]
+	);
+
 	await page.route('**/v1/models', async (route: Route) => {
 		await route.fulfill({ json: { data: models } });
 	});

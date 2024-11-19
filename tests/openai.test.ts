@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import {
+	chooseFromCombobox,
 	MOCK_OPENAI_COMPLETION_RESPONSE_1,
 	MOCK_OPENAI_MODELS,
 	MOCK_SESSION_1_RESPONSE_1,
@@ -15,15 +16,17 @@ test.describe('OpenAI Integration', () => {
 	});
 
 	test('fails to fetch data with an incorrect API key', async ({ page }) => {
+		await chooseFromCombobox(page, 'Connection type', 'OpenAI: Official API');
+		await page.getByText('Add connection').click();
+		await expect(page.getByLabel('Base URL')).toHaveValue('https://api.openai.com/v1');
+
 		await page.route('**/v1/models', (route) => {
 			route.fulfill({ status: 401, json: { error: { message: 'Invalid API key' } } });
 		});
-
-		await page.getByLabel('Base URL').fill('https://api.openai.com/v1');
 		await page.getByLabel('API Key').fill('sk-invalidapikey');
-		await page.getByRole('button', { name: 'Connect' }).click();
+		await page.getByRole('button', { name: 'Verify' }).click();
 
-		await expect(page.getByText('Failed to connect to OpenAI')).toBeVisible();
+		await expect(page.getByText('Connection failed to verify, check the connection settings and try again')).toBeVisible();
 	});
 
 	test('handles network connection error', async ({ page }) => {
