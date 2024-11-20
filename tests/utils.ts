@@ -170,7 +170,7 @@ export async function chooseModel(page: Page, modelName: string) {
 	await chooseFromCombobox(page, 'Available models', modelName);
 }
 
-export async function mockTagsResponse(page: Page) {
+export async function mockOllamaModelsResponse(page: Page) {
 	await page.goto('/');
 
 	// Add the default server to the servers list

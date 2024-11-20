@@ -8,7 +8,7 @@ import {
 	MOCK_SESSION_1_RESPONSE_3,
 	MOCK_SESSION_2_RESPONSE_1,
 	mockCompletionResponse,
-	mockTagsResponse,
+	mockOllamaModelsResponse,
 	textEditorLocator
 } from './utils';
 
@@ -16,7 +16,7 @@ test.describe('Session', () => {
 	let promptTextarea: Locator;
 
 	test.beforeEach(async ({ page }) => {
-		await mockTagsResponse(page);
+		await mockOllamaModelsResponse(page);
 		promptTextarea = page.locator('.prompt-editor__textarea');
 	});
 

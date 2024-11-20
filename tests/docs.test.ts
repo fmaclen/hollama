@@ -6,12 +6,12 @@ import {
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_DEFAULT_SERVER_ID,
 	MOCK_KNOWLEDGE,
-	mockTagsResponse,
+	mockOllamaModelsResponse,
 	seedKnowledgeAndReload
 } from './utils';
 
 test.beforeEach(async ({ page }) => {
-	await mockTagsResponse(page);
+	await mockOllamaModelsResponse(page);
 });
 
 test('seed data and take screenshots for README.md', async ({ page }) => {

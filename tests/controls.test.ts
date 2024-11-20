@@ -8,11 +8,11 @@ import {
 	MOCK_SESSION_1_RESPONSE_2,
 	MOCK_SESSION_1_RESPONSE_3,
 	MOCK_SESSION_2_RESPONSE_1,
-	mockTagsResponse
+	mockOllamaModelsResponse
 } from './utils';
 
 test.beforeEach(async ({ page }) => {
-	await mockTagsResponse(page);
+	await mockOllamaModelsResponse(page);
 });
 
 test('can navigate between session messages and controls', async ({ page }) => {

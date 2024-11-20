@@ -7,7 +7,7 @@ import {
 	MOCK_SESSION_1_RESPONSE_1,
 	mockOpenAICompletionResponse,
 	mockOpenAIModelsResponse,
-	mockTagsResponse
+	mockOllamaModelsResponse
 } from './utils';
 
 test.describe('OpenAI Integration', () => {
@@ -52,7 +52,7 @@ test.describe('OpenAI Integration', () => {
 	});
 
 	test('models list is sorted correctly', async ({ page }) => {
-		await mockTagsResponse(page);
+		await mockOllamaModelsResponse(page);
 		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
 		await page.getByText('Sessions', { exact: true }).click();

@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 
-import { mockTagsResponse } from './utils';
+import { mockOllamaModelsResponse } from './utils';
 
 test.beforeEach(async ({ page }) => {
-	await mockTagsResponse(page);
+	await mockOllamaModelsResponse(page);
 });
 
 test('deletes all settings and resets to default values', async ({ page }) => {
