@@ -25,21 +25,37 @@
 		knowledge?: Knowledge;
 	};
 
-	export let editor: Writable<Editor>;
-	export let session: Writable<Session>;
-	export let handleSubmit: () => void;
-	export let stopCompletion: () => void;
-	export let scrollToBottom: (shouldForceScroll: boolean) => void;
+	interface Props {
+		editor: Writable<Editor>;
+		session: Writable<Session>;
+		handleSubmit: () => void;
+		stopCompletion: () => void;
+		scrollToBottom: (shouldForceScroll: boolean) => void;
+	}
 
-	let chosenModel: string;
-	let isOllamaFamily = false;
+	let {
+		editor = $bindable(),
+		session = $bindable(),
+		handleSubmit,
+		stopCompletion,
+		scrollToBottom
+	}: Props = $props();
+
+	let chosenModel: string | undefined = $state(undefined);
 	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
 
-	$: $session.model = $settingsStore.models.find((m) => m.name === chosenModel);
-	$: isOllamaFamily =
+	const isOllamaFamily = $derived(() =>
 		$serversStore.find((s) => s.id === $session.model?.serverId)?.connectionType ===
-		ConnectionType.Ollama;
-	$: $attachments.length && scrollToBottom(true);
+			ConnectionType.Ollama
+	);
+
+	$effect(() => {
+		$session.model = $settingsStore.models.find((m) => m.name === chosenModel);
+	});
+
+	$effect(() => {
+		$attachments.length && scrollToBottom(true);
+	});
 
 	function toggleCodeEditor() {
 		$editor.isCodeEditor = !$editor.isCodeEditor;
@@ -156,7 +172,7 @@ ${a.knowledge.content}
 					placeholder={$LL.promptPlaceholder()}
 					bind:this={$editor.promptTextarea}
 					bind:value={$editor.prompt}
-					on:keydown={handleKeyDown}
+					onkeydown={handleKeyDown}
 				></textarea>
 			</Field>
 		{/if}
