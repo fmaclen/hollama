@@ -33,7 +33,7 @@
 		if (!$settingsStore.userLanguage)
 			$settingsStore.userLanguage = detectLocale(
 				'en',
-				['en', 'es', 'ja', 'tr', 'pt-br', 'zh-cn', 'vi'],
+				['en', 'es', 'de', 'ja', 'tr', 'pt-br', 'zh-cn', 'vi'],
 				navigatorDetector
 			) as Locales;
 
