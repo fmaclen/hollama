@@ -5,9 +5,9 @@ import {
 	MOCK_OPENAI_COMPLETION_RESPONSE_1,
 	MOCK_OPENAI_MODELS,
 	MOCK_SESSION_1_RESPONSE_1,
+	mockOllamaModelsResponse,
 	mockOpenAICompletionResponse,
-	mockOpenAIModelsResponse,
-	mockOllamaModelsResponse
+	mockOpenAIModelsResponse
 } from './utils';
 
 test.describe('OpenAI Integration', () => {
@@ -26,7 +26,9 @@ test.describe('OpenAI Integration', () => {
 		await page.getByLabel('API Key').fill('sk-invalidapikey');
 		await page.getByRole('button', { name: 'Verify' }).click();
 
-		await expect(page.getByText('Connection failed to verify, check the connection settings and try again')).toBeVisible();
+		await expect(
+			page.getByText('Connection failed to verify, check the connection settings and try again')
+		).toBeVisible();
 	});
 
 	test('handles network connection error', async ({ page }) => {
@@ -37,7 +39,9 @@ test.describe('OpenAI Integration', () => {
 
 		await page.getByLabel('API Key').fill('sk-validapikey');
 		await page.getByRole('button', { name: 'Verify' }).click();
-		await expect(page.getByText('Connection failed to verify, check the connection settings and try again')).toBeVisible();
+		await expect(
+			page.getByText('Connection failed to verify, check the connection settings and try again')
+		).toBeVisible();
 	});
 
 	test('cannot send fetch requests without a baseUrl set', async ({ page }) => {

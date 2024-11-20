@@ -186,7 +186,7 @@
 		HACK: This is needed because of a bug in Svelte 5 with `dark:` selectors
 		REF: https://github.com/sveltejs/svelte/issues/14330
 	*/
-	.markdown :global(code:where([data-color-theme="dark"], [data-color-theme="dark"] *)) {
+	.markdown :global(code:where([data-color-theme='dark'], [data-color-theme='dark'] *)) {
 		@apply bg-amber-950 text-orange-500;
 	}
 
@@ -199,7 +199,7 @@
 		HACK: This is needed because of a bug in Svelte 5 with `dark:` selectors
 		REF: https://github.com/sveltejs/svelte/issues/14330
 	*/
-	.markdown :global(pre code:where([data-color-theme="dark"], [data-color-theme="dark"] *)) {
+	.markdown :global(pre code:where([data-color-theme='dark'], [data-color-theme='dark'] *)) {
 		@apply invert;
 	}
 

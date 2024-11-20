@@ -6,8 +6,8 @@ import {
 	MOCK_OPENAI_MODELS,
 	MOCK_SESSION_1_RESPONSE_1,
 	mockCompletionResponse,
-	mockOpenAIModelsResponse,
-	mockOllamaModelsResponse
+	mockOllamaModelsResponse,
+	mockOpenAIModelsResponse
 } from './utils';
 
 test.describe('FieldSelect', () => {

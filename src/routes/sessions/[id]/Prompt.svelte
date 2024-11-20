@@ -44,8 +44,9 @@
 	let chosenModel: string | undefined = $state(undefined);
 	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
 
-	const isOllamaFamily = $derived(() =>
-		$serversStore.find((s) => s.id === $session.model?.serverId)?.connectionType ===
+	const isOllamaFamily = $derived(
+		() =>
+			$serversStore.find((s) => s.id === $session.model?.serverId)?.connectionType ===
 			ConnectionType.Ollama
 	);
 
