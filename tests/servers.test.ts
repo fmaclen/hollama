@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 
-import { chooseFromCombobox } from './utils';
+import { chooseFromCombobox, mockOllamaModelsResponse } from './utils';
 
 test.describe('Servers', () => {
 	test('it migrates old server settings to new format', async ({ page }) => {
@@ -93,6 +93,7 @@ test.describe('Servers', () => {
 	test.skip('can name connections to identify models', async ({ page }) => {});
 
 	test('a model can be pulled from the ollama library', async ({ page }) => {
+		await mockOllamaModelsResponse(page);
 		const downloadButton = page.getByRole('button', { name: 'Download model' });
 		const modelTagInput = page.getByLabel('Pull model');
 
