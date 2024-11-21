@@ -24,6 +24,7 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'settings.png' });
 
 	await page.goto('/sessions/ulxz6l'); // Visiting a fake session id so it doesn't change from test to test
+	await expect(page.getByText('No sessions')).toBeVisible();
 	await expect(page.locator('.prompt-editor__textarea')).toBeVisible();
 	await expect(page.locator('.text-editor')).not.toBeVisible();
 
