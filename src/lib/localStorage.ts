@@ -4,8 +4,8 @@ import { browser } from '$app/environment';
 import type { Session } from '$lib/sessions';
 
 import type { Knowledge } from './knowledge';
-import type { Server } from './servers';
 import { DEFAULT_SETTINGS, type Settings } from './settings';
+import type { Server } from './connections';
 
 function createLocalStorageStore<T>(key: string, defaultValue: T) {
 	const initialValue: T = browser

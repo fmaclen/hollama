@@ -90,6 +90,7 @@ const vi = {
 	seed: 'Seed',
 	seeDocs: 'Xem tài liệu',
 	servers: 'Máy chủ',
+	serverSettingsUpdated: 'Cấu hình máy chủ đã được cập nhật và cần được xác nhận lại trong "Cài đặt"',
 	session: 'Phiên',
 	sessions: 'Các phiên',
 	settings: 'Cài đặt',

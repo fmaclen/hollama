@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Brain, MessageSquareText, Moon, NotebookText, Settings2, Sun } from 'lucide-svelte';
 	import { onMount } from 'svelte';
-	import { Toaster } from 'svelte-sonner';
+	import { toast, Toaster } from 'svelte-sonner';
 	import { detectLocale, navigatorDetector } from 'typesafe-i18n/detectors';
 
 	import LL, { setLocale } from '$i18n/i18n-svelte';
@@ -14,7 +14,8 @@
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { settingsStore } from '$lib/localStorage';
+	import { ConnectionType, getDefaultServer } from '$lib/connections';
+	import { serversStore, settingsStore, StorageKey } from '$lib/localStorage';
 	import { checkForUpdates, updateStatusStore } from '$lib/updates';
 
 	$: pathname = $page.url.pathname;
@@ -28,6 +29,7 @@
 	});
 
 	onMount(() => {
+		// Language
 		if (!$settingsStore.userLanguage)
 			$settingsStore.userLanguage = detectLocale(
 				'en',
@@ -38,6 +40,55 @@
 		loadLocale($settingsStore.userLanguage);
 		setLocale($settingsStore.userLanguage);
 
+		// Migrate old server settings to new format
+		const settingsLocalStorage = localStorage.getItem(StorageKey.HollamaSettings);
+		if (settingsLocalStorage) {
+			const settings = JSON.parse(settingsLocalStorage);
+
+			if (settings.ollamaServer || settings.openaiServer) {
+				// Migrate Ollama server settings
+				if (settings.ollamaServer) {
+					console.warn('Migrating Ollama server settings');
+					serversStore.update((servers) => [
+						...servers,
+						{
+							...getDefaultServer(ConnectionType.Ollama),
+							baseUrl: settings.ollamaServer
+						}
+					]);
+
+					delete settings.ollamaServer;
+					delete settings.ollamaModel;
+					delete settings.ollamaServerStatus;
+					delete settings.ollamaModels;
+				}
+
+				// Migrate OpenAI server settings
+				if (settings.openaiServer) {
+					console.warn('Migrating OpenAI server settings');
+					serversStore.update((servers) => [
+						...servers,
+						{
+							...getDefaultServer(ConnectionType.OpenAI),
+							baseUrl: settings.openaiServer,
+							apiKey: settings.openaiApiKey
+						}
+					]);
+
+					delete settings.openaiServer;
+					delete settings.openaiApiKey;
+				}
+
+				// Reset the settings store with the removed keys
+				localStorage.removeItem(StorageKey.HollamaSettings);
+				settingsStore.set(settings);
+
+				// Ask the user to re-verify the server connections
+				toast.warning($LL.serverSettingsUpdated());
+			}
+		}
+
+		// Color theme
 		if (!browser || theme) return;
 		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 			? 'dark'

@@ -90,6 +90,7 @@ const zh_cn = {
 	searchEmpty: '无结果',
 	seeDocs: '查看文档',
 	servers: '服务器',
+	serverSettingsUpdated: '服务器配置已更新，需要在 "设置" 中重新验证',
 	session: '会话',
 	sessions: '会话',
 	settings: '设置',

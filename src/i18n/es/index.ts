@@ -93,6 +93,7 @@ const es = {
 	searchEmpty: 'No se encontraron resultados',
 	seeDocs: 'Ver documentación',
 	servers: 'Servidores',
+	serverSettingsUpdated: 'La configuración del servidor fue actualizada y necesita ser re-verificada en "Ajustes"',
 	session: 'Sesión',
 	sessions: 'Sesiones',
 	settings: 'Ajustes',

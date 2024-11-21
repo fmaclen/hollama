@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 
 import { mockOllamaModelsResponse } from './utils';
 
@@ -46,57 +45,6 @@ test('deletes all settings and resets to default values', async ({ page }) => {
 	expect(localStorageSettings).not.toContain('"userTheme":"dark"');
 	await expect(page.getByText('Dark')).toBeVisible();
 	await expect(page.getByText('Light')).not.toBeVisible();
-});
-
-test('a model can be pulled from the ollama library', async ({ page }) => {
-	const downloadButton = page.getByRole('button', { name: 'Download model' });
-	const modelTagInput = page.getByLabel('Pull model');
-
-	await page.goto('/settings');
-	await expect(downloadButton).toBeDisabled();
-	await expect(downloadButton).not.toHaveClass(/button--is-loading/);
-
-	await modelTagInput.fill('llama3.1');
-	await expect(downloadButton).toBeEnabled();
-	await expect(downloadButton).not.toHaveClass(/button--is-loading/);
-
-	await page.route('**/api/pull', (route) => {
-		setTimeout(() => route.fulfill({ json: { status: 'pulling model' } }), 1000);
-	});
-	await downloadButton.click();
-	await expect(downloadButton).toBeDisabled();
-	await expect(downloadButton).toHaveClass(/button--is-loading/);
-	await expect(modelTagInput).toBeDisabled();
-	await expect(page.getByText('Pulling model', { exact: false })).toBeVisible();
-	await expect(downloadButton).not.toBeDisabled();
-
-	const progressResponse: ProgressResponse = {
-		status: 'pulling 5fd4e1793450',
-		completed: 25,
-		total: 50,
-		digest: 'sha256:5fd4e179345020dd97359b0b4fd6ae20c3f918d6b8ed8cda7d855f92561c7ea7'
-	};
-	await page.route('**/api/pull', (route) => route.fulfill({ json: progressResponse }));
-	await downloadButton.click();
-	await expect(page.getByText('pulling 5fd4e1793450', { exact: false })).toBeVisible();
-	await expect(page.getByText('50%', { exact: false })).toBeVisible();
-
-	const errorResponse: ErrorResponse = { error: 'pull model manifest: file does not exist' };
-	await page.route('**/api/pull', (route) => route.fulfill({ json: errorResponse }));
-	await downloadButton.click();
-	await expect(page.getByText('Sorry, something went wrong', { exact: false })).toBeVisible();
-	await expect(
-		page.getByText('pull model manifest: file does not exist', { exact: false })
-	).toBeVisible();
-
-	const successResponse: StatusResponse = { status: 'success' };
-	await page.route('**/api/pull', (route) => route.fulfill({ json: successResponse }));
-	await downloadButton.click();
-	await expect(page.getByText('Success', { exact: false })).toBeVisible();
-	await expect(page.getByText('llama3.1 was downloaded', { exact: false })).toBeVisible();
-	await expect(modelTagInput).toHaveValue('');
-	await expect(downloadButton).toBeDisabled();
-	await expect(modelTagInput).not.toBeDisabled();
 });
 
 test('can switch language to spanish and back to english', async ({ page }) => {

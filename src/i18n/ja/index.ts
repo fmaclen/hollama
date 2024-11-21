@@ -88,6 +88,7 @@ const ja = {
 	searchEmpty: '結果が見つかりませんでした',
 	seeDocs: 'ドキュメントを参照する',
 	servers: 'サーバー',
+	serverSettingsUpdated: 'サーバーの設定が更新され、"設定"で再確認が必要です',
 	session: 'セッション',
 	sessions: 'セッション',
 	settings: '設定',

@@ -510,6 +510,10 @@ type RootTranslation = {
 	 */
 	servers: string
 	/**
+	 * S​e​r​v​e​r​ ​c​o​n​f​i​g​u​r​a​t​i​o​n​ ​w​a​s​ ​u​p​d​a​t​e​d​ ​a​n​d​ ​n​e​e​d​s​ ​t​o​ ​b​e​ ​r​e​-​v​e​r​i​f​i​e​d​ ​i​n​ ​"​S​e​t​t​i​n​g​s​"
+	 */
+	serverSettingsUpdated: string
+	/**
 	 * S​e​s​s​i​o​n
 	 */
 	session: string
@@ -1099,6 +1103,10 @@ The completion in progress will stop
 	 * Servers
 	 */
 	servers: () => LocalizedString
+	/**
+	 * Server configuration was updated and needs to be re-verified in "Settings"
+	 */
+	serverSettingsUpdated: () => LocalizedString
 	/**
 	 * Session
 	 */
