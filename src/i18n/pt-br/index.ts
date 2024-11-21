@@ -82,7 +82,8 @@ const pt_br = {
 	searchEmpty: 'Nenhum resultado encontrado',
 	seeDocs: 'Ver documentação',
 	servers: 'Servidores',
-	serverSettingsUpdated: 'A configuração do servidor foi atualizada e precisa ser re-verificada em "Ajustes"',
+	serverSettingsUpdated:
+		'A configuração do servidor foi atualizada e precisa ser re-verificada em "Ajustes"',
 	session: 'Sessão',
 	sessions: 'Sessões',
 	settings: 'Ajustes',

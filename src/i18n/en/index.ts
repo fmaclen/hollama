@@ -125,7 +125,8 @@ const en = {
 	seed: 'Seed',
 	seeDocs: 'See docs',
 	servers: 'Servers',
-	serverSettingsUpdated: 'Server configuration was updated and needs to be re-verified in "Settings"',
+	serverSettingsUpdated:
+		'Server configuration was updated and needs to be re-verified in "Settings"',
 	session: 'Session',
 	sessions: 'Sessions',
 	settings: 'Settings',

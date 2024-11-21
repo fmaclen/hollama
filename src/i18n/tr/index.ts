@@ -81,7 +81,8 @@ const tr = {
 	searchEmpty: 'Sonuç bulunamadı',
 	seeDocs: 'Belgeleri göster',
 	servers: 'Sunucular',
-	serverSettingsUpdated: 'Sunucu yapılandırması güncellendi ve "Ayarlar"\'da yeniden doğrulanması gerekiyor',
+	serverSettingsUpdated:
+		'Sunucu yapılandırması güncellendi ve "Ayarlar"\'da yeniden doğrulanması gerekiyor',
 	session: 'Oturum',
 	sessions: 'Oturumlar',
 	settings: 'Ayarlar',

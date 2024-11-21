@@ -5,14 +5,14 @@ import { chooseFromCombobox } from './utils';
 
 test.describe('Servers', () => {
 	test('it migrates old server settings to new format', async ({ page }) => {
-		const toastMessage = page.getByText('Server configuration was updated and needs to be re-verified in "Settings"');
+		const toastMessage = page.getByText(
+			'Server configuration was updated and needs to be re-verified in "Settings"'
+		);
 		await page.goto('/');
 		await expect(page).toHaveURL('/settings');
 		await expect(toastMessage).not.toBeVisible();
 
-		await page.evaluate(() =>
-			window.localStorage.removeItem('hollama-servers')
-		);
+		await page.evaluate(() => window.localStorage.removeItem('hollama-servers'));
 		let localStorageServers = await page.evaluate(() =>
 			window.localStorage.getItem('hollama-servers')
 		);
@@ -42,9 +42,7 @@ test.describe('Servers', () => {
 		localStorageSettings = await page.evaluate(() =>
 			window.localStorage.getItem('hollama-settings')
 		);
-		localStorageServers = await page.evaluate(() =>
-			window.localStorage.getItem('hollama-servers')
-		);
+		localStorageServers = await page.evaluate(() => window.localStorage.getItem('hollama-servers'));
 		expect(localStorageServers).toContain('http://localhost:42069');
 		expect(localStorageServers).toContain('https://api.openai.com/v1');
 		expect(localStorageServers).toContain('sk-validapikey');
