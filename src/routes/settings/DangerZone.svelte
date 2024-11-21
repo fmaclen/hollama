@@ -6,7 +6,7 @@
 	import { StorageKey } from '$lib/localStorage';
 
 	function deleteStorage(item: StorageKey): void {
-		const dialogText = {
+		const dialogText: Partial<Record<StorageKey, string>> = {
 			[StorageKey.HollamaSessions]: $LL.areYouSureYouWantToDeleteAllSessions(),
 			[StorageKey.HollamaKnowledge]: $LL.areYouSureYouWantToDeleteAllKnowledge(),
 			[StorageKey.HollamaSettings]: $LL.areYouSureYouWantToDeleteAllSettings()
