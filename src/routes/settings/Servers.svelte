@@ -48,7 +48,7 @@
 	</div>
 
 	<div class="servers">
-		{#if !$serversStore}
+		{#if !$serversStore.length}
 			<div class="servers__empty">
 				<EmptyMessage>{$LL.noServerConnections()}</EmptyMessage>
 			</div>
@@ -74,6 +74,6 @@
 	}
 
 	.servers__empty {
-		@apply col-span-full flex justify-center rounded-md border border-shade-3 p-4;
+		@apply col-span-full flex justify-center rounded-md border border-shade-3 p-8 -mt-3;
 	}
 </style>
