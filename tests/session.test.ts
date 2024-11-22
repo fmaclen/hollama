@@ -149,13 +149,9 @@ test.describe('Session', () => {
 		const settingsLink = page.locator('.layout__a', { hasText: 'Settings' });
 
 		await page.goto('/');
-		await expect(settingsLink).toHaveClass(/ layout__a--active/);
-		await expect(sessionLink).not.toHaveClass(/ layout__a--active/);
-
-		await sessionLink.click();
-		await expect(page.getByText('No sessions')).toBeVisible();
-		await expect(settingsLink).not.toHaveClass(/ layout__a--active/);
 		await expect(sessionLink).toHaveClass(/ layout__a--active/);
+		await expect(settingsLink).not.toHaveClass(/ layout__a--active/);
+		await expect(page.getByText('No sessions')).toBeVisible();
 		await expect(
 			page.locator('aside', {
 				hasText: 'Who would win in a fight between Emma Watson and Jessica Alba?'

@@ -214,7 +214,7 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
 // OpenAI mock functions
 
 export async function mockOpenAIModelsResponse(page: Page, models: OpenAI.Models.Model[]) {
-	await page.goto('/');
+	await page.goto('/settings');
 	await chooseFromCombobox(page, 'Connection type', 'OpenAI: Official API');
 	await page.getByText('Add connection').click();
 	await page.getByLabel('API Key').fill('sk-validapikey');

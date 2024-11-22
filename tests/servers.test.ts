@@ -60,7 +60,25 @@ test.describe('Servers', () => {
 		await expect(openaiConnection.getByLabel('API Key')).toHaveValue('sk-validapikey');
 	});
 
-	test.skip('it redirects to sessions if at least one server is verified', async ({ page }) => {});
+	test('it redirects to sessions if at least one server is verified', async ({ page }) => {
+		await page.goto('/');
+		let localStorageServers = await page.evaluate(() =>
+			window.localStorage.getItem('hollama-servers')
+		);
+		expect(localStorageServers).toContain('[]');
+		await expect(page).toHaveURL('/settings');
+
+		// Seed and verify an Ollama server
+		await mockOllamaModelsResponse(page);
+		await page.goto('/');
+		await expect(page).toHaveURL('/sessions');
+
+		localStorageServers = await page.evaluate(() =>
+			window.localStorage.getItem('hollama-servers')
+		);
+		expect(localStorageServers).toContain('isVerified');
+		expect(localStorageServers).not.toContain('\"isVerified\":null');
+	});
 
 	test.skip('can add and remove multiple server connections', async ({ page }) => {
 		await page.goto('/settings');
@@ -88,9 +106,9 @@ test.describe('Servers', () => {
 		await expect(connections.getByText('OpenAI-Compatible')).toBeVisible();
 	});
 
-	test.skip('models available on each server can be toggled on and off', async ({ page }) => {});
+	test.skip('models available on each server can be toggled on and off', async () => {});
 
-	test.skip('can name connections to identify models', async ({ page }) => {});
+	test.skip('can name connections to identify models', async () => {});
 
 	test('a model can be pulled from the ollama library', async ({ page }) => {
 		await mockOllamaModelsResponse(page);
