@@ -193,7 +193,7 @@
 	}
 
 	.connection__host {
-		@apply grid col-span-2 gap-2;
+		@apply col-span-2 grid gap-2;
 
 		&--openai {
 			@apply sm:grid sm:grid-cols-2;
