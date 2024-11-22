@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 
-import { chooseFromCombobox, mockOllamaModelsResponse } from './utils';
+import { chooseFromCombobox, MOCK_API_TAGS_RESPONSE, mockOllamaModelsResponse } from './utils';
 
 test.describe('Servers', () => {
 	test('it migrates old server settings to new format', async ({ page }) => {
@@ -73,11 +73,9 @@ test.describe('Servers', () => {
 		await page.goto('/');
 		await expect(page).toHaveURL('/sessions');
 
-		localStorageServers = await page.evaluate(() =>
-			window.localStorage.getItem('hollama-servers')
-		);
+		localStorageServers = await page.evaluate(() => window.localStorage.getItem('hollama-servers'));
 		expect(localStorageServers).toContain('isVerified');
-		expect(localStorageServers).not.toContain('\"isVerified\":null');
+		expect(localStorageServers).not.toContain('"isVerified":null');
 	});
 
 	test.skip('can add and remove multiple server connections', async ({ page }) => {
@@ -106,7 +104,33 @@ test.describe('Servers', () => {
 		await expect(connections.getByText('OpenAI-Compatible')).toBeVisible();
 	});
 
-	test.skip('models available on each server can be toggled on and off', async () => {});
+	test('models available on each server can be toggled on and off', async ({ page }) => {
+		await mockOllamaModelsResponse(page);
+		await expect(page).toHaveURL('/settings');
+		const useModelsFromThisServerCheckbox = page.getByLabel('Use models from this server');
+		await expect(useModelsFromThisServerCheckbox).toBeChecked();
+
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+		
+		const modelCombobox = page.getByLabel('Available models');
+		expect(modelCombobox).not.toBeDisabled();
+
+		await modelCombobox.click();
+		await expect(page.getByRole('option')).toHaveCount(MOCK_API_TAGS_RESPONSE.models.length);
+
+		await page.getByText('Settings').click();
+		await useModelsFromThisServerCheckbox.uncheck();
+		await expect(useModelsFromThisServerCheckbox).not.toBeChecked();
+
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+		await expect(modelCombobox).toBeDisabled();
+
+		await page.getByText('Settings').click();
+		await page.getByText('Re-verify').click();
+		await expect(useModelsFromThisServerCheckbox).toBeChecked();
+	});
 
 	test.skip('can name connections to identify models', async () => {});
 

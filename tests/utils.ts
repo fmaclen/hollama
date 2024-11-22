@@ -196,9 +196,12 @@ export async function mockOllamaModelsResponse(page: Page) {
 	await expect(
 		page.getByText('Connection has been verified and is ready to use')
 	).not.toBeVisible();
+	const useModelsFromThisServerCheckbox = page.getByLabel('Use models from this server');
+	await expect(useModelsFromThisServerCheckbox).not.toBeChecked();
 
 	await page.getByText('Verify').click();
 	await expect(page.getByText('Connection has been verified and is ready to use')).toBeVisible();
+	await expect(useModelsFromThisServerCheckbox).toBeChecked();
 }
 
 export async function mockCompletionResponse(page: Page, response: ChatResponse) {
