@@ -4,6 +4,32 @@ import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/bro
 import { chooseFromCombobox, MOCK_API_TAGS_RESPONSE, mockOllamaModelsResponse } from './utils';
 
 test.describe('Servers', () => {
+	test.skip('can add and remove multiple server connections', async ({ page }) => {
+		await page.goto('/settings');
+		await expect(page.getByText('Servers')).toBeVisible();
+
+		// An Ollama server is already added by default
+		const connections = page.locator('.connection');
+		await expect(connections.getByText('Ollama')).toBeVisible();
+		await expect(connections).toHaveCount(1);
+
+		// Add an OpenAI official API server
+		await chooseFromCombobox(page, 'Connection type', 'OpenAI: Official API');
+		await page.getByText('Add connection').click();
+		await expect(connections).toHaveCount(2);
+		await expect(connections.getByText('OpenAI')).toBeVisible();
+
+		// Add an OpenAI compatible API server
+		await chooseFromCombobox(
+			page,
+			'Connection type',
+			'OpenAI: Compatible servers (i.e. llama.cpp)'
+		);
+		await page.getByText('Add connection').click();
+		await expect(connections).toHaveCount(3);
+		await expect(connections.getByText('OpenAI-Compatible')).toBeVisible();
+	});
+
 	test('it migrates old server settings to new format', async ({ page }) => {
 		const toastMessage = page.getByText(
 			'Server configuration was updated and needs to be re-verified in "Settings"'
@@ -78,32 +104,6 @@ test.describe('Servers', () => {
 		expect(localStorageServers).not.toContain('"isVerified":null');
 	});
 
-	test.skip('can add and remove multiple server connections', async ({ page }) => {
-		await page.goto('/settings');
-		await expect(page.getByText('Servers')).toBeVisible();
-
-		// An Ollama server is already added by default
-		const connections = page.locator('.connection');
-		await expect(connections.getByText('Ollama')).toBeVisible();
-		await expect(connections).toHaveCount(1);
-
-		// Add an OpenAI official API server
-		await chooseFromCombobox(page, 'Connection type', 'OpenAI: Official API');
-		await page.getByText('Add connection').click();
-		await expect(connections).toHaveCount(2);
-		await expect(connections.getByText('OpenAI')).toBeVisible();
-
-		// Add an OpenAI compatible API server
-		await chooseFromCombobox(
-			page,
-			'Connection type',
-			'OpenAI: Compatible servers (i.e. llama.cpp)'
-		);
-		await page.getByText('Add connection').click();
-		await expect(connections).toHaveCount(3);
-		await expect(connections.getByText('OpenAI-Compatible')).toBeVisible();
-	});
-
 	test('models available on each server can be toggled on and off', async ({ page }) => {
 		await mockOllamaModelsResponse(page);
 		await expect(page).toHaveURL('/settings');
@@ -112,7 +112,7 @@ test.describe('Servers', () => {
 
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
-		
+
 		const modelCombobox = page.getByLabel('Available models');
 		expect(modelCombobox).not.toBeDisabled();
 
