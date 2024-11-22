@@ -102,7 +102,7 @@
 		<div class="connection__grid">
 			<div class="connection__host" class:connection__host--openai={isOpenAiFamily}>
 				<FieldInput
-					name={`server-${index}`}
+					name={`server-${server.id}`}
 					label={$LL.baseUrl()}
 					placeholder={server.baseUrl}
 					bind:value={server.baseUrl}
@@ -117,7 +117,7 @@
 				{#if isOpenAiFamily}
 					<FieldInput
 						type="password"
-						name={`apiKey-${index}`}
+						name={`apiKey-${server.id}`}
 						label={$LL.apiKey()}
 						bind:value={server.apiKey}
 					>
@@ -140,7 +140,7 @@
 				{/if}
 			</div>
 			<FieldInput
-				name={`modelsFilter-${index}`}
+				name={`modelsFilter-${server.id}`}
 				label={$LL.modelsFilter()}
 				placeholder="gpt"
 				bind:value={server.modelFilter}
@@ -155,7 +155,7 @@
 			</FieldInput>
 
 			<FieldInput
-				name={`label-${index}`}
+				name={`label-${server.id}`}
 				label={$LL.label()}
 				bind:value={server.label}
 				placeholder={'my-llama-server'}

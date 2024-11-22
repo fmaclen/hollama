@@ -72,7 +72,7 @@
 </script>
 
 <FieldInput
-	name="pull-model"
+	name={`pull-model-${server.id}`}
 	label={$LL.pullModel()}
 	placeholder={$LL.pullModelPlaceholder()}
 	bind:value={modelTag}
