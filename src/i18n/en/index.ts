@@ -25,7 +25,7 @@ const en = {
 	connect: 'Connect',
 	connected: 'Connected',
 	connectionType: 'Connection type',
-	connectionNameHelp: 'Identifies the connection in the models list',
+	connectionLabelHelp: 'Identifies the connection in the models list',
 	connecting: 'Connecting...',
 	connectionIsVerified: 'Connection has been verified and is ready to use',
 	connectionFailedToVerify:
@@ -68,6 +68,7 @@ const en = {
 	isLatestVersion: 'A newer version is available',
 	knowledge: 'Knowledge',
 	knowledgeSaved: 'Knowledge saved',
+	label: 'Label',
 	language: 'Language',
 	lastUsedModels: 'Recently used models',
 	light: 'Light',

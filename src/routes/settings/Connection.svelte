@@ -70,7 +70,7 @@
 					: ConnectionType.Ollama}
 			/>
 		{/if}
-		<Badge>{server.name ? server.name : server.connectionType?.toUpperCase()}</Badge>
+		<Badge>{server.label ? server.label : server.connectionType?.toUpperCase()}</Badge>
 	</legend>
 
 	<Fieldset>
@@ -155,14 +155,14 @@
 			</FieldInput>
 
 			<FieldInput
-				name={`name-${index}`}
-				label={$LL.name()}
-				bind:value={server.name}
+				name={`label-${index}`}
+				label={$LL.label()}
+				bind:value={server.label}
 				placeholder={'my-llama-server'}
 			>
 				<svelte:fragment slot="help">
 					<FieldHelp>
-						<P>{$LL.connectionNameHelp()}</P>
+						<P>{$LL.connectionLabelHelp()}</P>
 					</FieldHelp>
 				</svelte:fragment>
 			</FieldInput>

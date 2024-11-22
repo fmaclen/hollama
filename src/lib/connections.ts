@@ -10,7 +10,7 @@ export interface Server {
 	connectionType: ConnectionType;
 	isVerified: Date | null;
 	isEnabled: boolean;
-	name?: string;
+	label?: string;
 	modelFilter?: string;
 	apiKey?: string;
 }

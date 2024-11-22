@@ -119,7 +119,7 @@ type RootTranslation = {
 	/**
 	 * I​d​e​n​t​i​f​i​e​s​ ​t​h​e​ ​c​o​n​n​e​c​t​i​o​n​ ​i​n​ ​t​h​e​ ​m​o​d​e​l​s​ ​l​i​s​t
 	 */
-	connectionNameHelp: string
+	connectionLabelHelp: string
 	/**
 	 * C​o​n​n​e​c​t​i​n​g​.​.​.
 	 */
@@ -280,6 +280,10 @@ type RootTranslation = {
 	 * K​n​o​w​l​e​d​g​e​ ​s​a​v​e​d
 	 */
 	knowledgeSaved: string
+	/**
+	 * L​a​b​e​l
+	 */
+	label: string
 	/**
 	 * L​a​n​g​u​a​g​e
 	 */
@@ -714,7 +718,7 @@ The completion in progress will stop
 	/**
 	 * Identifies the connection in the models list
 	 */
-	connectionNameHelp: () => LocalizedString
+	connectionLabelHelp: () => LocalizedString
 	/**
 	 * Connecting...
 	 */
@@ -875,6 +879,10 @@ The completion in progress will stop
 	 * Knowledge saved
 	 */
 	knowledgeSaved: () => LocalizedString
+	/**
+	 * Label
+	 */
+	label: () => LocalizedString
 	/**
 	 * Language
 	 */
