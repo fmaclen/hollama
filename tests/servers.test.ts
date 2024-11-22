@@ -1,7 +1,14 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Route } from '@playwright/test';
 import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
+import type OpenAI from 'openai';
 
-import { chooseFromCombobox, MOCK_API_TAGS_RESPONSE, mockOllamaModelsResponse } from './utils';
+import {
+	chooseFromCombobox,
+	MOCK_API_TAGS_RESPONSE,
+	MOCK_OPENAI_MODELS,
+	mockOllamaModelsResponse,
+	mockOpenAIModelsResponse
+} from './utils';
 
 test.describe('Servers', () => {
 	test('can add and remove multiple server connections', async ({ page }) => {
@@ -162,8 +169,6 @@ test.describe('Servers', () => {
 		await expect(useModelsFromThisServerCheckbox).toBeChecked();
 	});
 
-	test.skip('can name connections to identify models', async () => {});
-
 	test('a model can be pulled from the ollama library', async ({ page }) => {
 		await mockOllamaModelsResponse(page);
 		const downloadButton = page.getByRole('button', { name: 'Download model' });
@@ -214,5 +219,63 @@ test.describe('Servers', () => {
 		await expect(modelTagInput).toHaveValue('');
 		await expect(downloadButton).toBeDisabled();
 		await expect(modelTagInput).not.toBeDisabled();
+	});
+
+	test('can name connections to identify models', async ({ page }) => {
+		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
+		await expect(page).toHaveURL('/settings');
+
+		// Add an OpenAI official API server
+		const connections = page.locator('.connection');
+		await expect(connections).toHaveCount(1);
+		await expect(connections.first().getByLabel('Label')).toHaveValue('');
+		await expect(connections.first().locator('.badge', { hasText: 'OpenAI' })).toBeVisible();
+
+		const connectionVerifiedMessage = page.getByText(
+			'Connection has been verified and is ready to use'
+		);
+		await expect(connectionVerifiedMessage).toHaveCount(1);
+
+		// Add a `llama.cpp` (OpenAI compatible) server
+		await chooseFromCombobox(
+			page,
+			'Connection type',
+			'OpenAI: Compatible servers (i.e. llama.cpp)'
+		);
+		await page.getByText('Add connection').click();
+		await expect(page.locator('.badge', { hasText: 'OpenAI-Compatible' })).toBeVisible();
+		await expect(connections.last().getByLabel('Label')).toHaveValue('');
+		await expect(connections.last().getByLabel('Base URL')).toHaveValue('http://localhost:8080/v1');
+
+		await connections.last().getByLabel('Label').fill('llama.cpp');
+		await expect(connections.last().locator('.badge', { hasText: 'llama.cpp' })).toBeVisible();
+		await expect(page.locator('.badge', { hasText: 'OpenAI-Compatible' })).not.toBeVisible();
+
+		// Mock a model list for the `llama.cpp` server
+		const MOCK_LLAMA_CPP_MODELS: OpenAI.Models.Model[] = [
+			{
+				id: 'Qwen2.5-32B-Instruct-Q4_K_S.gguf',
+				object: 'model',
+				created: 1732284764,
+				owned_by: 'llamacpp'
+			}
+		];
+		await page.route('http://localhost:8080/v1/models', async (route: Route) => {
+			await route.fulfill({ json: { data: MOCK_LLAMA_CPP_MODELS } });
+		});
+		await connections.last().getByRole('button', { name: 'Verify' }).click();
+		await expect(connectionVerifiedMessage).toHaveCount(2);
+
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+		const modelCombobox = page.getByLabel('Available models');
+		expect(modelCombobox).not.toBeDisabled();
+
+		await modelCombobox.click();
+		const modelOption = page.locator('.field-combobox-item-label');
+		await expect(modelOption).toHaveCount(3);
+		await expect(modelOption.last()).toContainText(MOCK_LLAMA_CPP_MODELS[0].id);
+		await expect(modelOption.last()).toContainText('llama.cpp');
+		await expect(modelOption.last()).not.toContainText('openai-compatible');
 	});
 });

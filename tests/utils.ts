@@ -221,7 +221,7 @@ export async function mockOpenAIModelsResponse(page: Page, models: OpenAI.Models
 	await chooseFromCombobox(page, 'Connection type', 'OpenAI: Official API');
 	await page.getByText('Add connection').click();
 	await page.getByLabel('API Key').fill('sk-validapikey');
-	await page.route('**/v1/models', async (route: Route) => {
+	await page.route('https://api.openai.com/v1/models', async (route: Route) => {
 		await route.fulfill({ json: { data: models } });
 	});
 	await page.getByRole('button', { name: 'Verify', exact: true }).click();
