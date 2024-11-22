@@ -188,14 +188,15 @@
 	}
 
 	.connection__grid {
-		@apply grid grid-cols-2 gap-2;
+		@apply flex flex-col gap-2;
+		@apply sm:grid sm:grid-cols-2;
 	}
 
 	.connection__host {
-		@apply col-span-2;
+		@apply grid col-span-2 gap-2;
 
 		&--openai {
-			@apply grid grid-cols-2 gap-2;
+			@apply sm:grid sm:grid-cols-2;
 		}
 	}
 </style>
