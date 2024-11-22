@@ -4,20 +4,35 @@ import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/bro
 import { chooseFromCombobox, MOCK_API_TAGS_RESPONSE, mockOllamaModelsResponse } from './utils';
 
 test.describe('Servers', () => {
-	test.skip('can add and remove multiple server connections', async ({ page }) => {
+	test('can add and remove multiple server connections', async ({ page }) => {
 		await page.goto('/settings');
 		await expect(page.getByText('Servers')).toBeVisible();
 
-		// An Ollama server is already added by default
+		const emptyMessage = page.getByText('No server connections, add one to start');
+		await expect(emptyMessage).toBeVisible();
+
 		const connections = page.locator('.connection');
-		await expect(connections.getByText('Ollama')).toBeVisible();
+		await expect(connections).toHaveCount(0);
+		await expect(page.getByLabel('Connection type')).toHaveValue('');
+
+		// Add an Ollama server
+		await chooseFromCombobox(page, 'Connection type', 'Ollama');
+		const connectionType = page.getByLabel('Connection type');
+		await expect(connectionType).toHaveValue('Ollama');
+
+		await page.getByText('Add connection').click();
+		await expect(connections.locator('.badge', { hasText: 'Ollama' })).toBeVisible();
 		await expect(connections).toHaveCount(1);
+		await expect(emptyMessage).not.toBeVisible();
+		await expect(connectionType).toHaveValue('');
 
 		// Add an OpenAI official API server
 		await chooseFromCombobox(page, 'Connection type', 'OpenAI: Official API');
+		await expect(connectionType).toHaveValue('OpenAI: Official API');
 		await page.getByText('Add connection').click();
 		await expect(connections).toHaveCount(2);
-		await expect(connections.getByText('OpenAI')).toBeVisible();
+		await expect(connections.locator('.badge', { hasText: 'OpenAI' })).toBeVisible();
+		await expect(connectionType).toHaveValue('');
 
 		// Add an OpenAI compatible API server
 		await chooseFromCombobox(
@@ -25,9 +40,24 @@ test.describe('Servers', () => {
 			'Connection type',
 			'OpenAI: Compatible servers (i.e. llama.cpp)'
 		);
+		await expect(connectionType).toHaveValue('OpenAI: Compatible servers (i.e. llama.cpp)');
 		await page.getByText('Add connection').click();
 		await expect(connections).toHaveCount(3);
-		await expect(connections.getByText('OpenAI-Compatible')).toBeVisible();
+		await expect(connections.locator('.badge', { hasText: 'OpenAI-Compatible' })).toBeVisible();
+		await expect(connectionType).toHaveValue('');
+
+		// Delete the servers
+		await connections.first().getByLabel('Delete server').click();
+		await expect(connections).toHaveCount(2);
+		await expect(emptyMessage).not.toBeVisible();
+
+		await connections.first().getByLabel('Delete server').click();
+		await expect(connections).toHaveCount(1);
+		await expect(emptyMessage).not.toBeVisible();
+
+		await connections.first().getByLabel('Delete server').click();
+		await expect(connections).toHaveCount(0);
+		await expect(emptyMessage).toBeVisible();
 	});
 
 	test('it migrates old server settings to new format', async ({ page }) => {
@@ -76,12 +106,12 @@ test.describe('Servers', () => {
 		const ollamaConnection = page.locator('.connection').first();
 		await expect(toastMessage).toBeVisible();
 		await expect(ollamaConnection).toBeVisible();
-		await expect(ollamaConnection.getByText(/Ollama/)).toBeVisible();
+		await expect(ollamaConnection.locator('.badge', { hasText: 'Ollama' })).toBeVisible();
 		await expect(ollamaConnection.getByLabel('Base URL')).toHaveValue('http://localhost:42069');
 
 		const openaiConnection = page.locator('.connection').last();
 		await expect(openaiConnection).toBeVisible();
-		await expect(openaiConnection.getByText(/OpenAI/)).toBeVisible();
+		await expect(openaiConnection.locator('.badge', { hasText: 'OpenAI' })).toBeVisible();
 		await expect(openaiConnection.getByLabel('Base URL')).toHaveValue('https://api.openai.com/v1');
 		await expect(openaiConnection.getByLabel('API Key')).toHaveValue('sk-validapikey');
 	});

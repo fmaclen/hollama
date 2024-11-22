@@ -33,14 +33,16 @@
 
 	<div class="connections">
 		<div class="connections__add">
-			<FieldSelect
-				name="connectionType"
-				isLabelVisible={false}
-				label={$LL.connectionType()}
-				placeholder={$LL.connectionType()}
-				options={SUPPORTED_CONNECTION_TYPES}
-				bind:value={newConnectionType}
-			/>
+			{#key newConnectionType}
+				<FieldSelect
+					name="connectionType"
+					isLabelVisible={false}
+					label={$LL.connectionType()}
+					placeholder={$LL.connectionType()}
+					options={SUPPORTED_CONNECTION_TYPES}
+					bind:value={newConnectionType}
+				/>
+			{/key}
 			<Button disabled={!newConnectionType} on:click={addServer}>
 				{$LL.addConnection()}
 			</Button>
@@ -74,6 +76,6 @@
 	}
 
 	.servers__empty {
-		@apply col-span-full flex justify-center rounded-md border border-shade-3 p-8 -mt-3;
+		@apply col-span-full -mt-3 flex justify-center rounded-md border border-shade-3 p-8;
 	}
 </style>
