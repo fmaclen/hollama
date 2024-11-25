@@ -20,6 +20,10 @@ export type Translations = RootTranslation
 
 type RootTranslation = {
 	/**
+	 * A​d​d​ ​c​o​n​n​e​c​t​i​o​n
+	 */
+	addConnection: string
+	/**
 	 * C​h​a​n​g​e​ ​y​o​u​r​ ​s​e​r​v​e​r​ ​s​e​t​t​i​n​g​s​ ​t​o​ ​a​l​l​o​w​ ​c​o​n​n​e​c​t​i​o​n​s​ ​f​r​o​m
 	 */
 	allowConnections: string
@@ -101,17 +105,25 @@ type RootTranslation = {
 	 */
 	confirmDeletion: string
 	/**
-	 * C​o​n​n​e​c​t
+	 * C​o​n​n​e​c​t​i​o​n​ ​t​y​p​e
 	 */
-	connect: string
+	connectionType: string
 	/**
-	 * C​o​n​n​e​c​t​e​d
+	 * I​d​e​n​t​i​f​i​e​s​ ​t​h​e​ ​c​o​n​n​e​c​t​i​o​n​ ​i​n​ ​t​h​e​ ​m​o​d​e​l​s​ ​l​i​s​t
 	 */
-	connected: string
+	connectionLabelHelp: string
 	/**
 	 * C​o​n​n​e​c​t​i​n​g​.​.​.
 	 */
 	connecting: string
+	/**
+	 * C​o​n​n​e​c​t​i​o​n​ ​h​a​s​ ​b​e​e​n​ ​v​e​r​i​f​i​e​d​ ​a​n​d​ ​i​s​ ​r​e​a​d​y​ ​t​o​ ​u​s​e
+	 */
+	connectionIsVerified: string
+	/**
+	 * C​o​n​n​e​c​t​i​o​n​ ​f​a​i​l​e​d​ ​t​o​ ​v​e​r​i​f​y​,​ ​c​h​e​c​k​ ​t​h​e​ ​c​o​n​n​e​c​t​i​o​n​ ​s​e​t​t​i​n​g​s​ ​a​n​d​ ​t​r​y​ ​a​g​a​i​n
+	 */
+	connectionFailedToVerify: string
 	/**
 	 * C​o​n​t​e​n​t
 	 */
@@ -168,6 +180,10 @@ type RootTranslation = {
 	 * D​e​l​e​t​e​ ​k​n​o​w​l​e​d​g​e
 	 */
 	deleteKnowledge: string
+	/**
+	 * D​e​l​e​t​e​ ​s​e​r​v​e​r
+	 */
+	deleteServer: string
 	/**
 	 * D​e​l​e​t​e​ ​s​e​s​s​i​o​n
 	 */
@@ -257,6 +273,10 @@ type RootTranslation = {
 	 */
 	knowledgeSaved: string
 	/**
+	 * L​a​b​e​l
+	 */
+	label: string
+	/**
 	 * L​a​n​g​u​a​g​e
 	 */
 	language: string
@@ -314,6 +334,14 @@ type RootTranslation = {
 	 */
 	modelWasDownloaded: RequiredParams<'model'>
 	/**
+	 * M​o​d​e​l​ ​n​a​m​e​s​ ​f​i​l​t​e​r
+	 */
+	modelsFilter: string
+	/**
+	 * H​i​d​e​s​ ​m​o​d​e​l​ ​n​a​m​e​s​ ​t​h​a​t​ ​d​o​n​'​t​ ​s​t​a​r​t​ ​w​i​t​h​ ​t​h​e​ ​f​i​l​t​e​r
+	 */
+	modelsFilterHelp: string
+	/**
 	 * M​o​t​d
 	 */
 	motd: string
@@ -341,6 +369,10 @@ type RootTranslation = {
 	 * N​o​ ​r​e​c​e​n​t​l​y​ ​u​s​e​d​ ​m​o​d​e​l​s
 	 */
 	noRecentModels: string
+	/**
+	 * N​o​ ​s​e​r​v​e​r​ ​c​o​n​n​e​c​t​i​o​n​s​,​ ​a​d​d​ ​o​n​e​ ​t​o​ ​s​t​a​r​t
+	 */
+	noServerConnections: string
 	/**
 	 * C​r​e​a​t​e​ ​a​ ​n​e​w​ ​s​e​s​s​i​o​n​ ​o​r​ ​c​h​o​o​s​e​ ​a​n​ ​e​x​i​s​t​i​n​g​ ​o​n​e​ ​f​r​o​m​ ​t​h​e​ ​l​i​s​t
 	 */
@@ -378,17 +410,21 @@ type RootTranslation = {
 	 */
 	numa: string
 	/**
+	 * O​l​l​a​m​a
+	 */
+	ollama: string
+	/**
 	 * O​l​l​a​m​a​'​s​ ​l​i​b​r​a​r​y
 	 */
 	ollamaLibrary: string
 	/**
-	 * F​a​i​l​e​d​ ​t​o​ ​c​o​n​n​e​c​t​ ​t​o​ ​O​p​e​n​A​I​.​ ​C​h​e​c​k​ ​y​o​u​r​ ​A​P​I​ ​k​e​y​ ​o​r​ ​n​e​t​w​o​r​k​ ​c​o​n​n​e​c​t​i​o​n
+	 * O​p​e​n​A​I​:​ ​O​f​f​i​c​i​a​l​ ​A​P​I
 	 */
-	openaiSyncFailed: string
+	openAIOfficialAPI: string
 	/**
-	 * S​y​n​c​ ​w​a​s​ ​s​u​c​c​e​s​s​f​u​l​.​ ​O​p​e​n​A​I​ ​m​o​d​e​l​s​ ​a​r​e​ ​n​o​w​ ​a​v​a​i​l​a​b​l​e​ ​i​n​ ​S​e​s​s​i​o​n​s
+	 * O​p​e​n​A​I​:​ ​C​o​m​p​a​t​i​b​l​e​ ​s​e​r​v​e​r​s​ ​(​i​.​e​.​ ​l​l​a​m​a​.​c​p​p​)
 	 */
-	openaiSyncSuccessful: string
+	openAICompatible: string
 	/**
 	 * O​t​h​e​r​ ​m​o​d​e​l​s
 	 */
@@ -450,6 +486,10 @@ type RootTranslation = {
 	 */
 	run: string
 	/**
+	 * R​e​-​v​e​r​i​f​y
+	 */
+	reVerify: string
+	/**
 	 * R​u​n​t​i​m​e​ ​o​p​t​i​o​n​s
 	 */
 	runtimeOptions: string
@@ -474,9 +514,13 @@ type RootTranslation = {
 	 */
 	seeDocs: string
 	/**
-	 * S​e​r​v​e​r
+	 * S​e​r​v​e​r​s
 	 */
-	server: string
+	servers: string
+	/**
+	 * S​e​r​v​e​r​ ​c​o​n​f​i​g​u​r​a​t​i​o​n​ ​w​a​s​ ​u​p​d​a​t​e​d​ ​a​n​d​ ​n​e​e​d​s​ ​t​o​ ​b​e​ ​r​e​-​v​e​r​i​f​i​e​d​ ​i​n​ ​"​S​e​t​t​i​n​g​s​"
+	 */
+	serverSettingsUpdated: string
 	/**
 	 * S​e​s​s​i​o​n
 	 */
@@ -552,6 +596,14 @@ type RootTranslation = {
 	 */
 	useMmap: string
 	/**
+	 * U​s​e​ ​m​o​d​e​l​s​ ​f​r​o​m​ ​t​h​i​s​ ​s​e​r​v​e​r
+	 */
+	useModelsFromThisServer: string
+	/**
+	 * V​e​r​i​f​y
+	 */
+	verify: string
+	/**
 	 * V​e​r​s​i​o​n
 	 */
 	version: string
@@ -570,6 +622,10 @@ type RootTranslation = {
 }
 
 export type TranslationFunctions = {
+	/**
+	 * Add connection
+	 */
+	addConnection: () => LocalizedString
 	/**
 	 * Change your server settings to allow connections from
 	 */
@@ -652,17 +708,25 @@ The completion in progress will stop
 	 */
 	confirmDeletion: () => LocalizedString
 	/**
-	 * Connect
+	 * Connection type
 	 */
-	connect: () => LocalizedString
+	connectionType: () => LocalizedString
 	/**
-	 * Connected
+	 * Identifies the connection in the models list
 	 */
-	connected: () => LocalizedString
+	connectionLabelHelp: () => LocalizedString
 	/**
 	 * Connecting...
 	 */
 	connecting: () => LocalizedString
+	/**
+	 * Connection has been verified and is ready to use
+	 */
+	connectionIsVerified: () => LocalizedString
+	/**
+	 * Connection failed to verify, check the connection settings and try again
+	 */
+	connectionFailedToVerify: () => LocalizedString
 	/**
 	 * Content
 	 */
@@ -719,6 +783,10 @@ The completion in progress will stop
 	 * Delete knowledge
 	 */
 	deleteKnowledge: () => LocalizedString
+	/**
+	 * Delete server
+	 */
+	deleteServer: () => LocalizedString
 	/**
 	 * Delete session
 	 */
@@ -808,6 +876,10 @@ The completion in progress will stop
 	 */
 	knowledgeSaved: () => LocalizedString
 	/**
+	 * Label
+	 */
+	label: () => LocalizedString
+	/**
 	 * Language
 	 */
 	language: () => LocalizedString
@@ -864,6 +936,14 @@ The completion in progress will stop
 	 */
 	modelWasDownloaded: (arg: { model: string }) => LocalizedString
 	/**
+	 * Model names filter
+	 */
+	modelsFilter: () => LocalizedString
+	/**
+	 * Hides model names that don't start with the filter
+	 */
+	modelsFilterHelp: () => LocalizedString
+	/**
 	 * Motd
 	 */
 	motd: () => LocalizedString
@@ -891,6 +971,10 @@ The completion in progress will stop
 	 * No recently used models
 	 */
 	noRecentModels: () => LocalizedString
+	/**
+	 * No server connections, add one to start
+	 */
+	noServerConnections: () => LocalizedString
 	/**
 	 * Create a new session or choose an existing one from the list
 	 */
@@ -928,17 +1012,21 @@ The completion in progress will stop
 	 */
 	numa: () => LocalizedString
 	/**
+	 * Ollama
+	 */
+	ollama: () => LocalizedString
+	/**
 	 * Ollama's library
 	 */
 	ollamaLibrary: () => LocalizedString
 	/**
-	 * Failed to connect to OpenAI. Check your API key or network connection
+	 * OpenAI: Official API
 	 */
-	openaiSyncFailed: () => LocalizedString
+	openAIOfficialAPI: () => LocalizedString
 	/**
-	 * Sync was successful. OpenAI models are now available in Sessions
+	 * OpenAI: Compatible servers (i.e. llama.cpp)
 	 */
-	openaiSyncSuccessful: () => LocalizedString
+	openAICompatible: () => LocalizedString
 	/**
 	 * Other models
 	 */
@@ -1000,6 +1088,10 @@ The completion in progress will stop
 	 */
 	run: () => LocalizedString
 	/**
+	 * Re-verify
+	 */
+	reVerify: () => LocalizedString
+	/**
 	 * Runtime options
 	 */
 	runtimeOptions: () => LocalizedString
@@ -1024,9 +1116,13 @@ The completion in progress will stop
 	 */
 	seeDocs: () => LocalizedString
 	/**
-	 * Server
+	 * Servers
 	 */
-	server: () => LocalizedString
+	servers: () => LocalizedString
+	/**
+	 * Server configuration was updated and needs to be re-verified in "Settings"
+	 */
+	serverSettingsUpdated: () => LocalizedString
 	/**
 	 * Session
 	 */
@@ -1099,6 +1195,14 @@ The completion in progress will stop
 	 * Use MMAP
 	 */
 	useMmap: () => LocalizedString
+	/**
+	 * Use models from this server
+	 */
+	useModelsFromThisServer: () => LocalizedString
+	/**
+	 * Verify
+	 */
+	verify: () => LocalizedString
 	/**
 	 * Version
 	 */

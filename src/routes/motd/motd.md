@@ -1,4 +1,4 @@
-`2024-11-12`
+`2024-11-25`
 
 ### Message of the day
 
@@ -6,11 +6,14 @@
 
 #### What's new?
 
-- **[Knowledge](/knowledge)** can now be used as context at any point in a Session.
-- **OpenAI models** ✨ are now _(optionally)_ available in Sessions. Set your own API key in [Settings](/settings)
+- **Multiple-server support** allows you to connect to one or more Ollama (and/or OpenAI) servers at the same time.
+- **Models list can be filtered** by keyword for each server.
+- **Servers can be labeled** to help you identify them in the models list.
 
 #### Previously, in Hollama
 
+- **OpenAI models** are now _(optionally)_ available in Sessions. Set your own API key in [Settings](/settings)
+- **[Knowledge](/knowledge)** can now be used as context at any point in a Session.
 - **Model** and **advanced Ollama settings** can be changed at any time on an existing session
 - **Multi-language support**
 - **Enhanced models menu** now shows parameter size and highlights recently used models

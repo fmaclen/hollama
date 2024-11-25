@@ -5,14 +5,17 @@
 
 	import LL from '$i18n/i18n-svelte';
 	import { beforeNavigate } from '$app/navigation';
-	import { chat, type ChatRequest, type Model } from '$lib/chat';
+	import { type ChatRequest, type ChatStrategy } from '$lib/chat';
+	import { OllamaStrategy } from '$lib/chat/ollama';
+	import { OpenAIStrategy } from '$lib/chat/openai';
 	import Button from '$lib/components/Button.svelte';
 	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
 	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
 	import Head from '$lib/components/Head.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
-	import { settingsStore } from '$lib/localStorage';
+	import { ConnectionType } from '$lib/connections';
+	import { serversStore } from '$lib/localStorage';
 	import {
 		formatSessionMetadata,
 		getSessionTitle,
@@ -125,21 +128,32 @@
 		$editor.prompt = ''; // Reset the prompt form field
 		$editor.completion = '';
 
-		const ollamaChatRequest: ChatRequest = {
-			model: $session.model,
+		const server = $serversStore.find((s) => s.id === $session.model?.serverId);
+		if (!server) throw new Error('Server not found');
+		if (!$session.model?.name) throw new Error('No model');
+
+		let chatRequest: ChatRequest = {
+			model: $session.model.name,
 			options: $session.options,
 			messages: $session.systemPrompt.content ? [$session.systemPrompt, ...messages] : messages
 		};
 
 		try {
-			await chat({
-				model: $settingsStore.models.find((model) => model.name === $session.model) as Model,
-				payload: ollamaChatRequest,
-				abortSignal: $editor.abortController.signal,
-				onChunk: async (chunk) => {
-					$editor.completion += chunk;
-					await scrollToBottom();
-				}
+			let strategy: ChatStrategy | undefined = undefined;
+			switch (server.connectionType) {
+				case ConnectionType.Ollama:
+					strategy = new OllamaStrategy(server);
+					break;
+				case ConnectionType.OpenAI:
+				case ConnectionType.OpenAICompatible:
+					strategy = new OpenAIStrategy(server);
+					break;
+			}
+
+			if (!strategy) throw new Error('Invalid strategy');
+			await strategy.chat(chatRequest, $editor.abortController.signal, async (chunk) => {
+				$editor.completion += chunk;
+				await scrollToBottom();
 			});
 
 			// After the completion save the session

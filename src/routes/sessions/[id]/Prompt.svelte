@@ -4,7 +4,7 @@
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
 	import Trash_2 from 'lucide-svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
-	import { writable, type Writable } from 'svelte/store';
+	import { type Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -12,8 +12,9 @@
 	import Field from '$lib/components/Field.svelte';
 	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
+	import { ConnectionType } from '$lib/connections';
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { knowledgeStore, settingsStore } from '$lib/localStorage';
+	import { knowledgeStore, serversStore } from '$lib/localStorage';
 	import type { Editor, Message, Session } from '$lib/sessions';
 	import { generateStorageId } from '$lib/utils';
 
@@ -24,17 +25,33 @@
 		knowledge?: Knowledge;
 	};
 
-	export let editor: Writable<Editor>;
-	export let session: Writable<Session>;
-	export let handleSubmit: () => void;
-	export let stopCompletion: () => void;
-	export let scrollToBottom: (shouldForceScroll: boolean) => void;
+	interface Props {
+		editor: Writable<Editor>;
+		session: Writable<Session>;
+		handleSubmit: () => void;
+		stopCompletion: () => void;
+		scrollToBottom: (shouldForceScroll: boolean) => void;
+	}
 
-	let isOllama = false;
-	let attachments: Writable<KnowledgeAttachment[]> = writable([]);
+	let {
+		editor = $bindable(),
+		session = $bindable(),
+		handleSubmit,
+		stopCompletion,
+		scrollToBottom
+	}: Props = $props();
 
-	$: isOllama = $settingsStore.models?.find((m) => m.name === $session.model)?.api === 'ollama';
-	$: $attachments.length && scrollToBottom(true);
+	let attachments: KnowledgeAttachment[] = $state([]);
+
+	const isOllamaFamily = $derived(
+		() =>
+			$serversStore.find((s) => s.id === $session.model?.serverId)?.connectionType ===
+			ConnectionType.Ollama
+	);
+
+	$effect(() => {
+		attachments.length && scrollToBottom(true);
+	});
 
 	function toggleCodeEditor() {
 		$editor.isCodeEditor = !$editor.isCodeEditor;
@@ -47,7 +64,7 @@
 	}
 
 	function switchToControls() {
-		if (!isOllama) {
+		if (!isOllamaFamily) {
 			toast.warning($LL.controlsOnlyAvailableForOllama());
 			return;
 		}
@@ -62,19 +79,19 @@
 	}
 
 	function handleSelectKnowledge(fieldId: string, knowledgeId: string) {
-		$attachments = $attachments.map((a) =>
+		attachments = attachments.map((a) =>
 			a.fieldId === fieldId ? { ...a, knowledge: loadKnowledge(knowledgeId) } : a
 		);
 	}
 
 	function handleDeleteAttachment(fieldId: string) {
-		$attachments = [...$attachments.filter((a) => a.fieldId !== fieldId)];
+		attachments = [...attachments.filter((a) => a.fieldId !== fieldId)];
 	}
 
 	function submit() {
-		if ($attachments.length) {
+		if (attachments.length) {
 			const attachmentMessages: Message[] = [];
-			$attachments.forEach((a) => {
+			attachments.forEach((a) => {
 				if (a.knowledge)
 					attachmentMessages.push({
 						role: 'user',
@@ -89,7 +106,7 @@ ${a.knowledge.content}
 					});
 			});
 			$session.messages = [...$session.messages, ...attachmentMessages];
-			$attachments = [];
+			attachments = [];
 		}
 
 		handleSubmit();
@@ -99,7 +116,7 @@ ${a.knowledge.content}
 <div class="prompt-editor" class:prompt-editor--fullscreen={$editor.isCodeEditor}>
 	<div class="prompt-editor__form">
 		<div class="prompt-editor__project">
-			<FieldSelectModel isLabelVisible={false} bind:model={$session.model} />
+			<FieldSelectModel isLabelVisible={false} bind:session />
 
 			<nav class="segmented-nav">
 				<div
@@ -151,14 +168,14 @@ ${a.knowledge.content}
 					placeholder={$LL.promptPlaceholder()}
 					bind:this={$editor.promptTextarea}
 					bind:value={$editor.prompt}
-					on:keydown={handleKeyDown}
-				/>
+					onkeydown={handleKeyDown}
+				></textarea>
 			</Field>
 		{/if}
 
-		{#if $attachments.length}
+		{#if attachments.length}
 			<div class="attachments">
-				{#each $attachments as attachment (attachment.fieldId)}
+				{#each attachments as attachment (attachment.fieldId)}
 					<div class="attachment">
 						<div class="attachment__knowledge">
 							<KnowledgeSelect
@@ -166,7 +183,7 @@ ${a.knowledge.content}
 								options={$knowledgeStore?.filter(
 									(k) =>
 										// Only filter out knowledge that's selected in OTHER attachments
-										!$attachments.find(
+										!attachments.find(
 											(a) =>
 												a.fieldId !== attachment.fieldId && // Skip current attachment
 												a.knowledge?.id === k.id
@@ -196,7 +213,7 @@ ${a.knowledge.content}
 				<Button
 					variant="outline"
 					on:click={() => {
-						$attachments = [...$attachments, { fieldId: generateStorageId() }];
+						attachments = [...attachments, { fieldId: generateStorageId() }];
 					}}
 					data-testid="knowledge-attachment"
 				>

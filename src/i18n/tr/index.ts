@@ -80,7 +80,9 @@ const tr = {
 	search: 'Ara',
 	searchEmpty: 'Sonuç bulunamadı',
 	seeDocs: 'Belgeleri göster',
-	server: 'Sunucu',
+	servers: 'Sunucular',
+	serverSettingsUpdated:
+		'Sunucu yapılandırması güncellendi ve "Ayarlar"\'da yeniden doğrulanması gerekiyor',
 	session: 'Oturum',
 	sessions: 'Oturumlar',
 	settings: 'Ayarlar',

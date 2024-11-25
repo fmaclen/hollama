@@ -10,9 +10,11 @@
 
 	export let sitemap: Sitemap;
 	let newId: string;
+	let href: string;
 
 	function setId() {
 		newId = generateStorageId();
+		href = generateNewUrl(sitemap, newId);
 	}
 
 	onMount(setId);
@@ -23,7 +25,7 @@
 		data-testid={sitemap === Sitemap.SESSIONS ? 'new-session' : 'new-knowledge'}
 		class="w-full"
 		variant="outline"
-		href={generateNewUrl(sitemap, newId)}
+		{href}
 		on:click={setId}
 	>
 		{sitemap === Sitemap.SESSIONS ? $LL.newSession() : $LL.newKnowledge()}

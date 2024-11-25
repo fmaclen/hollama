@@ -8,11 +8,11 @@ import {
 	MOCK_SESSION_1_RESPONSE_2,
 	MOCK_SESSION_1_RESPONSE_3,
 	MOCK_SESSION_2_RESPONSE_1,
-	mockTagsResponse
+	mockOllamaModelsResponse
 } from './utils';
 
 test.beforeEach(async ({ page }) => {
-	await mockTagsResponse(page);
+	await mockOllamaModelsResponse(page);
 });
 
 test('can navigate between session messages and controls', async ({ page }) => {
@@ -348,7 +348,12 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await expect(page.getByLabel('Use MLOCK')).toBeChecked();
 
 	// Check the options were saved to localStorage
-	expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toContain(
-		JSON.stringify(customizedOptions)
-	);
+	const savedSessions = await page.evaluate(() => window.localStorage.getItem('hollama-sessions'));
+	const parsedSessions = JSON.parse(savedSessions || '[]');
+	const savedOptions = parsedSessions[0].options;
+
+	// The order isn't guaranteed, so we need to check each option individually
+	for (const [key, value] of Object.entries(customizedOptions)) {
+		expect(savedOptions).toHaveProperty(key, value);
+	}
 });

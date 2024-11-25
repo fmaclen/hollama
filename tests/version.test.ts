@@ -2,13 +2,13 @@ import { expect, test } from '@playwright/test';
 
 import { GITHUB_RELEASES_API } from '$lib/github';
 
-import { mockTagsResponse } from './utils';
+import { mockOllamaModelsResponse } from './utils';
 
 const currentVersion = process.env.npm_package_version;
 const MOCK_NEWER_VERSION = '999.0.0';
 
 test.beforeEach(async ({ page }) => {
-	await mockTagsResponse(page);
+	await mockOllamaModelsResponse(page);
 
 	// NOTE: This is an intentionally broken response from the Github releases API
 	// to ensure we don't hit the real API.

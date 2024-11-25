@@ -7,10 +7,11 @@ import type {
 	PullRequest,
 	StatusResponse
 } from 'ollama/browser';
-import { get } from 'svelte/store';
 
-import { settingsStore } from '../localStorage';
-import type { ChatStrategy, Model } from './index';
+import type { Server } from '$lib/connections';
+import type { Model } from '$lib/settings';
+
+import type { ChatStrategy } from './index';
 
 export interface OllamaOptions {
 	numa: boolean;
@@ -48,20 +49,15 @@ export interface OllamaOptions {
 	stop: string[];
 }
 
-function getServerFromSettings() {
-	const settings = get(settingsStore);
-	if (!settings) throw new Error('No Ollama server specified');
-
-	return settings.ollamaServer;
-}
-
 export class OllamaStrategy implements ChatStrategy {
+	constructor(private server: Server) {}
+
 	async chat(
 		payload: ChatRequest,
 		abortSignal: AbortSignal,
 		onChunk: (content: string) => void
 	): Promise<void> {
-		const response = await fetch(`${getServerFromSettings()}/api/chat`, {
+		const response = await fetch(`${this.server.baseUrl}/api/chat`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'text/event-stream' },
 			body: JSON.stringify(payload),
@@ -94,7 +90,7 @@ export class OllamaStrategy implements ChatStrategy {
 	}
 
 	async getModels(): Promise<Model[]> {
-		const response = await fetch(`${getServerFromSettings()}/api/tags`);
+		const response = await fetch(`${this.server.baseUrl}/api/tags`);
 		if (!response.ok) throw new Error('Failed to fetch Ollama tags');
 
 		const data: ListResponse | undefined = await response.json();
@@ -102,19 +98,21 @@ export class OllamaStrategy implements ChatStrategy {
 			throw new Error('Failed to parse Ollama tags', { cause: data });
 		}
 
-		return data.models.map((model) => ({
-			...model,
-			api: 'ollama',
-			parameterSize: model.details.parameter_size,
-			modifiedAt: new Date(model.modified_at)
-		}));
+		return data.models
+			?.filter((model) => model.name.startsWith(this.server.modelFilter || ''))
+			.map((model) => ({
+				...model,
+				serverId: this.server.id,
+				parameterSize: model.details.parameter_size,
+				modifiedAt: new Date(model.modified_at)
+			}));
 	}
 
 	async pull(
 		payload: PullRequest,
 		onChunk: (progress: ProgressResponse | StatusResponse | ErrorResponse) => void
 	): Promise<void> {
-		const response = await fetch(`${getServerFromSettings()}/api/pull`, {
+		const response = await fetch(`${this.server.baseUrl}/api/pull`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload)
@@ -142,6 +140,15 @@ export class OllamaStrategy implements ChatStrategy {
 				const progressResponse = JSON.parse(update) as ProgressResponse;
 				onChunk(progressResponse);
 			}
+		}
+	}
+
+	async verifyServer(): Promise<boolean> {
+		try {
+			await this.getModels();
+			return true;
+		} catch {
+			return false;
 		}
 	}
 }

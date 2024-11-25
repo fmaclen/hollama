@@ -1,26 +1,31 @@
 import { expect, test } from '@playwright/test';
 
+import type { Model } from '$lib/settings';
+
 import {
 	MOCK_API_TAGS_RESPONSE,
+	MOCK_DEFAULT_SERVER_ID,
 	MOCK_KNOWLEDGE,
-	mockTagsResponse,
+	mockOllamaModelsResponse,
 	seedKnowledgeAndReload
 } from './utils';
 
 test.beforeEach(async ({ page }) => {
-	await mockTagsResponse(page);
+	await mockOllamaModelsResponse(page);
 });
 
 test('seed data and take screenshots for README.md', async ({ page }) => {
-	await page.goto('/');
+	await page.goto('/settings');
 
 	// Wait for fonts to load
 	expect(await page.evaluate(() => document.fonts.size)).toBe(19);
 	expect(await page.evaluate(() => document.fonts.ready)).toBeTruthy();
 
+	await expect(page.locator('.connection')).toHaveCount(1);
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'settings.png' });
 
 	await page.goto('/sessions/ulxz6l'); // Visiting a fake session id so it doesn't change from test to test
+	await expect(page.getByText('No sessions')).toBeVisible();
 	await expect(page.locator('.prompt-editor__textarea')).toBeVisible();
 	await expect(page.locator('.text-editor')).not.toBeVisible();
 
@@ -30,6 +35,10 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'session-new.png' });
 
 	// Stage 2 sessions
+	const models: Model[] = MOCK_API_TAGS_RESPONSE.models.map((model) => ({
+		name: model.name,
+		serverId: MOCK_DEFAULT_SERVER_ID
+	}));
 	await page.evaluate(
 		({ modelA, modelB }) =>
 			window.localStorage.setItem(
@@ -71,7 +80,10 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 					}
 				])
 			),
-		{ modelA: MOCK_API_TAGS_RESPONSE.models[0].name, modelB: MOCK_API_TAGS_RESPONSE.models[1].name }
+		{
+			modelA: models[0],
+			modelB: models[1]
+		}
 	);
 
 	await page.reload();

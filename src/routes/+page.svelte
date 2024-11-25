@@ -1,15 +1,13 @@
 <script lang="ts">
-	import { beforeUpdate } from 'svelte';
-
 	import { goto } from '$app/navigation';
-	import { settingsStore } from '$lib/localStorage';
+	import { serversStore } from '$lib/localStorage';
 
-	beforeUpdate(() => {
-		// If the server is connected, redirect to the sessions page
-		if ($settingsStore.ollamaServerStatus === 'connected') {
+	$effect.pre(() => {
+		// If at least one server is verified, redirect to the sessions page
+		if ($serversStore.some((server) => server.isVerified !== null)) {
 			goto('/sessions');
 		} else {
-			// If the server is not connected, redirect to the settings page
+			// Otherwise, redirect to the settings page to add or verify servers
 			goto('/settings');
 		}
 	});

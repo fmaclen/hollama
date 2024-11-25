@@ -6,13 +6,14 @@
 	import { StorageKey } from '$lib/localStorage';
 
 	function deleteStorage(item: StorageKey): void {
-		const dialogText = {
+		const dialogText: Partial<Record<StorageKey, string>> = {
 			[StorageKey.HollamaSessions]: $LL.areYouSureYouWantToDeleteAllSessions(),
 			[StorageKey.HollamaKnowledge]: $LL.areYouSureYouWantToDeleteAllKnowledge(),
 			[StorageKey.HollamaSettings]: $LL.areYouSureYouWantToDeleteAllSettings()
 		};
 		if (confirm(dialogText[item])) {
 			localStorage.removeItem(item);
+			if (item === StorageKey.HollamaSettings) localStorage.removeItem(StorageKey.HollamaServers);
 			location.reload();
 		}
 	}

@@ -2,6 +2,7 @@ import { expect, type Locator, type Page, type Route } from '@playwright/test';
 import type { ChatResponse, ListResponse } from 'ollama/browser';
 import type OpenAI from 'openai';
 
+import { ConnectionType, getDefaultServer } from '$lib/connections';
 import type { Knowledge } from '$lib/knowledge';
 
 export const MOCK_API_TAGS_RESPONSE: ListResponse = {
@@ -149,6 +150,8 @@ export const MOCK_OPENAI_MODELS: OpenAI.Models.Model[] = [
 	{ id: 'text-davinci-003', object: 'model', created: 1669599635, owned_by: 'openai-internal' }
 ];
 
+export const MOCK_DEFAULT_SERVER_ID = 'abc123';
+
 export async function chooseFromCombobox(
 	page: Page,
 	label: string | RegExp,
@@ -167,9 +170,16 @@ export async function chooseModel(page: Page, modelName: string) {
 	await chooseFromCombobox(page, 'Available models', modelName);
 }
 
-// Ollama mock functions
+export async function mockOllamaModelsResponse(page: Page) {
+	await page.goto('/');
 
-export async function mockTagsResponse(page: Page) {
+	// Add the default server to the servers list
+	await page.evaluate(
+		(data) => window.localStorage.setItem('hollama-servers', JSON.stringify(data)),
+		[{ ...getDefaultServer(ConnectionType.Ollama), id: MOCK_DEFAULT_SERVER_ID }]
+	);
+
+	// Mock the tags response
 	await page.route('**/api/tags', async (route: Route) => {
 		await route.fulfill({
 			status: 200,
@@ -177,6 +187,21 @@ export async function mockTagsResponse(page: Page) {
 			body: JSON.stringify(MOCK_API_TAGS_RESPONSE)
 		});
 	});
+
+	// Reload the page to load the servers list
+	await page.reload();
+
+	// Fetch list of models
+	await expect(page.getByText('Verify')).toBeVisible();
+	await expect(
+		page.getByText('Connection has been verified and is ready to use')
+	).not.toBeVisible();
+	const useModelsFromThisServerCheckbox = page.getByLabel('Use models from this server');
+	await expect(useModelsFromThisServerCheckbox).not.toBeChecked();
+
+	await page.getByText('Verify').click();
+	await expect(page.getByText('Connection has been verified and is ready to use')).toBeVisible();
+	await expect(useModelsFromThisServerCheckbox).toBeChecked();
 }
 
 export async function mockCompletionResponse(page: Page, response: ChatResponse) {
@@ -192,15 +217,15 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
 // OpenAI mock functions
 
 export async function mockOpenAIModelsResponse(page: Page, models: OpenAI.Models.Model[]) {
-	await page.route('**/v1/models', async (route: Route) => {
+	await page.goto('/settings');
+	await chooseFromCombobox(page, 'Connection type', 'OpenAI: Official API');
+	await page.getByText('Add connection').click();
+	await page.getByLabel('API Key').fill('sk-validapikey');
+	await page.route('https://api.openai.com/v1/models', async (route: Route) => {
 		await route.fulfill({ json: { data: models } });
 	});
-
-	await page.getByLabel('Base URL').fill('https://api.openai.com/v1');
-	await page.getByLabel('API Key').fill('sk-validapikey');
-	await page.getByRole('button', { name: 'Connect' }).click();
-
-	await expect(page.getByText('Sync was successful')).toBeVisible();
+	await page.getByRole('button', { name: 'Verify', exact: true }).click();
+	await expect(page.getByText('Connection has been verified and is ready to use')).toBeVisible();
 }
 
 export async function mockOpenAICompletionResponse(

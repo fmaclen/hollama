@@ -7,7 +7,7 @@ import {
 	MOCK_KNOWLEDGE,
 	MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1,
 	mockCompletionResponse,
-	mockTagsResponse,
+	mockOllamaModelsResponse,
 	seedKnowledgeAndReload,
 	submitWithKeyboardShortcut,
 	textEditorLocator
@@ -112,7 +112,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	);
 	const knowledgeItems = page.getByTestId('knowledge-item');
 
-	await mockTagsResponse(page);
+	await mockOllamaModelsResponse(page);
 
 	await page.goto('/');
 	await page.getByText('Knowledge', { exact: true }).click();
@@ -187,7 +187,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	const sessionArticle = page.locator('.session__history .article');
 	const knowledgeId = page.getByTestId('knowledge-id');
 
-	await mockTagsResponse(page);
+	await mockOllamaModelsResponse(page);
 	await page.goto('/');
 	await seedKnowledgeAndReload(page);
 	await page.getByText('Knowledge', { exact: true }).click();
@@ -211,10 +211,19 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	});
 
 	await page.locator('button', { hasText: 'Run' }).click();
+	const DEFAULT_OLLAMA_OPTIONS = {
+		penalize_newline: false,
+		numa: false,
+		low_vram: false,
+		f16_kv: false,
+		vocab_only: false,
+		use_mmap: false,
+		use_mlock: false
+	};
 	expect(requestPostData).toContain(
 		JSON.stringify({
 			model: MOCK_API_TAGS_RESPONSE.models[0].name,
-			options: {},
+			options: DEFAULT_OLLAMA_OPTIONS,
 			messages: [
 				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
 				{ role: 'user', content: 'What is this about?' }
@@ -234,7 +243,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	expect(requestPostData).toContain(
 		JSON.stringify({
 			model: MOCK_API_TAGS_RESPONSE.models[0].name,
-			options: {},
+			options: DEFAULT_OLLAMA_OPTIONS,
 			messages: [
 				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
 				{ role: 'user', content: 'What is this about?' }
@@ -257,7 +266,7 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	expect(requestPostData).toContain(
 		JSON.stringify({
 			model: MOCK_API_TAGS_RESPONSE.models[0].name,
-			options: {},
+			options: DEFAULT_OLLAMA_OPTIONS,
 			messages: [
 				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
 				{ role: 'user', content: 'What is this about?' },
@@ -273,7 +282,7 @@ test('can use shortcut to create knowledge from session', async ({ page }) => {
 	const sessionId = page.getByTestId('session-id');
 	const knowledgeId = page.getByTestId('knowledge-id');
 
-	await mockTagsResponse(page);
+	await mockOllamaModelsResponse(page);
 
 	await page.goto('/sessions');
 	await page.getByTestId('new-session').click();

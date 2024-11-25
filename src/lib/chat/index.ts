@@ -2,17 +2,9 @@ import type { ErrorResponse, ProgressResponse, PullRequest, StatusResponse } fro
 import { get } from 'svelte/store';
 
 import { sessionsStore, settingsStore } from '$lib/localStorage';
+import type { Model } from '$lib/settings';
 
-import { OllamaStrategy, type OllamaOptions } from './ollama';
-import { OpenAIStrategy } from './openai';
-
-export interface Model {
-	api: 'ollama' | 'openai';
-	name: string;
-	size?: number;
-	parameterSize?: string;
-	modifiedAt?: Date;
-}
+import { type OllamaOptions } from './ollama';
 
 export interface Message {
 	role: 'user' | 'assistant' | 'system';
@@ -41,51 +33,6 @@ export interface ChatStrategy {
 	): Promise<void>;
 }
 
-function getOpenAICredentials(): { server: string; apiKey: string } | null {
-	const { openaiServer, openaiApiKey } = get(settingsStore);
-	if (!openaiServer || !openaiApiKey) return null;
-	return { server: openaiServer, apiKey: openaiApiKey };
-}
-
-function getChatStrategy(model: Model): ChatStrategy {
-	if (model.api === 'ollama') return new OllamaStrategy();
-	else if (model.api === 'openai') {
-		const credentials = getOpenAICredentials();
-		if (!credentials) throw new Error('OpenAI credentials not found');
-		return new OpenAIStrategy(credentials);
-	}
-
-	throw new Error('Invalid model specified');
-}
-
-interface ChatParams {
-	model: Model;
-	payload: ChatRequest;
-	abortSignal: AbortSignal;
-	onChunk: (content: string) => void;
-}
-
-export async function chat({ model, payload, abortSignal, onChunk }: ChatParams): Promise<void> {
-	const strategy = getChatStrategy(model);
-	return strategy.chat(payload, abortSignal, onChunk);
-}
-
-export async function listModels(): Promise<Model[]> {
-	const ollamaModels = await new OllamaStrategy().getModels().catch(() => []);
-	const openaiModels: Model[] = [];
-
-	const openaiCredentials = getOpenAICredentials();
-	if (openaiCredentials)
-		openaiModels.push(...(await new OpenAIStrategy(openaiCredentials).getModels().catch(() => [])));
-
-	return [...ollamaModels, ...openaiModels].sort((a, b) => {
-		const nameA = a.name;
-		const nameB = b.name;
-		// Compare ignoring case and accents
-		return nameA.localeCompare(nameB, undefined, { sensitivity: 'base' });
-	});
-}
-
 export function getLastUsedModels(): Model[] {
 	const currentSessions = get(sessionsStore);
 	const models = get(settingsStore)?.models;
@@ -94,9 +41,9 @@ export function getLastUsedModels(): Model[] {
 	const lastUsedModels: Model[] = [];
 
 	for (const session of currentSessions) {
-		if (lastUsedModels.find((m) => m.name === session.model)) continue;
+		if (lastUsedModels.find((m) => m.name === session.model?.name)) continue;
 
-		const model = models.find((model) => model.name === session.model);
+		const model = models.find((model) => model.name === session.model?.name);
 		if (!model) continue;
 		lastUsedModels.push(model);
 

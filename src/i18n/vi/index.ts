@@ -89,7 +89,9 @@ const vi = {
 	searchEmpty: 'Không tìm thấy kết quả',
 	seed: 'Seed',
 	seeDocs: 'Xem tài liệu',
-	server: 'Máy chủ',
+	servers: 'Máy chủ',
+	serverSettingsUpdated:
+		'Cấu hình máy chủ đã được cập nhật và cần được xác nhận lại trong "Cài đặt"',
 	session: 'Phiên',
 	sessions: 'Các phiên',
 	settings: 'Cài đặt',

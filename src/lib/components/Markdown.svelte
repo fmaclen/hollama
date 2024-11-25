@@ -1,7 +1,7 @@
 <script lang="ts">
 	import hljs from 'highlight.js';
 	import MarkdownIt from 'markdown-it/lib/index.mjs';
-	import { onMount } from 'svelte';
+	import { mount, onMount } from 'svelte';
 
 	import 'highlight.js/styles/github.min.css';
 
@@ -36,7 +36,10 @@
 		preElements.forEach((preElement) => {
 			const codeElement = preElement.querySelector('code');
 			if (codeElement)
-				new ButtonCopy({ target: preElement, props: { content: codeElement.innerText } });
+				mount(ButtonCopy, {
+					target: preElement,
+					props: { content: codeElement.innerText }
+				});
 		});
 	});
 </script>
@@ -175,15 +178,29 @@
 
 	.markdown :global(code) {
 		@apply rounded-md bg-amber-50 p-1 text-xs text-orange-600;
-		@apply dark:bg-amber-950 dark:text-orange-500;
 		@apply md:text-sm;
 		font-variant-ligatures: none;
+	}
+
+	/*
+		HACK: This is needed because of a bug in Svelte 5 with `dark:` selectors
+		REF: https://github.com/sveltejs/svelte/issues/14330
+	*/
+	.markdown :global(code:where([data-color-theme='dark'], [data-color-theme='dark'] *)) {
+		@apply bg-amber-950 text-orange-500;
 	}
 
 	.markdown :global(pre code) {
 		@apply block bg-neutral-50/50 p-4 pr-12 text-base text-xs text-neutral-700;
 		@apply md:text-sm;
-		@apply dark:invert;
+	}
+
+	/*
+		HACK: This is needed because of a bug in Svelte 5 with `dark:` selectors
+		REF: https://github.com/sveltejs/svelte/issues/14330
+	*/
+	.markdown :global(pre code:where([data-color-theme='dark'], [data-color-theme='dark'] *)) {
+		@apply invert;
 	}
 
 	.markdown :global(a:has(code)) {

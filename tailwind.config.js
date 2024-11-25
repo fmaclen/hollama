@@ -65,7 +65,12 @@ const config = {
 					'@apply p-4 lg:p-6 xl:p-8': {}
 				},
 				'.confirm-deletion': {
-					'@apply bg-gradient-to-r from-transparent to-red-50 dark:to-red-900': {}
+					'@apply bg-gradient-to-r from-transparent to-red-50': {},
+					// HACK: This is needed because of a bug in Svelte 5 with `dark:` selectors
+					// REF: https://github.com/sveltejs/svelte/issues/14330
+					'&:global(:where([data-color-theme="dark"], [data-color-theme="dark"] *))': {
+						'@apply bg-gradient-to-r from-transparent to-red-900': {}
+					}
 				},
 				'.text-link': {
 					'@apply underline underline-offset-4 hover:text-accent': {}

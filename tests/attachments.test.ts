@@ -6,7 +6,7 @@ import {
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_KNOWLEDGE,
 	mockCompletionResponse,
-	mockTagsResponse,
+	mockOllamaModelsResponse,
 	seedKnowledgeAndReload
 } from './utils';
 
@@ -33,7 +33,7 @@ test.describe('Knowledge Attachments', () => {
 	let knowledgeAttachments: Locator;
 
 	test.beforeEach(async ({ page }) => {
-		await mockTagsResponse(page);
+		await mockOllamaModelsResponse(page);
 		await page.goto('/');
 		await seedKnowledgeAndReload(page);
 		await page.getByText('Sessions', { exact: true }).click();

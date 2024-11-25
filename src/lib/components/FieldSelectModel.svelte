@@ -1,11 +1,15 @@
 <script lang="ts">
+	import { beforeUpdate } from 'svelte';
+	import type { Writable } from 'svelte/store';
+
 	import LL from '$i18n/i18n-svelte';
-	import { type Model } from '$lib/chat';
-	import { settingsStore } from '$lib/localStorage';
+	import { serversStore, settingsStore } from '$lib/localStorage';
+	import type { Session } from '$lib/sessions';
+	import { type Model } from '$lib/settings';
 
 	import FieldSelect from './FieldSelect.svelte';
 
-	export let model: string | undefined;
+	export let session: Writable<Session>;
 	export let isLabelVisible: boolean | undefined = true;
 
 	type ModelOption = {
@@ -14,6 +18,7 @@
 		badge?: string | string[];
 	};
 
+	let modelName: string | undefined;
 	let disabled: boolean;
 	let models: ModelOption[] = [];
 	let lastUsedModels: ModelOption[] = [];
@@ -21,12 +26,17 @@
 
 	function formatModelToSelectOption(model: Model): ModelOption {
 		const badges: string[] = [];
+		const modelServer = $serversStore.find((s) => s.id === model.serverId);
 		if (model.parameterSize) badges.push(model.parameterSize);
-		badges.push(model.api);
-
+		badges.push(modelServer?.label || modelServer?.connectionType || '');
 		return { value: model.name, label: model.name, badge: badges };
 	}
 
+	beforeUpdate(() => {
+		modelName = $session.model?.name || undefined;
+	});
+
+	$: $session.model = $settingsStore.models.find((m) => m.name === modelName);
 	$: disabled = !$settingsStore.models?.length;
 	$: models = $settingsStore.models?.map(formatModelToSelectOption);
 	$: lastUsedModels = $settingsStore.lastUsedModels?.map(formatModelToSelectOption);
@@ -43,5 +53,5 @@
 		{ label: $LL.lastUsedModels(), options: lastUsedModels },
 		{ label: $LL.otherModels(), options: otherModels }
 	]}
-	bind:value={model}
+	bind:value={modelName}
 />

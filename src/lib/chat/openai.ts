@@ -1,22 +1,19 @@
 import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
+import type { Server } from '$lib/servers';
+
 import type { ChatRequest, ChatStrategy, Model } from './index';
 
 export class OpenAIStrategy implements ChatStrategy {
 	private openai: OpenAI;
 
-	constructor(params: { server: string; apiKey: string }) {
+	constructor(private server: Server) {
 		this.openai = new OpenAI({
-			baseURL: params.server,
-			apiKey: params.apiKey,
+			baseURL: this.server.baseUrl,
+			apiKey: this.server.apiKey || '',
 			dangerouslyAllowBrowser: true
 		});
-	}
-
-	config(params: { server: string; apiKey: string }): void {
-		this.openai.baseURL = params.server;
-		this.openai.apiKey = params.apiKey;
 	}
 
 	async chat(
@@ -39,10 +36,19 @@ export class OpenAIStrategy implements ChatStrategy {
 	async getModels(): Promise<Model[]> {
 		const response = await this.openai.models.list();
 		return response.data
-			?.filter((model) => model.id.startsWith('gpt'))
+			?.filter((model) => model.id.startsWith(this.server.modelFilter || ''))
 			.map((model) => ({
-				api: 'openai',
+				serverId: this.server.id,
 				name: model.id
 			}));
+	}
+
+	async verifyServer(): Promise<boolean> {
+		try {
+			await this.getModels();
+			return true;
+		} catch {
+			return false;
+		}
 	}
 }

@@ -5,6 +5,7 @@ import { sessionsStore, settingsStore, sortStore } from '$lib/localStorage';
 
 import { getLastUsedModels, type Message as ChatMessage } from './chat';
 import type { Knowledge } from './knowledge';
+import type { Model } from './settings';
 import { formatTimestampToNow } from './utils';
 
 export interface Message extends ChatMessage {
@@ -14,10 +15,10 @@ export interface Message extends ChatMessage {
 
 export interface Session {
 	id: string;
-	model: string;
 	messages: Message[];
 	systemPrompt: Message;
 	options: Partial<OllamaOptions>;
+	model?: Model;
 	updatedAt?: string;
 }
 
@@ -62,7 +63,7 @@ export const loadSession = (id: string): Session => {
 
 	if (!session) {
 		// Use the last used model
-		const model = getLastUsedModels()[0]?.name || '';
+		const model = getLastUsedModels()[0];
 
 		// Create a new session
 		session = {
@@ -107,7 +108,7 @@ export const saveSession = (session: Session): void => {
 export function formatSessionMetadata(session: Session) {
 	const subtitles: string[] = [];
 	if (session.updatedAt) subtitles.push(formatTimestampToNow(session.updatedAt));
-	subtitles.push(session.model);
+	if (session.model) subtitles.push(session.model.name);
 	return subtitles.join(' • ');
 }
 
