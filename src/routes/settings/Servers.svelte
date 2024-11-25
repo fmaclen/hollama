@@ -10,12 +10,6 @@
 
 	import Connection from './Connection.svelte';
 
-	const SUPPORTED_CONNECTION_TYPES = [
-		{ value: ConnectionType.Ollama, label: 'Ollama' },
-		{ value: ConnectionType.OpenAI, label: 'OpenAI: Official API' },
-		{ value: ConnectionType.OpenAICompatible, label: 'OpenAI: Compatible servers (i.e. llama.cpp)' }
-	];
-
 	let newConnectionType: ConnectionType | undefined = $state();
 
 	function addServer() {
@@ -39,7 +33,11 @@
 					isLabelVisible={false}
 					label={$LL.connectionType()}
 					placeholder={$LL.connectionType()}
-					options={SUPPORTED_CONNECTION_TYPES}
+					options={[
+						{ value: ConnectionType.Ollama, label: $LL.ollama() },
+						{ value: ConnectionType.OpenAI, label: $LL.openAIOfficialAPI() },
+						{ value: ConnectionType.OpenAICompatible, label: $LL.openAICompatible() }
+					]}
 					bind:value={newConnectionType}
 				/>
 			{/key}

@@ -418,9 +418,21 @@ type RootTranslation = {
 	 */
 	numa: string
 	/**
+	 * O​l​l​a​m​a
+	 */
+	ollama: string
+	/**
 	 * O​l​l​a​m​a​'​s​ ​l​i​b​r​a​r​y
 	 */
 	ollamaLibrary: string
+	/**
+	 * O​p​e​n​A​I​:​ ​O​f​f​i​c​i​a​l​ ​A​P​I
+	 */
+	openAIOfficialAPI: string
+	/**
+	 * O​p​e​n​A​I​:​ ​C​o​m​p​a​t​i​b​l​e​ ​s​e​r​v​e​r​s​ ​(​i​.​e​.​ ​l​l​a​m​a​.​c​p​p​)
+	 */
+	openAICompatible: string
 	/**
 	 * O​t​h​e​r​ ​m​o​d​e​l​s
 	 */
@@ -1016,9 +1028,21 @@ The completion in progress will stop
 	 */
 	numa: () => LocalizedString
 	/**
+	 * Ollama
+	 */
+	ollama: () => LocalizedString
+	/**
 	 * Ollama's library
 	 */
 	ollamaLibrary: () => LocalizedString
+	/**
+	 * OpenAI: Official API
+	 */
+	openAIOfficialAPI: () => LocalizedString
+	/**
+	 * OpenAI: Compatible servers (i.e. llama.cpp)
+	 */
+	openAICompatible: () => LocalizedString
 	/**
 	 * Other models
 	 */
