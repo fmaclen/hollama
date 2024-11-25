@@ -14,6 +14,7 @@
 	import Head from '$lib/components/Head.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
+	import { ConnectionType } from '$lib/connections';
 	import { serversStore } from '$lib/localStorage';
 	import {
 		formatSessionMetadata,
@@ -140,11 +141,11 @@
 		try {
 			let strategy: ChatStrategy | undefined = undefined;
 			switch (server.connectionType) {
-				case 'ollama':
+				case ConnectionType.Ollama:
 					strategy = new OllamaStrategy(server);
 					break;
-				case 'openai':
-				case 'openai-compatible':
+				case ConnectionType.OpenAI:
+				case ConnectionType.OpenAICompatible:
 					strategy = new OpenAIStrategy(server);
 					break;
 			}

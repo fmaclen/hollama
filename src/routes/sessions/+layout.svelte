@@ -9,6 +9,7 @@
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SectionListItem from '$lib/components/SectionListItem.svelte';
+	import { ConnectionType } from '$lib/connections';
 	import { serversStore, sessionsStore, settingsStore } from '$lib/localStorage';
 	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
 	import { type Model } from '$lib/settings';
@@ -21,11 +22,11 @@
 			if (!server.isEnabled) continue;
 
 			switch (server.connectionType) {
-				case 'ollama':
+				case ConnectionType.Ollama:
 					models.push(...(await new OllamaStrategy(server).getModels().catch(() => [])));
 					break;
-				case 'openai':
-				case 'openai-compatible':
+				case ConnectionType.OpenAI:
+				case ConnectionType.OpenAICompatible:
 					models.push(...(await new OpenAIStrategy(server).getModels().catch(() => [])));
 					break;
 			}
