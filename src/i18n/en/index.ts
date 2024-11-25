@@ -22,8 +22,6 @@ const en = {
 	checkNow: 'Check now',
 	clear: 'Clear',
 	confirmDeletion: 'Confirm deletion',
-	connect: 'Connect',
-	connected: 'Connected',
 	connectionType: 'Connection type',
 	connectionLabelHelp: 'Identifies the connection in the models list',
 	connecting: 'Connecting...',
