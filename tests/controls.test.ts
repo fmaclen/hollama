@@ -352,7 +352,7 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	const parsedSessions = JSON.parse(savedSessions || '[]');
 	const savedOptions = parsedSessions[0].options;
 
-	// Assert each option individually
+	// The order isn't guaranteed, so we need to check each option individually
 	for (const [key, value] of Object.entries(customizedOptions)) {
 		expect(savedOptions).toHaveProperty(key, value);
 	}

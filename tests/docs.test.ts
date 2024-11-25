@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import type { Model } from '$lib/settings';
 
 import {
+	chooseFromCombobox,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_DEFAULT_SERVER_ID,
 	MOCK_KNOWLEDGE,
@@ -15,12 +16,13 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('seed data and take screenshots for README.md', async ({ page }) => {
-	await page.goto('/');
+	await page.goto('/settings');
 
 	// Wait for fonts to load
 	expect(await page.evaluate(() => document.fonts.size)).toBe(19);
 	expect(await page.evaluate(() => document.fonts.ready)).toBeTruthy();
 
+	await expect(page.locator('.connection')).toHaveCount(1);
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'settings.png' });
 
 	await page.goto('/sessions/ulxz6l'); // Visiting a fake session id so it doesn't change from test to test
