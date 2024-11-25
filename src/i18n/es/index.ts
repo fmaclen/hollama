@@ -7,7 +7,8 @@ const es = {
 	allowConnections: 'Cambia la configuración de tu servidor para permitir conexiones desde',
 	allowMixedContent: 'Permitir contenido mixto',
 	apiKey: 'Llave de API',
-	areYouSureYouWantToDeleteAllKnowledge: '¿Estás seguro de que quieres eliminar todo el conocimiento?',
+	areYouSureYouWantToDeleteAllKnowledge:
+		'¿Estás seguro de que quieres eliminar todo el conocimiento?',
 	areYouSureYouWantToDeleteAllSessions: '¿Estás seguro de que quieres eliminar todas las sesiones?',
 	areYouSureYouWantToDeleteAllSettings: '¿Estás seguro de que quieres eliminar todos los ajustes?',
 	areYouSureYouWantToLeave: '¿Estás seguro de que quieres salir?\nLa tarea en progreso se detendrá',
@@ -19,7 +20,8 @@ const es = {
 	browseModels: 'Explorar la lista de modelos disponibles',
 	cancel: 'Cancelar',
 	cantConnectToOllamaServer: 'No se puede conectar al servidor de Ollama',
-	checkBrowserExtensions: 'También verifica que ninguna extensión del navegador esté bloqueando la conexión',
+	checkBrowserExtensions:
+		'También verifica que ninguna extensión del navegador esté bloqueando la conexión',
 	checkingForUpdates: 'Buscando actualizaciones...',
 	checkNow: 'Comprobar ahora',
 	clear: 'Limpiar',
@@ -27,13 +29,15 @@ const es = {
 	connect: 'Conectar',
 	connected: 'Conectado',
 	connecting: 'Conectando...',
-	connectionFailedToVerify: 'No se pudo verificar la conexión, revisa la configuración e intenta de nuevo',
+	connectionFailedToVerify:
+		'No se pudo verificar la conexión, revisa la configuración e intenta de nuevo',
 	connectionIsVerified: 'La conexión ha sido verificada y está lista para usar',
 	connectionLabelHelp: 'Identifica la conexión en la lista de modelos',
 	connectionType: 'Tipo de conexión',
 	content: 'Contenido',
 	controls: 'Controles',
-	controlsOnlyAvailableForOllama: 'Los controles avanzados actualmente solo están disponibles para modelos de Ollama',
+	controlsOnlyAvailableForOllama:
+		'Los controles avanzados actualmente solo están disponibles para modelos de Ollama',
 	copy: 'Copiar',
 	couldntCheckForUpdates: 'No se pudo buscar actualizaciones automáticamente',
 	couldntConnectToOllamaServer: 'No se pudo conectar al servidor de Ollama',
@@ -109,7 +113,8 @@ const es = {
 	searchEmpty: 'No se encontraron resultados',
 	seeDocs: 'Ver documentación',
 	servers: 'Servidores',
-	serverSettingsUpdated: 'La configuración del servidor fue actualizada y necesita ser re-verificada en "Ajustes"',
+	serverSettingsUpdated:
+		'La configuración del servidor fue actualizada y necesita ser re-verificada en "Ajustes"',
 	session: 'Sesión',
 	sessions: 'Sesiones',
 	settings: 'Ajustes',
@@ -119,7 +124,8 @@ const es = {
 	success: 'Éxito',
 	system: 'Sistema',
 	systemPrompt: 'Indicación del sistema',
-	tryingToConnectNotLocalhost: 'Si quieres conectarte a un servidor de Ollama que no está disponible en {hostname:string} o {ip:string} prueba',
+	tryingToConnectNotLocalhost:
+		'Si quieres conectarte a un servidor de Ollama que no está disponible en {hostname:string} o {ip:string} prueba',
 	useModelsFromThisServer: 'Usar modelos de este servidor',
 	verify: 'Verificar',
 	version: 'Versión',

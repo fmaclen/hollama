@@ -117,7 +117,8 @@ const zh_cn = {
 	success: '成功',
 	system: '系统',
 	systemPrompt: '系统提示词',
-	tryingToConnectNotLocalhost: '如果您想连接到 {hostname:string} 或 {ip:string} 上不可用的Ollama服务器，请尝试',
+	tryingToConnectNotLocalhost:
+		'如果您想连接到 {hostname:string} 或 {ip:string} 上不可用的Ollama服务器，请尝试',
 	useModelsFromThisServer: '使用此服务器的模型',
 	verify: '验证',
 	version: '版本',
