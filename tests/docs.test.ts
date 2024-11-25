@@ -3,7 +3,6 @@ import { expect, test } from '@playwright/test';
 import type { Model } from '$lib/settings';
 
 import {
-	chooseFromCombobox,
 	MOCK_API_TAGS_RESPONSE,
 	MOCK_DEFAULT_SERVER_ID,
 	MOCK_KNOWLEDGE,
