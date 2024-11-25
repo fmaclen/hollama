@@ -80,7 +80,7 @@
 >
 	<svelte:fragment slot="nav">
 		<Button
-			aria-label="Download model"
+			aria-label={$LL.downloadModel()}
 			class="h-full text-muted"
 			isLoading={isPullInProgress}
 			disabled={!modelTag || isPullInProgress || !server.isVerified}
