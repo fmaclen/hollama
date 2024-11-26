@@ -96,4 +96,20 @@ test.describe('Locales', () => {
 			);
 		});
 	});
+
+	test.describe('German', () => {
+		test.use({ locale: 'de-DE' });
+		test('default language is german', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('de-DE');
+
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Current version')).not.toBeVisible();
+			await expect(page.getByText('Aktuelle Version')).toBeVisible();
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"de"'
+			);
+		});
+	});
 });
