@@ -9,6 +9,7 @@
 - **Multiple-server support** allows you to connect to one or more Ollama (and/or OpenAI) servers at the same time.
 - **Models list can be filtered** by keyword for each server.
 - **Servers can be labeled** to help you identify them in the models list.
+- **Hallo Welt!** UI is now available in German.
 
 #### Previously, in Hollama
 
