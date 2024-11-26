@@ -124,6 +124,7 @@ const de = {
 	repeatPenalty: 'Wiederholungsstrafe',
 	retry: 'Erneut versuchen',
 	run: 'Ausführen',
+	reVerify: 'Erneut überprüfen',
 	runtimeOptions: 'Laufzeitoptionen',
 	save: 'Speichern',
 	search: 'Suchen',
