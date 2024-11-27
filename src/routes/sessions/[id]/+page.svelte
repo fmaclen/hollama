@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { afterUpdate, onMount, tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { writable, type Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import { beforeNavigate } from '$app/navigation';
@@ -15,7 +14,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import Metadata from '$lib/components/Metadata.svelte';
 	import { ConnectionType } from '$lib/connections';
-	import { serversStore } from '$lib/localStorage';
+	import { serversStore, settingsStore } from '$lib/localStorage';
 	import {
 		formatSessionMetadata,
 		getSessionTitle,
@@ -32,12 +31,17 @@
 	import Messages from './Messages.svelte';
 	import Prompt from './Prompt.svelte';
 
-	const shouldConfirmDeletion = writable(false);
+	// Use $state instead of writable stores
+	let shouldConfirmDeletion = $state(false);
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let session: Writable<Session> = writable(loadSession(data.id));
-	let editor: Writable<Editor> = writable({
+	let { data }: Props = $props();
+
+	let session = $state(loadSession(data.id));
+	let editor = $state<Editor>({
 		prompt: '',
 		view: 'messages',
 		messageIndexToEdit: null,
@@ -46,18 +50,35 @@
 		shouldFocusTextarea: false,
 		isNewSession: true
 	});
-	let messagesWindow: HTMLDivElement;
-	let userScrolledUp = false;
+	let messagesWindow: HTMLDivElement | undefined = $state();
+	let userScrolledUp = $state(false);
+	let modelName = $state('');
+	// $inspect(data.id);
+	$inspect(modelName).with(console.trace);
 
-	$: if (data.id) handleSessionChange();
+	$effect(() => {
+		const model = $settingsStore.models.find((m) => m.name === modelName);
+		if (model) session.model = model;
+	});
+
+	$effect(() => {
+		if (data.id !== session.id) handleSessionChange();
+	});
+
+	$effect(() => {
+		if (editor.shouldFocusTextarea && editor.promptTextarea) {
+			editor.promptTextarea.focus();
+			editor.shouldFocusTextarea = false;
+		}
+	});
 
 	onMount(async () => {
 		await scrollToBottom();
-		messagesWindow.addEventListener('scroll', handleScroll);
+		messagesWindow?.addEventListener('scroll', handleScroll);
 	});
 
 	beforeNavigate((navigation) => {
-		if (!$editor.isCompletionInProgress) return;
+		if (!editor.isCompletionInProgress) return;
 		const userConfirmed = confirm($LL.areYouSureYouWantToLeave());
 		if (userConfirmed) {
 			stopCompletion();
@@ -66,76 +87,70 @@
 		navigation.cancel();
 	});
 
-	afterUpdate(() => {
-		if ($editor.shouldFocusTextarea && $editor.promptTextarea) {
-			$editor.promptTextarea.focus();
-			$editor.shouldFocusTextarea = false;
-		}
-	});
-
 	async function handleSessionChange() {
-		session = writable(loadSession(data.id));
-		$editor.view = 'messages';
-		$editor.isNewSession = !$session?.messages.length;
+		session = loadSession(data.id);
+		modelName = session.model?.name || '';
+		editor.view = 'messages';
+		editor.isNewSession = !session?.messages.length;
 		scrollToBottom();
 	}
 
 	async function handleSubmitNewMessage() {
-		const message: Message = { role: 'user', content: $editor.prompt };
-		$session.messages = [...$session.messages, message];
+		const message: Message = { role: 'user', content: editor.prompt };
+		session.messages = [...session.messages, message];
 		await scrollToBottom(true); // Force scroll after submitting prompt
-		await handleCompletion($session.messages);
+		await handleCompletion(session.messages);
 	}
 
 	async function handleSubmitEditMessage() {
-		if ($editor.messageIndexToEdit === null) return;
+		if (editor.messageIndexToEdit === null) return;
 
-		$session.messages[$editor.messageIndexToEdit].content = $editor.prompt;
+		session.messages[editor.messageIndexToEdit].content = editor.prompt;
 
 		// Remove all messages after the edited message
-		$session.messages = $session.messages.slice(0, $editor.messageIndexToEdit + 1);
+		session.messages = session.messages.slice(0, editor.messageIndexToEdit + 1);
 
-		$editor.messageIndexToEdit = null;
-		$editor.prompt = '';
+		editor.messageIndexToEdit = null;
+		editor.prompt = '';
 
-		await handleCompletion($session.messages);
+		await handleCompletion(session.messages);
 	}
 
 	function handleSubmit() {
-		if (!$editor.prompt) return;
-		if (!$session.model) return;
-		$editor.isCodeEditor = false;
-		$editor.isNewSession = false;
-		$editor.view = 'messages';
+		if (!editor.prompt) return;
+		if (!session.model) return;
+		editor.isCodeEditor = false;
+		editor.isNewSession = false;
+		editor.view = 'messages';
 
-		if ($editor.messageIndexToEdit !== null) handleSubmitEditMessage();
+		if (editor.messageIndexToEdit !== null) handleSubmitEditMessage();
 		else handleSubmitNewMessage();
 	}
 
 	async function handleRetry(index: number) {
 		// Remove all the messages after the index
-		$session.messages = $session.messages.slice(0, index);
+		session.messages = session.messages.slice(0, index);
 
-		const mostRecentUserMessage = $session.messages.filter((m) => m.role === 'user').at(-1);
+		const mostRecentUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
 		if (!mostRecentUserMessage) throw new Error('No user message to retry');
 
-		await handleCompletion($session.messages);
+		await handleCompletion(session.messages);
 	}
 
 	async function handleCompletion(messages: Message[]) {
-		$editor.abortController = new AbortController();
-		$editor.isCompletionInProgress = true;
-		$editor.prompt = ''; // Reset the prompt form field
-		$editor.completion = '';
+		editor.abortController = new AbortController();
+		editor.isCompletionInProgress = true;
+		editor.prompt = ''; // Reset the prompt form field
+		editor.completion = '';
 
-		const server = $serversStore.find((s) => s.id === $session.model?.serverId);
+		const server = $serversStore.find((s) => s.id === session.model?.serverId);
 		if (!server) throw new Error('Server not found');
-		if (!$session.model?.name) throw new Error('No model');
+		if (!session.model?.name) throw new Error('No model');
 
 		let chatRequest: ChatRequest = {
-			model: $session.model.name,
-			options: $session.options,
-			messages: $session.systemPrompt.content ? [$session.systemPrompt, ...messages] : messages
+			model: session.model.name,
+			options: session.options,
+			messages: session.systemPrompt.content ? [session.systemPrompt, ...messages] : messages
 		};
 
 		try {
@@ -151,21 +166,21 @@
 			}
 
 			if (!strategy) throw new Error('Invalid strategy');
-			await strategy.chat(chatRequest, $editor.abortController.signal, async (chunk) => {
-				$editor.completion += chunk;
+			await strategy.chat(chatRequest, editor.abortController.signal, async (chunk) => {
+				editor.completion += chunk;
 				await scrollToBottom();
 			});
 
 			// After the completion save the session
-			const message: Message = { role: 'assistant', content: $editor.completion };
-			$session.messages = [...$session.messages, message];
-			$session.updatedAt = new Date().toISOString();
-			saveSession($session);
+			const message: Message = { role: 'assistant', content: editor.completion };
+			session.messages = [...session.messages, message];
+			session.updatedAt = new Date().toISOString();
+			saveSession(session);
 
 			// Final housekeeping
-			$editor.completion = '';
-			$editor.shouldFocusTextarea = true;
-			$editor.isCompletionInProgress = false;
+			editor.completion = '';
+			editor.shouldFocusTextarea = true;
+			editor.isCompletionInProgress = false;
 			await scrollToBottom();
 		} catch (error) {
 			const typedError = error instanceof Error ? error : new Error(String(error));
@@ -175,12 +190,12 @@
 	}
 
 	function stopCompletion() {
-		$editor.prompt = $session.messages[$session.messages.length - 1].content; // Reset the prompt to the last sent message
-		$editor.abortController?.abort();
-		$editor.completion = '';
-		$editor.isCompletionInProgress = false;
-		$session.messages = $session.messages.slice(0, -1); // Remove the "incomplete" AI response
-		$editor.isNewSession = !$session.messages.length;
+		editor.prompt = session.messages[session.messages.length - 1].content; // Reset the prompt to the last sent message
+		editor.abortController?.abort();
+		editor.completion = '';
+		editor.isCompletionInProgress = false;
+		session.messages = session.messages.slice(0, -1); // Remove the "incomplete" AI response
+		editor.isNewSession = !session.messages.length;
 	}
 
 	function handleError(error: Error) {
@@ -193,6 +208,7 @@
 	}
 
 	function handleScroll() {
+		if (!messagesWindow) return;
 		const { scrollTop, scrollHeight, clientHeight } = messagesWindow;
 		userScrolledUp = scrollTop + clientHeight < scrollHeight;
 	}
@@ -200,42 +216,51 @@
 	async function scrollToBottom(shouldForceScroll = false) {
 		if (!shouldForceScroll && (!messagesWindow || userScrolledUp)) return;
 		await tick();
-		requestAnimationFrame(() => (messagesWindow.scrollTop = messagesWindow.scrollHeight));
+		requestAnimationFrame(() => {
+			if (messagesWindow) messagesWindow.scrollTop = messagesWindow.scrollHeight;
+		});
 	}
 </script>
 
 <div class="session">
 	<Head
-		title={[$editor.isNewSession ? $LL.newSession() : getSessionTitle($session), $LL.sessions()]}
+		title={[editor.isNewSession ? $LL.newSession() : getSessionTitle(session), $LL.sessions()]}
 	/>
-	<Header confirmDeletion={$shouldConfirmDeletion}>
+	<Header confirmDeletion={shouldConfirmDeletion}>
 		<p data-testid="session-id" class="font-bold leading-none">
 			{$LL.session()}
-			<Button variant="link" href={`/sessions/${$session.id}`}>#{$session.id}</Button>
+			<Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
 		</p>
 		<Metadata dataTestid="session-metadata">
-			{$editor.isNewSession ? $LL.newSession() : formatSessionMetadata($session)}
+			{editor.isNewSession ? $LL.newSession() : formatSessionMetadata(session)}
 		</Metadata>
 
 		<svelte:fragment slot="nav">
-			{#if !$editor.isNewSession}
-				{#if !$shouldConfirmDeletion}
-					<ButtonCopy content={JSON.stringify($session.messages, null, 2)} />
+			{#if !editor.isNewSession}
+				{#if !shouldConfirmDeletion}
+					<ButtonCopy content={JSON.stringify(session.messages, null, 2)} />
 				{/if}
-				<ButtonDelete sitemap={Sitemap.SESSIONS} id={$session.id} {shouldConfirmDeletion} />
+				<!-- <ButtonDelete sitemap={Sitemap.SESSIONS} id={session.id} {shouldConfirmDeletion} /> -->
 			{/if}
 		</svelte:fragment>
 	</Header>
 
-	{#if $editor.view === 'controls'}
-		<Controls {session} />
+	{#if editor.view === 'controls'}
+		<!-- <Controls {session} /> -->
 	{:else}
 		<div class="session__history" bind:this={messagesWindow}>
-			<Messages {session} {editor} {handleRetry} />
+			<!-- <Messages {session} {editor} {handleRetry} /> -->
 		</div>
 	{/if}
 
-	<Prompt bind:session {editor} {handleSubmit} {stopCompletion} {scrollToBottom} />
+	<Prompt
+		bind:session
+		bind:editor
+		bind:modelName
+		{handleSubmit}
+		{stopCompletion}
+		{scrollToBottom}
+	/>
 </div>
 
 <style lang="postcss">
