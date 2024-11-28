@@ -24,12 +24,8 @@ test.describe('FieldSelect', () => {
 
 		// Open the dropdown
 		await modelCombobox.click();
-
-		// Check that the groups are visible
-		await expect(page.getByText('Recently used models', { exact: true })).toBeVisible();
+		await expect(page.getByText('Recently used models', { exact: true })).not.toBeVisible();
 		await expect(page.getByText('Other models', { exact: true })).toBeVisible();
-
-		// Check that all options are visible
 		await expect(page.getByRole('option')).toHaveCount(MOCK_API_TAGS_RESPONSE.models.length);
 
 		// Filter options

@@ -32,6 +32,11 @@
 		badges.push(modelServer?.label || modelServer?.connectionType || '');
 		return { value: model.name, label: model.name, badge: badges };
 	}
+
+	// Auto-select model when there is only one available
+	$effect(() => {
+		if (!value && otherModels?.length === 1) value = otherModels[0].value;
+	});
 </script>
 
 <FieldSelect
@@ -41,7 +46,8 @@
 	label={$LL.availableModels()}
 	{isLabelVisible}
 	options={[
-		{ label: $LL.lastUsedModels(), options: lastUsedModels },
+		// Only include lastUsedModels if they exist
+		...(lastUsedModels?.length ? [{ label: $LL.lastUsedModels(), options: lastUsedModels }] : []),
 		{ label: $LL.otherModels(), options: otherModels }
 	]}
 	bind:value

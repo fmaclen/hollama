@@ -98,10 +98,9 @@
 						knowledge: a.knowledge,
 						content: `
 <CONTEXT>
-${a.knowledge.name}
+	<CONTEXT_NAME>${a.knowledge.name}</CONTEXT_NAME>
+	<CONTEXT_CONTENT>${a.knowledge.content}</CONTEXT_CONTENT>
 </CONTEXT>
-
-${a.knowledge.content}
 `
 					});
 			});
