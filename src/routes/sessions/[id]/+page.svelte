@@ -52,11 +52,11 @@
 	let shouldConfirmDeletion = $state(false);
 
 	$effect(() => {
-		session.model = $settingsStore.models.find((m) => m.name === modelName);
+		if (data.id !== session.id) handleSessionChange();
 	});
 
 	$effect(() => {
-		if (data.id !== session.id) handleSessionChange();
+		session.model = $settingsStore.models.find((m) => m.name === modelName);
 	});
 
 	$effect(() => {
@@ -83,7 +83,6 @@
 	});
 
 	async function handleSessionChange() {
-		console.log('handleSessionChange');
 		session = loadSession(data.id);
 		modelName = session.model?.name || '';
 		editor.view = 'messages';
