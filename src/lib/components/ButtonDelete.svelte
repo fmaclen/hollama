@@ -9,9 +9,13 @@
 
 	import Button from './Button.svelte';
 
-	export let sitemap: Sitemap;
-	export let id: string;
-	export let shouldConfirmDeletion: boolean;
+	interface Props {
+		sitemap: Sitemap;
+		id: string;
+		shouldConfirmDeletion: boolean;
+	}
+
+	let { sitemap, id, shouldConfirmDeletion = $bindable() }: Props = $props();
 
 	function deleteRecord() {
 		shouldConfirmDeletion = false;

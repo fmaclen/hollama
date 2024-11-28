@@ -21,8 +21,7 @@
 		loadSession,
 		saveSession,
 		type Editor,
-		type Message,
-		type Session
+		type Message
 	} from '$lib/sessions';
 	import { Sitemap } from '$lib/sitemap';
 
@@ -30,9 +29,6 @@
 	import Controls from './Controls.svelte';
 	import Messages from './Messages.svelte';
 	import Prompt from './Prompt.svelte';
-
-	// Use $state instead of writable stores
-	let shouldConfirmDeletion = $state(false);
 
 	interface Props {
 		data: PageData;
@@ -53,12 +49,10 @@
 	let messagesWindow: HTMLDivElement | undefined = $state();
 	let userScrolledUp = $state(false);
 	let modelName = $state('');
-	// $inspect(data.id);
-	$inspect(modelName).with(console.trace);
+	let shouldConfirmDeletion = $state(false);
 
 	$effect(() => {
-		const model = $settingsStore.models.find((m) => m.name === modelName);
-		if (model) session.model = model;
+		session.model = $settingsStore.models.find((m) => m.name === modelName)
 	});
 
 	$effect(() => {
@@ -240,7 +234,7 @@
 				{#if !shouldConfirmDeletion}
 					<ButtonCopy content={JSON.stringify(session.messages, null, 2)} />
 				{/if}
-				<ButtonDelete sitemap={Sitemap.SESSIONS} id={session.id} {shouldConfirmDeletion} />
+				<ButtonDelete sitemap={Sitemap.SESSIONS} id={session.id} bind:shouldConfirmDeletion />
 			{/if}
 		</svelte:fragment>
 	</Header>

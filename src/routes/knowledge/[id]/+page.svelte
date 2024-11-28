@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { toast } from 'svelte-sonner';
-	import { writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import { afterNavigate } from '$app/navigation';
@@ -19,14 +18,18 @@
 
 	import type { PageData } from './$types';
 
-	export let data: PageData;
+	interface Props {
+		data: PageData;
+	}
 
-	let knowledge: Knowledge = loadKnowledge(data.id);
-	let name: string;
-	let content: string;
-	const shouldConfirmDeletion = writable(false);
+	let { data }: Props = $props();
 
-	$: isNewKnowledge = !name || !content;
+	let knowledge: Knowledge = $state(loadKnowledge(data.id));
+	let name: string = $state('');
+	let content: string = $state('');
+	let shouldConfirmDeletion = $state(false);
+
+	const isNewKnowledge = $derived(!name || !content);
 
 	function handleSubmit() {
 		if (!name || !content) return;
@@ -44,7 +47,7 @@
 
 <Head title={[knowledge.name ? knowledge.name : $LL.newKnowledge(), $LL.knowledge()]} />
 <div class="knowledge">
-	<Header confirmDeletion={$shouldConfirmDeletion}>
+	<Header confirmDeletion={shouldConfirmDeletion}>
 		<p data-testid="knowledge-id" class="font-bold leading-none">
 			{$LL.knowledge()}
 			<Button variant="link" href={`/knowledge/${knowledge.id}`}>
@@ -57,7 +60,11 @@
 
 		<svelte:fragment slot="nav">
 			{#if !isNewKnowledge}
-				<ButtonDelete sitemap={Sitemap.KNOWLEDGE} id={knowledge.id} {shouldConfirmDeletion} />
+				<ButtonDelete
+					sitemap={Sitemap.KNOWLEDGE}
+					id={knowledge.id}
+					bind:shouldConfirmDeletion
+				/>
 			{/if}
 		</svelte:fragment>
 	</Header>
