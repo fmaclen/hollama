@@ -97,10 +97,10 @@
 						role: 'user',
 						knowledge: a.knowledge,
 						content: `
-CONTEXT
----
+<CONTEXT>
 ${a.knowledge.name}
----
+</CONTEXT>
+
 ${a.knowledge.content}
 `
 					});

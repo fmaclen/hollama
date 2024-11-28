@@ -110,10 +110,10 @@ test.describe('Knowledge Attachments', () => {
 			role: 'user',
 			knowledge: MOCK_KNOWLEDGE[0],
 			content: `
-CONTEXT
----
+<CONTEXT>
 ${MOCK_KNOWLEDGE[0].name}
----
+</CONTEXT>
+
 ${MOCK_KNOWLEDGE[0].content}
 `
 		});
