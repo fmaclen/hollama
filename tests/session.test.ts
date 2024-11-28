@@ -231,6 +231,25 @@ test.describe('Session', () => {
 		await expect(page.locator('.section-list-item').last()).not.toHaveClass(
 			/ section-list-item--active/
 		);
+
+		// Navigate to Settings and back
+		await page.getByText('Settings').click();
+		await expect(page.getByText('Automatically check for updates')).toBeVisible();
+
+		await page.getByText('Sessions', { exact: true }).click();
+		await expect(page.getByRole('link', { name: 'New session' })).toBeVisible();
+		await expect(
+			page.getByText('Create a new session or choose an existing one from the list')
+		).toBeVisible();
+		await expect(page.getByTestId('session-item')).toHaveCount(2);
+
+		// Click first session and verify its state
+		await page.getByTestId('session-item').first().click();
+		await expect(page.getByRole('combobox')).toHaveValue(MOCK_API_TAGS_RESPONSE.models[1].name);
+		await expect(page.getByText('The fox says various things')).toBeVisible();
+		await expect(
+			page.getByText('Create a new session or choose an existing one from the list')
+		).not.toBeVisible();
 	});
 
 	test('deletes a session from the header and sidebar', async ({ page }) => {
