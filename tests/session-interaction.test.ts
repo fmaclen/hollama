@@ -11,7 +11,7 @@ import {
 	textEditorLocator
 } from './utils';
 
-test.describe('Session', () => {
+test.describe('Session interaction', () => {
 	let promptTextarea: Locator;
 
 	test.beforeEach(async ({ page }) => {
