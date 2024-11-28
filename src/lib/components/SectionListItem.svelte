@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
-
 	import LL from '$i18n/i18n-svelte';
 	import { page } from '$app/stores';
 	import { Sitemap } from '$lib/sitemap';
@@ -8,13 +6,18 @@
 	import ButtonDelete from './ButtonDelete.svelte';
 	import Metadata from './Metadata.svelte';
 
-	export let sitemap: Sitemap;
-	export let id: string;
-	export let title: string;
-	export let subtitle: string;
+	interface Props {
+		sitemap: Sitemap;
+		id: string;
+		title: string;
+		subtitle: string;
+	}
+
+	let { sitemap, id, title, subtitle }: Props = $props();
+
+	let shouldConfirmDeletion = $state(false);
 
 	const isSession = sitemap === Sitemap.SESSIONS;
-	const shouldConfirmDeletion = writable(false);
 </script>
 
 <!-- Need to use `#key id` to re-render the delete nav after deletion -->
@@ -22,7 +25,7 @@
 	<div
 		class="section-list-item"
 		class:section-list-item--active={$page.url.pathname.includes(id)}
-		class:section-list-item--confirm-deletion={$shouldConfirmDeletion}
+		class:section-list-item--confirm-deletion={shouldConfirmDeletion}
 	>
 		<a
 			class="section-list-item__a"
@@ -39,9 +42,9 @@
 		</a>
 		<nav
 			class="section-list-item__delete"
-			class:section-list-item__delete--confirm-deletion={$shouldConfirmDeletion}
+			class:section-list-item__delete--confirm-deletion={shouldConfirmDeletion}
 		>
-			<ButtonDelete {sitemap} {id} {shouldConfirmDeletion} />
+			<ButtonDelete {sitemap} {id} bind:shouldConfirmDeletion />
 		</nav>
 	</div>
 {/key}

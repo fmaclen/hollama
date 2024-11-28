@@ -251,7 +251,7 @@ test('can set ollama model and runtime options', async ({ page }) => {
 
 	await page
 		.locator('.section-list-item__a', {
-			hasText: 'Who would win in a fight between Emma Watson and Jessica Alba?'
+			hasText: 'Who would win in a fight'
 		})
 		.click();
 	await expect(page.locator('article', { hasText: 'What does the fox say?' })).not.toBeVisible();

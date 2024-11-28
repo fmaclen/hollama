@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Check, Trash2, X } from 'lucide-svelte';
-	import type { Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import { goto } from '$app/navigation';
@@ -9,12 +8,16 @@
 
 	import Button from './Button.svelte';
 
-	export let sitemap: Sitemap;
-	export let id: string;
-	export let shouldConfirmDeletion: Writable<boolean>;
+	interface Props {
+		sitemap: Sitemap;
+		id: string;
+		shouldConfirmDeletion: boolean;
+	}
+
+	let { sitemap, id, shouldConfirmDeletion = $bindable() }: Props = $props();
 
 	function deleteRecord() {
-		$shouldConfirmDeletion = false;
+		shouldConfirmDeletion = false;
 
 		switch (sitemap) {
 			case Sitemap.KNOWLEDGE:
@@ -31,12 +34,12 @@
 	}
 
 	function updateConfirmDeletion(value: boolean) {
-		$shouldConfirmDeletion = value;
+		shouldConfirmDeletion = value;
 	}
 </script>
 
-<div class="delete-button" class:delete--confirm-deletion={$shouldConfirmDeletion}>
-	{#if $shouldConfirmDeletion}
+<div class="delete-button" class:delete--confirm-deletion={shouldConfirmDeletion}>
+	{#if shouldConfirmDeletion}
 		<Button
 			variant="icon"
 			class="delete-button__confirm"

@@ -1,16 +1,12 @@
 <script lang="ts">
-	import { beforeUpdate } from 'svelte';
-	import type { Writable } from 'svelte/store';
-
 	import LL from '$i18n/i18n-svelte';
 	import { serversStore, settingsStore } from '$lib/localStorage';
-	import type { Session } from '$lib/sessions';
 	import { type Model } from '$lib/settings';
 
 	import FieldSelect from './FieldSelect.svelte';
 
-	export let session: Writable<Session>;
 	export let isLabelVisible: boolean | undefined = true;
+	export let value: string | undefined;
 
 	type ModelOption = {
 		value: string;
@@ -18,7 +14,6 @@
 		badge?: string | string[];
 	};
 
-	let modelName: string | undefined;
 	let disabled: boolean;
 	let models: ModelOption[] = [];
 	let lastUsedModels: ModelOption[] = [];
@@ -32,11 +27,6 @@
 		return { value: model.name, label: model.name, badge: badges };
 	}
 
-	beforeUpdate(() => {
-		modelName = $session.model?.name || undefined;
-	});
-
-	$: $session.model = $settingsStore.models.find((m) => m.name === modelName);
 	$: disabled = !$settingsStore.models?.length;
 	$: models = $settingsStore.models?.map(formatModelToSelectOption);
 	$: lastUsedModels = $settingsStore.lastUsedModels?.map(formatModelToSelectOption);
@@ -53,5 +43,5 @@
 		{ label: $LL.lastUsedModels(), options: lastUsedModels },
 		{ label: $LL.otherModels(), options: otherModels }
 	]}
-	bind:value={modelName}
+	bind:value
 />
