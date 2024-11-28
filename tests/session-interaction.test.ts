@@ -6,7 +6,6 @@ import {
 	MOCK_SESSION_1_RESPONSE_1,
 	MOCK_SESSION_1_RESPONSE_2,
 	MOCK_SESSION_1_RESPONSE_3,
-	MOCK_SESSION_2_RESPONSE_1,
 	mockCompletionResponse,
 	mockOllamaModelsResponse,
 	textEditorLocator
@@ -19,8 +18,6 @@ test.describe('Session', () => {
 		await mockOllamaModelsResponse(page);
 		promptTextarea = page.locator('.prompt-editor__textarea');
 	});
-
-
 
 	test('sends message and receives response', async ({ page }) => {
 		await page.goto('/');
@@ -89,11 +86,6 @@ test.describe('Session', () => {
 		await expect(page.locator('article nav', { hasText: 'Assistant' })).toHaveCount(2);
 		await expect(page.locator('article nav', { hasText: 'You' })).toHaveCount(2);
 	});
-
-
-
-	
-
 
 	test('can copy the raw text of a message or code snippets to clipboard', async ({ page }) => {
 		await page.goto('/');
