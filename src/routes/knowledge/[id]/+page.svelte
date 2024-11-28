@@ -60,11 +60,7 @@
 
 		<svelte:fragment slot="nav">
 			{#if !isNewKnowledge}
-				<ButtonDelete
-					sitemap={Sitemap.KNOWLEDGE}
-					id={knowledge.id}
-					bind:shouldConfirmDeletion
-				/>
+				<ButtonDelete sitemap={Sitemap.KNOWLEDGE} id={knowledge.id} bind:shouldConfirmDeletion />
 			{/if}
 		</svelte:fragment>
 	</Header>

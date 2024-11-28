@@ -1,6 +1,4 @@
 <script lang="ts">
-	import type { Writable } from 'svelte/store';
-
 	import LL from '$i18n/i18n-svelte';
 	import FieldCheckbox from '$lib/components/FieldCheckbox.svelte';
 	import FieldInput from '$lib/components/FieldInput.svelte';

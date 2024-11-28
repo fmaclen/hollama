@@ -47,12 +47,12 @@
 		isNewSession: true
 	});
 	let messagesWindow: HTMLDivElement | undefined = $state();
-	let userScrolledUp = $state(false);
 	let modelName: string | undefined = $state();
+	let userScrolledUp = $state(false);
 	let shouldConfirmDeletion = $state(false);
 
 	$effect(() => {
-		session.model = $settingsStore.models.find((m) => m.name === modelName)
+		session.model = $settingsStore.models.find((m) => m.name === modelName);
 	});
 
 	$effect(() => {
@@ -67,6 +67,7 @@
 	});
 
 	onMount(async () => {
+		handleSessionChange();
 		await scrollToBottom();
 		messagesWindow?.addEventListener('scroll', handleScroll);
 	});
@@ -82,10 +83,11 @@
 	});
 
 	async function handleSessionChange() {
+		console.log('handleSessionChange');
 		session = loadSession(data.id);
 		modelName = session.model?.name || '';
 		editor.view = 'messages';
-		editor.isNewSession = !session?.messages.length;
+		editor.isNewSession = !session?.messages?.length;
 		scrollToBottom();
 	}
 

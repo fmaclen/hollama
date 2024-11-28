@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Check, Trash2, X } from 'lucide-svelte';
-	import type { Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import { goto } from '$app/navigation';
