@@ -35,31 +35,37 @@
 	const DEFAULT_PRESENCE_PENALTY = $LL.automatic();
 	const DEFAULT_FREQUENCY_PENALTY = $LL.automatic();
 
-	export let session: Writable<Session>;
+	interface Props {
+		session: Session;
+	}
+
+	let { session = $bindable() }: Props = $props();
 
 	// HACK: Stop is a `string[]` so we are hardcoding it to a single value for now
-	let stop: string = $session.options.stop?.[0] ?? '';
-	$: if (stop) $session.options.stop = [stop];
+	let stop: string = $state(session.options.stop?.[0] ?? '');
+	let knowledgeId: string | undefined = $state(undefined);
 
-	let knowledgeId: string | undefined;
+	$effect(() => {
+		if (stop) session.options.stop = [stop];
+	});
 
-	$: {
-		if ($session.systemPrompt.knowledge && !knowledgeId) {
+	$effect(() => {
+		if (session.systemPrompt.knowledge && !knowledgeId) {
 			// Initial load: set knowledgeId if knowledge exists
-			knowledgeId = $session.systemPrompt.knowledge.id;
-		} else if (knowledgeId !== $session.systemPrompt.knowledge?.id) {
+			knowledgeId = session.systemPrompt.knowledge.id;
+		} else if (knowledgeId !== session.systemPrompt.knowledge?.id) {
 			// Knowledge selection changed
 			if (knowledgeId) {
 				const knowledge = loadKnowledge(knowledgeId);
-				$session.systemPrompt.knowledge = knowledge;
-				$session.systemPrompt.content = knowledge.content;
+				session.systemPrompt.knowledge = knowledge;
+				session.systemPrompt.content = knowledge.content;
 			} else {
 				// Clear knowledge if knowledgeId is undefined
-				$session.systemPrompt.knowledge = undefined;
-				$session.systemPrompt.content = '';
+				session.systemPrompt.knowledge = undefined;
+				session.systemPrompt.content = '';
 			}
 		}
-	}
+	});
 </script>
 
 <div class="controls">
@@ -78,7 +84,7 @@
 				min={0}
 				step={1}
 				placeholder={DEFAULT_NUM_KEEP}
-				bind:value={$session.options.num_keep}
+				bind:value={session.options.num_keep}
 			/>
 			<FieldInput
 				name="seed"
@@ -87,7 +93,7 @@
 				min={0}
 				step={1}
 				placeholder={DEFAULT_SEED}
-				bind:value={$session.options.seed}
+				bind:value={session.options.seed}
 			/>
 			<FieldInput
 				name="num_predict"
@@ -96,7 +102,7 @@
 				min={-2}
 				step={1}
 				placeholder={DEFAULT_NUM_PREDICT}
-				bind:value={$session.options.num_predict}
+				bind:value={session.options.num_predict}
 			/>
 			<FieldInput
 				name="top_k"
@@ -105,7 +111,7 @@
 				min={1}
 				step={1}
 				placeholder={DEFAULT_TOP_K}
-				bind:value={$session.options.top_k}
+				bind:value={session.options.top_k}
 			/>
 			<FieldInput
 				name="top_p"
@@ -115,7 +121,7 @@
 				max={1}
 				step={0.05}
 				placeholder={DEFAULT_TOP_P}
-				bind:value={$session.options.top_p}
+				bind:value={session.options.top_p}
 			/>
 			<FieldInput
 				name="min_p"
@@ -125,7 +131,7 @@
 				max={1}
 				step={0.01}
 				placeholder={DEFAULT_MIN_P}
-				bind:value={$session.options.min_p}
+				bind:value={session.options.min_p}
 			/>
 			<FieldInput
 				name="tfs_z"
@@ -134,7 +140,7 @@
 				min={1}
 				step={0.1}
 				placeholder={DEFAULT_TFS_Z}
-				bind:value={$session.options.tfs_z}
+				bind:value={session.options.tfs_z}
 			/>
 			<FieldInput
 				name="typical_p"
@@ -144,7 +150,7 @@
 				max={1}
 				step={0.01}
 				placeholder={DEFAULT_TYPICAL_P}
-				bind:value={$session.options.typical_p}
+				bind:value={session.options.typical_p}
 			/>
 			<FieldInput
 				name="repeat_last_n"
@@ -153,7 +159,7 @@
 				min={-1}
 				step={1}
 				placeholder={DEFAULT_REPEAT_LAST_N}
-				bind:value={$session.options.repeat_last_n}
+				bind:value={session.options.repeat_last_n}
 			/>
 			<FieldInput
 				name="temperature"
@@ -163,7 +169,7 @@
 				max={2}
 				step={0.1}
 				placeholder={DEFAULT_TEMPERATURE}
-				bind:value={$session.options.temperature}
+				bind:value={session.options.temperature}
 			/>
 			<FieldInput
 				name="repeat_penalty"
@@ -171,7 +177,7 @@
 				type="number"
 				step={0.1}
 				placeholder={DEFAULT_REPEAT_PENALTY}
-				bind:value={$session.options.repeat_penalty}
+				bind:value={session.options.repeat_penalty}
 			/>
 			<FieldInput
 				name="presence_penalty"
@@ -179,7 +185,7 @@
 				type="number"
 				step={0.01}
 				placeholder={DEFAULT_PRESENCE_PENALTY}
-				bind:value={$session.options.presence_penalty}
+				bind:value={session.options.presence_penalty}
 			/>
 			<FieldInput
 				name="frequency_penalty"
@@ -187,7 +193,7 @@
 				type="number"
 				step={0.01}
 				placeholder={DEFAULT_FREQUENCY_PENALTY}
-				bind:value={$session.options.frequency_penalty}
+				bind:value={session.options.frequency_penalty}
 			/>
 			<FieldInput
 				name="mirostat"
@@ -197,7 +203,7 @@
 				max={2}
 				step={1}
 				placeholder={DEFAULT_MIROSTAT}
-				bind:value={$session.options.mirostat}
+				bind:value={session.options.mirostat}
 			/>
 			<FieldInput
 				name="mirostat_tau"
@@ -205,7 +211,7 @@
 				type="number"
 				step={0.1}
 				placeholder={DEFAULT_MIROSTAT_TAU}
-				bind:value={$session.options.mirostat_tau}
+				bind:value={session.options.mirostat_tau}
 			/>
 			<FieldInput
 				name="mirostat_eta"
@@ -213,7 +219,7 @@
 				type="number"
 				step={0.01}
 				placeholder={DEFAULT_MIROSTAT_ETA}
-				bind:value={$session.options.mirostat_eta}
+				bind:value={session.options.mirostat_eta}
 			/>
 			<FieldInput
 				name="stop"
@@ -226,7 +232,7 @@
 		<div class="control-checkboxes">
 			<FieldCheckbox
 				label={$LL.penalizeNewline()}
-				bind:checked={$session.options.penalize_newline}
+				bind:checked={session.options.penalize_newline}
 				name="penalize_newline"
 			/>
 		</div>
@@ -242,7 +248,7 @@
 				min={1}
 				step={1}
 				placeholder={DEFAULT_NUM_CTX}
-				bind:value={$session.options.num_ctx}
+				bind:value={session.options.num_ctx}
 			/>
 			<FieldInput
 				name="num_batch"
@@ -251,7 +257,7 @@
 				min={1}
 				step={1}
 				placeholder={DEFAULT_NUM_BATCH}
-				bind:value={$session.options.num_batch}
+				bind:value={session.options.num_batch}
 			/>
 			<FieldInput
 				name="num_gpu"
@@ -260,7 +266,7 @@
 				min={0}
 				step={1}
 				placeholder={DEFAULT_NUM_GPU}
-				bind:value={$session.options.num_gpu}
+				bind:value={session.options.num_gpu}
 			/>
 			<FieldInput
 				name="main_gpu"
@@ -269,7 +275,7 @@
 				min={0}
 				step={1}
 				placeholder={DEFAULT_MAIN_GPU}
-				bind:value={$session.options.main_gpu}
+				bind:value={session.options.main_gpu}
 			/>
 			<FieldInput
 				name="num_thread"
@@ -278,30 +284,30 @@
 				min={1}
 				step={1}
 				placeholder={DEFAULT_NUM_THREAD}
-				bind:value={$session.options.num_thread}
+				bind:value={session.options.num_thread}
 			/>
 		</div>
 		<div class="control-checkboxes">
-			<FieldCheckbox label={$LL.numa()} bind:checked={$session.options.numa} name="numa" />
+			<FieldCheckbox label={$LL.numa()} bind:checked={session.options.numa} name="numa" />
 			<FieldCheckbox
 				label={$LL.lowVram()}
-				bind:checked={$session.options.low_vram}
+				bind:checked={session.options.low_vram}
 				name="low_vram"
 			/>
-			<FieldCheckbox label={$LL.f16Kv()} bind:checked={$session.options.f16_kv} name="f16_kv" />
+			<FieldCheckbox label={$LL.f16Kv()} bind:checked={session.options.f16_kv} name="f16_kv" />
 			<FieldCheckbox
 				label={$LL.vocabOnly()}
-				bind:checked={$session.options.vocab_only}
+				bind:checked={session.options.vocab_only}
 				name="vocab_only"
 			/>
 			<FieldCheckbox
 				label={$LL.useMmap()}
-				bind:checked={$session.options.use_mmap}
+				bind:checked={session.options.use_mmap}
 				name="use_mmap"
 			/>
 			<FieldCheckbox
 				label={$LL.useMlock()}
-				bind:checked={$session.options.use_mlock}
+				bind:checked={session.options.use_mlock}
 				name="use_mlock"
 			/>
 		</div>
@@ -310,7 +316,7 @@
 
 <style lang="postcss">
 	.controls {
-		@apply base-fieldset-container flex flex-col gap-y-6 overflow-scroll;
+		@apply base-fieldset-container flex h-full flex-col gap-y-6 overflow-scroll;
 		@apply md:gap-y-8;
 	}
 

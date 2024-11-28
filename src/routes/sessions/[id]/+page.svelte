@@ -240,16 +240,16 @@
 				{#if !shouldConfirmDeletion}
 					<ButtonCopy content={JSON.stringify(session.messages, null, 2)} />
 				{/if}
-				<!-- <ButtonDelete sitemap={Sitemap.SESSIONS} id={session.id} {shouldConfirmDeletion} /> -->
+				<ButtonDelete sitemap={Sitemap.SESSIONS} id={session.id} {shouldConfirmDeletion} />
 			{/if}
 		</svelte:fragment>
 	</Header>
 
 	{#if editor.view === 'controls'}
-		<!-- <Controls {session} /> -->
+		<Controls bind:session />
 	{:else}
 		<div class="session__history" bind:this={messagesWindow}>
-			<!-- <Messages {session} {editor} {handleRetry} /> -->
+			<Messages bind:session bind:editor {handleRetry} />
 		</div>
 	{/if}
 

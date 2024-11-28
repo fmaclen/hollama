@@ -4,7 +4,6 @@
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
 	import Trash_2 from 'lucide-svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
-	import { type Writable } from 'svelte/store';
 
 	import LL from '$i18n/i18n-svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -14,7 +13,7 @@
 	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
 	import { ConnectionType } from '$lib/connections';
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { knowledgeStore, serversStore, settingsStore } from '$lib/localStorage';
+	import { knowledgeStore, serversStore } from '$lib/localStorage';
 	import type { Editor, Message, Session } from '$lib/sessions';
 	import { generateStorageId } from '$lib/utils';
 
@@ -46,8 +45,7 @@
 	let attachments: KnowledgeAttachment[] = $state([]);
 
 	const isOllamaFamily = $derived(
-		() =>
-			$serversStore.find((s) => s.id === session.model?.serverId)?.connectionType ===
+		$serversStore.find((s) => s.id === session.model?.serverId)?.connectionType ===
 			ConnectionType.Ollama
 	);
 

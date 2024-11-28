@@ -11,10 +11,10 @@
 
 	export let sitemap: Sitemap;
 	export let id: string;
-	export let shouldConfirmDeletion: Writable<boolean>;
+	export let shouldConfirmDeletion: boolean;
 
 	function deleteRecord() {
-		$shouldConfirmDeletion = false;
+		shouldConfirmDeletion = false;
 
 		switch (sitemap) {
 			case Sitemap.KNOWLEDGE:
@@ -31,12 +31,12 @@
 	}
 
 	function updateConfirmDeletion(value: boolean) {
-		$shouldConfirmDeletion = value;
+		shouldConfirmDeletion = value;
 	}
 </script>
 
-<div class="delete-button" class:delete--confirm-deletion={$shouldConfirmDeletion}>
-	{#if $shouldConfirmDeletion}
+<div class="delete-button" class:delete--confirm-deletion={shouldConfirmDeletion}>
+	{#if shouldConfirmDeletion}
 		<Button
 			variant="icon"
 			class="delete-button__confirm"

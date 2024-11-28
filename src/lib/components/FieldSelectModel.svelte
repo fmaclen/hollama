@@ -1,9 +1,6 @@
 <script lang="ts">
-	import type { Writable } from 'svelte/store';
-
 	import LL from '$i18n/i18n-svelte';
 	import { serversStore, settingsStore } from '$lib/localStorage';
-	import type { Session } from '$lib/sessions';
 	import { type Model } from '$lib/settings';
 
 	import FieldSelect from './FieldSelect.svelte';
