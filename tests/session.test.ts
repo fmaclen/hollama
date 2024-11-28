@@ -169,12 +169,13 @@ test.describe('Session', () => {
 			)
 			.isVisible();
 		await expect(page.getByText('No sessions')).not.toBeVisible();
-		expect(await page.getByTestId('session-item').textContent()).toContain(
-			'Who would win in a fight between Emma Watson and Jessica Alba?'
-		);
-		expect(await page.getByTestId('session-item').textContent()).toContain(
-			MOCK_API_TAGS_RESPONSE.models[0].name
-		);
+
+		// Check the session title and model name are displayed correctly
+		const sessionTitle = 'Who would win in a fight between Emma Watson and Jessica Alba?';
+		const sessionItem = page.getByTestId('session-item');
+		expect(await sessionItem.textContent()).toContain(sessionTitle.slice(0, 56));
+		expect(await sessionItem.textContent()).not.toContain(sessionTitle);
+		expect(await sessionItem.textContent()).toContain(MOCK_API_TAGS_RESPONSE.models[0].name);
 		expect(await page.getByTestId('session-item').count()).toBe(1);
 
 		// Leave the conversation by visiting the sessions index
@@ -184,9 +185,7 @@ test.describe('Session', () => {
 				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
 			)
 		).not.toBeVisible();
-		await expect(
-			page.getByText('Who would win in a fight between Emma Watson and Jessica Alba?')
-		).toBeVisible();
+		await expect(page.getByText('Who would win in a fight')).toBeVisible();
 
 		// Navigate back to the conversation
 		await page.getByTestId('session-item').click();
@@ -218,7 +217,7 @@ test.describe('Session', () => {
 			MOCK_API_TAGS_RESPONSE.models[1].name
 		);
 		expect(await page.getByTestId('session-item').last().textContent()).toContain(
-			'Who would win in a fight between Emma Watson and Jessica Alba?'
+			'Who would win in a fight'
 		);
 		expect(await page.getByTestId('session-item').last().textContent()).toContain(
 			MOCK_API_TAGS_RESPONSE.models[0].name
@@ -811,5 +810,33 @@ test.describe('Session', () => {
 		await page.goto('/sessions');
 		const sessionsCount = await page.locator('.session__history').count();
 		expect(sessionsCount).toBe(0);
+	});
+
+	test('truncates session titles correctly', async ({ page }) => {
+		const longPrompt =
+			'This is a very long prompt that should be truncated in both the page title and the sidebar list item.\nIt contains more than 56 characters to ensure truncation works correctly.';
+		const truncatedPrompt = longPrompt.slice(0, 56);
+
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+
+		// Check initial title
+		await expect(page).toHaveTitle('New session • Sessions • Hollama');
+		await expect(page.getByTestId('session-item')).not.toBeVisible();
+
+		// Submit prompt and verify truncation
+		await promptTextarea.fill(longPrompt);
+		await page.getByText('Run').click();
+
+		// Verify page title is truncated
+		await expect(page).toHaveTitle(`${truncatedPrompt} • Sessions • Hollama`);
+
+		// Verify sidebar list item is truncated
+		await expect(page.getByTestId('session-item')).toBeVisible();
+		await expect(page.getByTestId('session-item')).toContainText(truncatedPrompt);
+		await expect(page.getByTestId('session-item')).not.toContainText(longPrompt);
 	});
 });
