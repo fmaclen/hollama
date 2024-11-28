@@ -5,19 +5,25 @@
 
 	import FieldSelect from './FieldSelect.svelte';
 
-	export let isLabelVisible: boolean | undefined = true;
-	export let value: string | undefined;
+	interface Props {
+		isLabelVisible?: boolean;
+		value?: string;
+	}
+
+	let { isLabelVisible = true, value = $bindable() }: Props = $props();
+
+	const disabled = $derived(!$settingsStore.models?.length);
+	const models = $derived($settingsStore.models?.map(formatModelToSelectOption));
+	const lastUsedModels = $derived($settingsStore.lastUsedModels?.map(formatModelToSelectOption));
+	const otherModels = $derived(
+		models?.filter((m) => !lastUsedModels?.some((lm) => lm.value === m.value)) || []
+	);
 
 	type ModelOption = {
 		value: string;
 		label: string;
 		badge?: string | string[];
 	};
-
-	let disabled: boolean;
-	let models: ModelOption[] = [];
-	let lastUsedModels: ModelOption[] = [];
-	let otherModels: ModelOption[] = [];
 
 	function formatModelToSelectOption(model: Model): ModelOption {
 		const badges: string[] = [];
@@ -26,11 +32,6 @@
 		badges.push(modelServer?.label || modelServer?.connectionType || '');
 		return { value: model.name, label: model.name, badge: badges };
 	}
-
-	$: disabled = !$settingsStore.models?.length;
-	$: models = $settingsStore.models?.map(formatModelToSelectOption);
-	$: lastUsedModels = $settingsStore.lastUsedModels?.map(formatModelToSelectOption);
-	$: otherModels = models?.filter((m) => !lastUsedModels?.some((lm) => lm.value === m.value)) || [];
 </script>
 
 <FieldSelect
