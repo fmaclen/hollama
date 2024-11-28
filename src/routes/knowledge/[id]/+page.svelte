@@ -25,7 +25,7 @@
 	let { data }: Props = $props();
 
 	let knowledge: Knowledge = $state(loadKnowledge(data.id));
-	let name: string = $state('');
+	let name: string | undefined = $state();
 	let content: string = $state('');
 	let shouldConfirmDeletion = $state(false);
 

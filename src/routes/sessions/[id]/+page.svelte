@@ -48,7 +48,7 @@
 	});
 	let messagesWindow: HTMLDivElement | undefined = $state();
 	let userScrolledUp = $state(false);
-	let modelName = $state('');
+	let modelName: string | undefined = $state();
 	let shouldConfirmDeletion = $state(false);
 
 	$effect(() => {

@@ -43,7 +43,7 @@
 
 	// HACK: Stop is a `string[]` so we are hardcoding it to a single value for now
 	let stop: string = $state(session.options.stop?.[0] ?? '');
-	let knowledgeId: string | undefined = $state(undefined);
+	let knowledgeId: string | undefined = $state();
 
 	$effect(() => {
 		if (stop) session.options.stop = [stop];
