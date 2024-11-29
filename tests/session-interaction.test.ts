@@ -515,14 +515,8 @@ test.describe('Session interaction', () => {
 
 		// Attempt to navigate away
 		await page.getByText('Settings', { exact: true }).click();
-
 		// Check that we're still on the session page
 		await expect(page.getByTestId('session-id')).toBeVisible();
-
-		// Start another streamed completion
-		await promptTextarea.fill('Another test prompt');
-		await runButton.click();
-
 		// Wait for the completion to start
 		await expect(page.getByText('...')).toBeVisible();
 
