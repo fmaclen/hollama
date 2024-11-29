@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 import type { Model } from '$lib/settings';
+import { generateRandomId } from '$lib/utils';
 
 import {
 	MOCK_API_TAGS_RESPONSE,
-	MOCK_DEFAULT_SERVER_ID,
 	MOCK_KNOWLEDGE,
 	mockOllamaModelsResponse,
 	seedKnowledgeAndReload
@@ -37,7 +37,7 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	// Stage 2 sessions
 	const models: Model[] = MOCK_API_TAGS_RESPONSE.models.map((model) => ({
 		name: model.name,
-		serverId: MOCK_DEFAULT_SERVER_ID
+		serverId: generateRandomId()
 	}));
 	await page.evaluate(
 		({ modelA, modelB }) =>

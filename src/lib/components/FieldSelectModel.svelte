@@ -5,19 +5,25 @@
 
 	import FieldSelect from './FieldSelect.svelte';
 
-	export let isLabelVisible: boolean | undefined = true;
-	export let value: string | undefined;
+	interface Props {
+		isLabelVisible?: boolean;
+		value?: string;
+	}
+
+	let { isLabelVisible = true, value = $bindable() }: Props = $props();
+
+	const disabled = $derived(!$settingsStore.models?.length);
+	const models = $derived($settingsStore.models?.map(formatModelToSelectOption));
+	const lastUsedModels = $derived($settingsStore.lastUsedModels?.map(formatModelToSelectOption));
+	const otherModels = $derived(
+		models?.filter((m) => !lastUsedModels?.some((lm) => lm.value === m.value)) || []
+	);
 
 	type ModelOption = {
 		value: string;
 		label: string;
 		badge?: string | string[];
 	};
-
-	let disabled: boolean;
-	let models: ModelOption[] = [];
-	let lastUsedModels: ModelOption[] = [];
-	let otherModels: ModelOption[] = [];
 
 	function formatModelToSelectOption(model: Model): ModelOption {
 		const badges: string[] = [];
@@ -27,10 +33,10 @@
 		return { value: model.name, label: model.name, badge: badges };
 	}
 
-	$: disabled = !$settingsStore.models?.length;
-	$: models = $settingsStore.models?.map(formatModelToSelectOption);
-	$: lastUsedModels = $settingsStore.lastUsedModels?.map(formatModelToSelectOption);
-	$: otherModels = models?.filter((m) => !lastUsedModels?.some((lm) => lm.value === m.value)) || [];
+	// Auto-select model when there is only one available
+	$effect(() => {
+		if (!value && otherModels?.length === 1) value = otherModels[0].value;
+	});
 </script>
 
 <FieldSelect
@@ -40,7 +46,8 @@
 	label={$LL.availableModels()}
 	{isLabelVisible}
 	options={[
-		{ label: $LL.lastUsedModels(), options: lastUsedModels },
+		// Only include lastUsedModels if they exist
+		...(lastUsedModels?.length ? [{ label: $LL.lastUsedModels(), options: lastUsedModels }] : []),
 		{ label: $LL.otherModels(), options: otherModels }
 	]}
 	bind:value

@@ -15,7 +15,7 @@
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { knowledgeStore, serversStore } from '$lib/localStorage';
 	import type { Editor, Message, Session } from '$lib/sessions';
-	import { generateStorageId } from '$lib/utils';
+	import { generateRandomId } from '$lib/utils';
 
 	import KnowledgeSelect from './KnowledgeSelect.svelte';
 
@@ -97,11 +97,10 @@
 						role: 'user',
 						knowledge: a.knowledge,
 						content: `
-CONTEXT
----
-${a.knowledge.name}
----
-${a.knowledge.content}
+<CONTEXT>
+	<CONTEXT_NAME>${a.knowledge.name}</CONTEXT_NAME>
+	<CONTEXT_CONTENT>${a.knowledge.content}</CONTEXT_CONTENT>
+</CONTEXT>
 `
 					});
 			});
@@ -213,7 +212,7 @@ ${a.knowledge.content}
 				<Button
 					variant="outline"
 					on:click={() => {
-						attachments = [...attachments, { fieldId: generateStorageId() }];
+						attachments = [...attachments, { fieldId: generateRandomId() }];
 					}}
 					data-testid="knowledge-attachment"
 				>
@@ -239,7 +238,7 @@ ${a.knowledge.content}
 				<ButtonSubmit
 					handleSubmit={submit}
 					hasMetaKey={editor.isCodeEditor}
-					disabled={!editor.prompt || !session.model}
+					disabled={!editor.prompt || !session.model || editor.isCompletionInProgress}
 				>
 					{$LL.run()}
 				</ButtonSubmit>
