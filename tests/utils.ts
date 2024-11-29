@@ -150,8 +150,6 @@ export const MOCK_OPENAI_MODELS: OpenAI.Models.Model[] = [
 	{ id: 'text-davinci-003', object: 'model', created: 1669599635, owned_by: 'openai-internal' }
 ];
 
-export const MOCK_DEFAULT_SERVER_ID = 'abc123';
-
 export async function chooseFromCombobox(
 	page: Page,
 	label: string | RegExp,
@@ -176,7 +174,7 @@ export async function mockOllamaModelsResponse(page: Page) {
 	// Add the default server to the servers list
 	await page.evaluate(
 		(data) => window.localStorage.setItem('hollama-servers', JSON.stringify(data)),
-		[{ ...getDefaultServer(ConnectionType.Ollama), id: MOCK_DEFAULT_SERVER_ID }]
+		[{ ...getDefaultServer(ConnectionType.Ollama) }]
 	);
 
 	// Mock the tags response
