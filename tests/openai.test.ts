@@ -81,8 +81,8 @@ test.describe('OpenAI Integration', () => {
 
 		// Simulate sending a message (you might need to adjust this based on your actual UI)
 		await page.locator('.prompt-editor__textarea').fill('Hello, AI!');
+		await mockOpenAICompletionResponse(page, MOCK_OPENAI_COMPLETION_RESPONSE_1);
 		await page.getByRole('button', { name: 'Run' }).click();
-
 		await page.getByLabel('Available models').click();
 		await expect(page.getByText('Recently used models', { exact: true })).toBeVisible();
 		await expect(page.getByRole('option', { name: 'gpt-3.5-turbo' })).toBeVisible();
