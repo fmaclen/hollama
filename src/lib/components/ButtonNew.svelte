@@ -3,7 +3,7 @@
 
 	import LL from '$i18n/i18n-svelte';
 	import { Sitemap } from '$lib/sitemap';
-	import { generateStorageId } from '$lib/utils';
+	import { generateRandomId } from '$lib/utils';
 
 	import Button from './Button.svelte';
 	import { generateNewUrl } from './ButtonNew';
@@ -13,7 +13,7 @@
 	let href: string;
 
 	function setId() {
-		newId = generateStorageId();
+		newId = generateRandomId();
 		href = generateNewUrl(sitemap, newId);
 	}
 

@@ -15,7 +15,7 @@
 	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
 	import { knowledgeStore, serversStore } from '$lib/localStorage';
 	import type { Editor, Message, Session } from '$lib/sessions';
-	import { generateStorageId } from '$lib/utils';
+	import { generateRandomId } from '$lib/utils';
 
 	import KnowledgeSelect from './KnowledgeSelect.svelte';
 
@@ -212,7 +212,7 @@
 				<Button
 					variant="outline"
 					on:click={() => {
-						attachments = [...attachments, { fieldId: generateStorageId() }];
+						attachments = [...attachments, { fieldId: generateRandomId() }];
 					}}
 					data-testid="knowledge-attachment"
 				>

@@ -1,3 +1,5 @@
+import { generateRandomId } from "./utils";
+
 export enum ConnectionType {
 	Ollama = 'ollama',
 	OpenAI = 'openai',
@@ -33,7 +35,7 @@ export function getDefaultServer(connectionType: ConnectionType): Server {
 	}
 
 	return {
-		id: crypto.randomUUID(),
+		id: generateRandomId(),
 		baseUrl,
 		connectionType,
 		modelFilter,
