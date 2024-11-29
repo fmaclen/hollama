@@ -278,4 +278,30 @@ test.describe('Servers', () => {
 		await expect(modelOption.last()).toContainText('llama.cpp');
 		await expect(modelOption.last()).not.toContainText('openai-compatible');
 	});
+
+	test('new connections are saved with correct serverIds', async ({ page }) => {
+		await mockOllamaModelsResponse(page);
+
+		// Check localStorage for correct format
+		const serversLocalStorage = await page.evaluate(() =>
+			window.localStorage.getItem('hollama-servers')
+		);
+		const servers = JSON.parse(serversLocalStorage || '[]');
+		expect(servers).toHaveLength(1);
+		expect(servers[0].id).toMatch(/^[a-z0-9]{6}$/); // Should match format from generateRandomId()
+
+		// Models aren't saved to localStorage until we load a new or existing session
+		await page.getByRole('link', { name: 'Sessions' }).click();
+		await page.getByTestId('new-session').click();
+		await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
+
+		// Verify the settings has the correct serverId reference
+		const settingsLocalStorage = await page.evaluate(() =>
+			window.localStorage.getItem('hollama-settings')
+		);
+		const settings = JSON.parse(settingsLocalStorage || '{}');
+		expect(settings.models).toBeDefined();
+		expect(settings.models.length).toBeGreaterThan(0);
+		expect(settings.models[0].serverId).toBe(servers[0].id);
+	});
 });
