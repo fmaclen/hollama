@@ -238,7 +238,7 @@
 				<ButtonSubmit
 					handleSubmit={submit}
 					hasMetaKey={editor.isCodeEditor}
-					disabled={!editor.prompt || !session.model}
+					disabled={!editor.prompt || !session.model || editor.isCompletionInProgress}
 				>
 					{$LL.run()}
 				</ButtonSubmit>

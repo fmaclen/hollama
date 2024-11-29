@@ -167,7 +167,7 @@ test.describe('Session interaction', () => {
 	test('can start a new session, choose a model and stop a completion in progress', async ({
 		page
 	}) => {
-		const sendButton = page.getByText('Run');
+		const runButton = page.getByText('Run');
 		const stopButton = page.getByTitle('Stop completion');
 		const userMessage = page.locator('article', { hasText: 'You' });
 		const aiMessage = page.locator('article', { hasText: 'Assistant' });
@@ -184,17 +184,26 @@ test.describe('Session interaction', () => {
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await page.route('**/chat', () => {});
 		await promptTextarea.fill('Hello world!');
-		await sendButton.click();
+		await runButton.click();
 		await expect(userMessage).toBeVisible();
 		await expect(userMessage).toContainText('Hello world!');
 		await expect(aiMessage).toBeVisible();
 		await expect(aiMessage).toContainText('...');
 		await expect(promptTextarea).toHaveValue('');
-		await expect(sendButton).toBeDisabled();
+		await expect(runButton).toBeDisabled();
 		await expect(stopButton).toBeVisible();
 		await expect(page.getByText('Write a prompt to start a new session')).not.toBeVisible();
 		await expect(sessionMetadata).toHaveText(new RegExp(MOCK_API_TAGS_RESPONSE.models[0].name));
 
+		// Before the completion is stopped, make sure the Run button is disabled
+		// even if there is a prompt in the textarea and a model selected
+		await promptTextarea.fill('Hello again!');
+		await expect(page.locator('.field-combobox-input')).toHaveValue(
+			MOCK_API_TAGS_RESPONSE.models[0].name
+		);
+		await expect(runButton).toBeDisabled();
+
+		await promptTextarea.fill('');
 		await stopButton.click();
 		await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
 		await expect(userMessage).not.toBeVisible();
