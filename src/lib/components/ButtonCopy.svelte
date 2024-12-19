@@ -12,13 +12,15 @@
 		if (navigator.clipboard && window.isSecureContext) {
 			navigator.clipboard.writeText(content);
 		} else {
+			// HACK
+			// This is a workaround to copy text content on HTTP connections.
 			const textArea = document.createElement('textarea');
 			textArea.value = content;
 			document.body.appendChild(textArea);
 			textArea.select();
 			try {
 				document.execCommand('copy');
-				toast.success($LL.copiedNotPrivate());
+				toast.warning($LL.copiedNotPrivate());
 			} catch (e) {
 				console.error(e);
 				toast.error($LL.notCopiedNotPrivate());

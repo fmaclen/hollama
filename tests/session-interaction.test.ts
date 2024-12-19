@@ -131,6 +131,29 @@ test.describe('Session interaction', () => {
 		);
 	});
 
+	test('can copy text on an insecure connection', async ({ page }) => {
+		// Mock insecure context before navigating
+		await page.addInitScript(() => {
+			Object.defineProperty(window, 'isSecureContext', { value: false });
+		});
+
+		await page.goto('/');
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+		await expect(page.locator('.session__history').getByTitle('Copy')).toHaveCount(2);
+
+		const toastWarning = page.getByText('Content copied, but your connection is not private');
+		const toastError = page.getByText("Couldn't copy content. Connection is not private");
+		await expect(toastWarning).not.toBeVisible();
+
+		await page.locator('.session__history').getByTitle('Copy').first().click();
+		await expect(toastWarning).toBeVisible();
+	});
+
 	test('can copy the whole session content to clipboard', async ({ page }) => {
 		await page.goto('/');
 		await page.evaluate(() => navigator.clipboard.writeText(''));
