@@ -147,7 +147,6 @@ test.describe('Session interaction', () => {
 		await expect(page.locator('.session__history').getByTitle('Copy')).toHaveCount(2);
 
 		const toastWarning = page.getByText('Content copied, but your connection is not private');
-		const toastError = page.getByText("Couldn't copy content. Connection is not private");
 		await expect(toastWarning).not.toBeVisible();
 
 		await page.locator('.session__history').getByTitle('Copy').first().click();
