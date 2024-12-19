@@ -4,49 +4,22 @@
 	import LL from '$i18n/i18n-svelte';
 
 	import Button from './Button.svelte';
+	import { toast } from 'svelte-sonner';
 
 	export let content: string;
 
-	async function copyContent() {
-		let result = false;
-		if (!navigator.clipboard) {
+	function copyContent() {
+		if (navigator.clipboard && window.isSecureContext) {
+			navigator.clipboard.writeText(content);
+		} else {
 			const textArea = document.createElement('textarea');
 			textArea.value = content;
-
-			// Avoid scrolling to bottom
-			textArea.style.top = '0';
-			textArea.style.left = '0';
-			textArea.style.position = 'fixed';
-
 			document.body.appendChild(textArea);
-			textArea.focus();
 			textArea.select();
-
-			try {
-				const successful = document.execCommand('copy');
-				const msg = successful ? 'successful' : 'unsuccessful';
-				console.log('Fallback: Copying text command was ' + msg);
-				result = true;
-			} catch (err) {
-				console.error('Fallback: Oops, unable to copy', err);
-			}
-
+			document.execCommand('copy');
 			document.body.removeChild(textArea);
-			return result;
+			toast.warning('Content copied, but your connection is not private');
 		}
-
-		result = await navigator.clipboard
-			.writeText(content)
-			.then(() => {
-				console.log('Async: Copying to clipboard was successful!');
-				return true;
-			})
-			.catch((error) => {
-				console.error('Async: Could not copy text: ', error);
-				return false;
-			});
-
-		return result;
 	}
 </script>
 
