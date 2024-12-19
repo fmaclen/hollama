@@ -620,6 +620,14 @@ type RootTranslation = {
 	 * Y​o​u
 	 */
 	you: string
+	/**
+	 * C​o​n​t​e​n​t​ ​c​o​p​i​e​d​,​ ​b​u​t​ ​y​o​u​r​ ​c​o​n​n​e​c​t​i​o​n​ ​i​s​ ​n​o​t​ ​p​r​i​v​a​t​e
+	 */
+	copiedNotPrivate: string
+	/**
+	 * C​o​u​l​d​n​'​t​ ​c​o​p​y​ ​c​o​n​t​e​n​t​.​ ​C​o​n​n​e​c​t​i​o​n​ ​i​s​ ​n​o​t​ ​p​r​i​v​a​t​e
+	 */
+	notCopiedNotPrivate: string
 }
 
 export type TranslationFunctions = {
@@ -1220,6 +1228,14 @@ The completion in progress will stop
 	 * You
 	 */
 	you: () => LocalizedString
+	/**
+	 * Content copied, but your connection is not private
+	 */
+	copiedNotPrivate: () => LocalizedString
+	/**
+	 * Couldn't copy content. Connection is not private
+	 */
+	notCopiedNotPrivate: () => LocalizedString
 }
 
 export type Formatters = {}

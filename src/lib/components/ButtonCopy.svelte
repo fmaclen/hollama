@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { Files } from 'lucide-svelte';
+	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';
 
 	import Button from './Button.svelte';
-	import { toast } from 'svelte-sonner';
 
 	export let content: string;
 
@@ -16,9 +16,14 @@
 			textArea.value = content;
 			document.body.appendChild(textArea);
 			textArea.select();
-			document.execCommand('copy');
+			try {
+				document.execCommand('copy');
+				toast.success($LL.copiedNotPrivate());
+			} catch (e) {
+				console.error(e);
+				toast.error($LL.notCopiedNotPrivate());
+			}
 			document.body.removeChild(textArea);
-			toast.warning('Content copied, but your connection is not private');
 		}
 	}
 </script>
