@@ -153,7 +153,9 @@ const en = {
 	version: 'Version',
 	vocabOnly: 'Vocab only',
 	writePromptToStart: 'Write a prompt to start a new session',
-	you: 'You'
+	you: 'You',
+	copiedNotPrivate: 'Content copied, but your connection is not private',
+	notCopiedNotPrivate: "Couldn't copy content. Connection is not private"
 } satisfies BaseTranslation;
 
 export default en;

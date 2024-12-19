@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Files } from 'lucide-svelte';
+	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';
 
@@ -8,7 +9,25 @@
 	export let content: string;
 
 	function copyContent() {
-		navigator.clipboard.writeText(content);
+		if (navigator.clipboard && window.isSecureContext) {
+			navigator.clipboard.writeText(content);
+		} else {
+			// HACK
+			// This is a workaround to copy text content on HTTP connections.
+			// https://developer.mozilla.org/en-US/docs/Web/API/ClipboardItem
+			const textArea = document.createElement('textarea');
+			textArea.value = content;
+			document.body.appendChild(textArea);
+			textArea.select();
+			try {
+				document.execCommand('copy');
+				toast.warning($LL.copiedNotPrivate());
+			} catch (e) {
+				console.error(e);
+				toast.error($LL.notCopiedNotPrivate());
+			}
+			document.body.removeChild(textArea);
+		}
 	}
 </script>
 
