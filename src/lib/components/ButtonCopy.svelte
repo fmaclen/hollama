@@ -14,6 +14,7 @@
 		} else {
 			// HACK
 			// This is a workaround to copy text content on HTTP connections.
+			// https://developer.mozilla.org/en-US/docs/Web/API/ClipboardItem
 			const textArea = document.createElement('textarea');
 			textArea.value = content;
 			document.body.appendChild(textArea);
