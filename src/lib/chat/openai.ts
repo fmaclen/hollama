@@ -1,9 +1,10 @@
 import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
-import type { Server } from '$lib/servers';
+import type { Server } from '$lib/connections';
+import type { Model } from '$lib/settings';
 
-import type { ChatRequest, ChatStrategy, Model } from './index';
+import type { ChatRequest, ChatStrategy } from './index';
 
 export class OpenAIStrategy implements ChatStrategy {
 	private openai: OpenAI;
