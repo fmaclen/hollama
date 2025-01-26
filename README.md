@@ -7,6 +7,7 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 - Support for **Ollama** & **OpenAI** models
 - Multi-server support
 - Large prompt fields
+- Support for reasoning models
 - Markdown rendering with syntax highlighting
 - Code editor features
 - Customizable system prompts & advanced Ollama parameters

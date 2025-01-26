@@ -43,5 +43,11 @@
 {/each}
 
 {#if editor.isCompletionInProgress}
-	<Article message={{ role: 'assistant', content: editor.completion || '...' }} />
+	<Article
+		message={{
+			role: 'assistant',
+			content: editor.completion || '...',
+			reasoning: editor.reasoning
+		}}
+	/>
 {/if}

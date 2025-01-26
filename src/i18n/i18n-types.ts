@@ -463,6 +463,10 @@ type RootTranslation = {
 	 */
 	random: string
 	/**
+	 * R​e​a​s​o​n​i​n​g
+	 */
+	reasoning: string
+	/**
 	 * R​e​f​r​e​s​h​ ​t​o​ ​u​p​d​a​t​e
 	 */
 	refreshToUpdate: string
@@ -1072,6 +1076,10 @@ The completion in progress will stop
 	 * Random
 	 */
 	random: () => LocalizedString
+	/**
+	 * Reasoning
+	 */
+	reasoning: () => LocalizedString
 	/**
 	 * Refresh to update
 	 */

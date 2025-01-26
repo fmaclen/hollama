@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { BrainIcon, Pencil, RefreshCw, Trash2 } from 'lucide-svelte';
+	import { BrainIcon, ChevronDown, ChevronUp, Pencil, RefreshCw, Trash2 } from 'lucide-svelte';
+	import { quadInOut } from 'svelte/easing';
+	import { slide } from 'svelte/transition';
 
 	import LL from '$i18n/i18n-svelte';
 	import Badge from '$lib/components/Badge.svelte';
@@ -18,6 +20,7 @@
 
 	let isKnowledgeAttachment: boolean | undefined;
 	let isUserRole: boolean | undefined;
+	let isReasoningVisible: boolean = false;
 
 	$: if (message) {
 		isKnowledgeAttachment = message.knowledge?.name !== undefined;
@@ -84,11 +87,32 @@
 			</div>
 		</nav>
 
-		<div class="markdown">
-			{#if message.content}
-				<Markdown markdown={message.content} />
-			{/if}
-		</div>
+		{#if message.reasoning}
+			<div class="reasoning" transition:slide={{ easing: quadInOut, duration: 200 }}>
+				<button
+					class="reasoning__button"
+					on:click={() => (isReasoningVisible = !isReasoningVisible)}
+				>
+					{$LL.reasoning()}
+					{#if isReasoningVisible}
+						<ChevronUp class="base-icon" />
+					{:else}
+						<ChevronDown class="base-icon" />
+					{/if}
+				</button>
+				{#if isReasoningVisible}
+					<article
+						class="article article--reasoning"
+						transition:slide={{ easing: quadInOut, duration: 200 }}
+					>
+						<Markdown markdown={message.reasoning} />
+					</article>
+				{/if}
+			</div>
+		{/if}
+		{#if message.content}
+			<Markdown markdown={message.content} />
+		{/if}
 	</article>
 {/if}
 
@@ -102,6 +126,10 @@
 
 	.article--assistant {
 		@apply border-transparent bg-shade-0;
+	}
+
+	.article--reasoning {
+		@apply max-w-full border-b-0 border-l-0 border-r-0;
 	}
 
 	.article__interactive,
@@ -147,5 +175,13 @@
 
 	.attachment__content {
 		@apply flex items-center gap-2;
+	}
+
+	.reasoning {
+		@apply rounded bg-shade-1 text-xs;
+	}
+
+	.reasoning__button {
+		@apply flex w-full items-center justify-between gap-2 p-2;
 	}
 </style>

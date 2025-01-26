@@ -270,7 +270,11 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 			messages: [
 				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
 				{ role: 'user', content: 'What is this about?' },
-				{ role: 'assistant', content: MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.message.content },
+				{
+					role: 'assistant',
+					content: MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.message.content,
+					reasoning: ''
+				},
 				{ role: 'user', content: 'Gotcha, thanks for the clarification' }
 			]
 		})
