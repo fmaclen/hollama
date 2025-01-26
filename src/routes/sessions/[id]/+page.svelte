@@ -30,6 +30,9 @@
 	import Messages from './Messages.svelte';
 	import Prompt from './Prompt.svelte';
 
+	const THINK_TAG = '<think>';
+	const END_THINK_TAG = '</think>';
+
 	interface Props {
 		data: PageData;
 	}
@@ -135,8 +138,9 @@
 	async function handleCompletion(messages: Message[]) {
 		editor.abortController = new AbortController();
 		editor.isCompletionInProgress = true;
-		editor.prompt = ''; // Reset the prompt form field
+		editor.prompt = '';
 		editor.completion = '';
+		editor.reasoning = '';
 
 		const server = $serversStore.find((s) => s.id === session.model?.serverId);
 		if (!server) throw new Error('Server not found');
@@ -161,19 +165,40 @@
 			}
 
 			if (!strategy) throw new Error('Invalid strategy');
+			
+			let isInThinkTag = false;
 			await strategy.chat(chatRequest, editor.abortController.signal, async (chunk) => {
-				editor.completion += chunk;
+				if (chunk.includes(THINK_TAG)) {
+					isInThinkTag = true;
+					chunk = chunk.replace(THINK_TAG, '');
+				}
+				
+				if (chunk.includes(END_THINK_TAG)) {
+					isInThinkTag = false;
+					chunk = chunk.replace(END_THINK_TAG, '');
+				}
+				
+				if (isInThinkTag) {
+					editor.reasoning += chunk;
+				} else {
+					editor.completion += chunk;
+				}
+				
 				await scrollToBottom();
 			});
 
-			// After the completion save the session
-			const message: Message = { role: 'assistant', content: editor.completion };
+			const message: Message = { 
+				role: 'assistant', 
+				content: editor.completion,
+				reasoning: editor.reasoning
+			};
+			
 			session.messages = [...session.messages, message];
 			session.updatedAt = new Date().toISOString();
 			saveSession(session);
 
-			// Final housekeeping
 			editor.completion = '';
+			editor.reasoning = '';
 			editor.shouldFocusTextarea = true;
 			editor.isCompletionInProgress = false;
 			await scrollToBottom();
