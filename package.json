@@ -19,7 +19,7 @@
 	},
 	"devDependencies": {
 		"@ianvs/prettier-plugin-sort-imports": "^4.3.1",
-		"@playwright/test": "^1.43.0",
+		"@playwright/test": "^1.50.0",
 		"@sveltejs/adapter-auto": "^3.3.1",
 		"@sveltejs/adapter-cloudflare": "^4.7.4",
 		"@sveltejs/adapter-node": "^5.2.9",
