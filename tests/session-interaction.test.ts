@@ -182,6 +182,7 @@ test.describe('Session interaction', () => {
 		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[1]).toEqual({
 			content:
 				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.',
+			reasoning: '',
 			role: 'assistant'
 		});
 	});

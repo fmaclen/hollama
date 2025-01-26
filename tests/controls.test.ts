@@ -207,6 +207,7 @@ test('can set ollama model and runtime options', async ({ page }) => {
 			},
 			{
 				role: 'assistant',
+				reasoning: '',
 				content: MOCK_SESSION_1_RESPONSE_1.message.content
 			},
 			{
@@ -296,6 +297,7 @@ test('can set ollama model and runtime options', async ({ page }) => {
 			},
 			{
 				role: 'assistant',
+				reasoning: '',
 				content: MOCK_SESSION_1_RESPONSE_1.message.content
 			},
 			{
@@ -304,6 +306,7 @@ test('can set ollama model and runtime options', async ({ page }) => {
 			},
 			{
 				role: 'assistant',
+				reasoning: '',
 				content: MOCK_SESSION_1_RESPONSE_2.message.content
 			},
 			{
