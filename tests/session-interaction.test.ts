@@ -1,5 +1,4 @@
 import { expect, test, type Dialog, type Locator } from '@playwright/test';
-import type { ChatResponse } from 'ollama/browser';
 
 import {
 	chooseModel,

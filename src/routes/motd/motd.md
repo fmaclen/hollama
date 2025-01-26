@@ -1,4 +1,4 @@
-`2024-11-25`
+`2025-1-26`
 
 ### Message of the day
 
@@ -6,13 +6,14 @@
 
 #### What's new?
 
+- **Reasoning responses** (i.e. [`deepseek-r1`](https://ollama.com/library/deepseek-r1)) are now displayed in a dedicated UI component.
 - **Multiple-server support** allows you to connect to one or more Ollama (and/or OpenAI) servers at the same time.
-- **Models list can be filtered** by keyword for each server.
-- **Servers can be labeled** to help you identify them in the models list.
-- **Hallo Welt!** UI is now available in German.
 
 #### Previously, in Hollama
 
+- **Models list can be filtered** by keyword for each server.
+- **Servers can be labeled** to help you identify them in the models list.
+- **Hallo Welt!** UI is now available in German.
 - **OpenAI models** are now _(optionally)_ available in Sessions. Set your own API key in [Settings](/settings)
 - **[Knowledge](/knowledge)** can now be used as context at any point in a Session.
 - **Model** and **advanced Ollama settings** can be changed at any time on an existing session
