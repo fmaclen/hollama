@@ -11,6 +11,7 @@ import { formatTimestampToNow } from './utils';
 export interface Message extends ChatMessage {
 	knowledge?: Knowledge;
 	context?: number[];
+	reasoning?: string;
 }
 
 export interface Session {
@@ -31,6 +32,7 @@ export interface Editor {
 	isNewSession: boolean;
 	shouldFocusTextarea: boolean;
 	completion?: string;
+	reasoning?: string;
 	promptTextarea?: HTMLTextAreaElement;
 	abortController?: AbortController;
 }
