@@ -257,6 +257,7 @@ test.describe('Session interaction', () => {
 		await expect(textEditorLocator(page, 'Prompt')).toHaveText(
 			'Who would win in a fight between Emma Watson and Jessica Alba?'
 		);
+		await textEditorLocator(page, 'Prompt').clear();
 		await textEditorLocator(page, 'Prompt').fill('Nevermind...');
 
 		// Switch back to normal
@@ -311,6 +312,7 @@ test.describe('Session interaction', () => {
 
 		await page.locator('.article', { hasText: 'You' }).first().hover();
 		await page.locator('.article', { hasText: 'You' }).first().getByTitle('Edit').click();
+		await textEditorLocator(page, 'Prompt').clear();
 		await textEditorLocator(page, 'Prompt').fill('Hello world!');
 		await page.getByText('Run').click();
 
@@ -357,6 +359,7 @@ test.describe('Session interaction', () => {
 		);
 		await expect(cancelButton).toBeVisible();
 
+		await textEditorLocator(page, 'Prompt').clear();
 		await textEditorLocator(page, 'Prompt').fill(
 			'Who would win in a fight between Scarlett Johansson and Jessica Alba?'
 		);
