@@ -93,7 +93,7 @@
 					class="reasoning__button"
 					on:click={() => (isReasoningVisible = !isReasoningVisible)}
 				>
-					Reasoning
+					{$LL.reasoning()}
 					{#if isReasoningVisible}
 						<ChevronUp class="base-icon" />
 					{:else}

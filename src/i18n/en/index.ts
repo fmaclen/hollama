@@ -113,6 +113,7 @@ const en = {
 	pullModelPlaceholder: 'Model tag (e.g. llama3.1)',
 	pullingModel: 'Pulling model',
 	random: 'Random',
+	reasoning: 'Reasoning',
 	refreshToUpdate: 'Refresh to update',
 	releaseHistory: 'Release history',
 	repeatLastN: 'Repeat last N',
