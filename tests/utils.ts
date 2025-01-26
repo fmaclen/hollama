@@ -130,6 +130,15 @@ export const MOCK_SESSION_2_RESPONSE_1: ChatResponse = {
 	eval_duration: 2181595000
 };
 
+export const MOCK_RESPONSE_WITH_REASONING: ChatResponse = {
+	...MOCK_SESSION_1_RESPONSE_1,
+	message: {
+		role: 'assistant',
+		content:
+			'<think>Let me analyze this request carefully. The user is asking about code testing, which requires a structured response.</think>Here is how you can test your code effectively:\n\n1. Write unit tests\n2. Use integration tests\n3. Implement end-to-end testing'
+	}
+};
+
 export const MOCK_OPENAI_COMPLETION_RESPONSE_1: OpenAI.Chat.Completions.ChatCompletionChunk = {
 	model: 'gpt-3.5-turbo',
 	created: 1677610602,

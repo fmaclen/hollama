@@ -1,8 +1,10 @@
 import { expect, test, type Dialog, type Locator } from '@playwright/test';
+import type { ChatResponse } from 'ollama/browser';
 
 import {
 	chooseModel,
 	MOCK_API_TAGS_RESPONSE,
+	MOCK_RESPONSE_WITH_REASONING,
 	MOCK_SESSION_1_RESPONSE_1,
 	MOCK_SESSION_1_RESPONSE_2,
 	MOCK_SESSION_1_RESPONSE_3,
@@ -565,5 +567,45 @@ test.describe('Session interaction', () => {
 		await page.goto('/sessions');
 		const sessionsCount = await page.locator('.session__history').count();
 		expect(sessionsCount).toBe(0);
+	});
+
+	test('handles reasoning in AI responses', async ({ page }) => {
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await mockCompletionResponse(page, MOCK_RESPONSE_WITH_REASONING);
+		await promptTextarea.fill('How should I test my code?');
+		await page.getByText('Run').click();
+
+		// Check that the main content is displayed without the think tags
+		await expect(page.locator('article').last()).toContainText(
+			'Here is how you can test your code effectively:'
+		);
+		await expect(page.getByText('<think>')).not.toBeVisible();
+		await expect(page.getByText('</think>')).not.toBeVisible();
+
+		// Check that the reasoning is displayed in its own div
+		await expect(page.locator('.reasoning')).toBeVisible();
+		await expect(page.locator('.reasoning__content')).not.toBeVisible();
+
+		// Toggle on the reasoning
+		await page.getByRole('button', { name: 'Reasoning' }).click();
+		await expect(page.locator('.reasoning__content')).toBeVisible();
+		await expect(page.locator('.reasoning__content')).toHaveText(
+			'Let me analyze this request carefully. The user is asking about code testing, which requires a structured response.'
+		);
+
+		// Toggle off the reasoning
+		await page.getByRole('button', { name: 'Reasoning' }).click();
+		await expect(page.locator('.reasoning__content')).not.toBeVisible();
+
+		// Verify the response structure when copying
+		await page.locator('.session__history').getByTitle('Copy').last().click();
+		const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
+		expect(clipboardText).toBe(
+			'Here is how you can test your code effectively:\n\n1. Write unit tests\n2. Use integration tests\n3. Implement end-to-end testing'
+		);
 	});
 });

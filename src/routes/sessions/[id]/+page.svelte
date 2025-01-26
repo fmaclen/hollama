@@ -168,6 +168,15 @@
 
 			let isInThinkTag = false;
 			await strategy.chat(chatRequest, editor.abortController.signal, async (chunk) => {
+				// This is required primarily for testing, because both the reasoning
+				// and the completion are returned in a single chunk.
+				if (chunk.includes(THINK_TAG) && chunk.includes(END_THINK_TAG)) {
+					const start = chunk.indexOf(THINK_TAG) + THINK_TAG.length;
+					const end = chunk.indexOf(END_THINK_TAG);
+					editor.reasoning += chunk.slice(start, end);
+					chunk = chunk.slice(end);
+				}
+
 				if (chunk.includes(THINK_TAG)) {
 					isInThinkTag = true;
 					chunk = chunk.replace(THINK_TAG, '');
