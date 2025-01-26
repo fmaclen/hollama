@@ -87,7 +87,7 @@
 		</nav>
 
 		{#if message.reasoning}
-			<div class="reasoning">
+			<div class="reasoning" transition:slide>
 				<button
 					class="reasoning__button"
 					on:click={() => (isReasoningVisible = !isReasoningVisible)}
