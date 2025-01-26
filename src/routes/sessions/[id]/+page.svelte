@@ -165,34 +165,34 @@
 			}
 
 			if (!strategy) throw new Error('Invalid strategy');
-			
+
 			let isInThinkTag = false;
 			await strategy.chat(chatRequest, editor.abortController.signal, async (chunk) => {
 				if (chunk.includes(THINK_TAG)) {
 					isInThinkTag = true;
 					chunk = chunk.replace(THINK_TAG, '');
 				}
-				
+
 				if (chunk.includes(END_THINK_TAG)) {
 					isInThinkTag = false;
 					chunk = chunk.replace(END_THINK_TAG, '');
 				}
-				
+
 				if (isInThinkTag) {
 					editor.reasoning += chunk;
 				} else {
 					editor.completion += chunk;
 				}
-				
+
 				await scrollToBottom();
 			});
 
-			const message: Message = { 
-				role: 'assistant', 
+			const message: Message = {
+				role: 'assistant',
 				content: editor.completion,
 				reasoning: editor.reasoning
 			};
-			
+
 			session.messages = [...session.messages, message];
 			session.updatedAt = new Date().toISOString();
 			saveSession(session);

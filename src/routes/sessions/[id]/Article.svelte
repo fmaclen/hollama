@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { BrainIcon, ChevronDown, ChevronUp, Pencil, RefreshCw, Trash2 } from 'lucide-svelte';
+	import { slide } from 'svelte/transition';
 
 	import LL from '$i18n/i18n-svelte';
 	import Badge from '$lib/components/Badge.svelte';
@@ -9,7 +10,6 @@
 	import Markdown from '$lib/components/Markdown.svelte';
 	import { type Message } from '$lib/sessions';
 	import { Sitemap } from '$lib/sitemap';
-	import { slide } from 'svelte/transition';
 
 	export let message: Message;
 	export let retryIndex: number | undefined = undefined;
@@ -88,7 +88,10 @@
 
 		{#if message.reasoning}
 			<div class="reasoning">
-				<button class="reasoning__button" on:click={() => isReasoningVisible = !isReasoningVisible}>
+				<button
+					class="reasoning__button"
+					on:click={() => (isReasoningVisible = !isReasoningVisible)}
+				>
 					Reasoning
 					{#if isReasoningVisible}
 						<ChevronUp class="base-icon" />
@@ -167,15 +170,15 @@
 	}
 
 	.reasoning {
-		@apply bg-shade-1 rounded text-xs;
+		@apply rounded bg-shade-1 text-xs;
 	}
 
 	.reasoning__button {
-		@apply p-2 flex items-center gap-2 justify-between w-full;
+		@apply flex w-full items-center justify-between gap-2 p-2;
 	}
 
 	.reasoning__content {
-		@apply p-2 border-t border-shade-3;
+		@apply border-t border-shade-3 p-2;
 	}
 
 	.reasoning__content :global(*) {
