@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { BrainIcon, ChevronDown, ChevronUp, Pencil, RefreshCw, Trash2 } from 'lucide-svelte';
+	import { quadInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
 
 	import LL from '$i18n/i18n-svelte';
@@ -87,7 +88,7 @@
 		</nav>
 
 		{#if message.reasoning}
-			<div class="reasoning" transition:slide>
+			<div class="reasoning" transition:slide={{ easing: quadInOut, duration: 200 }}>
 				<button
 					class="reasoning__button"
 					on:click={() => (isReasoningVisible = !isReasoningVisible)}
@@ -100,9 +101,12 @@
 					{/if}
 				</button>
 				{#if isReasoningVisible}
-					<div class="reasoning__content" transition:slide>
+					<article
+						class="article article--reasoning"
+						transition:slide={{ easing: quadInOut, duration: 200 }}
+					>
 						<Markdown markdown={message.reasoning} />
-					</div>
+					</article>
 				{/if}
 			</div>
 		{/if}
@@ -122,6 +126,10 @@
 
 	.article--assistant {
 		@apply border-transparent bg-shade-0;
+	}
+
+	.article--reasoning {
+		@apply max-w-full border-b-0 border-l-0 border-r-0;
 	}
 
 	.article__interactive,
@@ -175,13 +183,5 @@
 
 	.reasoning__button {
 		@apply flex w-full items-center justify-between gap-2 p-2;
-	}
-
-	.reasoning__content {
-		@apply border-t border-shade-3 p-2;
-	}
-
-	.reasoning__content :global(*) {
-		@apply text-xs;
 	}
 </style>

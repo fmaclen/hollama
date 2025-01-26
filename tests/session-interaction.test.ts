@@ -587,18 +587,18 @@ test.describe('Session interaction', () => {
 
 		// Check that the reasoning is displayed in its own div
 		await expect(page.locator('.reasoning')).toBeVisible();
-		await expect(page.locator('.reasoning__content')).not.toBeVisible();
+		await expect(page.locator('.article--reasoning')).not.toBeVisible();
 
 		// Toggle on the reasoning
 		await page.getByRole('button', { name: 'Reasoning' }).click();
-		await expect(page.locator('.reasoning__content')).toBeVisible();
-		await expect(page.locator('.reasoning__content')).toHaveText(
+		await expect(page.locator('.article--reasoning')).toBeVisible();
+		await expect(page.locator('.article--reasoning')).toHaveText(
 			'Let me analyze this request carefully. The user is asking about code testing, which requires a structured response.'
 		);
 
 		// Toggle off the reasoning
 		await page.getByRole('button', { name: 'Reasoning' }).click();
-		await expect(page.locator('.reasoning__content')).not.toBeVisible();
+		await expect(page.locator('.article--reasoning')).not.toBeVisible();
 
 		// Verify the response structure when copying
 		await page.locator('.session__history').getByTitle('Copy').last().click();
