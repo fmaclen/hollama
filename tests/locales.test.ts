@@ -112,4 +112,20 @@ test.describe('Locales', () => {
 			);
 		});
 	});
+
+	test.describe('French', () => {
+		test.use({ locale: 'fr-FR' });
+		test('default language is French', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('fr-FR');
+
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Servers')).not.toBeVisible();
+			await expect(page.getByText('Serveurs')).toBeVisible();
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"fr"'
+			);
+		});
+	});
 });
