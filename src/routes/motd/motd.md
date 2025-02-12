@@ -1,4 +1,4 @@
-`2025-1-26`
+`2025-02-12`
 
 ### Message of the day
 
@@ -8,6 +8,7 @@
 
 - **Reasoning responses** (i.e. [`deepseek-r1`](https://ollama.com/library/deepseek-r1)) are now displayed in a dedicated UI component.
 - **Multiple-server support** allows you to connect to one or more Ollama (and/or OpenAI) servers at the same time.
+- **Bonjour le monde!** UI is now available in French.
 
 #### Previously, in Hollama
 
@@ -33,8 +34,6 @@
 
 We welcome contributions from people familiar with **Svelte**, **TypeScript** and **TailwindCSS**.
 If that sparks your interest, read this next: [`CONTRIBUTING.md`](https://github.com/fmaclen/hollama/blob/main/CONTRIBUTING.md)
-
-If you want to contribute in a _less_ technical role, such as UI/UX designers or if you are good at prompt engineering, please [reach out](mailto:hello@fernando.is)
 
 #### About
 
