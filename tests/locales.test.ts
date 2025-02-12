@@ -128,5 +128,4 @@ test.describe('Locales', () => {
 			);
 		});
 	});
-
 });
