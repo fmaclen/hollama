@@ -1,32 +1,32 @@
-# Hollama
+# هولاما
 
-A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) servers.
+واجهة مستخدم ويب بسيطة للتحدث مع خوادم [أولاما](https://github.com/jmorganca/ollama/).
 
-### Features
+### المميزات
 
-- Support for **Ollama** & **OpenAI** models
-- Multi-server support
-- Large prompt fields
-- Support for reasoning models
-- Markdown rendering with syntax highlighting
-- Code editor features
-- Customizable system prompts & advanced Ollama parameters
-- Copy code snippets, messages or entire sessions
-- Edit & retry messages
-- Stores data locally on your browser
-- Responsive layout
-- Light & dark themes
-- Multi-language interface
-- Download [Ollama models](https://ollama.ai/models) directly from the UI
+  - دعم نماذج **أولاما** و **OpenAI**
+  - دعم متعدد الخوادم
+  - حقول مطالبات كبيرة
+  - دعم نماذج الاستدلال
+  - عرض Markdown مع تمييز بناء الجملة
+  - مميزات محرر الأكواد
+  - مطالبات نظام قابلة للتخصيص وبارامترات أولاما متقدمة
+  - نسخ مقتطفات الأكواد أو الرسائل أو الجلسات بأكملها
+  - تعديل الرسائل وإعادة المحاولة
+  - تخزين البيانات محليًا في متصفحك
+  - تصميم متجاوب
+  - ثيمات فاتحة وداكنة
+  - واجهة متعددة اللغات
+  - تنزيل [نماذج أولاما](https://ollama.ai/models) مباشرة من واجهة المستخدم
 
-### Get started
+### ابدأ الآن
 
-- ⚡️ [Live demo](https://hollama.fernando.is)
-  - _No sign-up required_
-- 🖥️ Download for [macOS, Windows & Linux](https://github.com/fmaclen/hollama/releases)
-- 🐳 [Self-hosting](SELF_HOSTING.md) with Docker
-- 🐞 [Contribute](CONTRIBUTING.md)
+  - ⚡️ [عرض تجريبي مباشر](https://hollama.fernando.is)
+      - *لا يتطلب تسجيل*
+  - 🖥️ تنزيل لأنظمة [macOS و Windows و Linux](https://github.com/fmaclen/hollama/releases)
+  - 🐳 [الاستضافة الذاتية](https://www.google.com/url?sa=E&source=gmail&q=SELF_HOSTING.md) باستخدام Docker
+  - 🐞 [المساهمة](https://www.google.com/url?sa=E&source=gmail&q=CONTRIBUTING.md)
 
-| ![session](tests/docs.test.ts-snapshots/session.png)         | ![settings](tests/docs.test.ts-snapshots/settings.png)   |
+| ![جلسة](about:sanitized)         | ![إعدادات](about:sanitized)   |
 | ------------------------------------------------------------ | -------------------------------------------------------- |
-| ![session-new](tests/docs.test.ts-snapshots/session-new.png) | ![knowledge](tests/docs.test.ts-snapshots/knowledge.png) |
+| ![جلسة-جديدة](about:sanitized) | ![معرفة](about:sanitized) |

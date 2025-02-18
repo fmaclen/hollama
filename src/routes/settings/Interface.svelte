@@ -29,6 +29,7 @@
 		onChange={() => changeLanguage(value)}
 		options={[
 			{ value: 'en', label: 'English' },
+			{ value: 'ar', label: 'عربي' },
 			{ value: 'de', label: 'Deutsch' },
 			{ value: 'zh-cn', label: '中文 (简体)' },
 			{ value: 'es', label: 'Español' },
