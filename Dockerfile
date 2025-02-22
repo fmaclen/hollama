@@ -6,6 +6,7 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 WORKDIR /app
 
 ENV PUBLIC_ADAPTER='docker-node'
+ENV VITE_ALLOWED_HOSTS='localhost'
 
 COPY . .
 
