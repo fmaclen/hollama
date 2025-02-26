@@ -137,7 +137,7 @@ test.describe('Locales', () => {
 			await page.evaluate(() => window.localStorage.clear());
 			await page.reload();
 			await expect(page.getByText('Servers')).not.toBeVisible();
-			await expect(page.getByText('Serveurs')).toBeVisible();
+			await expect(page.getByText('სერვერები')).toBeVisible();
 			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
 				'"userLanguage":"ka"'
 			);
