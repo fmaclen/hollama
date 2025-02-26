@@ -16,8 +16,9 @@ const en = {
 	baseUrl: 'საბაზისო URL',
 	browseModels: 'ხელმისაწვდომი მოდელების სიის დათვალიერება',
 	cancel: 'გაუქმება',
-	cantConnectToOllamaServer: "Ollama-ის სერვერთან მიერთება შეუძლებელია",
-	checkBrowserExtensions: 'ასევე შეამოწმეთ ბრაუზერის გაფართოებები, რომლებსაც მიერთების დაბლოკვა შეუძლიათ',
+	cantConnectToOllamaServer: 'Ollama-ის სერვერთან მიერთება შეუძლებელია',
+	checkBrowserExtensions:
+		'ასევე შეამოწმეთ ბრაუზერის გაფართოებები, რომლებსაც მიერთების დაბლოკვა შეუძლიათ',
 	checkingForUpdates: 'მიმდინარეობს განახლებების შემოწმება...',
 	checkNow: 'შემოწმება ახლავე',
 	clear: 'გასუფთავება',
@@ -33,8 +34,8 @@ const en = {
 	controlsOnlyAvailableForOllama:
 		'დამატებითი კონტროლის ელემენტები ამჟამად, მხოლოდ, Ollama-ის მოდელებისთვისაა ხელმისაწვდომი',
 	copy: 'კოპირება',
-	couldntCheckForUpdates: "განახლებების ავტომატური შემოწმება შეუძლებელია",
-	couldntConnectToOllamaServer: "Ollama-ის სერვერთან მიერთება შეუძლებელია",
+	couldntCheckForUpdates: 'განახლებების ავტომატური შემოწმება შეუძლებელია',
+	couldntConnectToOllamaServer: 'Ollama-ის სერვერთან მიერთება შეუძლებელია',
 	creatingTunnel: 'გვირაბის შექმნა',
 	currentVersion: 'მიმდინარე ვერსია',
 	dangerZone: 'სახიფათო ზონა',
@@ -82,7 +83,7 @@ const en = {
 	modelOptions: 'მოდელის მორგება',
 	modelWasDownloaded: '{model:string} გადმოწერილია',
 	modelsFilter: 'მოდელის სახელების ფილტრი',
-	modelsFilterHelp: "დამალავს მოდელის სახელებს, რომლებიც ფილტრით არ იწყება",
+	modelsFilterHelp: 'დამალავს მოდელის სახელებს, რომლებიც ფილტრით არ იწყება',
 	motd: 'დღის შეტყობინება',
 	name: 'სახელი',
 	newKnowledge: 'ახალი ცოდნა',
@@ -101,7 +102,7 @@ const en = {
 	numThread: 'ნაკადების რაოდენობა',
 	numa: 'NUMA',
 	ollama: 'Ollama',
-	ollamaLibrary: "Ollama-ის ბიბლიოთეკა",
+	ollamaLibrary: 'Ollama-ის ბიბლიოთეკა',
 	openAIOfficialAPI: 'OpenAI: ოფიციალური API',
 	openAICompatible: 'OpenAI: თავსებადი სერვერები (მაგ: llama.cpp)',
 	otherModels: 'სხვა მოდელები',
@@ -156,7 +157,7 @@ const en = {
 	writePromptToStart: 'დაწერეთ მოთხოვნის ხაზზე ახალი სესიის დასაწყებად',
 	you: 'თქვენ',
 	copiedNotPrivate: 'შემცველობა დაკოპირდა, მაგრამ თქვენი მიერთება კონფიდენციალური არაა',
-	notCopiedNotPrivate: "შემცველობის დაკოპირება შეუძლებელია, რადგან მიერთება კონფიდენციალური არაა"
+	notCopiedNotPrivate: 'შემცველობის დაკოპირება შეუძლებელია, რადგან მიერთება კონფიდენციალური არაა'
 } satisfies BaseTranslation;
 
 export default en;
