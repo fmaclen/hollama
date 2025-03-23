@@ -1,9 +1,12 @@
 <script lang="ts">
 	import hljs from 'highlight.js';
+	import katex from 'katex';
+	import mk from 'markdown-it-texmath';
 	import MarkdownIt from 'markdown-it/lib/index.mjs';
 	import { mount, onMount } from 'svelte';
 
 	import 'highlight.js/styles/github.min.css';
+	import 'katex/dist/katex.min.css';
 
 	import ButtonCopy from './ButtonCopy.svelte';
 
@@ -29,6 +32,9 @@
 			return renderCodeSnippet(md.utils.escapeHtml(str));
 		}
 	});
+
+	md.use(mk, { engine: katex, delimiters: 'dollars' });
+	md.use(mk, { engine: katex, delimiters: 'brackets' });
 
 	onMount(() => {
 		const preElements = document.querySelectorAll(`pre#${CODE_SNIPPET_ID}`);
