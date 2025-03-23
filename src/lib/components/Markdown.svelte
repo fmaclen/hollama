@@ -1,7 +1,7 @@
 <script lang="ts">
 	import hljs from 'highlight.js';
 	import katex from 'katex';
-	import mk from 'markdown-it-texmath';
+	import texmath from 'markdown-it-texmath';
 	import MarkdownIt from 'markdown-it/lib/index.mjs';
 	import { mount, onMount } from 'svelte';
 
@@ -34,7 +34,10 @@
 	});
 
 	// Math notation parsing with Katex, with multiple delimiters
-	md.use(mk, { engine: katex, delimiters: ['dollars', 'brackets', 'doxygen', 'gitlab', 'julia', 'kramdown', 'beg_end'] });
+	md.use(texmath, {
+		engine: katex,
+		delimiters: ['dollars', 'brackets', 'doxygen', 'gitlab', 'julia', 'kramdown', 'beg_end']
+	});
 
 	onMount(() => {
 		const preElements = document.querySelectorAll(`pre#${CODE_SNIPPET_ID}`);
