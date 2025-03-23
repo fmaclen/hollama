@@ -30,6 +30,10 @@
 - [Short-term priorities](https://github.com/fmaclen/hollama/issues?q=is%3Aissue+is%3Aopen+label%3Apriority)
 - And we are **always tweaking the UI**
 
+#### Community Resources
+
+- [Deploying Hollama & Ollama on Kubernetes](https://github.com/prudhvikrishnap/h-ollama-on-k8s/blob/main/guide.md) by [@prudhvikrishnap](https://github.com/prudhvikrishnap/h-ollama-on-k8s/commits?author=prudhvikrishnap)
+
 #### Contributions
 
 We welcome contributions from people familiar with **Svelte**, **TypeScript** and **TailwindCSS**.
