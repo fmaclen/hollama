@@ -33,8 +33,8 @@
 		}
 	});
 
-	md.use(mk, { engine: katex, delimiters: 'dollars' });
-	md.use(mk, { engine: katex, delimiters: 'brackets' });
+	// Math notation parsing with Katex, with multiple delimiters
+	md.use(mk, { engine: katex, delimiters: ['dollars', 'brackets', 'doxygen', 'gitlab', 'julia', 'kramdown', 'beg_end'] });
 
 	onMount(() => {
 		const preElements = document.querySelectorAll(`pre#${CODE_SNIPPET_ID}`);
