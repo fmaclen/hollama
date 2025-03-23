@@ -85,7 +85,7 @@
 			navigation.cancel();
 			return;
 		}
-		
+
 		// Check for unsaved content in the prompt textarea
 		if (editor.prompt && editor.prompt.trim() !== '') {
 			const userConfirmed = confirm($LL.unsavedChangesWillBeLost());
