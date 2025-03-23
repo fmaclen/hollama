@@ -607,4 +607,33 @@ test.describe('Session interaction', () => {
 			'Here is how you can test your code effectively:\n\n1. Write unit tests\n2. Use integration tests\n3. Implement end-to-end testing'
 		);
 	});
+
+	test('warns when navigating away with unsaved prompt content', async ({ page }) => {
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		// Set up dialog handler before triggering navigation
+		let dialogPromise = page.waitForEvent('dialog');
+		
+		// Fill the prompt but don't submit
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.fill('This is an unsaved prompt');
+		
+		// Try to navigate away - this should trigger a dialog
+		await page.getByText('Settings', { exact: true }).click();
+		
+		// Wait for and handle the dialog
+		const dialog = await dialogPromise;
+		
+		// Verify the warning dialog message was shown
+		expect(dialog.message()).toContain('You have unsaved changes that will be lost');
+		
+		// Dismiss the dialog (simulates clicking "Cancel")
+		await dialog.dismiss();
+		
+		// Verify we're still on the session page (navigation was canceled)
+		await expect(page.url()).toContain('/sessions/');
+		await expect(promptTextarea).toHaveValue('This is an unsaved prompt');
+	});
 });
