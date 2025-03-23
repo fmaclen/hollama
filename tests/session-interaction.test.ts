@@ -614,7 +614,7 @@ test.describe('Session interaction', () => {
 		await page.getByTestId('new-session').click();
 
 		// Set up dialog handler before triggering navigation
-		let dialogPromise = page.waitForEvent('dialog');
+		const dialogPromise = page.waitForEvent('dialog');
 
 		// Fill the prompt but don't submit
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
