@@ -21,6 +21,7 @@ export interface Session {
 	options: Partial<OllamaOptions>;
 	model?: Model;
 	updatedAt?: string;
+	title?: string;
 }
 
 export interface Editor {
@@ -115,6 +116,9 @@ export function formatSessionMetadata(session: Session) {
 }
 
 export function getSessionTitle(session: Session) {
+	if (session.title) {
+		return session.title;
+	}
 	const firstUserMessage = session.messages.find(
 		(m) => m.role === 'user' && m.content && !m.knowledge
 	);
