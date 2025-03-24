@@ -19,8 +19,8 @@
 	let { sitemap, id, title, subtitle }: Props = $props();
 	let isEditing = $state(false);
 	let editedTitle = $state(title);
-	let shouldConfirmDeletion = $state(false);
 	let titleInput: HTMLInputElement | null = $state(null);
+	let isDeleting = $state(false);
 
 	const isSession = sitemap === Sitemap.SESSIONS;
 
@@ -54,7 +54,7 @@
 	<div
 		class="section-list-item"
 		class:section-list-item--active={page.url.pathname.includes(id)}
-		class:section-list-item--confirm-deletion={shouldConfirmDeletion}
+		class:section-list-item--confirm-deletion={isDeleting}
 		class:section-list-item--editing={isEditing}
 	>
 		{#if isEditing && isSession}
@@ -87,10 +87,10 @@
 		{/if}
 		<nav
 			class="section-list-item__actions"
-			class:section-list-item__actions--confirm-deletion={shouldConfirmDeletion}
+			class:section-list-item__actions--confirm-deletion={isDeleting}
 			class:section-list-item__actions--editing={isEditing}
 		>
-			{#if isSession && !shouldConfirmDeletion}
+			{#if !isDeleting}
 				<ButtonEdit
 					bind:shouldConfirmEdit={isEditing}
 					onConfirm={handleTitleEdit}
@@ -98,7 +98,7 @@
 				/>
 			{/if}
 			{#if !isEditing}
-				<ButtonDelete {sitemap} {id} bind:shouldConfirmDeletion />
+				<ButtonDelete {sitemap} {id} bind:shouldConfirmDeletion={isDeleting} />
 			{/if}
 		</nav>
 	</div>
@@ -123,16 +123,16 @@
 	}
 
 	.section-list-item:hover .section-list-item__actions {
-		@apply opacity-100;
+		@apply opacity-100 visible;
 	}
 
 	.section-list-item__actions {
-		@apply flex flex-row items-center opacity-0;
+		@apply flex flex-row items-center opacity-0 invisible;
 	}
 
 	.section-list-item__actions--confirm-deletion,
 	.section-list-item__actions--editing {
-		@apply opacity-100;
+		@apply opacity-100 visible;
 	}
 
 	.section-list-item--active {

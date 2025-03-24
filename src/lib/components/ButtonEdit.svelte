@@ -32,7 +32,7 @@
 			variant="icon"
 			class="edit-button__confirm"
 			on:click={handleConfirm}
-			title={$LL.confirmDeletion()}
+			title={$LL.confirmEdit()}
 		>
 			<Check class="base-icon" />
 		</Button>
