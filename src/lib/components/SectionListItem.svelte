@@ -123,16 +123,16 @@
 	}
 
 	.section-list-item:hover .section-list-item__actions {
-		@apply opacity-100 visible;
+		@apply visible opacity-100;
 	}
 
 	.section-list-item__actions {
-		@apply flex flex-row items-center opacity-0 invisible;
+		@apply invisible flex flex-row items-center opacity-0;
 	}
 
 	.section-list-item__actions--confirm-deletion,
 	.section-list-item__actions--editing {
-		@apply opacity-100 visible;
+		@apply visible opacity-100;
 	}
 
 	.section-list-item--active {

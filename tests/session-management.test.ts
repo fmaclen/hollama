@@ -326,7 +326,7 @@ test.describe('Session management', () => {
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Original title');
 		await page.getByText('Run').click();
-		
+
 		// Verify initial title
 		const sessionListItem = page.locator('.section-list-item');
 		const sessionActions = page.locator('.section-list-item__actions');
@@ -339,7 +339,7 @@ test.describe('Session management', () => {
 		await expect(sessionActions).toHaveCSS('opacity', '1');
 		await expect(sessionListItem.getByText('Confirm edit')).not.toBeVisible();
 		await expect(sessionListItem.getByText('Dismiss')).not.toBeVisible();
-		
+
 		// Verify edit mode UI
 		await sessionListItem.getByTitle('Edit title').click();
 		await expect(sessionListItem.getByTitle('Confirm edit')).toBeVisible();
