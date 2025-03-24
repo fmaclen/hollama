@@ -13,6 +13,28 @@
 	export let markdown: string;
 	const CODE_SNIPPET_ID = 'code-snippet';
 
+	function normalizeMarkdown(content: string) {
+		// Replace multiple newlines with double newlines
+		content = content.replace(/\n{2,}/g, '\n\n');
+		
+		// First, normalize display math blocks
+		content = content.replace(/\n\\[\[]/g, '\n\n\\[');
+		content = content.replace(/\\]\n/g, '\\]\n\n');
+		
+		// Split on all math delimiters: \[...\], \(...\), and $...$
+		const parts = content.split(/(\$[^$]+\$|\\[([^)]+\\]|\\[[^\\]+\\])/g);
+		content = parts.map(part => {
+			// If this part is any kind of math block, leave it unchanged
+			if (part.startsWith('$') || part.startsWith('\\[') || part.startsWith('\\(')) {
+				return part;
+			}
+			// Otherwise, wrap any \boxed commands in inline math
+			return part.replace(/\\boxed\{((?:[^{}]|\{[^{}]*\})*)\}/g, '\\(\\boxed{$1}\\)');
+		}).join('');
+		
+		return content;
+	}
+
 	function renderCodeSnippet(code: string) {
 		return `<pre id="${CODE_SNIPPET_ID}"><code class="hljs">${code}</code></pre>`;
 	}
@@ -59,7 +81,7 @@
 		getting formatted on auto-formatting.
 	-->
 	{#if markdown}
-		{@html md.render(markdown)} <!-- eslint-disable-line svelte/no-at-html-tags -->
+		{@html md.render(normalizeMarkdown(markdown))} <!-- eslint-disable-line svelte/no-at-html-tags -->
 	{/if}
 </div>
 
@@ -228,3 +250,4 @@
 		@apply opacity-100;
 	}
 </style>
+
