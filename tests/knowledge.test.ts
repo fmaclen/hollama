@@ -96,6 +96,10 @@ test('can delete knowledge from the header and sidebar', async ({ page }) => {
 	await expect(page.locator('header').getByTitle('Delete knowledge')).not.toBeVisible();
 
 	// Delete the knowledge from the sidebar
+	await page.locator('.section-list-item').first().hover();
+	await expect(page.getByTitle('Delete knowledge')).toBeVisible();
+	await expect(page.getByTitle('Edit title')).not.toBeVisible(); // Only sessions have an edit title button
+
 	await page.locator('.section-list-item').first().getByTitle('Delete knowledge').click();
 	await page.getByTitle('Confirm deletion').click();
 	await expect(page.getByText('No knowledge')).toBeVisible();

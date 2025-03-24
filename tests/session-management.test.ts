@@ -317,4 +317,56 @@ test.describe('Session management', () => {
 		await expect(page.getByTestId('session-item')).toContainText(truncatedPrompt);
 		await expect(page.getByTestId('session-item')).not.toContainText(longPrompt);
 	});
+
+	test('can edit session titles', async ({ page }) => {
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.fill('Original title');
+		await page.getByText('Run').click();
+
+		// Verify initial title
+		const sessionListItem = page.locator('.section-list-item');
+		const sessionActions = page.locator('.section-list-item__actions');
+		await expect(sessionListItem).toContainText('Original title');
+		await expect(sessionActions).toHaveCSS('opacity', '0');
+		await expect(sessionListItem.getByText('Edit title')).not.toBeVisible();
+
+		// Enter edit mode
+		await sessionListItem.hover();
+		await expect(sessionActions).toHaveCSS('opacity', '1');
+		await expect(sessionListItem.getByText('Confirm edit')).not.toBeVisible();
+		await expect(sessionListItem.getByText('Dismiss')).not.toBeVisible();
+
+		// Verify edit mode UI
+		await sessionListItem.getByTitle('Edit title').click();
+		await expect(sessionListItem.getByTitle('Confirm edit')).toBeVisible();
+		await expect(sessionListItem.getByTitle('Dismiss')).toBeVisible();
+		await expect(sessionListItem.getByTitle('Delete session')).not.toBeVisible();
+
+		// Edit the title
+		const titleInput = page.locator('.section-list-item__title-input');
+		await expect(titleInput).toBeFocused();
+
+		// Verify the title was updated
+		await titleInput.fill('New title');
+		await sessionListItem.getByTitle('Confirm edit').click();
+		await expect(sessionListItem).toContainText('New title');
+		await expect(sessionListItem.getByText('Confirm edit')).not.toBeVisible();
+		await expect(sessionListItem.getByText('Dismiss')).not.toBeVisible();
+
+		// Verify the title persists after page reload
+		await page.reload();
+		await expect(sessionListItem).toContainText('New title');
+
+		// Test canceling edit
+		await sessionListItem.hover();
+		await sessionListItem.getByTitle('Edit title').click();
+		await titleInput.fill('Canceled title');
+		await sessionListItem.getByTitle('Dismiss').click();
+		await expect(sessionListItem).not.toContainText('Canceled title');
+		await expect(sessionListItem).toContainText('New title');
+	});
 });

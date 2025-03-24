@@ -107,6 +107,10 @@ type RootTranslation = {
 	 */
 	confirmDeletion: string
 	/**
+	 * C​o​n​f​i​r​m​ ​e​d​i​t
+	 */
+	confirmEdit: string
+	/**
 	 * C​o​n​n​e​c​t​i​o​n​ ​t​y​p​e
 	 */
 	connectionType: string
@@ -206,6 +210,10 @@ type RootTranslation = {
 	 * E​d​i​t
 	 */
 	edit: string
+	/**
+	 * E​d​i​t​ ​t​i​t​l​e
+	 */
+	editTitle: string
 	/**
 	 * N​o​ ​k​n​o​w​l​e​d​g​e
 	 */
@@ -726,6 +734,10 @@ The completion in progress will stop
 	 */
 	confirmDeletion: () => LocalizedString
 	/**
+	 * Confirm edit
+	 */
+	confirmEdit: () => LocalizedString
+	/**
 	 * Connection type
 	 */
 	connectionType: () => LocalizedString
@@ -825,6 +837,10 @@ The completion in progress will stop
 	 * Edit
 	 */
 	edit: () => LocalizedString
+	/**
+	 * Edit title
+	 */
+	editTitle: () => LocalizedString
 	/**
 	 * No knowledge
 	 */
