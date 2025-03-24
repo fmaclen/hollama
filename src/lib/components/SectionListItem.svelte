@@ -23,9 +23,13 @@
 	let isEditing = $state(false);
 	let editedTitle = $state(title);
 	let shouldConfirmDeletion = $state(false);
-	let titleInput: HTMLInputElement;
+	let titleInput: HTMLInputElement | null = $state(null);
 
 	const isSession = sitemap === Sitemap.SESSIONS;
+
+	$effect(() => {
+		if (isEditing && titleInput) titleInput.focus();
+	});
 
 	function handleTitleEdit() {
 		if (isSession && editedTitle !== title) {
@@ -39,20 +43,12 @@
 	}
 
 	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === 'Enter') {
-			handleTitleEdit();
-		}
+		if (e.key === 'Enter') handleTitleEdit();
 	}
 
 	function cancelEdit() {
 		editedTitle = title;
 		isEditing = false;
-	}
-
-	function startEditing() {
-		isEditing = true;
-		// Focus the input on the next tick to ensure it's mounted
-		setTimeout(() => titleInput?.focus(), 0);
 	}
 </script>
 
@@ -68,10 +64,10 @@
 			<div class="section-list-item__content">
 				<input
 					bind:this={titleInput}
+					bind:value={editedTitle}
 					class="section-list-item__title-input"
 					type="text"
-					bind:value={editedTitle}
-					onkeydown={handleKeydown}
+					on:keydown={handleKeydown}
 				/>
 				<Metadata>
 					{subtitle}
