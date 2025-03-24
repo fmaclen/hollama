@@ -618,7 +618,7 @@ test.describe('Session interaction', () => {
 		await promptTextarea.fill('This is an unsaved prompt');
 
 		// First verify that navigating within /sessions/ doesn't trigger a dialog
-		await page.getByText('New session', { exact: true }).click();
+		await page.getByTestId('new-session').click();
 		await expect(promptTextarea).toHaveValue('This is an unsaved prompt');
 		expect(page.url()).toContain('/sessions/');
 
