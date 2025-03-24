@@ -36,6 +36,7 @@
 			{ value: 'pt-br', label: 'Português (Brasil)' },
 			{ value: 'ja', label: '日本語' },
 			{ value: 'tr', label: 'Türkçe' },
+			{ value: 'ka', label: 'ქართული' },
 			{ value: 'vi', label: 'Tiếng Việt' }
 		]}
 	/>
