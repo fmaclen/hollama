@@ -331,9 +331,9 @@ test.describe('Session interaction', () => {
 	});
 
 	test('can cancel editing a message sent from user', async ({ page }) => {
-		const editButton = page.getByTitle('Edit');
-		const cancelButton = page.getByText('Cancel');
 		const userMessage = page.locator('article', { hasText: 'You' });
+		const editButton = userMessage.getByTitle('Edit');
+		const cancelButton = page.getByText('Cancel');
 
 		await page.goto('/');
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
