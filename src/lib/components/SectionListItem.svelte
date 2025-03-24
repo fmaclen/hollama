@@ -90,7 +90,7 @@
 			class:section-list-item__actions--confirm-deletion={isDeleting}
 			class:section-list-item__actions--editing={isEditing}
 		>
-			{#if !isDeleting}
+			{#if isSession && !isDeleting}
 				<ButtonEdit
 					bind:shouldConfirmEdit={isEditing}
 					onConfirm={handleTitleEdit}
