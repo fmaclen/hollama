@@ -8,6 +8,7 @@
 
 - **KaTeX math notation** is now supported in model responses.
 - **Reasoning responses** (i.e. [`deepseek-r1`](https://ollama.com/library/deepseek-r1)) are now displayed in a dedicated UI component.
+- **Session titles** can now be manually edited.
 
 #### Previously, in Hollama
 
