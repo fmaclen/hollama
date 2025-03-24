@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { Check, Edit2, X } from 'lucide-svelte';
+	import { Check, Pencil, X } from 'lucide-svelte';
 
 	import LL from '$i18n/i18n-svelte';
+
 	import Button from './Button.svelte';
 
 	interface Props {
@@ -49,9 +50,9 @@
 			variant="icon"
 			class="edit__pencil"
 			on:click={() => updateConfirmEdit(true)}
-			title={$LL.edit()}
+			title={$LL.editTitle()}
 		>
-			<Edit2 class="base-icon" />
+			<Pencil class="base-icon" />
 		</Button>
 	{/if}
 </div>
@@ -64,4 +65,4 @@
 	.edit-button :global(.edit-button__confirm) {
 		@apply hover:text-positive;
 	}
-</style> 
+</style>

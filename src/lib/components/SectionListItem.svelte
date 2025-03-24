@@ -1,13 +1,10 @@
 <script lang="ts">
-	import { Check, Edit2, X } from 'lucide-svelte';
-
 	import LL from '$i18n/i18n-svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { sessionsStore } from '$lib/localStorage';
 	import { saveSession } from '$lib/sessions';
 	import { Sitemap } from '$lib/sitemap';
 
-	import Button from './Button.svelte';
 	import ButtonDelete from './ButtonDelete.svelte';
 	import ButtonEdit from './ButtonEdit.svelte';
 	import Metadata from './Metadata.svelte';
@@ -56,7 +53,7 @@
 {#key id}
 	<div
 		class="section-list-item"
-		class:section-list-item--active={$page.url.pathname.includes(id)}
+		class:section-list-item--active={page.url.pathname.includes(id)}
 		class:section-list-item--confirm-deletion={shouldConfirmDeletion}
 		class:section-list-item--editing={isEditing}
 	>
