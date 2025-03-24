@@ -9,6 +9,7 @@ A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) s
 - Large prompt fields
 - Support for reasoning models
 - Markdown rendering with syntax highlighting
+- KaTeX math notation
 - Code editor features
 - Customizable system prompts & advanced Ollama parameters
 - Copy code snippets, messages or entire sessions

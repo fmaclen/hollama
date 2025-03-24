@@ -619,8 +619,8 @@ test.describe('Session interaction', () => {
 
 		// First verify that navigating within /sessions/ doesn't trigger a dialog
 		await page.getByText('New session', { exact: true }).click();
-		await expect(page.url()).toContain('/sessions/');
 		await expect(promptTextarea).toHaveValue('This is an unsaved prompt');
+		expect(page.url()).toContain('/sessions/');
 
 		// Now verify that navigating outside /sessions/ does trigger a dialog
 		const dialogPromise = page.waitForEvent('dialog');
@@ -630,7 +630,53 @@ test.describe('Session interaction', () => {
 		await dialog.dismiss();
 
 		// Verify we're still on the session page (navigation was canceled)
-		await expect(page.url()).toContain('/sessions/');
 		await expect(promptTextarea).toHaveValue('This is an unsaved prompt');
+		expect(page.url()).toContain('/sessions/');
+	});
+
+	test('renders math notation correctly using KaTeX', async ({ page }) => {
+		// Mock a session with LaTeX math content
+		await page.evaluate(() =>
+			window.localStorage.setItem(
+				'hollama-sessions',
+				JSON.stringify([
+					{
+						id: 'math123',
+						model: 'llama3',
+						messages: [
+							{
+								role: 'user',
+								content:
+									'What is the formula for Pythagoras theorem in math notation using latex/katex\n'
+							},
+							{
+								role: 'assistant',
+								content:
+									"The formula for Pythagoras' theorem, written in LaTeX (and rendered by KaTeX), is:\n\n\\[\\boxed{a^2 + b^2 = c^2}\\]\n\nwhere:\n- \\(a\\) and \\(b\\) are the lengths of the legs of a right triangle,\n- \\(c\\) is the length of the hypotenuse.",
+								reasoning: ''
+							}
+						],
+						context: [],
+						updatedAt: new Date().toISOString()
+					}
+				])
+			)
+		);
+
+		// Navigate to the session with math content
+		await page.goto('/sessions/math123');
+
+		// Wait for KaTeX to render
+		await page.waitForSelector('.katex');
+
+		// Check that math notation is rendered correctly
+		const eqnElements = await page.locator('eqn').count();
+		const eqElements = await page.locator('eq').count();
+		const katexSpans = await page.locator('span.katex').count();
+
+		// Assert that we have 3 instances of each
+		expect(eqnElements).toBe(1);
+		expect(eqElements).toBe(3);
+		expect(katexSpans).toBe(4);
 	});
 });
