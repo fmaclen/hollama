@@ -608,6 +608,32 @@ test.describe('Session interaction', () => {
 		);
 	});
 
+	test('warns when navigating away with unsaved prompt content', async ({ page }) => {
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		// Fill the prompt but don't submit
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.fill('This is an unsaved prompt');
+
+		// First verify that navigating within /sessions/ doesn't trigger a dialog
+		await page.getByTestId('new-session').click();
+		await expect(promptTextarea).toHaveValue('This is an unsaved prompt');
+		expect(page.url()).toContain('/sessions/');
+
+		// Now verify that navigating outside /sessions/ does trigger a dialog
+		const dialogPromise = page.waitForEvent('dialog');
+		await page.getByText('Settings', { exact: true }).click();
+		const dialog = await dialogPromise;
+		expect(dialog.message()).toContain('You have unsaved changes that will be lost');
+		await dialog.dismiss();
+
+		// Verify we're still on the session page (navigation was canceled)
+		await expect(promptTextarea).toHaveValue('This is an unsaved prompt');
+		expect(page.url()).toContain('/sessions/');
+	});
+
 	test('renders math notation correctly using KaTeX', async ({ page }) => {
 		// Mock a session with LaTeX math content
 		await page.evaluate(() =>

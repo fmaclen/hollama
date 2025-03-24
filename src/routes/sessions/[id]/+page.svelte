@@ -76,13 +76,27 @@
 	});
 
 	beforeNavigate((navigation) => {
-		if (!editor.isCompletionInProgress) return;
-		const userConfirmed = confirm($LL.areYouSureYouWantToLeave());
-		if (userConfirmed) {
-			stopCompletion();
+		if (editor.isCompletionInProgress) {
+			const userConfirmed = confirm($LL.areYouSureYouWantToLeave());
+			if (userConfirmed) {
+				stopCompletion();
+				return;
+			}
+			navigation.cancel();
 			return;
 		}
-		navigation.cancel();
+
+		// Only show confirmation when navigating outside of /sessions/ path
+		if (
+			editor.prompt &&
+			editor.prompt.trim() !== '' &&
+			!navigation.to?.url.pathname.startsWith('/sessions/')
+		) {
+			const userConfirmed = confirm($LL.unsavedChangesWillBeLost());
+			if (!userConfirmed) {
+				navigation.cancel();
+			}
+		}
 	});
 
 	async function handleSessionChange() {

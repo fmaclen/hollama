@@ -594,6 +594,10 @@ type RootTranslation = {
 	 */
 	typicalP: string
 	/**
+	 * Y​o​u​ ​h​a​v​e​ ​u​n​s​a​v​e​d​ ​c​h​a​n​g​e​s​ ​t​h​a​t​ ​w​i​l​l​ ​b​e​ ​l​o​s​t​.​ ​C​o​n​t​i​n​u​e​?
+	 */
+	unsavedChangesWillBeLost: string
+	/**
 	 * U​s​e​ ​M​L​O​C​K
 	 */
 	useMlock: string
@@ -1205,6 +1209,10 @@ The completion in progress will stop
 	 * Typical P
 	 */
 	typicalP: () => LocalizedString
+	/**
+	 * You have unsaved changes that will be lost. Continue?
+	 */
+	unsavedChangesWillBeLost: () => LocalizedString
 	/**
 	 * Use MLOCK
 	 */
