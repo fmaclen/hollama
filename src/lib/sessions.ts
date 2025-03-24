@@ -116,15 +116,16 @@ export function formatSessionMetadata(session: Session) {
 }
 
 export function getSessionTitle(session: Session) {
-	if (session.title) {
-		return session.title;
-	}
+	if (session.title) return session.title;
+
 	const firstUserMessage = session.messages.find(
 		(m) => m.role === 'user' && m.content && !m.knowledge
 	);
+
 	if (firstUserMessage?.content) {
 		const MAX_TITLE_LENGTH = 56;
 		return firstUserMessage.content.slice(0, MAX_TITLE_LENGTH);
 	}
+
 	return '';
 }
