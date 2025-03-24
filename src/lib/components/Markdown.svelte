@@ -22,7 +22,8 @@
 		content = content.replace(/\\]\n/g, '\\]\n\n');
 		
 		// Split on all math delimiters: \[...\], \(...\), and $...$
-		const parts = content.split(/(\$[^$]+\$|\\[([^)]+\\]|\\[[^\\]+\\])/g);
+		// Using [\s\S] instead of . to match across lines
+		const parts = content.split(/(\$[^$]+\$|\\[([^)]+\\]|\\[\s\S]+?\\])/g);
 		content = parts.map(part => {
 			// If this part is any kind of math block, leave it unchanged
 			if (part.startsWith('$') || part.startsWith('\\[') || part.startsWith('\\(')) {
