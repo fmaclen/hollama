@@ -49,6 +49,7 @@ const en = {
 	dismiss: 'Dismiss',
 	downloadModel: 'Download model',
 	edit: 'Edit',
+	editTitle: 'Edit title',
 	emptyKnowledge: 'No knowledge',
 	emptySessions: 'No sessions',
 	error: 'Error',

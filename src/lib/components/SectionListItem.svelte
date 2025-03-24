@@ -67,10 +67,10 @@
 					bind:value={editedTitle}
 					class="section-list-item__title-input"
 					type="text"
-					on:keydown={handleKeydown}
+					onkeydown={handleKeydown}
 				/>
 				<Metadata>
-					{subtitle}
+					{$LL.editTitle()}
 				</Metadata>
 			</div>
 		{:else}

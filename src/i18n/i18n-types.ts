@@ -207,6 +207,10 @@ type RootTranslation = {
 	 */
 	edit: string
 	/**
+	 * E​d​i​t​ ​t​i​t​l​e
+	 */
+	editTitle: string
+	/**
 	 * N​o​ ​k​n​o​w​l​e​d​g​e
 	 */
 	emptyKnowledge: string
@@ -825,6 +829,10 @@ The completion in progress will stop
 	 * Edit
 	 */
 	edit: () => LocalizedString
+	/**
+	 * Edit title
+	 */
+	editTitle: () => LocalizedString
 	/**
 	 * No knowledge
 	 */
