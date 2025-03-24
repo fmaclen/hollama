@@ -1,4 +1,4 @@
-`2025-03-23`
+`2025-03-24`
 
 ### Message of the day
 
@@ -6,12 +6,12 @@
 
 #### What's new?
 
+- **KaTeX math notation** is now supported in model responses.
 - **Reasoning responses** (i.e. [`deepseek-r1`](https://ollama.com/library/deepseek-r1)) are now displayed in a dedicated UI component.
-- **Multiple-server support** allows you to connect to one or more Ollama (and/or OpenAI) servers at the same time.
-- **Bonjour le monde!** UI is now available in French.
 
 #### Previously, in Hollama
 
+- **Multiple-server support** allows you to connect to one or more Ollama (and/or OpenAI) servers at the same time.
 - **Models list can be filtered** by keyword for each server.
 - **Servers can be labeled** to help you identify them in the models list.
 - **Hallo Welt!** UI is now available in German.

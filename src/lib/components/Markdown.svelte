@@ -1,14 +1,42 @@
 <script lang="ts">
 	import hljs from 'highlight.js';
+	import katex from 'katex';
+	import texmath from 'markdown-it-texmath';
 	import MarkdownIt from 'markdown-it/lib/index.mjs';
 	import { mount, onMount } from 'svelte';
 
 	import 'highlight.js/styles/github.min.css';
+	import 'katex/dist/katex.min.css';
 
 	import ButtonCopy from './ButtonCopy.svelte';
 
 	export let markdown: string;
 	const CODE_SNIPPET_ID = 'code-snippet';
+
+	function normalizeMarkdown(content: string) {
+		// Replace multiple newlines with double newlines
+		content = content.replace(/\n{2,}/g, '\n\n');
+
+		// First, normalize display math blocks
+		content = content.replace(/\n\\\[/g, '\n\n\\[');
+		content = content.replace(/\\]\n/g, '\\]\n\n');
+
+		// Split on all math delimiters: \[...\], \(...\), and $...$
+		// Using [\s\S] instead of . to match across lines
+		const parts = content.split(/(\$[^$]+\$|\\[([^)]+\\]|\\[\s\S]+?\\])/g);
+		content = parts
+			.map((part) => {
+				// If this part is any kind of math block, leave it unchanged
+				if (part.startsWith('$') || part.startsWith('\\[') || part.startsWith('\\(')) {
+					return part;
+				}
+				// Otherwise, wrap any \boxed commands in inline math
+				return part.replace(/\\boxed\{((?:[^{}]|\{[^{}]*\})*)\}/g, '\\(\\boxed{$1}\\)');
+			})
+			.join('');
+
+		return content;
+	}
 
 	function renderCodeSnippet(code: string) {
 		return `<pre id="${CODE_SNIPPET_ID}"><code class="hljs">${code}</code></pre>`;
@@ -28,6 +56,12 @@
 
 			return renderCodeSnippet(md.utils.escapeHtml(str));
 		}
+	});
+
+	// Math notation parsing with Katex, with multiple delimiters
+	md.use(texmath, {
+		engine: katex,
+		delimiters: ['dollars', 'brackets', 'doxygen', 'gitlab', 'julia', 'kramdown', 'beg_end']
 	});
 
 	onMount(() => {
@@ -50,7 +84,8 @@
 		getting formatted on auto-formatting.
 	-->
 	{#if markdown}
-		{@html md.render(markdown)} <!-- eslint-disable-line svelte/no-at-html-tags -->
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+		{@html md.render(normalizeMarkdown(markdown))}
 	{/if}
 </div>
 
