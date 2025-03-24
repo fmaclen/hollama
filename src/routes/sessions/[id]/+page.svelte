@@ -86,8 +86,8 @@
 			return;
 		}
 
-		// Check for unsaved content in the prompt textarea
-		if (editor.prompt && editor.prompt.trim() !== '') {
+		// Only show confirmation when navigating outside of /sessions/ path
+		if (editor.prompt && editor.prompt.trim() !== '' && !navigation.to?.url.pathname.startsWith('/sessions/')) {
 			const userConfirmed = confirm($LL.unsavedChangesWillBeLost());
 			if (!userConfirmed) {
 				navigation.cancel();

@@ -613,23 +613,20 @@ test.describe('Session interaction', () => {
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
 
-		// Set up dialog handler before triggering navigation
-		const dialogPromise = page.waitForEvent('dialog');
-
 		// Fill the prompt but don't submit
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('This is an unsaved prompt');
 
-		// Try to navigate away - this should trigger a dialog
+		// First verify that navigating within /sessions/ doesn't trigger a dialog
+		await page.getByText('New session', { exact: true }).click();
+		await expect(page.url()).toContain('/sessions/');
+		await expect(promptTextarea).toHaveValue('This is an unsaved prompt');
+
+		// Now verify that navigating outside /sessions/ does trigger a dialog
+		const dialogPromise = page.waitForEvent('dialog');
 		await page.getByText('Settings', { exact: true }).click();
-
-		// Wait for and handle the dialog
 		const dialog = await dialogPromise;
-
-		// Verify the warning dialog message was shown
 		expect(dialog.message()).toContain('You have unsaved changes that will be lost');
-
-		// Dismiss the dialog (simulates clicking "Cancel")
 		await dialog.dismiss();
 
 		// Verify we're still on the session page (navigation was canceled)
