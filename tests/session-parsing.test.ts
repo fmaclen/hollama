@@ -13,19 +13,8 @@ import {
     mockOllamaModelsResponse
 } from './utils';
 
-// Increase the test timeout and add slowMo option
-const slowMoValue = 300; // milliseconds to slow down each step
-
-// Use slowMo for all tests in this file
-test.use({ 
-    launchOptions: { slowMo: slowMoValue } 
-});
-
 test.describe('Session response tag parsing', () => {
     let promptTextarea: Locator;
-
-    // Set longer timeouts for slower streaming demos
-    test.setTimeout(30000);
     
     test.beforeEach(async ({ page }) => {
         await mockOllamaModelsResponse(page);
@@ -67,8 +56,9 @@ test.describe('Session response tag parsing', () => {
 
         await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
         
-        // Set up fake streaming before filling the prompt
-        await mockStreamedCompletionResponse(page, MOCK_STREAMED_THINK_TAGS, 30);
+        // Set up fake streaming for the tests
+        // First test - <think> tags
+        await mockStreamedCompletionResponse(page, MOCK_STREAMED_THINK_TAGS, 50);
         
         // Now fill and submit the prompt
         await promptTextarea.fill('How should I test my code?');
@@ -104,8 +94,9 @@ test.describe('Session response tag parsing', () => {
 
         await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
         
-        // Set up fake streaming before filling the prompt
-        await mockStreamedCompletionResponse(page, MOCK_STREAMED_THOUGHT_TAGS, 30);
+        // Set up fake streaming for the tests
+        // Second test - <thought> tags
+        await mockStreamedCompletionResponse(page, MOCK_STREAMED_THOUGHT_TAGS, 50);
         
         // Now fill and submit the prompt
         await promptTextarea.fill('How should I test my code?');
@@ -141,7 +132,8 @@ test.describe('Session response tag parsing', () => {
 
         await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
         
-        // Set up fake streaming before filling the prompt
+        // Set up fake streaming for the tests
+        // Third test - mixed tags
         await mockStreamedCompletionResponse(page, MOCK_STREAMED_MIXED_TAGS, 50);
         
         // Now fill and submit the prompt
@@ -186,7 +178,8 @@ test.describe('Session response tag parsing', () => {
 
         await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
         
-        // Set up fake streaming before filling the prompt
+        // Set up fake streaming for the tests
+        // Fourth test - complex nested tags
         await mockStreamedCompletionResponse(page, MOCK_COMPLEX_NESTED_TAGS, 50);
         
         // Now fill and submit the prompt
