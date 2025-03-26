@@ -29,9 +29,11 @@
 	import Controls from './Controls.svelte';
 	import Messages from './Messages.svelte';
 	import Prompt from './Prompt.svelte';
-
-	const THINK_TAG = '<think>';
-	const END_THINK_TAG = '</think>';
+	import {
+		processReasoningChunk,
+		processRemainingBuffer,
+		type TagPair
+	} from './reasoningProcessor';
 
 	interface Props {
 		data: PageData;
@@ -180,35 +182,43 @@
 
 			if (!strategy) throw new Error('Invalid strategy');
 
-			let isInThinkTag = false;
+			let isInReasoningTag = false;
+			let bufferChunk = '';
+			let currentTagPair: TagPair | null = null;
+
 			await strategy.chat(chatRequest, editor.abortController.signal, async (chunk) => {
-				// This is required primarily for testing, because both the reasoning
-				// and the completion are returned in a single chunk.
-				if (chunk.includes(THINK_TAG) && chunk.includes(END_THINK_TAG)) {
-					const start = chunk.indexOf(THINK_TAG) + THINK_TAG.length;
-					const end = chunk.indexOf(END_THINK_TAG);
-					editor.reasoning += chunk.slice(start, end);
-					chunk = chunk.slice(end);
-				}
+				// Process the chunk using the extracted function
+				const result = processReasoningChunk(
+					chunk,
+					bufferChunk,
+					isInReasoningTag,
+					currentTagPair,
+					(text) => {
+						editor.completion += text;
+					},
+					(text) => {
+						editor.reasoning += text;
+					}
+				);
 
-				if (chunk.includes(THINK_TAG)) {
-					isInThinkTag = true;
-					chunk = chunk.replace(THINK_TAG, '');
-				}
-
-				if (chunk.includes(END_THINK_TAG)) {
-					isInThinkTag = false;
-					chunk = chunk.replace(END_THINK_TAG, '');
-				}
-
-				if (isInThinkTag) {
-					editor.reasoning += chunk;
-				} else {
-					editor.completion += chunk;
-				}
+				bufferChunk = result.bufferChunk;
+				isInReasoningTag = result.isInReasoningTag;
+				currentTagPair = result.currentTagPair;
 
 				await scrollToBottom();
 			});
+
+			// Process any remaining buffer content
+			processRemainingBuffer(
+				bufferChunk,
+				isInReasoningTag,
+				(text) => {
+					editor.completion += text;
+				},
+				(text) => {
+					editor.reasoning += text;
+				}
+			);
 
 			const message: Message = {
 				role: 'assistant',
