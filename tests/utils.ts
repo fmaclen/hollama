@@ -139,6 +139,69 @@ export const MOCK_RESPONSE_WITH_REASONING: ChatResponse = {
 	}
 };
 
+// For testing streaming tag parsing
+export const MOCK_STREAMED_THINK_TAGS = [
+	'<',
+	't',
+	'h',
+	'i',
+	'n',
+	'k',
+	'>',
+	'This is in a thinking tag',
+	'<',
+	'/',
+	't',
+	'h',
+	'i',
+	'n',
+	'k',
+	'>',
+	'This is outside a tag'
+];
+
+export const MOCK_STREAMED_THOUGHT_TAGS = [
+	'<',
+	't',
+	'h',
+	'o',
+	'u',
+	'g',
+	'h',
+	't',
+	'>',
+	'This is in a thought tag',
+	'<',
+	'/',
+	't',
+	'h',
+	'o',
+	'u',
+	'g',
+	'h',
+	't',
+	'>',
+	'This is outside a tag'
+];
+
+// For testing multiple alternating tags
+export const MOCK_STREAMED_MIXED_TAGS = [
+	'<think>First think block</think>',
+	'Some content between tags',
+	'<thought>Second thought block</thought>',
+	'Final content'
+];
+
+// For testing complex nested tags and partial matches
+export const MOCK_COMPLEX_NESTED_TAGS = [
+	// First a think tag that has "thought" text inside it
+	'<think>I need to give this some thought about the question</think>',
+	' Some regular content here. ',
+	// Now a thought tag that has "think" text inside it
+	'<thought>I think the answer is 42</thought>',
+	' Final content here.'
+];
+
 export const MOCK_OPENAI_COMPLETION_RESPONSE_1: OpenAI.Chat.Completions.ChatCompletionChunk = {
 	model: 'gpt-3.5-turbo',
 	created: 1677610602,
@@ -219,6 +282,96 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
 			body: JSON.stringify(response)
 		});
 	});
+}
+
+/**
+ * Mocks a streamed completion response by sending chunks one at a time
+ * @param page The Playwright page
+ * @param chunks Array of string chunks to stream one by one
+ * @param delayMs Delay between chunks in milliseconds
+ */
+export async function mockStreamedCompletionResponse(
+	page: Page, 
+	chunks: string[], 
+	delayMs: number = 50
+) {
+	// Store the full content to return after all chunks are processed
+	const fullContent = chunks.join('');
+	
+	// Create an array to store our response objects
+	const responseEvents: ChatResponse[] = [];
+	
+	// Set up route handler for the chat API
+	await page.route('**/api/chat', async (route) => {
+		// For the first request, start our stream simulation
+		await route.fulfill({
+			status: 200,
+			contentType: 'application/json',
+			body: JSON.stringify({
+				...MOCK_SESSION_1_RESPONSE_1,
+				message: {
+					role: 'assistant',
+					content: '' // Start with empty content
+				},
+				done: false
+			})
+		});
+		
+		// Set up a function to send each chunk
+		async function sendChunks() {
+			let accumulatedContent = '';
+			
+			for (let i = 0; i < chunks.length; i++) {
+				accumulatedContent += chunks[i];
+				
+				// Create a response for this chunk
+				const response: ChatResponse = {
+					...MOCK_SESSION_1_RESPONSE_1,
+					message: {
+						role: 'assistant',
+						content: accumulatedContent
+					},
+					done: i === chunks.length - 1
+				};
+				responseEvents.push(response);
+				
+				// Wait between chunks to simulate streaming
+				if (i < chunks.length - 1) {
+					await new Promise(resolve => setTimeout(resolve, delayMs));
+				}
+			}
+		}
+		
+		// Start sending chunks
+		void sendChunks();
+	});
+	
+	// Handle subsequent requests to get streaming updates
+	await page.route('**/api/chat', async (route) => {
+		// If we have chunks to send, send the next one
+		if (responseEvents.length > 0) {
+			const nextResponse = responseEvents.shift();
+			await route.fulfill({
+				status: 200,
+				contentType: 'application/json',
+				body: JSON.stringify(nextResponse)
+			});
+		} else {
+			// If no more chunks, fulfill with the final response
+			await route.fulfill({
+				status: 200,
+				contentType: 'application/json',
+				body: JSON.stringify({
+					...MOCK_SESSION_1_RESPONSE_1,
+					message: {
+						role: 'assistant',
+						content: fullContent
+					},
+					done: true
+				})
+			});
+		}
+	}, { times: chunks.length + 1 }); // Handle the initial request plus one per chunk
 }
 
 // OpenAI mock functions
