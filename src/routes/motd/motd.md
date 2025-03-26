@@ -1,4 +1,4 @@
-`2025-03-24`
+`2025-03-26`
 
 ### Message of the day
 
@@ -6,9 +6,9 @@
 
 #### What's new?
 
+- **Added support for reasoning responses** using [`<think>`](https://ollama.com/library/deepseek-r1) and [`<thought>`](https://ollama.com/library/exaone-deep) tags.
 - **KaTeX math notation** is now supported in model responses.
 - **Session titles** can now be manually edited.
-- **Reasoning responses** (i.e. [`deepseek-r1`](https://ollama.com/library/deepseek-r1)) are now displayed in a dedicated UI component.
 
 #### Previously, in Hollama
 
