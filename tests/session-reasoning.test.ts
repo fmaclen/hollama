@@ -13,7 +13,7 @@ import {
     mockOllamaModelsResponse
 } from './utils';
 
-test.describe('Session response tag parsing', () => {
+test.describe('Session reasoning tag handling', () => {
     let promptTextarea: Locator;
     
     test.beforeEach(async ({ page }) => {
@@ -40,12 +40,27 @@ test.describe('Session response tag parsing', () => {
         await expect(page.getByText('<think>')).not.toBeVisible();
         await expect(page.getByText('</think>')).not.toBeVisible();
 
+        // Check that reasoning indicator exists but reasoning is not initially visible
+        await expect(page.locator('.reasoning')).toBeVisible();
+        await expect(page.locator('.article--reasoning')).not.toBeVisible();
+
         // Check reasoning content and toggle
         await expect(page.getByRole('button', { name: 'Reasoning' })).toBeVisible();
         await page.getByRole('button', { name: 'Reasoning' }).click();
         await expect(page.locator('.article--reasoning')).toBeVisible();
         await expect(page.locator('.article--reasoning')).toHaveText(
             'Let me analyze this request carefully. The user is asking about code testing, which requires a structured response.'
+        );
+        
+        // Toggle off the reasoning
+        await page.getByRole('button', { name: 'Reasoning' }).click();
+        await expect(page.locator('.article--reasoning')).not.toBeVisible();
+        
+        // Verify the response structure when copying - should not include tags or reasoning
+        await page.locator('.session__history').getByTitle('Copy').last().click();
+        const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
+        expect(clipboardText).toBe(
+            'Here is how you can test your code effectively:\n\n1. Write unit tests\n2. Use integration tests\n3. Implement end-to-end testing'
         );
     });
 
