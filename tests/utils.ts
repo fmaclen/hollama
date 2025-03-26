@@ -184,24 +184,6 @@ export const MOCK_STREAMED_THOUGHT_TAGS = [
 	'This is outside a tag'
 ];
 
-// For testing multiple alternating tags
-export const MOCK_STREAMED_MIXED_TAGS = [
-	'<think>First think block</think>',
-	'Some content between tags',
-	'<thought>Second thought block</thought>',
-	'Final content'
-];
-
-// For testing complex nested tags and partial matches
-export const MOCK_COMPLEX_NESTED_TAGS = [
-	// First a think tag that has "thought" text inside it
-	'<think>I need to give this some thought about the question</think>',
-	' Some regular content here. ',
-	// Now a thought tag that has "think" text inside it
-	'<thought>I think the answer is 42</thought>',
-	' Final content here.'
-];
-
 export const MOCK_OPENAI_COMPLETION_RESPONSE_1: OpenAI.Chat.Completions.ChatCompletionChunk = {
 	model: 'gpt-3.5-turbo',
 	created: 1677610602,
