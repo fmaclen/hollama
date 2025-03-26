@@ -30,8 +30,8 @@
 	import Messages from './Messages.svelte';
 	import Prompt from './Prompt.svelte';
 
-	const THINK_TAG = '<think>';
-	const END_THINK_TAG = '</think>';
+	const THOUGHT_TAG = '<thought>';
+	const END_THOUGHT_TAG = '</thought>';
 
 	interface Props {
 		data: PageData;
@@ -180,42 +180,125 @@
 
 			if (!strategy) throw new Error('Invalid strategy');
 
-			let isInThinkTag = false;
+			let isInThoughtTag = false;
+			let bufferChunk = '';
+			
 			await strategy.chat(chatRequest, editor.abortController.signal, async (chunk) => {
-				// This is required primarily for testing, because both the reasoning
-				// and the completion are returned in a single chunk.
-				if (chunk.includes(THINK_TAG) && chunk.includes(END_THINK_TAG)) {
-					const start = chunk.indexOf(THINK_TAG) + THINK_TAG.length;
-					const end = chunk.indexOf(END_THINK_TAG);
-					editor.reasoning += chunk.slice(start, end);
-					chunk = chunk.slice(end);
+				// Add the current chunk to our buffer for processing
+				bufferChunk += chunk;
+				
+				// Process the buffer repeatedly until we've handled all tags
+				let continueProcessing = true;
+				
+				while (continueProcessing) {
+					// Default to stopping after this iteration unless we find more to process
+					continueProcessing = false;
+					
+					// Case 1: Complete thought block (has both opening and closing tags)
+					if (bufferChunk.includes(THOUGHT_TAG) && bufferChunk.includes(END_THOUGHT_TAG)) {
+						const start = bufferChunk.indexOf(THOUGHT_TAG) + THOUGHT_TAG.length;
+						const end = bufferChunk.indexOf(END_THOUGHT_TAG);
+						
+						if (start < end) {
+							// Extract the content between tags as reasoning
+							editor.reasoning += bufferChunk.slice(start, end);
+							
+							// Add content before the opening tag to completion if needed
+							if (bufferChunk.indexOf(THOUGHT_TAG) > 0) {
+								editor.completion += bufferChunk.slice(0, bufferChunk.indexOf(THOUGHT_TAG));
+							}
+							
+							// Keep content after the end tag for further processing
+							bufferChunk = bufferChunk.slice(end + END_THOUGHT_TAG.length);
+							
+							// Continue processing if there's content left
+							if (bufferChunk.length > 0) {
+								continueProcessing = true;
+							}
+						} else {
+							// This should not happen in valid markup, but just in case
+							// Skip the opening tag and continue
+							bufferChunk = bufferChunk.slice(start);
+							continueProcessing = true;
+						}
+					}
+					// Case 2: Only opening tag found
+					else if (bufferChunk.includes(THOUGHT_TAG)) {
+						isInThoughtTag = true;
+						const tagIndex = bufferChunk.indexOf(THOUGHT_TAG);
+						
+						// Add content before the tag to completion
+						if (tagIndex > 0) {
+							editor.completion += bufferChunk.slice(0, tagIndex);
+						}
+						
+						// Remove content up to and including the opening tag
+						bufferChunk = bufferChunk.slice(tagIndex + THOUGHT_TAG.length);
+						
+						// We'll accumulate the reasoning in the next iteration or when end tag is found
+						continueProcessing = false; // Stop and wait for more chunks
+					}
+					// Case 3: Only closing tag found
+					else if (bufferChunk.includes(END_THOUGHT_TAG)) {
+						const tagIndex = bufferChunk.indexOf(END_THOUGHT_TAG);
+						
+						// Add content before the tag to reasoning or completion based on current state
+						if (isInThoughtTag) {
+							editor.reasoning += bufferChunk.slice(0, tagIndex);
+						} else {
+							editor.completion += bufferChunk.slice(0, tagIndex);
+						}
+						
+						isInThoughtTag = false;
+						
+						// Remove content up to and including the closing tag
+						bufferChunk = bufferChunk.slice(tagIndex + END_THOUGHT_TAG.length);
+						
+						// Continue processing any remaining content
+						if (bufferChunk.length > 0) {
+							continueProcessing = true;
+						}
+					}
+					// Case 4: No tags found, process based on current state
+					else {
+						// If buffer is getting too large, process part of it
+						if (bufferChunk.length > 1000) {
+							// Process half the buffer to avoid losing context
+							const halfLength = Math.floor(bufferChunk.length / 2);
+							
+							if (isInThoughtTag) {
+								editor.reasoning += bufferChunk.slice(0, halfLength);
+							} else {
+								editor.completion += bufferChunk.slice(0, halfLength);
+							}
+							
+							// Keep the rest for further processing
+							bufferChunk = bufferChunk.slice(halfLength);
+						}
+						
+						// No more processing needed for now
+						continueProcessing = false;
+					}
 				}
-
-				if (chunk.includes(THINK_TAG)) {
-					isInThinkTag = true;
-					chunk = chunk.replace(THINK_TAG, '');
-				}
-
-				if (chunk.includes(END_THINK_TAG)) {
-					isInThinkTag = false;
-					chunk = chunk.replace(END_THINK_TAG, '');
-				}
-
-				if (isInThinkTag) {
-					editor.reasoning += chunk;
-				} else {
-					editor.completion += chunk;
-				}
-
+				
 				await scrollToBottom();
 			});
+			
+			// Process any remaining buffer content at the end
+			if (bufferChunk.length > 0) {
+				if (isInThoughtTag) {
+					editor.reasoning += bufferChunk;
+				} else {
+					editor.completion += bufferChunk;
+				}
+			}
 
 			const message: Message = {
 				role: 'assistant',
 				content: editor.completion,
 				reasoning: editor.reasoning
 			};
-
+			
 			session.messages = [...session.messages, message];
 			session.updatedAt = new Date().toISOString();
 			saveSession(session);
