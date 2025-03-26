@@ -291,16 +291,16 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
  * @param delayMs Delay between chunks in milliseconds
  */
 export async function mockStreamedCompletionResponse(
-	page: Page, 
-	chunks: string[], 
+	page: Page,
+	chunks: string[],
 	delayMs: number = 50
 ) {
 	// Store the full content to return after all chunks are processed
 	const fullContent = chunks.join('');
-	
+
 	// Create an array to store our response objects
 	const responseEvents: ChatResponse[] = [];
-	
+
 	// Set up route handler for the chat API
 	await page.route('**/api/chat', async (route) => {
 		// For the first request, start our stream simulation
@@ -316,14 +316,14 @@ export async function mockStreamedCompletionResponse(
 				done: false
 			})
 		});
-		
+
 		// Set up a function to send each chunk
 		async function sendChunks() {
 			let accumulatedContent = '';
-			
+
 			for (let i = 0; i < chunks.length; i++) {
 				accumulatedContent += chunks[i];
-				
+
 				// Create a response for this chunk
 				const response: ChatResponse = {
 					...MOCK_SESSION_1_RESPONSE_1,
@@ -334,44 +334,48 @@ export async function mockStreamedCompletionResponse(
 					done: i === chunks.length - 1
 				};
 				responseEvents.push(response);
-				
+
 				// Wait between chunks to simulate streaming
 				if (i < chunks.length - 1) {
-					await new Promise(resolve => setTimeout(resolve, delayMs));
+					await new Promise((resolve) => setTimeout(resolve, delayMs));
 				}
 			}
 		}
-		
+
 		// Start sending chunks
 		void sendChunks();
 	});
-	
+
 	// Handle subsequent requests to get streaming updates
-	await page.route('**/api/chat', async (route) => {
-		// If we have chunks to send, send the next one
-		if (responseEvents.length > 0) {
-			const nextResponse = responseEvents.shift();
-			await route.fulfill({
-				status: 200,
-				contentType: 'application/json',
-				body: JSON.stringify(nextResponse)
-			});
-		} else {
-			// If no more chunks, fulfill with the final response
-			await route.fulfill({
-				status: 200,
-				contentType: 'application/json',
-				body: JSON.stringify({
-					...MOCK_SESSION_1_RESPONSE_1,
-					message: {
-						role: 'assistant',
-						content: fullContent
-					},
-					done: true
-				})
-			});
-		}
-	}, { times: chunks.length + 1 }); // Handle the initial request plus one per chunk
+	await page.route(
+		'**/api/chat',
+		async (route) => {
+			// If we have chunks to send, send the next one
+			if (responseEvents.length > 0) {
+				const nextResponse = responseEvents.shift();
+				await route.fulfill({
+					status: 200,
+					contentType: 'application/json',
+					body: JSON.stringify(nextResponse)
+				});
+			} else {
+				// If no more chunks, fulfill with the final response
+				await route.fulfill({
+					status: 200,
+					contentType: 'application/json',
+					body: JSON.stringify({
+						...MOCK_SESSION_1_RESPONSE_1,
+						message: {
+							role: 'assistant',
+							content: fullContent
+						},
+						done: true
+					})
+				});
+			}
+		},
+		{ times: chunks.length + 1 }
+	); // Handle the initial request plus one per chunk
 }
 
 // OpenAI mock functions

@@ -3,7 +3,6 @@ import { expect, test, type Dialog, type Locator } from '@playwright/test';
 import {
 	chooseModel,
 	MOCK_API_TAGS_RESPONSE,
-	MOCK_RESPONSE_WITH_REASONING,
 	MOCK_SESSION_1_RESPONSE_1,
 	MOCK_SESSION_1_RESPONSE_2,
 	MOCK_SESSION_1_RESPONSE_3,

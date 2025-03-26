@@ -24,16 +24,16 @@
 		type Message
 	} from '$lib/sessions';
 	import { Sitemap } from '$lib/sitemap';
-	import {
-		processReasoningChunk,
-		processRemainingBuffer,
-		type TagPair
-	} from './reasoningProcessor';
 
 	import type { PageData } from './$types';
 	import Controls from './Controls.svelte';
 	import Messages from './Messages.svelte';
 	import Prompt from './Prompt.svelte';
+	import {
+		processReasoningChunk,
+		processRemainingBuffer,
+		type TagPair
+	} from './reasoningProcessor';
 
 	interface Props {
 		data: PageData;

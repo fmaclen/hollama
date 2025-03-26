@@ -74,7 +74,10 @@ export function findFirstOpeningTag(buffer: string): TagWithPosition | null {
 /**
  * Helper function to find the first closing tag in buffer
  */
-export function findFirstClosingTag(buffer: string, currentTagPair: TagPair | null): TagWithPosition | null {
+export function findFirstClosingTag(
+	buffer: string,
+	currentTagPair: TagPair | null
+): TagWithPosition | null {
 	let firstTag = null;
 	let firstIndex = Infinity;
 
@@ -231,4 +234,4 @@ export function processRemainingBuffer(
 			updateCompletion(bufferChunk);
 		}
 	}
-} 
+}
