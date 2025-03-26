@@ -32,6 +32,29 @@
 
 	const THOUGHT_TAG = '<thought>';
 	const END_THOUGHT_TAG = '</thought>';
+	const THINK_TAG = '<think>';
+	const END_THINK_TAG = '</think>';
+	
+	// Tags to consider as reasoning content markers
+	const REASONING_TAGS = [
+		{ openTag: THOUGHT_TAG, closeTag: END_THOUGHT_TAG },
+		{ openTag: THINK_TAG, closeTag: END_THINK_TAG }
+	];
+
+	// Type definitions for tag handling
+	type TagPair = {
+		openTag: string;
+		closeTag: string;
+	};
+
+	type TagWithPosition = TagPair & {
+		index: number;
+	};
+
+	type CompleteTagPair = TagPair & {
+		openIndex: number;
+		closeIndex: number;
+	};
 
 	interface Props {
 		data: PageData;
@@ -180,8 +203,82 @@
 
 			if (!strategy) throw new Error('Invalid strategy');
 
-			let isInThoughtTag = false;
+			let isInReasoningTag = false;
 			let bufferChunk = '';
+			let currentTagPair: TagPair | null = null;
+			
+			/**
+			 * Helper function to find first opening and closing tags in buffer
+			 * Returns an object with opening/closing tags and their positions, or null if none found
+			 */
+			function findTags(buffer: string): CompleteTagPair | null {
+				let result = null;
+				
+				for (const tagPair of REASONING_TAGS) {
+					const openIndex = buffer.indexOf(tagPair.openTag);
+					const closeIndex = buffer.indexOf(tagPair.closeTag);
+					
+					// Check if both tags exist and are properly ordered
+					if (openIndex !== -1 && closeIndex !== -1 && openIndex < closeIndex) {
+						// If we don't have a result yet, or this pair starts earlier, use this one
+						if (result === null || openIndex < result.openIndex) {
+							result = {
+								...tagPair,
+								openIndex,
+								closeIndex
+							};
+						}
+					}
+				}
+				
+				return result;
+			}
+			
+			/**
+			 * Helper function to find the first opening tag in buffer
+			 * Returns tag data or null if none found
+			 */
+			function findFirstOpeningTag(buffer: string): TagWithPosition | null {
+				let firstTag = null;
+				let firstIndex = Infinity;
+				
+				for (const tagPair of REASONING_TAGS) {
+					const index = buffer.indexOf(tagPair.openTag);
+					if (index !== -1 && index < firstIndex) {
+						firstIndex = index;
+						firstTag = { ...tagPair, index };
+					}
+				}
+				
+				return firstIndex < Infinity ? firstTag : null;
+			}
+			
+			/**
+			 * Helper function to find the first closing tag in buffer
+			 */
+			function findFirstClosingTag(buffer: string): TagWithPosition | null {
+				let firstTag = null;
+				let firstIndex = Infinity;
+				
+				// If we know the current tag pair, prioritize its closing tag
+				if (currentTagPair) {
+					const index = buffer.indexOf(currentTagPair.closeTag);
+					if (index !== -1) {
+						return { ...currentTagPair, index };
+					}
+				}
+				
+				// Otherwise check all possible closing tags
+				for (const tagPair of REASONING_TAGS) {
+					const index = buffer.indexOf(tagPair.closeTag);
+					if (index !== -1 && index < firstIndex) {
+						firstIndex = index;
+						firstTag = { ...tagPair, index };
+					}
+				}
+				
+				return firstIndex < Infinity ? firstTag : null;
+			}
 			
 			await strategy.chat(chatRequest, editor.abortController.signal, async (chunk) => {
 				// Add the current chunk to our buffer for processing
@@ -195,89 +292,88 @@
 					continueProcessing = false;
 					
 					// Case 1: Complete thought block (has both opening and closing tags)
-					if (bufferChunk.includes(THOUGHT_TAG) && bufferChunk.includes(END_THOUGHT_TAG)) {
-						const start = bufferChunk.indexOf(THOUGHT_TAG) + THOUGHT_TAG.length;
-						const end = bufferChunk.indexOf(END_THOUGHT_TAG);
+					const completePair = findTags(bufferChunk);
+					if (completePair) {
+						const start = completePair.openIndex + completePair.openTag.length;
+						const end = completePair.closeIndex;
 						
-						if (start < end) {
-							// Extract the content between tags as reasoning
-							editor.reasoning += bufferChunk.slice(start, end);
-							
-							// Add content before the opening tag to completion if needed
-							if (bufferChunk.indexOf(THOUGHT_TAG) > 0) {
-								editor.completion += bufferChunk.slice(0, bufferChunk.indexOf(THOUGHT_TAG));
-							}
-							
-							// Keep content after the end tag for further processing
-							bufferChunk = bufferChunk.slice(end + END_THOUGHT_TAG.length);
-							
-							// Continue processing if there's content left
-							if (bufferChunk.length > 0) {
-								continueProcessing = true;
-							}
-						} else {
-							// This should not happen in valid markup, but just in case
-							// Skip the opening tag and continue
-							bufferChunk = bufferChunk.slice(start);
-							continueProcessing = true;
-						}
-					}
-					// Case 2: Only opening tag found
-					else if (bufferChunk.includes(THOUGHT_TAG)) {
-						isInThoughtTag = true;
-						const tagIndex = bufferChunk.indexOf(THOUGHT_TAG);
+						// Extract the content between tags as reasoning
+						editor.reasoning += bufferChunk.slice(start, end);
 						
-						// Add content before the tag to completion
-						if (tagIndex > 0) {
-							editor.completion += bufferChunk.slice(0, tagIndex);
+						// Add content before the opening tag to completion if needed
+						if (completePair.openIndex > 0) {
+							editor.completion += bufferChunk.slice(0, completePair.openIndex);
 						}
 						
-						// Remove content up to and including the opening tag
-						bufferChunk = bufferChunk.slice(tagIndex + THOUGHT_TAG.length);
+						// Keep content after the end tag for further processing
+						bufferChunk = bufferChunk.slice(end + completePair.closeTag.length);
 						
-						// We'll accumulate the reasoning in the next iteration or when end tag is found
-						continueProcessing = false; // Stop and wait for more chunks
-					}
-					// Case 3: Only closing tag found
-					else if (bufferChunk.includes(END_THOUGHT_TAG)) {
-						const tagIndex = bufferChunk.indexOf(END_THOUGHT_TAG);
-						
-						// Add content before the tag to reasoning or completion based on current state
-						if (isInThoughtTag) {
-							editor.reasoning += bufferChunk.slice(0, tagIndex);
-						} else {
-							editor.completion += bufferChunk.slice(0, tagIndex);
-						}
-						
-						isInThoughtTag = false;
-						
-						// Remove content up to and including the closing tag
-						bufferChunk = bufferChunk.slice(tagIndex + END_THOUGHT_TAG.length);
-						
-						// Continue processing any remaining content
+						// Continue processing if there's content left
 						if (bufferChunk.length > 0) {
 							continueProcessing = true;
 						}
 					}
-					// Case 4: No tags found, process based on current state
+					// Case 2: Only opening tag found
 					else {
-						// If buffer is getting too large, process part of it
-						if (bufferChunk.length > 1000) {
-							// Process half the buffer to avoid losing context
-							const halfLength = Math.floor(bufferChunk.length / 2);
+						const openingTag = findFirstOpeningTag(bufferChunk);
+						if (openingTag) {
+							isInReasoningTag = true;
+							currentTagPair = openingTag;
 							
-							if (isInThoughtTag) {
-								editor.reasoning += bufferChunk.slice(0, halfLength);
-							} else {
-								editor.completion += bufferChunk.slice(0, halfLength);
+							// Add content before the tag to completion
+							if (openingTag.index > 0) {
+								editor.completion += bufferChunk.slice(0, openingTag.index);
 							}
 							
-							// Keep the rest for further processing
-							bufferChunk = bufferChunk.slice(halfLength);
+							// Remove content up to and including the opening tag
+							bufferChunk = bufferChunk.slice(openingTag.index + openingTag.openTag.length);
+							
+							// We'll accumulate the reasoning in the next iteration or when end tag is found
+							continueProcessing = false; // Stop and wait for more chunks
 						}
-						
-						// No more processing needed for now
-						continueProcessing = false;
+						// Case 3: Only closing tag found
+						else {
+							const closingTag = findFirstClosingTag(bufferChunk);
+							if (closingTag) {
+								// Add content before the tag to reasoning or completion based on current state
+								if (isInReasoningTag) {
+									editor.reasoning += bufferChunk.slice(0, closingTag.index);
+								} else {
+									editor.completion += bufferChunk.slice(0, closingTag.index);
+								}
+								
+								isInReasoningTag = false;
+								currentTagPair = null;
+								
+								// Remove content up to and including the closing tag
+								bufferChunk = bufferChunk.slice(closingTag.index + closingTag.closeTag.length);
+								
+								// Continue processing any remaining content
+								if (bufferChunk.length > 0) {
+									continueProcessing = true;
+								}
+							}
+							// Case 4: No tags found, process based on current state
+							else {
+								// If buffer is getting too large, process part of it
+								if (bufferChunk.length > 1000) {
+									// Process half the buffer to avoid losing context
+									const halfLength = Math.floor(bufferChunk.length / 2);
+									
+									if (isInReasoningTag) {
+										editor.reasoning += bufferChunk.slice(0, halfLength);
+									} else {
+										editor.completion += bufferChunk.slice(0, halfLength);
+									}
+									
+									// Keep the rest for further processing
+									bufferChunk = bufferChunk.slice(halfLength);
+								}
+								
+								// No more processing needed for now
+								continueProcessing = false;
+							}
+						}
 					}
 				}
 				
@@ -286,7 +382,7 @@
 			
 			// Process any remaining buffer content at the end
 			if (bufferChunk.length > 0) {
-				if (isInThoughtTag) {
+				if (isInReasoningTag) {
 					editor.reasoning += bufferChunk;
 				} else {
 					editor.completion += bufferChunk;
