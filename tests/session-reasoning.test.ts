@@ -71,7 +71,7 @@ test.describe('Session reasoning tag handling', () => {
 
 		// Set up fake streaming for the tests
 		// First test - <think> tags
-		await mockStreamedCompletionResponse(page, MOCK_STREAMED_THINK_TAGS, 50);
+		await mockStreamedCompletionResponse(page, MOCK_STREAMED_THINK_TAGS);
 
 		// Now fill and submit the prompt
 		await promptTextarea.fill('How should I test my code?');
@@ -112,7 +112,7 @@ test.describe('Session reasoning tag handling', () => {
 
 		// Set up fake streaming for the tests
 		// Second test - <thought> tags
-		await mockStreamedCompletionResponse(page, MOCK_STREAMED_THOUGHT_TAGS, 50);
+		await mockStreamedCompletionResponse(page, MOCK_STREAMED_THOUGHT_TAGS);
 
 		// Now fill and submit the prompt
 		await promptTextarea.fill('How should I test my code?');
