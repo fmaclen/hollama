@@ -275,73 +275,125 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
 export async function mockStreamedCompletionResponse(
 	page: Page,
 	chunks: string[],
-	delayMs: number = 50
+	delayMs: number = 100
 ) {
-	// Store the full content to return after all chunks are processed
-	const fullContent = chunks.join('');
-
-	// Create an array to store our response objects
-	const responseEvents: ChatResponse[] = [];
-
-	// Set up route handler for the chat API
-	await page.route('**/api/chat', async (route) => {
-		// For the first request, start our stream simulation
-		await route.fulfill({
-			status: 200,
-			contentType: 'application/json',
-			body: JSON.stringify({
+	try {
+		// Approach 1: Using a local HTTP server with CORS headers
+		// Import Node's http module
+		const http = await import('http');
+		
+		// Start a local mock server that streams responses slowly
+		const server = http.createServer((req, res) => {
+			// Set CORS headers
+			const corsHeaders = {
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+				'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+				'Access-Control-Max-Age': '3600'
+			};
+			
+			// Handle preflight OPTIONS request
+			if (req.method === 'OPTIONS') {
+				res.writeHead(204, corsHeaders);
+				res.end();
+				return;
+			}
+			
+			// Set headers for streaming
+			res.writeHead(200, {
+				'Content-Type': 'application/json',
+				'Cache-Control': 'no-cache',
+				'Connection': 'keep-alive',
+				'Transfer-Encoding': 'chunked',
+				...corsHeaders
+			});
+			
+			// First, send an initial empty response
+			const initialResponse = {
 				...MOCK_SESSION_1_RESPONSE_1,
 				message: {
 					role: 'assistant',
-					content: '' // Start with empty content
+					content: ''
 				},
 				done: false
-			})
-		});
-
-		// Set up a function to send each chunk
-		async function sendChunks() {
+			};
+			res.write(JSON.stringify(initialResponse) + '\n');
+			
+			// Keep track of accumulated content
 			let accumulatedContent = '';
-
-			for (let i = 0; i < chunks.length; i++) {
-				accumulatedContent += chunks[i];
-
-				// Create a response for this chunk
-				const response: ChatResponse = {
-					...MOCK_SESSION_1_RESPONSE_1,
-					message: {
-						role: 'assistant',
-						content: accumulatedContent
-					},
-					done: i === chunks.length - 1
-				};
-				responseEvents.push(response);
-
-				// Wait between chunks to simulate streaming
-				if (i < chunks.length - 1) {
-					await new Promise((resolve) => setTimeout(resolve, delayMs));
+			let index = 0;
+			
+			// Stream each chunk with a delay
+			const interval = setInterval(() => {
+				if (index < chunks.length) {
+					// Add the next chunk to accumulated content
+					accumulatedContent += chunks[index];
+					
+					// Create a response object for this state
+					const response = {
+						...MOCK_SESSION_1_RESPONSE_1,
+						message: {
+							role: 'assistant',
+							content: accumulatedContent
+						},
+						done: index === chunks.length - 1
+					};
+					
+					// Send this chunk
+					res.write(JSON.stringify(response) + '\n');
+					
+					// Move to next chunk
+					index++;
+					
+					// If this was the last chunk, end the interval and response
+					if (index === chunks.length) {
+						clearInterval(interval);
+						res.end();
+					}
+				} else {
+					// Should not get here, but cleanup just in case
+					clearInterval(interval);
+					res.end();
 				}
-			}
-		}
-
-		// Start sending chunks
-		void sendChunks();
-	});
-
-	// Handle subsequent requests to get streaming updates
-	await page.route(
-		'**/api/chat',
-		async (route) => {
-			// If we have chunks to send, send the next one
-			if (responseEvents.length > 0) {
-				const nextResponse = responseEvents.shift();
-				await route.fulfill({
-					status: 200,
-					contentType: 'application/json',
-					body: JSON.stringify(nextResponse)
-				});
-			} else {
-				// If no more chunks, fulfill with the final response
+			}, delayMs);
+			
+			// Clean up the interval if the client disconnects
+			req.on('close', () => clearInterval(interval));
+		});
+		
+		// Start the server on a random port
+		const serverStartPromise = new Promise<number>((resolve) => {
+			server.listen(0, () => {
+				const address = server.address() as { port: number };
+				resolve(address.port);
+			});
+		});
+		
+		const port = await serverStartPromise;
+		const mockStreamUrl = `http://localhost:${port}`;
+		
+		// Intercept the API route and redirect to our local streaming server
+		await page.route('**/api/chat', (route) => {
+			// Forward the request to our mock streaming server
+			route.continue({ url: mockStreamUrl });
+		});
+		
+		// Ensure the server is closed when the test is done
+		page.once('close', () => {
+			server.close();
+		});
+	} catch (error) {
+		console.error('Error with HTTP server approach, falling back to request counting:', error);
+		
+		// Approach 2: Using request counting
+		// Keep track of which chunk we're on
+		let requestCount = 0;
+		let accumulatedContent = '';
+		
+		// Handle API route
+		await page.route('**/api/chat', async (route) => {
+			// For the first request, return empty content
+			if (requestCount === 0) {
 				await route.fulfill({
 					status: 200,
 					contentType: 'application/json',
@@ -349,15 +401,42 @@ export async function mockStreamedCompletionResponse(
 						...MOCK_SESSION_1_RESPONSE_1,
 						message: {
 							role: 'assistant',
-							content: fullContent
+							content: ''
 						},
-						done: true
+						done: false
+					})
+				});
+			} else {
+				// Simulate a delay for subsequent requests
+				await new Promise(resolve => setTimeout(resolve, delayMs));
+				
+				// Calculate which chunk to send
+				const chunkIndex = Math.min(requestCount, chunks.length) - 1;
+				
+				// Update accumulated content if we still have chunks
+				if (chunkIndex < chunks.length) {
+					accumulatedContent += chunks[chunkIndex];
+				}
+				
+				// Send the response with accumulated content so far
+				await route.fulfill({
+					status: 200,
+					contentType: 'application/json',
+					body: JSON.stringify({
+						...MOCK_SESSION_1_RESPONSE_1,
+						message: {
+							role: 'assistant',
+							content: accumulatedContent
+						},
+						done: chunkIndex >= chunks.length - 1
 					})
 				});
 			}
-		},
-		{ times: chunks.length + 1 }
-	); // Handle the initial request plus one per chunk
+			
+			// Increment the request counter
+			requestCount++;
+		});
+	}
 }
 
 // OpenAI mock functions
