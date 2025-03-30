@@ -79,7 +79,7 @@ test.describe('Session reasoning tag handling', () => {
 
 		// Wait for the reasoning button to appear, indicating the reasoning tag was processed
 		await expect(page.getByRole('button', { name: 'Reasoning' })).toBeVisible();
-		
+
 		// At this point, the reasoning content should be streaming in, but the final part should not yet be visible
 		await expect(page.locator('.article--assistant')).not.toContainText('This is outside a tag');
 
@@ -126,7 +126,7 @@ test.describe('Session reasoning tag handling', () => {
 
 		// Wait for the reasoning button to appear, indicating the reasoning tag was processed
 		await expect(page.getByRole('button', { name: 'Reasoning' })).toBeVisible();
-		
+
 		// At this point, the reasoning content should be streaming in, but the final part should not yet be visible
 		await expect(page.locator('.article--assistant')).not.toContainText('This is outside a tag');
 
