@@ -29,10 +29,7 @@
 	import Controls from './Controls.svelte';
 	import Messages from './Messages.svelte';
 	import Prompt from './Prompt.svelte';
-	import {
-		createReasoningProcessor,
-		type TagPair
-	} from './reasoningProcessor';
+	import { createReasoningProcessor } from './reasoningProcessor';
 
 	interface Props {
 		data: PageData;
