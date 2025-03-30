@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	
+
 	interface Props {
 		dataTestid?: string;
 		children?: Snippet;
 	}
-	
+
 	let { dataTestid = undefined, children }: Props = $props();
 </script>
 
