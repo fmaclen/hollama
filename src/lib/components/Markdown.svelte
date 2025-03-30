@@ -3,14 +3,14 @@
 	import katex from 'katex';
 	import texmath from 'markdown-it-texmath';
 	import MarkdownIt from 'markdown-it/lib/index.mjs';
-	import { mount, onMount } from 'svelte';
+	import { mount } from 'svelte';
 
 	import 'highlight.js/styles/github.min.css';
 	import 'katex/dist/katex.min.css';
 
 	import ButtonCopy from './ButtonCopy.svelte';
 
-	export let markdown: string;
+	let { markdown }: { markdown: string } = $props();
 	const CODE_SNIPPET_ID = 'code-snippet';
 
 	function normalizeMarkdown(content: string) {
@@ -64,16 +64,13 @@
 		delimiters: ['dollars', 'brackets', 'doxygen', 'gitlab', 'julia', 'kramdown', 'beg_end']
 	});
 
-	onMount(() => {
+	$effect(() => {
 		const preElements = document.querySelectorAll(`pre#${CODE_SNIPPET_ID}`);
 
 		preElements.forEach((preElement) => {
 			const codeElement = preElement.querySelector('code');
 			if (codeElement)
-				mount(ButtonCopy, {
-					target: preElement,
-					props: { content: codeElement.innerText }
-				});
+				mount(ButtonCopy, { target: preElement, props: { content: codeElement.innerText } });
 		});
 	});
 </script>
