@@ -6,7 +6,7 @@
 	"description": "A minimal UI for talking to Ollama servers",
 	"scripts": {
 		"dev": "concurrently \"typesafe-i18n\" \"vite dev --host\"",
-		"build": "vite build",
+		"build": "svelte-kit sync && vite build",
 		"preview": "vite preview",
 		"test": "playwright test --trace on --ignore-snapshots ",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
