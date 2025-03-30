@@ -319,22 +319,17 @@ export async function mockStreamedCompletionResponse(
 			};
 			res.write(JSON.stringify(initialResponse) + '\n');
 			
-			// Keep track of accumulated content
-			let accumulatedContent = '';
 			let index = 0;
 			
 			// Stream each chunk with a delay
 			const interval = setInterval(() => {
 				if (index < chunks.length) {
-					// Add the next chunk to accumulated content
-					accumulatedContent += chunks[index];
-					
-					// Create a response object for this state
+					// Create a response object with just the current chunk
 					const response = {
 						...MOCK_SESSION_1_RESPONSE_1,
 						message: {
 							role: 'assistant',
-							content: accumulatedContent
+							content: chunks[index]
 						},
 						done: index === chunks.length - 1
 					};
@@ -388,7 +383,6 @@ export async function mockStreamedCompletionResponse(
 		// Approach 2: Using request counting
 		// Keep track of which chunk we're on
 		let requestCount = 0;
-		let accumulatedContent = '';
 		
 		// Handle API route
 		await page.route('**/api/chat', async (route) => {
@@ -413,24 +407,21 @@ export async function mockStreamedCompletionResponse(
 				// Calculate which chunk to send
 				const chunkIndex = Math.min(requestCount, chunks.length) - 1;
 				
-				// Update accumulated content if we still have chunks
+				// Send only the current chunk
 				if (chunkIndex < chunks.length) {
-					accumulatedContent += chunks[chunkIndex];
+					await route.fulfill({
+						status: 200,
+						contentType: 'application/json',
+						body: JSON.stringify({
+							...MOCK_SESSION_1_RESPONSE_1,
+							message: {
+								role: 'assistant',
+								content: chunks[chunkIndex]
+							},
+							done: chunkIndex >= chunks.length - 1
+						})
+					});
 				}
-				
-				// Send the response with accumulated content so far
-				await route.fulfill({
-					status: 200,
-					contentType: 'application/json',
-					body: JSON.stringify({
-						...MOCK_SESSION_1_RESPONSE_1,
-						message: {
-							role: 'assistant',
-							content: accumulatedContent
-						},
-						done: chunkIndex >= chunks.length - 1
-					})
-				});
 			}
 			
 			// Increment the request counter
