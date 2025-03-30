@@ -139,6 +139,51 @@ export const MOCK_RESPONSE_WITH_REASONING: ChatResponse = {
 	}
 };
 
+// For testing streaming tag parsing
+export const MOCK_STREAMED_THINK_TAGS = [
+	'<',
+	't',
+	'h',
+	'i',
+	'n',
+	'k',
+	'>',
+	'This is in a thinking tag',
+	'<',
+	'/',
+	't',
+	'h',
+	'i',
+	'n',
+	'k',
+	'>',
+	'This is outside a tag'
+];
+
+export const MOCK_STREAMED_THOUGHT_TAGS = [
+	'<',
+	't',
+	'h',
+	'o',
+	'u',
+	'g',
+	'h',
+	't',
+	'>',
+	'This is in a thought tag',
+	'<',
+	'/',
+	't',
+	'h',
+	'o',
+	'u',
+	'g',
+	'h',
+	't',
+	'>',
+	'This is outside a tag'
+];
+
 export const MOCK_OPENAI_COMPLETION_RESPONSE_1: OpenAI.Chat.Completions.ChatCompletionChunk = {
 	model: 'gpt-3.5-turbo',
 	created: 1677610602,
@@ -218,6 +263,117 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
 			contentType: 'application/json',
 			body: JSON.stringify(response)
 		});
+	});
+}
+
+/**
+ * Mocks a streamed completion response by sending chunks one at a time
+ * @param page The Playwright page
+ * @param chunks Array of string chunks to stream one by one
+ * @param delayMs Delay between chunks in milliseconds
+ */
+export async function mockStreamedCompletionResponse(
+	page: Page,
+	chunks: string[],
+	delayMs: number = 100
+) {
+	// Import Node's http module
+	const http = await import('http');
+
+	// Start a local mock server that streams responses slowly
+	const server = http.createServer((req, res) => {
+		// Set CORS headers
+		const corsHeaders = {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+			'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+			'Access-Control-Max-Age': '3600'
+		};
+
+		// Handle preflight OPTIONS request
+		if (req.method === 'OPTIONS') {
+			res.writeHead(204, corsHeaders);
+			res.end();
+			return;
+		}
+
+		// Set headers for streaming
+		res.writeHead(200, {
+			'Content-Type': 'application/json',
+			'Cache-Control': 'no-cache',
+			Connection: 'keep-alive',
+			'Transfer-Encoding': 'chunked',
+			...corsHeaders
+		});
+
+		// First, send an initial empty response
+		const initialResponse = {
+			...MOCK_SESSION_1_RESPONSE_1,
+			message: {
+				role: 'assistant',
+				content: ''
+			},
+			done: false
+		};
+		res.write(JSON.stringify(initialResponse) + '\n');
+
+		let index = 0;
+
+		// Stream each chunk with a delay
+		const interval = setInterval(() => {
+			if (index < chunks.length) {
+				// Create a response object with just the current chunk
+				const response = {
+					...MOCK_SESSION_1_RESPONSE_1,
+					message: {
+						role: 'assistant',
+						content: chunks[index]
+					},
+					done: index === chunks.length - 1
+				};
+
+				// Send this chunk
+				res.write(JSON.stringify(response) + '\n');
+
+				// Move to next chunk
+				index++;
+
+				// If this was the last chunk, end the interval and response
+				if (index === chunks.length) {
+					clearInterval(interval);
+					res.end();
+				}
+			} else {
+				// Should not get here, but cleanup just in case
+				clearInterval(interval);
+				res.end();
+			}
+		}, delayMs);
+
+		// Clean up the interval if the client disconnects
+		req.on('close', () => clearInterval(interval));
+	});
+
+	// Start the server on a random port
+	const serverStartPromise = new Promise<number>((resolve) => {
+		server.listen(0, () => {
+			const address = server.address() as { port: number };
+			resolve(address.port);
+		});
+	});
+
+	const port = await serverStartPromise;
+	const mockStreamUrl = `http://localhost:${port}`;
+
+	// Intercept the API route and redirect to our local streaming server
+	await page.route('**/api/chat', (route) => {
+		// Forward the request to our mock streaming server
+		route.continue({ url: mockStreamUrl });
+	});
+
+	// Ensure the server is closed when the test is done
+	page.once('close', () => {
+		server.close();
 	});
 }
 

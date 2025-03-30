@@ -29,9 +29,7 @@
 	import Controls from './Controls.svelte';
 	import Messages from './Messages.svelte';
 	import Prompt from './Prompt.svelte';
-
-	const THINK_TAG = '<think>';
-	const END_THINK_TAG = '</think>';
+	import { createReasoningProcessor } from './reasoningProcessor';
 
 	interface Props {
 		data: PageData;
@@ -180,35 +178,24 @@
 
 			if (!strategy) throw new Error('Invalid strategy');
 
-			let isInThinkTag = false;
+			// Create a reasoning processor to handle tag parsing
+			const reasoningProcessor = createReasoningProcessor(
+				(text) => {
+					editor.completion += text;
+				},
+				(text) => {
+					editor.reasoning += text;
+				}
+			);
+
 			await strategy.chat(chatRequest, editor.abortController.signal, async (chunk) => {
-				// This is required primarily for testing, because both the reasoning
-				// and the completion are returned in a single chunk.
-				if (chunk.includes(THINK_TAG) && chunk.includes(END_THINK_TAG)) {
-					const start = chunk.indexOf(THINK_TAG) + THINK_TAG.length;
-					const end = chunk.indexOf(END_THINK_TAG);
-					editor.reasoning += chunk.slice(start, end);
-					chunk = chunk.slice(end);
-				}
-
-				if (chunk.includes(THINK_TAG)) {
-					isInThinkTag = true;
-					chunk = chunk.replace(THINK_TAG, '');
-				}
-
-				if (chunk.includes(END_THINK_TAG)) {
-					isInThinkTag = false;
-					chunk = chunk.replace(END_THINK_TAG, '');
-				}
-
-				if (isInThinkTag) {
-					editor.reasoning += chunk;
-				} else {
-					editor.completion += chunk;
-				}
-
+				// Process the chunk using the FSM-based processor
+				reasoningProcessor.processChunk(chunk);
 				await scrollToBottom();
 			});
+
+			// Finalize processing of any remaining content
+			reasoningProcessor.finalize();
 
 			const message: Message = {
 				role: 'assistant',
