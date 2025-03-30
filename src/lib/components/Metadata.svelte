@@ -1,9 +1,16 @@
 <script lang="ts">
-	export let dataTestid: string | undefined = undefined;
+	import type { Snippet } from 'svelte';
+
+	interface Props {
+		dataTestid?: string;
+		children?: Snippet;
+	}
+
+	let { dataTestid = undefined, children }: Props = $props();
 </script>
 
 <p class="metadata" data-testid={dataTestid}>
-	<slot />
+	{@render children?.()}
 </p>
 
 <style lang="postcss">
