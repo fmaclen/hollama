@@ -68,6 +68,9 @@ export class ReasoningProcessor {
 	 * Process a single character based on current state
 	 */
 	private processChar(char: string): void {
+		// Define a maximum buffer size before flushing
+		const MAX_BUFFER_SIZE = 100;
+		
 		switch (this.state) {
 			case ParserState.DEFAULT:
 				if (char === '<') {
@@ -75,6 +78,11 @@ export class ReasoningProcessor {
 					this.tagBuffer = '<';
 				} else {
 					this.completionBuffer += char;
+					// Flush completion buffer if it gets too large
+					if (this.completionBuffer.length >= MAX_BUFFER_SIZE) {
+						this.updateCompletion(this.completionBuffer);
+						this.completionBuffer = '';
+					}
 				}
 				break;
 				
@@ -127,6 +135,11 @@ export class ReasoningProcessor {
 					this.tagBuffer = '<';
 				} else {
 					this.reasoningBuffer += char;
+					// Flush reasoning buffer if it gets too large
+					if (this.reasoningBuffer.length >= MAX_BUFFER_SIZE) {
+						this.updateReasoning(this.reasoningBuffer);
+						this.reasoningBuffer = '';
+					}
 				}
 				break;
 				
@@ -171,10 +184,16 @@ export class ReasoningProcessor {
 	 * Flush any remaining content from buffers
 	 */
 	private flushBuffers(): void {
-		// Only flush if we have something to flush
+		// Flush completion buffer
 		if (this.completionBuffer.length > 0) {
 			this.updateCompletion(this.completionBuffer);
 			this.completionBuffer = '';
+		}
+		
+		// Also flush reasoning buffer for incremental updates
+		if (this.reasoningBuffer.length > 0) {
+			this.updateReasoning(this.reasoningBuffer);
+			this.reasoningBuffer = '';
 		}
 	}
 
