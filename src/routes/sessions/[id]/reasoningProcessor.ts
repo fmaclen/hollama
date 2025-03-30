@@ -4,13 +4,9 @@ export type TagPair = {
 	closeTag: string;
 };
 
-export type TagWithPosition = TagPair & {
-	index: number;
-};
-
-export type CompleteTagPair = TagPair & {
-	openIndex: number;
-	closeIndex: number;
+export type TagState = {
+	tagPair: TagPair;
+	content: string;
 };
 
 // Reasoning tag constants
@@ -25,213 +21,208 @@ export const REASONING_TAGS: TagPair[] = [
 	{ openTag: THINK_TAG, closeTag: END_THINK_TAG }
 ];
 
-/**
- * Helper function to find first opening and closing tags in buffer
- * Returns an object with opening/closing tags and their positions, or null if none found
- */
-export function findTags(buffer: string): CompleteTagPair | null {
-	let result = null;
-
-	for (const tagPair of REASONING_TAGS) {
-		const openIndex = buffer.indexOf(tagPair.openTag);
-		const closeIndex = buffer.indexOf(tagPair.closeTag);
-
-		// Check if both tags exist and are properly ordered
-		if (openIndex !== -1 && closeIndex !== -1 && openIndex < closeIndex) {
-			// If we don't have a result yet, or this pair starts earlier, use this one
-			if (result === null || openIndex < result.openIndex) {
-				result = {
-					...tagPair,
-					openIndex,
-					closeIndex
-				};
-			}
-		}
-	}
-
-	return result;
+// FSM states
+enum ParserState {
+	DEFAULT,               // Processing normal text
+	TAG_START,             // Found '<'
+	OPENING_TAG,           // Building a possible opening tag
+	INSIDE_REASONING,      // Inside a reasoning tag
+	CLOSING_TAG_START,     // Found '<' inside reasoning
+	CLOSING_TAG            // Building a possible closing tag
 }
 
 /**
- * Helper function to find the first opening tag in buffer
- * Returns tag data or null if none found
+ * FSM-based processor for handling reasoning tags in streamed content
  */
-export function findFirstOpeningTag(buffer: string): TagWithPosition | null {
-	let firstTag = null;
-	let firstIndex = Infinity;
+export class ReasoningProcessor {
+	private state = ParserState.DEFAULT;
+	private completionBuffer = '';
+	private reasoningBuffer = '';
+	private tagBuffer = '';
+	private currentTagPair: TagPair | null = null;
+	private updateCompletion: (text: string) => void;
+	private updateReasoning: (text: string) => void;
 
-	for (const tagPair of REASONING_TAGS) {
-		const index = buffer.indexOf(tagPair.openTag);
-		if (index !== -1 && index < firstIndex) {
-			firstIndex = index;
-			firstTag = { ...tagPair, index };
-		}
+	constructor(
+		updateCompletion: (text: string) => void,
+		updateReasoning: (text: string) => void
+	) {
+		this.updateCompletion = updateCompletion;
+		this.updateReasoning = updateReasoning;
 	}
 
-	return firstIndex < Infinity ? firstTag : null;
-}
-
-/**
- * Helper function to find the first closing tag in buffer
- */
-export function findFirstClosingTag(
-	buffer: string,
-	currentTagPair: TagPair | null
-): TagWithPosition | null {
-	let firstTag = null;
-	let firstIndex = Infinity;
-
-	// If we know the current tag pair, prioritize its closing tag
-	if (currentTagPair) {
-		const index = buffer.indexOf(currentTagPair.closeTag);
-		if (index !== -1) {
-			return { ...currentTagPair, index };
+	/**
+	 * Process a chunk of text character by character
+	 */
+	processChunk(chunk: string): void {
+		// Process each character individually
+		for (let i = 0; i < chunk.length; i++) {
+			this.processChar(chunk[i]);
 		}
+		
+		// Flush any accumulated content
+		this.flushBuffers();
 	}
 
-	// Otherwise check all possible closing tags
-	for (const tagPair of REASONING_TAGS) {
-		const index = buffer.indexOf(tagPair.closeTag);
-		if (index !== -1 && index < firstIndex) {
-			firstIndex = index;
-			firstTag = { ...tagPair, index };
-		}
-	}
-
-	return firstIndex < Infinity ? firstTag : null;
-}
-
-/**
- * Processes a chunk of text for reasoning tags and updates the completion and reasoning content
- * Returns the updated buffer after processing
- */
-export function processReasoningChunk(
-	chunk: string,
-	bufferChunk: string,
-	isInReasoningTag: boolean,
-	currentTagPair: TagPair | null,
-	updateCompletion: (text: string) => void,
-	updateReasoning: (text: string) => void
-): { bufferChunk: string; isInReasoningTag: boolean; currentTagPair: TagPair | null } {
-	// Add the current chunk to our buffer for processing
-	let newBuffer = bufferChunk + chunk;
-	let newIsInReasoningTag = isInReasoningTag;
-	let newCurrentTagPair = currentTagPair;
-
-	// Process the buffer repeatedly until we've handled all tags
-	let continueProcessing = true;
-
-	while (continueProcessing) {
-		// Default to stopping after this iteration unless we find more to process
-		continueProcessing = false;
-
-		// Case 1: Complete thought block (has both opening and closing tags)
-		const completePair = findTags(newBuffer);
-		if (completePair) {
-			const start = completePair.openIndex + completePair.openTag.length;
-			const end = completePair.closeIndex;
-
-			// Extract the content between tags as reasoning
-			updateReasoning(newBuffer.slice(start, end));
-
-			// Add content before the opening tag to completion if needed
-			if (completePair.openIndex > 0) {
-				updateCompletion(newBuffer.slice(0, completePair.openIndex));
-			}
-
-			// Keep content after the end tag for further processing
-			newBuffer = newBuffer.slice(end + completePair.closeTag.length);
-
-			// Continue processing if there's content left
-			if (newBuffer.length > 0) {
-				continueProcessing = true;
-			}
-		}
-		// Case 2: Only opening tag found
-		else {
-			const openingTag = findFirstOpeningTag(newBuffer);
-			if (openingTag) {
-				newIsInReasoningTag = true;
-				newCurrentTagPair = openingTag;
-
-				// Add content before the tag to completion
-				if (openingTag.index > 0) {
-					updateCompletion(newBuffer.slice(0, openingTag.index));
+	/**
+	 * Process a single character based on current state
+	 */
+	private processChar(char: string): void {
+		switch (this.state) {
+			case ParserState.DEFAULT:
+				if (char === '<') {
+					this.state = ParserState.TAG_START;
+					this.tagBuffer = '<';
+				} else {
+					this.completionBuffer += char;
 				}
-
-				// Remove content up to and including the opening tag
-				newBuffer = newBuffer.slice(openingTag.index + openingTag.openTag.length);
-
-				// We'll accumulate the reasoning in the next iteration or when end tag is found
-				continueProcessing = false; // Stop and wait for more chunks
-			}
-			// Case 3: Only closing tag found
-			else {
-				const closingTag = findFirstClosingTag(newBuffer, newCurrentTagPair);
-				if (closingTag) {
-					// Add content before the tag to reasoning or completion based on current state
-					if (newIsInReasoningTag) {
-						updateReasoning(newBuffer.slice(0, closingTag.index));
-					} else {
-						updateCompletion(newBuffer.slice(0, closingTag.index));
-					}
-
-					newIsInReasoningTag = false;
-					newCurrentTagPair = null;
-
-					// Remove content up to and including the closing tag
-					newBuffer = newBuffer.slice(closingTag.index + closingTag.closeTag.length);
-
-					// Continue processing any remaining content
-					if (newBuffer.length > 0) {
-						continueProcessing = true;
-					}
+				break;
+				
+			case ParserState.TAG_START:
+				this.tagBuffer += char;
+				
+				if (char === '/') {
+					// This could be a closing tag, but we're not in reasoning mode
+					// So treat it as regular text
+					this.completionBuffer += this.tagBuffer;
+					this.tagBuffer = '';
+					this.state = ParserState.DEFAULT;
+				} else {
+					// Could be the start of an opening tag
+					this.state = ParserState.OPENING_TAG;
 				}
-				// Case 4: No tags found, process based on current state
-				else {
-					// If buffer is getting too large, process part of it
-					if (newBuffer.length > 1000) {
-						// Process half the buffer to avoid losing context
-						const halfLength = Math.floor(newBuffer.length / 2);
-
-						if (newIsInReasoningTag) {
-							updateReasoning(newBuffer.slice(0, halfLength));
-						} else {
-							updateCompletion(newBuffer.slice(0, halfLength));
+				break;
+				
+			case ParserState.OPENING_TAG:
+				this.tagBuffer += char;
+				
+				// Check if we have a complete opening tag
+				for (const tagPair of REASONING_TAGS) {
+					if (this.tagBuffer === tagPair.openTag) {
+						// Found a complete opening tag
+						this.currentTagPair = tagPair;
+						this.state = ParserState.INSIDE_REASONING;
+						this.tagBuffer = '';
+						
+						// Flush any accumulated completion content
+						if (this.completionBuffer.length > 0) {
+							this.updateCompletion(this.completionBuffer);
+							this.completionBuffer = '';
 						}
-
-						// Keep the rest for further processing
-						newBuffer = newBuffer.slice(halfLength);
+						return;
 					}
-
-					// No more processing needed for now
-					continueProcessing = false;
 				}
-			}
+				
+				// If the tag is too long, it's not a valid tag
+				if (this.tagBuffer.length > 10) { // Longer than our longest tag
+					this.completionBuffer += this.tagBuffer;
+					this.tagBuffer = '';
+					this.state = ParserState.DEFAULT;
+				}
+				break;
+				
+			case ParserState.INSIDE_REASONING:
+				if (char === '<') {
+					this.state = ParserState.CLOSING_TAG_START;
+					this.tagBuffer = '<';
+				} else {
+					this.reasoningBuffer += char;
+				}
+				break;
+				
+			case ParserState.CLOSING_TAG_START:
+				this.tagBuffer += char;
+				
+				if (char === '/') {
+					this.state = ParserState.CLOSING_TAG;
+				} else {
+					// Not a closing tag, just part of the reasoning content
+					this.reasoningBuffer += this.tagBuffer;
+					this.tagBuffer = '';
+					this.state = ParserState.INSIDE_REASONING;
+				}
+				break;
+				
+			case ParserState.CLOSING_TAG:
+				this.tagBuffer += char;
+				
+				// Check if we have a matching closing tag
+				if (this.currentTagPair && this.tagBuffer === this.currentTagPair.closeTag) {
+					// Found a matching closing tag
+					if (this.reasoningBuffer.length > 0) {
+						this.updateReasoning(this.reasoningBuffer);
+						this.reasoningBuffer = '';
+					}
+					
+					this.tagBuffer = '';
+					this.currentTagPair = null;
+					this.state = ParserState.DEFAULT;
+				} else if (this.tagBuffer.length > 10) { // Longer than our longest tag
+					// Not a valid closing tag, treat as regular reasoning content
+					this.reasoningBuffer += this.tagBuffer;
+					this.tagBuffer = '';
+					this.state = ParserState.INSIDE_REASONING;
+				}
+				break;
 		}
 	}
 
-	return {
-		bufferChunk: newBuffer,
-		isInReasoningTag: newIsInReasoningTag,
-		currentTagPair: newCurrentTagPair
-	};
+	/**
+	 * Flush any remaining content from buffers
+	 */
+	private flushBuffers(): void {
+		// Only flush if we have something to flush
+		if (this.completionBuffer.length > 0) {
+			this.updateCompletion(this.completionBuffer);
+			this.completionBuffer = '';
+		}
+	}
+
+	/**
+	 * Process any remaining content at the end of streaming
+	 */
+	finalize(): void {
+		// Handle any remaining buffers
+		if (this.completionBuffer.length > 0) {
+			this.updateCompletion(this.completionBuffer);
+			this.completionBuffer = '';
+		}
+		
+		// Handle any remaining reasoning content
+		if (this.reasoningBuffer.length > 0) {
+			this.updateReasoning(this.reasoningBuffer);
+			this.reasoningBuffer = '';
+		}
+		
+		// If we have tag buffer content, treat it as regular text
+		// based on current state
+		if (this.tagBuffer.length > 0) {
+			if (this.state === ParserState.INSIDE_REASONING || 
+				this.state === ParserState.CLOSING_TAG_START ||
+				this.state === ParserState.CLOSING_TAG) {
+				this.updateReasoning(this.tagBuffer);
+			} else {
+				this.updateCompletion(this.tagBuffer);
+			}
+			this.tagBuffer = '';
+		}
+	}
 }
 
 /**
- * Process any remaining buffer content at the end of streaming
+ * Create a processor for handling reasoning tags in streamed content
  */
-export function processRemainingBuffer(
-	bufferChunk: string,
-	isInReasoningTag: boolean,
+export function createReasoningProcessor(
 	updateCompletion: (text: string) => void,
 	updateReasoning: (text: string) => void
-): void {
-	if (bufferChunk.length > 0) {
-		if (isInReasoningTag) {
-			updateReasoning(bufferChunk);
-		} else {
-			updateCompletion(bufferChunk);
-		}
-	}
+): {
+	processChunk: (chunk: string) => void;
+	finalize: () => void;
+} {
+	const processor = new ReasoningProcessor(updateCompletion, updateReasoning);
+	
+	return {
+		processChunk: (chunk: string) => processor.processChunk(chunk),
+		finalize: () => processor.finalize()
+	};
 }

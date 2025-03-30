@@ -30,8 +30,7 @@
 	import Messages from './Messages.svelte';
 	import Prompt from './Prompt.svelte';
 	import {
-		processReasoningChunk,
-		processRemainingBuffer,
+		createReasoningProcessor,
 		type TagPair
 	} from './reasoningProcessor';
 
@@ -182,36 +181,8 @@
 
 			if (!strategy) throw new Error('Invalid strategy');
 
-			let isInReasoningTag = false;
-			let bufferChunk = '';
-			let currentTagPair: TagPair | null = null;
-
-			await strategy.chat(chatRequest, editor.abortController.signal, async (chunk) => {
-				// Process the chunk using the extracted function
-				const result = processReasoningChunk(
-					chunk,
-					bufferChunk,
-					isInReasoningTag,
-					currentTagPair,
-					(text) => {
-						editor.completion += text;
-					},
-					(text) => {
-						editor.reasoning += text;
-					}
-				);
-
-				bufferChunk = result.bufferChunk;
-				isInReasoningTag = result.isInReasoningTag;
-				currentTagPair = result.currentTagPair;
-
-				await scrollToBottom();
-			});
-
-			// Process any remaining buffer content
-			processRemainingBuffer(
-				bufferChunk,
-				isInReasoningTag,
+			// Create a reasoning processor to handle tag parsing
+			const reasoningProcessor = createReasoningProcessor(
 				(text) => {
 					editor.completion += text;
 				},
@@ -219,6 +190,15 @@
 					editor.reasoning += text;
 				}
 			);
+
+			await strategy.chat(chatRequest, editor.abortController.signal, async (chunk) => {
+				// Process the chunk using the FSM-based processor
+				reasoningProcessor.processChunk(chunk);
+				await scrollToBottom();
+			});
+
+			// Finalize processing of any remaining content
+			reasoningProcessor.finalize();
 
 			const message: Message = {
 				role: 'assistant',
