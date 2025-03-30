@@ -277,157 +277,104 @@ export async function mockStreamedCompletionResponse(
 	chunks: string[],
 	delayMs: number = 100
 ) {
-	try {
-		// Approach 1: Using a local HTTP server with CORS headers
-		// Import Node's http module
-		const http = await import('http');
+	// Import Node's http module
+	const http = await import('http');
 
-		// Start a local mock server that streams responses slowly
-		const server = http.createServer((req, res) => {
-			// Set CORS headers
-			const corsHeaders = {
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-				'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-				'Access-Control-Max-Age': '3600'
-			};
+	// Start a local mock server that streams responses slowly
+	const server = http.createServer((req, res) => {
+		// Set CORS headers
+		const corsHeaders = {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+			'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+			'Access-Control-Max-Age': '3600'
+		};
 
-			// Handle preflight OPTIONS request
-			if (req.method === 'OPTIONS') {
-				res.writeHead(204, corsHeaders);
-				res.end();
-				return;
-			}
+		// Handle preflight OPTIONS request
+		if (req.method === 'OPTIONS') {
+			res.writeHead(204, corsHeaders);
+			res.end();
+			return;
+		}
 
-			// Set headers for streaming
-			res.writeHead(200, {
-				'Content-Type': 'application/json',
-				'Cache-Control': 'no-cache',
-				Connection: 'keep-alive',
-				'Transfer-Encoding': 'chunked',
-				...corsHeaders
-			});
+		// Set headers for streaming
+		res.writeHead(200, {
+			'Content-Type': 'application/json',
+			'Cache-Control': 'no-cache',
+			Connection: 'keep-alive',
+			'Transfer-Encoding': 'chunked',
+			...corsHeaders
+		});
 
-			// First, send an initial empty response
-			const initialResponse = {
-				...MOCK_SESSION_1_RESPONSE_1,
-				message: {
-					role: 'assistant',
-					content: ''
-				},
-				done: false
-			};
-			res.write(JSON.stringify(initialResponse) + '\n');
+		// First, send an initial empty response
+		const initialResponse = {
+			...MOCK_SESSION_1_RESPONSE_1,
+			message: {
+				role: 'assistant',
+				content: ''
+			},
+			done: false
+		};
+		res.write(JSON.stringify(initialResponse) + '\n');
 
-			let index = 0;
+		let index = 0;
 
-			// Stream each chunk with a delay
-			const interval = setInterval(() => {
-				if (index < chunks.length) {
-					// Create a response object with just the current chunk
-					const response = {
-						...MOCK_SESSION_1_RESPONSE_1,
-						message: {
-							role: 'assistant',
-							content: chunks[index]
-						},
-						done: index === chunks.length - 1
-					};
+		// Stream each chunk with a delay
+		const interval = setInterval(() => {
+			if (index < chunks.length) {
+				// Create a response object with just the current chunk
+				const response = {
+					...MOCK_SESSION_1_RESPONSE_1,
+					message: {
+						role: 'assistant',
+						content: chunks[index]
+					},
+					done: index === chunks.length - 1
+				};
 
-					// Send this chunk
-					res.write(JSON.stringify(response) + '\n');
+				// Send this chunk
+				res.write(JSON.stringify(response) + '\n');
 
-					// Move to next chunk
-					index++;
+				// Move to next chunk
+				index++;
 
-					// If this was the last chunk, end the interval and response
-					if (index === chunks.length) {
-						clearInterval(interval);
-						res.end();
-					}
-				} else {
-					// Should not get here, but cleanup just in case
+				// If this was the last chunk, end the interval and response
+				if (index === chunks.length) {
 					clearInterval(interval);
 					res.end();
 				}
-			}, delayMs);
-
-			// Clean up the interval if the client disconnects
-			req.on('close', () => clearInterval(interval));
-		});
-
-		// Start the server on a random port
-		const serverStartPromise = new Promise<number>((resolve) => {
-			server.listen(0, () => {
-				const address = server.address() as { port: number };
-				resolve(address.port);
-			});
-		});
-
-		const port = await serverStartPromise;
-		const mockStreamUrl = `http://localhost:${port}`;
-
-		// Intercept the API route and redirect to our local streaming server
-		await page.route('**/api/chat', (route) => {
-			// Forward the request to our mock streaming server
-			route.continue({ url: mockStreamUrl });
-		});
-
-		// Ensure the server is closed when the test is done
-		page.once('close', () => {
-			server.close();
-		});
-	} catch (error) {
-		console.error('Error with HTTP server approach, falling back to request counting:', error);
-
-		// Approach 2: Using request counting
-		// Keep track of which chunk we're on
-		let requestCount = 0;
-
-		// Handle API route
-		await page.route('**/api/chat', async (route) => {
-			// For the first request, return empty content
-			if (requestCount === 0) {
-				await route.fulfill({
-					status: 200,
-					contentType: 'application/json',
-					body: JSON.stringify({
-						...MOCK_SESSION_1_RESPONSE_1,
-						message: {
-							role: 'assistant',
-							content: ''
-						},
-						done: false
-					})
-				});
 			} else {
-				// Simulate a delay for subsequent requests
-				await new Promise((resolve) => setTimeout(resolve, delayMs));
-
-				// Calculate which chunk to send
-				const chunkIndex = Math.min(requestCount, chunks.length) - 1;
-
-				// Send only the current chunk
-				if (chunkIndex < chunks.length) {
-					await route.fulfill({
-						status: 200,
-						contentType: 'application/json',
-						body: JSON.stringify({
-							...MOCK_SESSION_1_RESPONSE_1,
-							message: {
-								role: 'assistant',
-								content: chunks[chunkIndex]
-							},
-							done: chunkIndex >= chunks.length - 1
-						})
-					});
-				}
+				// Should not get here, but cleanup just in case
+				clearInterval(interval);
+				res.end();
 			}
+		}, delayMs);
 
-			// Increment the request counter
-			requestCount++;
+		// Clean up the interval if the client disconnects
+		req.on('close', () => clearInterval(interval));
+	});
+
+	// Start the server on a random port
+	const serverStartPromise = new Promise<number>((resolve) => {
+		server.listen(0, () => {
+			const address = server.address() as { port: number };
+			resolve(address.port);
 		});
-	}
+	});
+
+	const port = await serverStartPromise;
+	const mockStreamUrl = `http://localhost:${port}`;
+
+	// Intercept the API route and redirect to our local streaming server
+	await page.route('**/api/chat', (route) => {
+		// Forward the request to our mock streaming server
+		route.continue({ url: mockStreamUrl });
+	});
+
+	// Ensure the server is closed when the test is done
+	page.once('close', () => {
+		server.close();
+	});
 }
 
 // OpenAI mock functions
