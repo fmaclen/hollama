@@ -20,7 +20,7 @@
 
 	let isKnowledgeAttachment: boolean | undefined;
 	let isUserRole: boolean | undefined;
-	let isReasoningVisible: boolean = false;
+	let isReasoningVisible: boolean = true;
 
 	$: if (message) {
 		isKnowledgeAttachment = message.knowledge?.name !== undefined;
