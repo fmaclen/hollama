@@ -1,3 +1,5 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { expect, test, type Dialog, type Locator } from '@playwright/test';
 
 import {
@@ -637,5 +639,68 @@ test.describe('Session interaction', () => {
 		expect(eqnElements).toBe(1);
 		expect(eqElements).toBe(3);
 		expect(katexSpans).toBe(4);
+	});
+
+	test('can attach, preview, delete, and send an image (Ollama)', async ({ page }) => {
+		// ESM-compatible path resolution for test image
+		const __filename = fileURLToPath(import.meta.url);
+		const __dirname = path.dirname(__filename);
+		const testImagePath = path.resolve(__dirname, 'docs.test.ts-snapshots', 'motd.png');
+
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		const promptTextarea = page.locator('.prompt-editor__textarea');
+
+		// Check Attach image button exists
+		const attachImageButton = page.getByTestId('image-attachment');
+		await expect(attachImageButton).toBeVisible();
+
+		// Simulate image upload
+		const [fileChooser] = await Promise.all([
+			page.waitForEvent('filechooser'),
+			attachImageButton.click()
+		]);
+		await fileChooser.setFiles(testImagePath);
+
+		// Check preview and filename
+		await expect(page.locator('.attachment__image-preview')).toBeVisible();
+		await expect(page.locator('.attachment__image-name')).toHaveText('motd.png');
+
+		// Delete the image
+		await page.getByTestId('attachment-delete').click();
+		await expect(page.locator('.attachment__image-preview')).not.toBeVisible();
+
+		// Re-attach for payload test
+		const [fileChooser2] = await Promise.all([
+			page.waitForEvent('filechooser'),
+			attachImageButton.click()
+		]);
+		await fileChooser2.setFiles(testImagePath);
+
+		// Intercept outgoing request
+		let requestPayload: any = undefined;
+		await page.route('**/chat', async (route, request) => {
+			const postData = request.postData();
+			if (postData) requestPayload = JSON.parse(postData);
+			await route.fulfill({ status: 200, body: '{}' });
+		});
+
+		await promptTextarea.fill('Describe this image');
+		await page.getByText('Run').click();
+
+		// Wait for request to be sent
+		await page.waitForTimeout(500);
+		// Assert payload contains images array and prompt
+		if (!requestPayload) throw new Error('No request payload captured');
+		expect(Array.isArray(requestPayload.images)).toBe(true);
+		expect(requestPayload.images.length).toBe(1);
+		expect(typeof requestPayload.images[0]).toBe('string');
+		expect(
+			requestPayload.messages.some(
+				(m: any) => typeof m.content === 'string' && m.content.includes('Describe this image')
+			)
+		).toBe(true);
 	});
 });
