@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Brain, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { Brain, Image, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
 	import Trash_2 from 'lucide-svelte/icons/trash-2';
@@ -20,9 +20,19 @@
 	import KnowledgeSelect from './KnowledgeSelect.svelte';
 
 	type KnowledgeAttachment = {
+		type: 'knowledge';
 		fieldId: string;
 		knowledge?: Knowledge;
 	};
+
+	type ImageAttachment = {
+		type: 'image';
+		id: string;
+		name: string;
+		dataUrl: string;
+	};
+
+	type Attachment = KnowledgeAttachment | ImageAttachment;
 
 	interface Props {
 		editor: Editor;
@@ -42,7 +52,7 @@
 		scrollToBottom
 	}: Props = $props();
 
-	let attachments: KnowledgeAttachment[] = $state([]);
+	let attachments: Attachment[] = $state([]);
 
 	const isOllamaFamily = $derived(
 		$serversStore.find((s) => s.id === session.model?.serverId)?.connectionType ===
@@ -80,20 +90,55 @@
 
 	function handleSelectKnowledge(fieldId: string, knowledgeId: string) {
 		attachments = attachments.map((a) =>
-			a.fieldId === fieldId ? { ...a, knowledge: loadKnowledge(knowledgeId) } : a
+			a.type === 'knowledge' && a.fieldId === fieldId
+				? { ...a, knowledge: loadKnowledge(knowledgeId) }
+				: a
 		);
 	}
 
-	function handleDeleteAttachment(fieldId: string) {
-		attachments = [...attachments.filter((a) => a.fieldId !== fieldId)];
+	function handleImageUploadClick() {
+		const input = document.createElement('input');
+		input.type = 'file';
+		input.accept = 'image/*';
+		input.onchange = (e) => {
+			const file = (e.target as HTMLInputElement).files?.[0];
+			if (!file) return;
+
+			const reader = new FileReader();
+			reader.onload = (event) => {
+				const dataUrl = event.target?.result as string;
+				if (dataUrl) {
+					attachments = [
+						...attachments,
+						{
+							type: 'image',
+							id: generateRandomId(),
+							name: file.name,
+							dataUrl
+						}
+					];
+				}
+			};
+			reader.readAsDataURL(file);
+		};
+		input.click();
+	}
+
+	function handleDeleteAttachment(id: string) {
+		attachments = [
+			...attachments.filter((a) => (a.type === 'knowledge' ? a.fieldId : a.id) !== id)
+		];
 	}
 
 	function submit() {
-		if (attachments.length) {
-			const attachmentMessages: Message[] = [];
+		const knowledgeAttachments = attachments.filter(
+			(a): a is KnowledgeAttachment => a.type === 'knowledge'
+		);
+		if (knowledgeAttachments.length) {
+			const knowledgeAttachmentMessages: Message[] = [];
 			attachments.forEach((a) => {
-				if (a.knowledge)
-					attachmentMessages.push({
+				if (a.type === 'knowledge' && a.knowledge)
+					knowledgeAttachmentMessages.push({
 						role: 'user',
 						knowledge: a.knowledge,
 						content: `
@@ -104,8 +149,8 @@
 `
 					});
 			});
-			session.messages = [...session.messages, ...attachmentMessages];
-			attachments = [];
+			session.messages = [...session.messages, ...knowledgeAttachmentMessages];
+			attachments = attachments.filter((a) => a.type !== 'knowledge');
 		}
 
 		handleSubmit();
@@ -174,31 +219,44 @@
 
 		{#if attachments.length}
 			<div class="attachments">
-				{#each attachments as attachment (attachment.fieldId)}
+				{#each attachments as attachment (attachment.type === 'knowledge' ? attachment.fieldId : attachment.id)}
 					<div class="attachment">
-						<div class="attachment__knowledge">
-							<KnowledgeSelect
-								value={attachment.knowledge?.id}
-								options={$knowledgeStore?.filter(
-									(k) =>
-										// Only filter out knowledge that's selected in OTHER attachments
-										!attachments.find(
-											(a) =>
-												a.fieldId !== attachment.fieldId && // Skip current attachment
-												a.knowledge?.id === k.id
-										)
-								)}
-								showLabel={false}
-								fieldId={`attachment-${attachment.fieldId}`}
-								onChange={(knowledgeId) =>
-									knowledgeId && handleSelectKnowledge(attachment.fieldId, knowledgeId)}
-								allowClear={false}
-							/>
-						</div>
+						{#if attachment.type === 'knowledge'}
+							<div class="attachment__knowledge">
+								<KnowledgeSelect
+									value={attachment.knowledge?.id}
+									options={$knowledgeStore?.filter(
+										(k) =>
+											// Only filter out knowledge that's selected in OTHER attachments
+											!attachments.find((a) => {
+												if (a.type !== 'knowledge' || attachment.type !== 'knowledge') return false;
+												return a.fieldId !== attachment.fieldId && a.knowledge?.id === k.id;
+											})
+									)}
+									showLabel={false}
+									fieldId={`attachment-${attachment.fieldId}`}
+									onChange={(knowledgeId) =>
+										knowledgeId && handleSelectKnowledge(attachment.fieldId, knowledgeId)}
+									allowClear={false}
+								/>
+							</div>
+						{:else}
+							<div class="attachment__image">
+								<img
+									src={attachment.dataUrl}
+									alt={attachment.name}
+									class="attachment__image-preview"
+								/>
+								<span class="attachment__image-name">{attachment.name}</span>
+							</div>
+						{/if}
 						<Button
 							variant="outline"
-							on:click={() => handleDeleteAttachment(attachment.fieldId)}
-							data-testid="knowledge-attachment-delete"
+							on:click={() =>
+								handleDeleteAttachment(
+									attachment.type === 'knowledge' ? attachment.fieldId : attachment.id
+								)}
+							data-testid="attachment-delete"
 						>
 							<Trash_2 class="base-icon" />
 						</Button>
@@ -212,11 +270,19 @@
 				<Button
 					variant="outline"
 					on:click={() => {
-						attachments = [...attachments, { fieldId: generateRandomId() }];
+						attachments = [...attachments, { type: 'knowledge', fieldId: generateRandomId() }];
 					}}
 					data-testid="knowledge-attachment"
 				>
 					<Brain class="base-icon" />
+				</Button>
+				<Button
+					variant="outline"
+					on:click={handleImageUploadClick}
+					data-testid="image-attachment"
+					title={'Attach image'}
+				>
+					<Image class="base-icon" />
 				</Button>
 			</div>
 
@@ -344,7 +410,7 @@
 	}
 
 	.attachments-toolbar {
-		@apply flex h-full;
+		@apply flex h-full gap-x-1;
 	}
 
 	.attachments {
@@ -357,5 +423,17 @@
 
 	.attachment__knowledge {
 		@apply w-full;
+	}
+
+	.attachment__image {
+		@apply flex w-full items-center gap-x-2 overflow-hidden text-ellipsis whitespace-nowrap rounded-md border p-1 mr-2;
+	}
+
+	.attachment__image-preview {
+		@apply h-8 w-8 rounded-sm object-cover;
+	}
+
+	.attachment__image-name {
+		@apply text-xs;
 	}
 </style>
