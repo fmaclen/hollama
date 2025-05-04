@@ -1,6 +1,10 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { expect, test, type Locator } from '@playwright/test';
+import type {
+	ChatCompletionContentPart,
+	ChatCompletionMessageParam
+} from 'openai/resources/index.mjs';
 
 import {
 	chooseFromCombobox,
@@ -9,7 +13,7 @@ import {
 	MOCK_KNOWLEDGE,
 	mockCompletionResponse,
 	mockOllamaModelsResponse,
-	seedKnowledgeAndReload
+	seedKnowledgeAndReload,
 } from './utils';
 
 const MOCK_ATTACHMENTS_RESPONSE = {
@@ -439,5 +443,82 @@ test.describe('Attachments', () => {
 		await expect(userMessageArticle.locator('.article__image-filename')).toHaveText('session.png');
 		await expect(userMessageArticle.locator('.article__image-filename')).not.toHaveText('motd.png');
 		await expect(page.getByText('Description of one image')).toBeVisible(); // Check assistant response
+	});
+
+	test('can attach and send an image (OpenAI vision payload)', async ({ page }) => {
+		const { mockOpenAIModelsResponse } = await import('./utils');
+		const { MOCK_OPENAI_MODELS } = await import('./utils');
+
+		// ESM-compatible path resolution for test image
+		const __filename = fileURLToPath(import.meta.url);
+		const __dirname = path.dirname(__filename);
+		const testImagePath = path.resolve(__dirname, 'docs.test.ts-snapshots', 'motd.png');
+
+		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
+
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		// Select an OpenAI model from the mocked list
+		const openaiModelName = 'gpt-4';
+		await chooseModel(page, openaiModelName);
+
+		const promptTextarea = page.locator('.prompt-editor__textarea');
+		const attachImageButton = page.getByTestId('image-attachment');
+
+		// Simulate image upload
+		const [fileChooser] = await Promise.all([
+			page.waitForEvent('filechooser'),
+			attachImageButton.click()
+		]);
+		await fileChooser.setFiles(testImagePath);
+
+		// Intercept outgoing request to OpenAI chat completions endpoint
+		// Use a partial type for the overall payload as the library might not export a full request body type
+		let requestPayload: { messages: ChatCompletionMessageParam[] } | undefined = undefined;
+		await page.route('**/chat/completions', async (route, request) => {
+			const postData = request.postData();
+			if (postData) requestPayload = JSON.parse(postData) as { messages: ChatCompletionMessageParam[] };
+			// Simulate a streamed response as OpenAI would send
+			const responseBody = [
+				JSON.stringify({
+					choices: [
+						{ delta: { content: 'This is a description of MOTD.png' } }
+					]
+				}),
+				''
+			].join('\n');
+			await route.fulfill({
+				status: 200,
+				contentType: 'text/event-stream',
+				body: responseBody
+			});
+		});
+
+		await promptTextarea.fill('Describe this image');
+		await page.getByText('Run').click();
+
+		// Assert payload contains OpenAI vision format
+		expect(requestPayload, 'No request payload captured').toBeDefined();
+
+		// Now TypeScript knows requestPayload is defined
+		const lastUserMsg = requestPayload!.messages.find((m: ChatCompletionMessageParam) => m.role === 'user');
+		expect(lastUserMsg).toBeTruthy();
+		if (!lastUserMsg || typeof lastUserMsg.content === 'string' || !Array.isArray(lastUserMsg.content)) {
+			throw new Error('User message content is not in the expected format (array of parts)');
+		}
+		expect(Array.isArray(lastUserMsg.content)).toBe(true);
+		// Should have at least one text and one image_url part
+		const textPart = lastUserMsg.content.find((part: ChatCompletionContentPart) => part.type === 'text');
+		const imagePart = lastUserMsg.content.find((part: ChatCompletionContentPart) => part.type === 'image_url');
+		expect(textPart).toBeTruthy();
+		expect(textPart?.text).toContain('Describe this image');
+		expect(imagePart).toBeTruthy();
+		// Need type guard for image_url part
+		if (imagePart?.type !== 'image_url') {
+			throw new Error('Image part is not of type image_url');
+		}
+		expect(imagePart.image_url.url).toMatch(/^data:image\/(png|jpeg|jpg|webp);base64,/);
 	});
 });
