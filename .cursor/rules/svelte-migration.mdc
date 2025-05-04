@@ -1,0 +1,55 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+- **Reactivity → Runes**
+  - **State:** Replace `let count = 0; $: if (count) ...` with `let count = $state(0);`.
+  - **Derived State:** Replace `$: doubled = count * 2;` with `let doubled = $derived(count * 2);`.
+  - **Effects:** Replace `$: console.log(count);` or `afterUpdate()` with `$effect(() => { console.log(count); });`.
+  - **Lifecycle:** Replace `onMount`, `beforeUpdate`, `afterUpdate` with `$effect` (or `$effect.pre` for beforeUpdate timing).
+
+- **Props Declaration → `$props`**
+  - Replace `export let propName = defaultValue;` with `let { propName = defaultValue } = $props();`.
+  - Replace `export { propName as renamedProp };` with `let { propName: renamedProp } = $props();`.
+  - Replace `$$props` and `$$restProps` with `{ ...rest } = $props();`.
+
+- **Two-Way Binding → `$bindable`**
+  - Replace `export let value;` (intended for `bind:value`) with `let { value = $bindable() } = $props();`.
+
+- **Event Handling → Property Syntax**
+  - Replace `on:click={handler}` with `onclick={handler}`.
+  - Replace `on:click|once|preventDefault` with manual implementation (wrapper functions or logic inside handler).
+  - Replace `on:click` on a component (forwarding) with accepting an `onclick` prop and applying it or spreading props.
+
+- **Component Events → Callback Props**
+  - Remove `createEventDispatcher`.
+  - Define function props (e.g., `notifyParent: () => void`) in the child component.
+  - Pass handler functions from the parent as props.
+
+- **Slots → Snippets**
+  - Replace `<slot />` (default slot) with declaring `let { children } = $props();` and rendering `{@render children()}`.
+  - Replace `<slot name="xyz" />` with declaring `let { xyz } = $props();` and rendering `{@render xyz()}`.
+  - Replace `let:variable` on slots with passing data as arguments to the snippet render: `{@render snippetName(data)}` and defining the snippet with parameters `{#snippet snippetName(data)}`.
+
+- **Dynamic Components (`<svelte:component>`)**
+  - `<svelte:component this={Component} />` still works, but is often unnecessary.
+  - You can now render components directly using a variable: `<Component />` where `Component` is a state variable holding the component constructor.
+
+- **Class Components API**
+  - `new Component(...)` is replaced by `mount(Component, options)` or `hydrate(Component, options)` from `svelte`.
+  - `$on`, `$set`, `$destroy` instance methods are removed.
+    - `$on` -> `mount(..., { events: { ... } })` (though callback props preferred).
+    - `$set` -> Use reactive `$state` props.
+    - `$destroy` -> `unmount(componentInstance)`.
+  - Enable `compatibility.componentApi = 4` in `svelte.config.js` for automated backwards compatibility if needed during transition.
+
+- **Server-Side Rendering (SSR)**
+  - Component `.render()` method removed.
+  - Use `render(Component, { props: { ... }})` from `svelte/server`.
+
+- **Other Notable Changes**
+  - `bind:this` no longer returns `$set`/`$on`/`$destroy`.
+  - `<foo.bar>` is now treated as a component, not an HTML tag with a dot.
+  - Whitespace handling is more predictable.
+  - The prop name `children` is reserved for the default snippet.

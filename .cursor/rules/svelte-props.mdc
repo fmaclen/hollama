@@ -1,0 +1,117 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+- **Declare Props using `$props`**
+  - All props are accessed via `let { ... } = $props();`.
+  - Destructure props for direct access.
+  - Provide default values for optional props: `let { name = 'Default' } = $props();`.
+  - Rename props during destructuring if needed (e.g., for reserved words): `let { class: className } = $props();`.
+  - Use rest syntax to capture remaining props: `let { knownProp, ...rest } = $props();`.
+
+  ```svelte
+  <!-- Filename: MyComponent.svelte -->
+  <script lang="ts">
+    // ✅ DO: Destructure props
+    let { requiredProp, optionalProp = 'fallback', class: className, ...rest } = $props();
+  </script>
+
+  <div class={className}>
+    <p>Required: {requiredProp}</p>
+    <p>Optional: {optionalProp}</p>
+    <pre>Rest: {JSON.stringify(rest)}</pre>
+  </div>
+  ```
+
+  ```svelte
+  <!-- Filename: App.svelte -->
+  <script lang="ts">
+    import MyComponent from './MyComponent.svelte';
+  </script>
+
+  <MyComponent requiredProp="Value1" class="my-class" data-custom="attr" />
+  <MyComponent requiredProp="Value2" optionalProp="Override" />
+  ```
+
+- **Props are Ephemeral by Default**
+  - Props received from the parent update when the parent's state changes.
+  - You can *temporarily* modify a prop's value within the child component (e.g., `count++` on a `count` prop).
+  - This temporary change is lost if the parent re-sends the prop.
+  - This is suitable for *unsaved* or *ephemeral* state within the child.
+  - **Warning:** Mutating object/array props directly can affect the parent if the parent passed reactive state (e.g., `$state`). Svelte warns against this. Prefer `$bindable` or callback props for intentional two-way binding.
+
+  ```svelte
+  <!-- Filename: Child.svelte -->
+  <script lang="ts">
+    let { count, user } = $props();
+  </script>
+
+  <p>Parent Count: {count}</p>
+  <button onclick={() => count++}>Increment Child (Temporary)</button>
+
+  <p>User Name (from Parent): {user.name}</p>
+  <!-- ⚠️ Mutating a reactive prop directly (shows warning) -->
+  <button onclick={() => user.name = 'Changed in Child'}>Change User Name</button>
+  ```
+
+  ```svelte
+  <!-- Filename: App.svelte -->
+  <script lang="ts">
+    import Child from './Child.svelte';
+    let parentCount = $state(0);
+    let reactiveUser = $state({ name: 'Alice' });
+  </script>
+
+  <button onclick={() => parentCount++}>Increment Parent</button>
+  <Child count={parentCount} user={reactiveUser} />
+  <p>Parent User Name: {reactiveUser.name}</p>
+  ```
+
+- **Use `$bindable` for Two-Way Binding**
+  - Mark props intended for two-way binding with `$bindable()`.
+  - Provide a default value if the parent might not bind: `let { value = $bindable('default') } = $props();`.
+  - The parent uses the `bind:propName={stateVariable}` directive.
+
+  ```svelte
+  <!-- Filename: FancyInput.svelte -->
+  <script lang="ts">
+    // ✅ DO: Use $bindable for two-way binding
+    let { value = $bindable(''), placeholder = 'Enter text' } = $props();
+  </script>
+
+  <input bind:value={value} {placeholder} />
+  ```
+
+  ```svelte
+  <!-- Filename: App.svelte -->
+  <script lang="ts">
+    import FancyInput from './FancyInput.svelte';
+    let message = $state('Initial value');
+  </script>
+
+  <FancyInput bind:value={message} placeholder="Type your message"/>
+  <p>Parent state: {message}</p>
+  ```
+
+- **Unique Component IDs with `$props.id()`**
+  - Generate a unique, stable ID per component instance using `const uid = $props.id();`.
+  - Useful for linking labels and inputs (`for`, `aria-labelledby`).
+  - Consistent between server and client rendering.
+
+  ```svelte
+  <!-- Filename: LabelledInput.svelte -->
+  <script lang="ts">
+    const uid = $props.id();
+    let { label } = $props();
+  </script>
+
+  <div>
+    <label for={uid}>{label}</label>
+    <input id={uid} type="text" />
+  </div>
+  ```
+
+- **Reserved `children` Prop**
+  - The name `children` is reserved for the default snippet content passed to a component. See [`svelte-snippets.mdc`](mdc:.cursor/rules/svelte-snippets.mdc).
+  - Do not declare a prop named `children`.

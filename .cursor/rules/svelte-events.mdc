@@ -1,0 +1,226 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+- **DOM Event Handling Syntax**
+  - Replace Svelte 4 `on:eventname` directive with direct property binding: `{eventname}` or `eventname={handler}`.
+  - Use lowercase event names for standard DOM events (e.g., `onclick`, `oninput`, `onkeydown`).
+
+  ```svelte
+  <script lang="ts">
+    let count = $state(0);
+    let text = $state('');
+
+    function handleClick() {
+      count++;
+    }
+
+    function handleInput(event: Event) {
+      text = (event.target as HTMLInputElement).value;
+    }
+
+    function handleEnter(event: KeyboardEvent) {
+      if (event.key === 'Enter') {
+        console.log('Enter pressed!');
+      }
+    }
+  </script>
+
+  <!-- ✅ DO: Use property syntax -->
+  <button onclick={handleClick}>
+    Clicks: {count}
+  </button>
+
+  <!-- Also works with inline handlers -->
+  <button onclick={() => count--}>
+    Decrement
+  </button>
+
+  <!-- Shorthand works if handler name matches event -->
+  <button onclick={handleClick}> 
+    {/* If function was named `onclick` -> <button {onclick}> */}
+    Click Me
+  </button>
+
+  <input oninput={handleInput} placeholder="Type here" bind:value={text} />
+  <input onkeydown={handleEnter} placeholder="Press Enter" />
+  ```
+
+- **Component Events via Callback Props**
+  - Svelte 5 replaces `createEventDispatcher` with callback props.
+  - Define function props in the child component to be called when an event occurs.
+  - The parent component passes handler functions as props to the child.
+
+  ```svelte
+  <!-- Filename: ChildComponent.svelte -->
+  <script lang="ts">
+    // ✅ DO: Accept callback props
+    let { notify, sendData } = $props<{ 
+      notify: () => void,
+      sendData?: (data: { message: string }) => void
+    }>();
+
+    let internalValue = $state('Some data');
+
+    function triggerNotify() {
+      notify(); // Call the parent's handler
+    }
+
+    function triggerSendData() {
+      sendData?.({ message: internalValue }); // Call optional handler
+    }
+  </script>
+
+  <button onclick={triggerNotify}>Notify Parent</button>
+  <button onclick={triggerSendData}>Send Data to Parent</button>
+  ```
+
+  ```svelte
+  <!-- Filename: App.svelte -->
+  <script lang="ts">
+    import ChildComponent from './ChildComponent.svelte';
+
+    function handleNotification() {
+      console.log('Notification received from child!');
+    }
+
+    function handleData(data: { message: string }) {
+      console.log('Data from child:', data.message);
+    }
+  </script>
+
+  <!-- ✅ DO: Pass handlers as props -->
+  <ChildComponent notify={handleNotification} sendData={handleData} />
+  ```
+
+- **Bubbling/Forwarding Events**
+  - To forward a DOM event from an element inside a child component to the parent, accept a corresponding callback prop (e.g., `onclick`).
+  - Spread props (`{...props}`) onto an element to automatically forward all standard attributes and event handlers passed by the parent.
+
+  ```svelte
+  <!-- Filename: ForwardingButton.svelte -->
+  <script lang="ts">
+    // ✅ DO: Accept standard event handler props like onclick
+    // Or simply capture all props
+    let { children, ...props } = $props(); 
+  </script>
+
+  <!-- Spreading props forwards onclick, onmouseover, etc. -->
+  <button {...props}>
+    {@render children?.()}
+  </button>
+  ```
+
+  ```svelte
+  <!-- Filename: App.svelte -->
+  <script lang="ts">
+    import ForwardingButton from './ForwardingButton.svelte';
+
+    function handleParentClick() {
+      console.log('Button click handled in parent!');
+    }
+  </script>
+
+  <ForwardingButton onclick={handleParentClick}>
+    Click Me (Forwards)
+  </ForwardingButton>
+  ```
+
+- **Event Modifiers are Manual**
+  - Modifiers like `once`, `preventDefault`, `stopPropagation`, `passive`, `capture` are no longer built-in syntax (`|modifier`).
+  - Implement `preventDefault` and `stopPropagation` directly within your handler function.
+  - Use higher-order functions or helper utilities for modifiers like `once`.
+  - Use specific event properties like `onclickcapture` for the `capture` modifier.
+  - For `passive` / `nonpassive`, use a custom action or the `on` utility from `svelte/events` to attach the listener with options.
+
+  ```svelte
+  <script lang="ts">
+    import { on } from 'svelte/events';
+    import { onDestroy } from 'svelte';
+
+    function handleClick(event: MouseEvent) {
+      // ✅ DO: Call preventDefault directly
+      event.preventDefault();
+      console.log('Default prevented. Link navigation stopped.');
+    }
+
+    let runCount = 0;
+    function handleOnce() {
+      // ✅ DO: Implement `once` logic manually
+      if (runCount === 0) {
+        console.log('Ran only once!');
+        runCount++;
+      }
+    }
+
+    // Example using svelte/events for passive
+    let buttonElement: HTMLButtonElement;
+    onDestroy(
+      on(window, 'scroll', () => { 
+        console.log('Passive scroll listener'); 
+      }, { passive: true })
+    );
+
+  </script>
+
+  <a href="https://google.com" onclick={handleClick}>
+    Click (Prevents Default)
+  </a>
+
+  <button onclick={handleOnce}>Click Me Once</button>
+
+  <!-- ✅ DO: Use `onclickcapture` for capture phase -->
+  <div onclickcapture={() => console.log('Capture phase')} 
+       onclick={() => console.log('Bubble phase')}>
+    <button>Capture Test</button>
+  </div>
+  ```
+
+- **Multiple Handlers on One Element**
+  - Only one handler prop (e.g., `onclick`) can be assigned per element.
+  - If you need multiple functions to run for the same event, combine them within a single inline arrow function.
+
+  ```svelte
+  <script lang="ts">
+    function logger(event: Event) {
+      console.log('Event target:', event.target);
+    }
+    function counter(event: MouseEvent) {
+      console.log('Button clicked!');
+    }
+  </script>
+
+  <!-- ✅ DO: Combine handlers in an inline function -->
+  <button onclick={(e) => {
+    logger(e);
+    counter(e);
+  }}>
+    Click Me (Multiple Actions)
+  </button>
+  ```
+
+- **Preserving Local Handlers When Spreading Props**
+  - If spreading props (`{...props}`) and also defining a local handler (e.g., `onclick`), ensure the local logic runs by calling it alongside the prop handler.
+
+  ```svelte
+  <!-- Filename: CustomButton.svelte -->
+  <script lang="ts">
+    let props = $props();
+
+    function localHandler(event: MouseEvent) {
+      console.log('CustomButton local logic ran!');
+      // Maybe add a class, etc.
+    }
+  </script>
+
+  <button 
+    {...props} 
+    onclick={(e) => {
+      localHandler(e);      // Run local logic first
+      props.onclick?.(e);  // Then run parent's handler if it exists
+    }}
+  >
+    Enhanced Button
+  </button>
+  ```
