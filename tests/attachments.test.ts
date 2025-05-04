@@ -13,7 +13,7 @@ import {
 	MOCK_KNOWLEDGE,
 	mockCompletionResponse,
 	mockOllamaModelsResponse,
-	seedKnowledgeAndReload,
+	seedKnowledgeAndReload
 } from './utils';
 
 const MOCK_ATTACHMENTS_RESPONSE = {
@@ -304,7 +304,9 @@ test.describe('Attachments', () => {
 		const promptAttachments = page.locator('.prompt-editor .attachment');
 		await expect(promptAttachments).toHaveCount(1);
 		await expect(promptAttachments.locator('.attachment__image-name')).toHaveText('motd.png');
-		await expect(promptAttachments.locator('.attachment__image-name')).not.toHaveText('session.png');
+		await expect(promptAttachments.locator('.attachment__image-name')).not.toHaveText(
+			'session.png'
+		);
 
 		// Upload second image
 		const secondTestImagePath = path.resolve(__dirname, 'docs.test.ts-snapshots', 'session.png');
@@ -479,13 +481,12 @@ test.describe('Attachments', () => {
 		let requestPayload: { messages: ChatCompletionMessageParam[] } | undefined = undefined;
 		await page.route('**/chat/completions', async (route, request) => {
 			const postData = request.postData();
-			if (postData) requestPayload = JSON.parse(postData) as { messages: ChatCompletionMessageParam[] };
+			if (postData)
+				requestPayload = JSON.parse(postData) as { messages: ChatCompletionMessageParam[] };
 			// Simulate a streamed response as OpenAI would send
 			const responseBody = [
 				JSON.stringify({
-					choices: [
-						{ delta: { content: 'This is a description of MOTD.png' } }
-					]
+					choices: [{ delta: { content: 'This is a description of MOTD.png' } }]
 				}),
 				''
 			].join('\n');
@@ -503,15 +504,25 @@ test.describe('Attachments', () => {
 		expect(requestPayload, 'No request payload captured').toBeDefined();
 
 		// Now TypeScript knows requestPayload is defined
-		const lastUserMsg = requestPayload!.messages.find((m: ChatCompletionMessageParam) => m.role === 'user');
+		const lastUserMsg = requestPayload!.messages.find(
+			(m: ChatCompletionMessageParam) => m.role === 'user'
+		);
 		expect(lastUserMsg).toBeTruthy();
-		if (!lastUserMsg || typeof lastUserMsg.content === 'string' || !Array.isArray(lastUserMsg.content)) {
+		if (
+			!lastUserMsg ||
+			typeof lastUserMsg.content === 'string' ||
+			!Array.isArray(lastUserMsg.content)
+		) {
 			throw new Error('User message content is not in the expected format (array of parts)');
 		}
 		expect(Array.isArray(lastUserMsg.content)).toBe(true);
 		// Should have at least one text and one image_url part
-		const textPart = lastUserMsg.content.find((part: ChatCompletionContentPart) => part.type === 'text');
-		const imagePart = lastUserMsg.content.find((part: ChatCompletionContentPart) => part.type === 'image_url');
+		const textPart = lastUserMsg.content.find(
+			(part: ChatCompletionContentPart) => part.type === 'text'
+		);
+		const imagePart = lastUserMsg.content.find(
+			(part: ChatCompletionContentPart) => part.type === 'image_url'
+		);
 		expect(textPart).toBeTruthy();
 		expect(textPart?.text).toContain('Describe this image');
 		expect(imagePart).toBeTruthy();

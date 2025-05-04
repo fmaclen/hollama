@@ -25,40 +25,40 @@ export class OpenAIStrategy implements ChatStrategy {
 		abortSignal: AbortSignal,
 		onChunk: (content: string) => void
 	): Promise<void> {
-		const formattedMessages = payload.messages.map((message: Message): ChatCompletionMessageParam => {
-			if (message.images && message.images.length > 0) {
-				const content: ChatCompletionContentPart[] = [
-					{ type: 'text', text: message.content }
-				];
-				message.images.forEach((img) => {
-					let mimeType = 'image/jpeg';
-					let base64Data = img;
-					const dataUrlMatch = img.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,(.*)$/);
-					if (dataUrlMatch) {
-						mimeType = dataUrlMatch[1];
-						base64Data = dataUrlMatch[2];
-					}
-					content.push({
-						type: 'image_url',
-						image_url: {
-							url: `data:${mimeType};base64,${base64Data}`
+		const formattedMessages = payload.messages.map(
+			(message: Message): ChatCompletionMessageParam => {
+				if (message.images && message.images.length > 0) {
+					const content: ChatCompletionContentPart[] = [{ type: 'text', text: message.content }];
+					message.images.forEach((img) => {
+						let mimeType = 'image/jpeg';
+						let base64Data = img;
+						const dataUrlMatch = img.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,(.*)$/);
+						if (dataUrlMatch) {
+							mimeType = dataUrlMatch[1];
+							base64Data = dataUrlMatch[2];
 						}
+						content.push({
+							type: 'image_url',
+							image_url: {
+								url: `data:${mimeType};base64,${base64Data}`
+							}
+						});
 					});
-				});
-				// Vision API only supports user role for images currently
-				// Cast role explicitly to satisfy TypeScript
-				return { role: 'user' as const, content };
-			} else {
-				// Explicitly cast roles for non-image messages too
-				if (message.role === 'user') {
-					return { role: 'user', content: message.content };
-				} else if (message.role === 'assistant') {
-					return { role: 'assistant', content: message.content };
+					// Vision API only supports user role for images currently
+					// Cast role explicitly to satisfy TypeScript
+					return { role: 'user' as const, content };
 				} else {
-					return { role: 'system', content: message.content };
+					// Explicitly cast roles for non-image messages too
+					if (message.role === 'user') {
+						return { role: 'user', content: message.content };
+					} else if (message.role === 'assistant') {
+						return { role: 'assistant', content: message.content };
+					} else {
+						return { role: 'system', content: message.content };
+					}
 				}
 			}
-		});
+		);
 
 		const response = await this.openai.chat.completions.create({
 			model: payload.model,
