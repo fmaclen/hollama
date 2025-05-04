@@ -38,7 +38,7 @@
 		editor: Editor;
 		session: Session;
 		modelName: string | undefined;
-		handleSubmit: (images?: string[]) => void;
+		handleSubmit: (images?: { data: string; filename: string }[]) => void;
 		stopCompletion: () => void;
 		scrollToBottom: (shouldForceScroll: boolean) => void;
 	}
@@ -154,11 +154,12 @@
 		}
 
 		const imageAttachments = attachments.filter((a): a is ImageAttachment => a.type === 'image');
-		const images = imageAttachments.map((a) =>
-			a.dataUrl.replace(/^data:image\/[a-zA-Z]+;base64,/, '')
-		);
+		const imagesPayload = imageAttachments.map((a) => ({
+			filename: a.name,
+			data: a.dataUrl.replace(/^data:image\/[a-zA-Z]+;base64,/, '')
+		}));
 
-		handleSubmit(images.length ? images : undefined);
+		handleSubmit(imagesPayload.length ? imagesPayload : undefined);
 		attachments = [];
 	}
 </script>

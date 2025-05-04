@@ -105,7 +105,7 @@
 		scrollToBottom();
 	}
 
-	async function handleSubmitNewMessage(images?: string[]) {
+	async function handleSubmitNewMessage(images?: { data: string; filename: string }[]) {
 		const message: Message = { role: 'user', content: editor.prompt };
 		if (images && images.length) message.images = images;
 		session.messages = [...session.messages, message];
@@ -127,7 +127,7 @@
 		await handleCompletion(session.messages);
 	}
 
-	function handleSubmit(images?: string[]) {
+	function handleSubmit(images?: { data: string; filename: string }[]) {
 		if (!editor.prompt) return;
 		if (!session.model) return;
 		editor.isCodeEditor = false;
@@ -159,15 +159,24 @@
 		if (!server) throw new Error('Server not found');
 		if (!session.model?.name) throw new Error('No model');
 
-		// Ensure images are only on the last user message
 		let chatMessages = session.systemPrompt.content
 			? [session.systemPrompt, ...messages]
 			: messages;
 
+		// Map messages for the chat request, converting images if necessary
+		const chatMessagesForRequest = chatMessages.map((msg) => {
+			// Ollama expects images as base64 strings without filename
+			const images = msg.images?.map((img) => img.data);
+			return {
+				...msg,
+				images // Override images with just the data
+			};
+		});
+
 		let chatRequest: ChatRequest = {
 			model: session.model.name,
 			options: session.options,
-			messages: chatMessages
+			messages: chatMessagesForRequest
 		};
 
 		try {

@@ -118,11 +118,11 @@
 				{#each message.images as img, i}
 					<div class="article__image-attachment">
 						<img
-							src={`data:image/png;base64,${img}`}
-							alt={`Image attachment ${i + 1}`}
+							src={`data:image/png;base64,${img.data}`}
+							alt={`Image attachment ${i + 1}: ${img.filename}`}
 							class="article__image-thumbnail"
 						/>
-						<span class="article__image-filename">Image {i + 1}</span>
+						<span class="article__image-filename">{img.filename}</span>
 					</div>
 				{/each}
 			</div>

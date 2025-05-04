@@ -3,16 +3,18 @@ import { get } from 'svelte/store';
 import type { OllamaOptions } from '$lib/chat/ollama';
 import { sessionsStore, settingsStore, sortStore } from '$lib/localStorage';
 
-import { getLastUsedModels, type Message as ChatMessage } from './chat';
+import { getLastUsedModels } from './chat';
 import type { Knowledge } from './knowledge';
 import type { Model } from './settings';
 import { formatTimestampToNow } from './utils';
 
-export interface Message extends ChatMessage {
+export interface Message {
+	role: 'user' | 'assistant' | 'system';
+	content: string;
 	knowledge?: Knowledge;
 	context?: number[];
 	reasoning?: string;
-	images?: string[]; // Optional array of base64 image strings
+	images?: { data: string; filename: string }[]; // Store image data and filename
 }
 
 export interface Session {

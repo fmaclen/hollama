@@ -289,6 +289,6 @@ test.describe('Attachments', () => {
 		await expect(articleImages.first()).toBeVisible();
 		const articleFilenames = page.locator('.article__image-filename');
 		await expect(articleFilenames).toHaveCount(1);
-		await expect(articleFilenames.first()).toHaveText('Image 1');
+		await expect(articleFilenames.first()).toHaveText('motd.png');
 	});
 });
