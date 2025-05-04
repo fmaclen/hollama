@@ -117,7 +117,7 @@
 		{/if}
 		{#if message.images && message.images.length}
 			<div class="article__images">
-				{#each message.images as img, i}
+				{#each message.images as img}
 					<AttachmentImage dataUrl={`data:image/png;base64,${img.data}`} name={img.filename} />
 				{/each}
 			</div>

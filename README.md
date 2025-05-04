@@ -1,6 +1,6 @@
 # Hollama
 
-A minimal LLM chat app that runs *entirely* in your browser.
+A minimal LLM chat app that runs _entirely_ in your browser.
 
 ### Features
 
