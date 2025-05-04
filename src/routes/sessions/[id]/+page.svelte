@@ -160,7 +160,9 @@
 		if (!session.model?.name) throw new Error('No model');
 
 		// Ensure images are only on the last user message
-		let chatMessages = session.systemPrompt.content ? [session.systemPrompt, ...messages] : messages;
+		let chatMessages = session.systemPrompt.content
+			? [session.systemPrompt, ...messages]
+			: messages;
 
 		let chatRequest: ChatRequest = {
 			model: session.model.name,

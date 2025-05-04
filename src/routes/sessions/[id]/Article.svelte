@@ -200,18 +200,18 @@
 	}
 
 	.article__images {
-		@apply flex flex-wrap gap-2 mt-2;
+		@apply mt-2 flex flex-wrap gap-2;
 	}
 
 	.article__image-attachment {
-		@apply flex flex-col items-center max-w-[8rem];
+		@apply flex max-w-[8rem] flex-col items-center;
 	}
 
 	.article__image-thumbnail {
-		@apply w-20 h-20 object-cover rounded border border-shade-3;
+		@apply h-20 w-20 rounded border border-shade-3 object-cover;
 	}
 
 	.article__image-filename {
-		@apply text-xs text-muted mt-1 truncate max-w-full;
+		@apply mt-1 max-w-full truncate text-xs text-muted;
 	}
 </style>

@@ -154,7 +154,9 @@
 		}
 
 		const imageAttachments = attachments.filter((a): a is ImageAttachment => a.type === 'image');
-		const images = imageAttachments.map((a) => a.dataUrl.replace(/^data:image\/[a-zA-Z]+;base64,/, ''));
+		const images = imageAttachments.map((a) =>
+			a.dataUrl.replace(/^data:image\/[a-zA-Z]+;base64,/, '')
+		);
 
 		handleSubmit(images.length ? images : undefined);
 		attachments = [];
@@ -430,7 +432,7 @@
 	}
 
 	.attachment__image {
-		@apply flex w-full items-center gap-x-2 overflow-hidden text-ellipsis whitespace-nowrap rounded-md border p-1 mr-2;
+		@apply mr-2 flex w-full items-center gap-x-2 overflow-hidden text-ellipsis whitespace-nowrap rounded-md border p-1;
 	}
 
 	.attachment__image-preview {

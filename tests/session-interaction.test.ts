@@ -680,13 +680,17 @@ test.describe('Session interaction', () => {
 		await fileChooser2.setFiles(testImagePath);
 
 		// Intercept outgoing request
-		let requestPayload: any = undefined;
+		let requestPayload:
+			| { messages: { role: string; content: string; images?: string[] }[] }
+			| undefined = undefined;
 		await page.route('**/chat', async (route, request) => {
 			const postData = request.postData();
 			if (postData) requestPayload = JSON.parse(postData);
 			// Simulate a streamed response as Ollama would send
 			const responseBody = [
-				JSON.stringify({ message: { role: 'assistant', content: 'This is a description of MOTD.png' } }),
+				JSON.stringify({
+					message: { role: 'assistant', content: 'This is a description of MOTD.png' }
+				}),
 				''
 			].join('\n');
 			await route.fulfill({
@@ -699,16 +703,18 @@ test.describe('Session interaction', () => {
 		await promptTextarea.fill('Describe this image');
 		await page.getByText('Run').click();
 
-		// Wait for request to be sent
-		await page.waitForTimeout(500);
 		// Assert payload contains images array and prompt
 		if (!requestPayload) throw new Error('No request payload captured');
-		const lastUserMsg = requestPayload.messages.filter((m: any) => m.role === 'user').at(-1);
+		const lastUserMsg = (
+			requestPayload as { messages: { role: string; content: string; images?: string[] }[] }
+		).messages
+			.filter((m) => m.role === 'user')
+			.at(-1);
 		expect(lastUserMsg).toBeTruthy();
-		expect(Array.isArray(lastUserMsg.images)).toBe(true);
-		expect(lastUserMsg.images.length).toBe(1);
-		expect(typeof lastUserMsg.images[0]).toBe('string');
-		expect(lastUserMsg.content).toContain('Describe this image');
+		expect(Array.isArray(lastUserMsg?.images)).toBe(true);
+		expect(lastUserMsg?.images?.length).toBe(1);
+		expect(typeof lastUserMsg?.images?.[0]).toBe('string');
+		expect(lastUserMsg?.content).toContain('Describe this image');
 
 		// Assert attachments UI is cleared
 		expect(await page.locator('.attachment__image-preview').count()).toBe(0);
