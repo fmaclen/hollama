@@ -392,7 +392,7 @@
 	}
 
 	.prompt-editor__form {
-		@apply flex h-full flex-col gap-y-2 min-h-0;
+		@apply flex h-full min-h-0 flex-col gap-y-2;
 	}
 
 	.prompt-editor__textarea {
