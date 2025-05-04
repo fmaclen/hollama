@@ -65,7 +65,7 @@ test.describe('Knowledge Attachments', () => {
 		);
 
 		// Remove first attachment using Trash button
-		await knowledgeAttachments.first().getByTestId('knowledge-attachment-delete').click();
+		await knowledgeAttachments.first().getByTestId('attachment-delete').click();
 		await expect(knowledgeAttachments).toHaveCount(1);
 		await expect(knowledgeAttachments.first().locator('.field-combobox-input')).toHaveValue(
 			MOCK_KNOWLEDGE[1].name
