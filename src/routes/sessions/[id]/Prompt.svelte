@@ -38,7 +38,7 @@
 		editor: Editor;
 		session: Session;
 		modelName: string | undefined;
-		handleSubmit: () => void;
+		handleSubmit: (images?: string[]) => void;
 		stopCompletion: () => void;
 		scrollToBottom: (shouldForceScroll: boolean) => void;
 	}
@@ -153,7 +153,10 @@
 			attachments = attachments.filter((a) => a.type !== 'knowledge');
 		}
 
-		handleSubmit();
+		const imageAttachments = attachments.filter((a): a is ImageAttachment => a.type === 'image');
+		const images = imageAttachments.map((a) => a.dataUrl.replace(/^data:image\/[a-zA-Z]+;base64,/, ''));
+
+		handleSubmit(images.length ? images : undefined);
 	}
 </script>
 

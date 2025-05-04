@@ -12,6 +12,7 @@ export interface Message extends ChatMessage {
 	knowledge?: Knowledge;
 	context?: number[];
 	reasoning?: string;
+	images?: string[]; // Optional array of base64 image strings
 }
 
 export interface Session {

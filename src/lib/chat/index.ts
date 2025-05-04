@@ -9,6 +9,7 @@ import { type OllamaOptions } from './ollama';
 export interface Message {
 	role: 'user' | 'assistant' | 'system';
 	content: string;
+	images?: string[]; // Optional array of base64 image strings
 }
 
 export interface ChatRequest {

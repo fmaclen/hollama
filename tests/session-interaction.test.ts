@@ -694,13 +694,11 @@ test.describe('Session interaction', () => {
 		await page.waitForTimeout(500);
 		// Assert payload contains images array and prompt
 		if (!requestPayload) throw new Error('No request payload captured');
-		expect(Array.isArray(requestPayload.images)).toBe(true);
-		expect(requestPayload.images.length).toBe(1);
-		expect(typeof requestPayload.images[0]).toBe('string');
-		expect(
-			requestPayload.messages.some(
-				(m: any) => typeof m.content === 'string' && m.content.includes('Describe this image')
-			)
-		).toBe(true);
+		const lastUserMsg = requestPayload.messages.filter((m: any) => m.role === 'user').at(-1);
+		expect(lastUserMsg).toBeTruthy();
+		expect(Array.isArray(lastUserMsg.images)).toBe(true);
+		expect(lastUserMsg.images.length).toBe(1);
+		expect(typeof lastUserMsg.images[0]).toBe('string');
+		expect(lastUserMsg.content).toContain('Describe this image');
 	});
 });

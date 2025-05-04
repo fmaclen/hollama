@@ -105,8 +105,9 @@
 		scrollToBottom();
 	}
 
-	async function handleSubmitNewMessage() {
+	async function handleSubmitNewMessage(images?: string[]) {
 		const message: Message = { role: 'user', content: editor.prompt };
+		if (images && images.length) message.images = images;
 		session.messages = [...session.messages, message];
 		await scrollToBottom(true); // Force scroll after submitting prompt
 		await handleCompletion(session.messages);
@@ -126,7 +127,7 @@
 		await handleCompletion(session.messages);
 	}
 
-	function handleSubmit() {
+	function handleSubmit(images?: string[]) {
 		if (!editor.prompt) return;
 		if (!session.model) return;
 		editor.isCodeEditor = false;
@@ -134,7 +135,7 @@
 		editor.view = 'messages';
 
 		if (editor.messageIndexToEdit !== null) handleSubmitEditMessage();
-		else handleSubmitNewMessage();
+		else handleSubmitNewMessage(images);
 	}
 
 	async function handleRetry(index: number) {
@@ -158,10 +159,13 @@
 		if (!server) throw new Error('Server not found');
 		if (!session.model?.name) throw new Error('No model');
 
+		// Ensure images are only on the last user message
+		let chatMessages = session.systemPrompt.content ? [session.systemPrompt, ...messages] : messages;
+
 		let chatRequest: ChatRequest = {
 			model: session.model.name,
 			options: session.options,
-			messages: session.systemPrompt.content ? [session.systemPrompt, ...messages] : messages
+			messages: chatMessages
 		};
 
 		try {
