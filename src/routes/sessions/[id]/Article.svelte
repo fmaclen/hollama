@@ -195,18 +195,6 @@
 	}
 
 	.article__images {
-		@apply mt-2 flex flex-wrap gap-2;
-	}
-
-	.article__image-attachment {
-		@apply flex max-w-[8rem] flex-col items-center;
-	}
-
-	.article__image-thumbnail {
-		@apply h-20 w-20 rounded border border-shade-3 object-cover;
-	}
-
-	.article__image-filename {
-		@apply mt-1 max-w-full truncate text-xs text-muted;
+		@apply mt-2 flex flex-wrap gap-1;
 	}
 </style>
