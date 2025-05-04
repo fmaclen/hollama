@@ -113,10 +113,16 @@
 		await handleCompletion(session.messages);
 	}
 
-	async function handleSubmitEditMessage() {
+	async function handleSubmitEditMessage(images?: { data: string; filename: string }[]) {
 		if (editor.messageIndexToEdit === null) return;
 
-		session.messages[editor.messageIndexToEdit].content = editor.prompt;
+		const msg = session.messages[editor.messageIndexToEdit];
+		msg.content = editor.prompt;
+		if (images) {
+			msg.images = images;
+		} else {
+			delete msg.images;
+		}
 
 		// Remove all messages after the edited message
 		session.messages = session.messages.slice(0, editor.messageIndexToEdit + 1);
@@ -134,7 +140,7 @@
 		editor.isNewSession = false;
 		editor.view = 'messages';
 
-		if (editor.messageIndexToEdit !== null) handleSubmitEditMessage();
+		if (editor.messageIndexToEdit !== null) handleSubmitEditMessage(images);
 		else handleSubmitNewMessage(images);
 	}
 

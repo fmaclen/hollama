@@ -17,6 +17,12 @@
 		editor.messageIndexToEdit = session.messages.findIndex((m) => m === message);
 		editor.isCodeEditor = true;
 		editor.prompt = message.content;
+		editor.attachments = (message.images || []).map((img, idx) => ({
+			type: 'image',
+			id: `${idx}-${img.filename}`,
+			name: img.filename,
+			dataUrl: `data:image/png;base64,${img.data}`
+		}));
 		editor.promptTextarea?.focus();
 	}
 

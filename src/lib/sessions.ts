@@ -35,6 +35,7 @@ export interface Editor {
 	isCompletionInProgress: boolean;
 	isNewSession: boolean;
 	shouldFocusTextarea: boolean;
+	attachments?: { type: 'image'; id: string; name: string; dataUrl: string }[];
 	completion?: string;
 	reasoning?: string;
 	promptTextarea?: HTMLTextAreaElement;

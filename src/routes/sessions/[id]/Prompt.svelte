@@ -63,6 +63,12 @@
 		attachments.length && scrollToBottom(true);
 	});
 
+	$effect(() => {
+		if (editor.messageIndexToEdit !== null && editor.attachments) {
+			attachments = [...editor.attachments];
+		}
+	});
+
 	function toggleCodeEditor() {
 		editor.isCodeEditor = !editor.isCodeEditor;
 		editor.shouldFocusTextarea = !editor.isCodeEditor;
