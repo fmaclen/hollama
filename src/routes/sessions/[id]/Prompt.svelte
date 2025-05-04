@@ -106,32 +106,52 @@
 		const input = document.createElement('input');
 		input.type = 'file';
 		input.accept = '.png,.jpg,.jpeg,image/png,image/jpeg';
+		input.multiple = true;
 		input.onchange = (e) => {
-			const file = (e.target as HTMLInputElement).files?.[0];
-			if (!file) return;
+			const files = (e.target as HTMLInputElement).files;
+			if (!files || files.length === 0) return;
 
 			const allowedTypes = ['image/png', 'image/jpeg'];
-			if (!allowedTypes.includes(file.type)) {
-				toast.warning('Only PNG and JPEG images are supported.');
-				return;
-			}
+			const newAttachments: Attachment[] = [];
+			let unsupportedFiles = false;
 
-			const reader = new FileReader();
-			reader.onload = (event) => {
-				const dataUrl = event.target?.result as string;
-				if (dataUrl) {
-					attachments = [
-						...attachments,
-						{
-							type: 'image',
-							id: generateRandomId(),
-							name: file.name,
-							dataUrl
+			const filePromises = Array.from(files).map((file) => {
+				return new Promise<void>((resolve) => {
+					if (!allowedTypes.includes(file.type)) {
+						unsupportedFiles = true;
+						resolve();
+						return;
+					}
+
+					const reader = new FileReader();
+					reader.onload = (event) => {
+						const dataUrl = event.target?.result as string;
+						if (dataUrl) {
+							newAttachments.push({
+								type: 'image',
+								id: generateRandomId(),
+								name: file.name,
+								dataUrl
+							});
 						}
-					];
+						resolve();
+					};
+					reader.onerror = () => {
+						console.error('Error reading file:', file.name);
+						resolve();
+					};
+					reader.readAsDataURL(file);
+				});
+			});
+
+			Promise.all(filePromises).then(() => {
+				if (unsupportedFiles) {
+					toast.warning('Some files were ignored. Only PNG and JPEG images are supported.');
 				}
-			};
-			reader.readAsDataURL(file);
+				if (newAttachments.length > 0) {
+					attachments = [...attachments, ...newAttachments];
+				}
+			});
 		};
 		input.click();
 	}
