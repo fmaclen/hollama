@@ -105,10 +105,16 @@
 	function handleImageUploadClick() {
 		const input = document.createElement('input');
 		input.type = 'file';
-		input.accept = 'image/*';
+		input.accept = '.png,.jpg,.jpeg,image/png,image/jpeg';
 		input.onchange = (e) => {
 			const file = (e.target as HTMLInputElement).files?.[0];
 			if (!file) return;
+
+			const allowedTypes = ['image/png', 'image/jpeg'];
+			if (!allowedTypes.includes(file.type)) {
+				toast.warning('Only PNG and JPEG images are supported.');
+				return;
+			}
 
 			const reader = new FileReader();
 			reader.onload = (event) => {
