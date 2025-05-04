@@ -157,6 +157,7 @@
 		const images = imageAttachments.map((a) => a.dataUrl.replace(/^data:image\/[a-zA-Z]+;base64,/, ''));
 
 		handleSubmit(images.length ? images : undefined);
+		attachments = [];
 	}
 </script>
 

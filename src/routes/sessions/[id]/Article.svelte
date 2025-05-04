@@ -113,6 +113,20 @@
 		{#if message.content}
 			<Markdown markdown={message.content} />
 		{/if}
+		{#if message.images && message.images.length}
+			<div class="article__images">
+				{#each message.images as img, i}
+					<div class="article__image-attachment">
+						<img
+							src={`data:image/png;base64,${img}`}
+							alt={`Image attachment ${i + 1}`}
+							class="article__image-thumbnail"
+						/>
+						<span class="article__image-filename">Image {i + 1}</span>
+					</div>
+				{/each}
+			</div>
+		{/if}
 	</article>
 {/if}
 
@@ -183,5 +197,21 @@
 
 	.reasoning__button {
 		@apply flex w-full items-center justify-between gap-2 p-2;
+	}
+
+	.article__images {
+		@apply flex flex-wrap gap-2 mt-2;
+	}
+
+	.article__image-attachment {
+		@apply flex flex-col items-center max-w-[8rem];
+	}
+
+	.article__image-thumbnail {
+		@apply w-20 h-20 object-cover rounded border border-shade-3;
+	}
+
+	.article__image-filename {
+		@apply text-xs text-muted mt-1 truncate max-w-full;
 	}
 </style>

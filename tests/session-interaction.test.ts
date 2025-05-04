@@ -684,7 +684,16 @@ test.describe('Session interaction', () => {
 		await page.route('**/chat', async (route, request) => {
 			const postData = request.postData();
 			if (postData) requestPayload = JSON.parse(postData);
-			await route.fulfill({ status: 200, body: '{}' });
+			// Simulate a streamed response as Ollama would send
+			const responseBody = [
+				JSON.stringify({ message: { role: 'assistant', content: 'This is a description of MOTD.png' } }),
+				''
+			].join('\n');
+			await route.fulfill({
+				status: 200,
+				contentType: 'text/event-stream',
+				body: responseBody
+			});
 		});
 
 		await promptTextarea.fill('Describe this image');
@@ -700,5 +709,16 @@ test.describe('Session interaction', () => {
 		expect(lastUserMsg.images.length).toBe(1);
 		expect(typeof lastUserMsg.images[0]).toBe('string');
 		expect(lastUserMsg.content).toContain('Describe this image');
+
+		// Assert attachments UI is cleared
+		expect(await page.locator('.attachment__image-preview').count()).toBe(0);
+
+		// Assert session history contains the image thumbnail and filename
+		const articleImages = page.locator('.article__image-thumbnail');
+		await expect(articleImages).toHaveCount(1);
+		await expect(articleImages.first()).toBeVisible();
+		const articleFilenames = page.locator('.article__image-filename');
+		await expect(articleFilenames).toHaveCount(1);
+		await expect(articleFilenames.first()).toHaveText('Image 1');
 	});
 });
