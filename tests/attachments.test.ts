@@ -233,12 +233,12 @@ test.describe('Attachments', () => {
 		await fileChooser.setFiles(testImagePath);
 
 		// Check preview and filename
-		await expect(page.locator('.attachment__image-preview')).toBeVisible();
-		await expect(page.locator('.attachment__image-name')).toHaveText('motd.png');
+		await expect(page.locator('.prompt-editor').getByTestId('attachment-image-preview')).toBeVisible();
+		await expect(page.locator('.prompt-editor').getByTestId('attachment-image-name')).toHaveText('motd.png');
 
 		// Delete the image
 		await page.getByTestId('attachment-delete').click();
-		await expect(page.locator('.attachment__image-preview')).not.toBeVisible();
+		await expect(page.locator('.prompt-editor').getByTestId('attachment-image-preview')).not.toBeVisible();
 
 		// Re-attach for payload test
 		const [fileChooser2] = await Promise.all([
@@ -285,13 +285,13 @@ test.describe('Attachments', () => {
 		expect(lastUserMsg?.content).toContain('Describe this image');
 
 		// Assert attachments UI is cleared
-		expect(await page.locator('.prompt-editor .attachment__image-preview').count()).toBe(0);
+		expect(await page.locator('.prompt-editor').getByTestId('attachment-image-preview').count()).toBe(0);
 
 		// Assert session history contains the image thumbnail and filename
-		const articleImages = page.locator('.article__image-thumbnail');
+		const articleImages = page.getByTestId('attachment-image-preview');
 		await expect(articleImages).toHaveCount(1);
 		await expect(articleImages.first()).toBeVisible();
-		const articleFilenames = page.locator('.article__image-filename');
+		const articleFilenames = page.getByTestId('attachment-image-name');
 		await expect(articleFilenames).toHaveCount(1);
 		await expect(articleFilenames.first()).toHaveText('motd.png');
 
@@ -303,8 +303,8 @@ test.describe('Attachments', () => {
 		// Assert original image is in attachments
 		const promptAttachments = page.locator('.prompt-editor .attachment');
 		await expect(promptAttachments).toHaveCount(1);
-		await expect(promptAttachments.locator('.attachment__image-name')).toHaveText('motd.png');
-		await expect(promptAttachments.locator('.attachment__image-name')).not.toHaveText(
+		await expect(promptAttachments.getByTestId('attachment-image-name')).toHaveText('motd.png');
+		await expect(promptAttachments.getByTestId('attachment-image-name')).not.toHaveText(
 			'session.png'
 		);
 
@@ -318,10 +318,10 @@ test.describe('Attachments', () => {
 
 		// Assert both images are in attachments
 		await expect(promptAttachments).toHaveCount(2);
-		await expect(promptAttachments.locator('.attachment__image-name').nth(0)).toHaveText(
+		await expect(promptAttachments.getByTestId('attachment-image-name').nth(0)).toHaveText(
 			'motd.png'
 		);
-		await expect(promptAttachments.locator('.attachment__image-name').nth(1)).toHaveText(
+		await expect(promptAttachments.getByTestId('attachment-image-name').nth(1)).toHaveText(
 			'session.png'
 		);
 
@@ -367,14 +367,14 @@ test.describe('Attachments', () => {
 		expect(editedUserMsg1?.images?.length).toBe(2); // Both images sent
 
 		// Assert attachments UI is cleared
-		expect(await page.locator('.prompt-editor .attachment__image-preview').count()).toBe(0);
+		expect(await page.locator('.prompt-editor').getByTestId('attachment-image-preview').count()).toBe(0);
 
 		// Assert session history shows edited message with both images
-		await expect(userMessageArticle.locator('.article__image-thumbnail')).toHaveCount(2);
-		await expect(userMessageArticle.locator('.article__image-filename').nth(0)).toHaveText(
+		await expect(userMessageArticle.getByTestId('attachment-image-preview')).toHaveCount(2);
+		await expect(userMessageArticle.getByTestId('attachment-image-name').nth(0)).toHaveText(
 			'motd.png'
 		);
-		await expect(userMessageArticle.locator('.article__image-filename').nth(1)).toHaveText(
+		await expect(userMessageArticle.getByTestId('attachment-image-name').nth(1)).toHaveText(
 			'session.png'
 		);
 		await expect(page.getByText('Description of two images')).toBeVisible(); // Check assistant response
@@ -394,8 +394,8 @@ test.describe('Attachments', () => {
 
 		// Assert only the second image remains
 		await expect(promptAttachments).toHaveCount(1);
-		await expect(promptAttachments.locator('.attachment__image-name')).toHaveText('session.png');
-		await expect(promptAttachments.locator('.attachment__image-name')).not.toHaveText('motd.png');
+		await expect(promptAttachments.getByTestId('attachment-image-name')).toHaveText('session.png');
+		await expect(promptAttachments.getByTestId('attachment-image-name')).not.toHaveText('motd.png');
 
 		// Update prompt text
 		await textEditor.clear();
@@ -438,12 +438,12 @@ test.describe('Attachments', () => {
 		expect(editedUserMsg2?.images?.length).toBe(1); // Only one image sent
 
 		// Assert attachments UI is cleared
-		expect(await page.locator('.prompt-editor .attachment__image-preview').count()).toBe(0);
+		expect(await page.locator('.prompt-editor').getByTestId('attachment-image-preview').count()).toBe(0);
 
 		// Assert session history shows re-edited message with only the second image
-		await expect(userMessageArticle.locator('.article__image-thumbnail')).toHaveCount(1);
-		await expect(userMessageArticle.locator('.article__image-filename')).toHaveText('session.png');
-		await expect(userMessageArticle.locator('.article__image-filename')).not.toHaveText('motd.png');
+		await expect(userMessageArticle.getByTestId('attachment-image-preview')).toHaveCount(1);
+		await expect(userMessageArticle.getByTestId('attachment-image-name')).toHaveText('session.png');
+		await expect(userMessageArticle.getByTestId('attachment-image-name')).not.toHaveText('motd.png');
 		await expect(page.getByText('Description of one image')).toBeVisible(); // Check assistant response
 	});
 
@@ -531,5 +531,8 @@ test.describe('Attachments', () => {
 			throw new Error('Image part is not of type image_url');
 		}
 		expect(imagePart.image_url.url).toMatch(/^data:image\/(png|jpeg|jpg|webp);base64,/);
+
+		// Assert attachments UI is cleared
+		expect(await page.locator('.prompt-editor').getByTestId('attachment-image-preview').count()).toBe(0);
 	});
 });

@@ -457,16 +457,4 @@
 	.attachment__knowledge {
 		@apply w-full;
 	}
-
-	.attachment__image {
-		@apply mr-2 flex w-full items-center gap-x-2 overflow-hidden text-ellipsis whitespace-nowrap rounded-md border p-1;
-	}
-
-	.attachment__image-preview {
-		@apply h-8 w-8 rounded-sm object-cover;
-	}
-
-	.attachment__image-name {
-		@apply text-xs;
-	}
 </style>
