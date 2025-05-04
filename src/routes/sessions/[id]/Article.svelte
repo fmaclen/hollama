@@ -12,6 +12,8 @@
 	import { type Message } from '$lib/sessions';
 	import { Sitemap } from '$lib/sitemap';
 
+	import AttachmentImage from './AttachmentImage.svelte';
+
 	export let message: Message;
 	export let retryIndex: number | undefined = undefined;
 	export let handleRetry: ((index: number) => void) | undefined = undefined;
@@ -116,14 +118,7 @@
 		{#if message.images && message.images.length}
 			<div class="article__images">
 				{#each message.images as img, i}
-					<div class="article__image-attachment">
-						<img
-							src={`data:image/png;base64,${img.data}`}
-							alt={`Image attachment ${i + 1}: ${img.filename}`}
-							class="article__image-thumbnail"
-						/>
-						<span class="article__image-filename">{img.filename}</span>
-					</div>
+					<AttachmentImage dataUrl={`data:image/png;base64,${img.data}`} name={img.filename} />
 				{/each}
 			</div>
 		{/if}

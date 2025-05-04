@@ -17,6 +17,7 @@
 	import type { Editor, Message, Session } from '$lib/sessions';
 	import { generateRandomId } from '$lib/utils';
 
+	import AttachmentImage from './AttachmentImage.svelte';
 	import KnowledgeSelect from './KnowledgeSelect.svelte';
 
 	type KnowledgeAttachment = {
@@ -279,15 +280,8 @@
 									allowClear={false}
 								/>
 							</div>
-						{:else}
-							<div class="attachment__image">
-								<img
-									src={attachment.dataUrl}
-									alt={attachment.name}
-									class="attachment__image-preview"
-								/>
-								<span class="attachment__image-name">{attachment.name}</span>
-							</div>
+						{:else if attachment.type === 'image'}
+							<AttachmentImage dataUrl={attachment.dataUrl} name={attachment.name} />
 						{/if}
 						<Button
 							variant="outline"
