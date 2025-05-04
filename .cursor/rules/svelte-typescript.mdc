@@ -1,0 +1,189 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+- **Enable TypeScript with `lang="ts"`**
+  - Add `lang="ts"` to the `<script>` tag to enable TypeScript syntax and type checking.
+
+  ```svelte
+  <script lang="ts">
+    // ✅ DO: Enable TypeScript
+    let message: string = 'Hello, TypeScript!';
+  </script>
+
+  <p>{message}</p>
+  ```
+
+- **Typing State Variables (`$state`)**
+  - Provide explicit types for `$state` variables when needed, especially if the initial value doesn't fully infer the type (e.g., `null` or `undefined`).
+
+  ```svelte
+  <script lang="ts">
+    // ✅ DO: Type state variables
+    let count: number = $state(0);
+    let user: { name: string; id: number } | null = $state(null);
+    let items: string[] = $state([]);
+  </script>
+  ```
+
+- **Typing Props (`$props`)**
+  - Define an interface or type alias for your component's props.
+  - Use the type when destructuring `$props()`.
+  - Use `generics="T"` attribute on the `<script>` tag for generic components.
+
+  ```svelte
+  <!-- Filename: TypedProps.svelte -->
+  <script lang="ts" generics="T extends { id: number }">
+    // ✅ DO: Define an interface for props
+    interface Props {
+      title: string;
+      items: T[];
+      onClickItem?: (item: T) => void;
+      value?: string = $bindable('default'); // Type bindable props too
+    }
+
+    // ✅ DO: Apply the type to $props()
+    let { title, items, onClickItem, value }: Props = $props();
+  </script>
+
+  <h2>{title}</h2>
+  <input bind:value={value} />
+  <ul>
+    {#each items as item}
+      <li onclick={() => onClickItem?.(item)}>{JSON.stringify(item)}</li>
+    {/each}
+  </ul>
+  ```
+
+- **Typing Snippet Props**
+  - Snippets are functions, so type them accordingly in your props interface.
+  - Specify parameter types and the return type (usually `any` or `Snippet` from `svelte`).
+
+  ```svelte
+  <!-- Filename: ListWithTypedSnippets.svelte -->
+  <script lang="ts" generics="T">
+    import type { Snippet } from 'svelte';
+
+    interface Props {
+      items: T[];
+      // ✅ DO: Type snippet props as functions
+      itemRenderer: Snippet<{ item: T, index: number }>; // Parameter object type
+      header?: Snippet; // Optional snippet with no params
+    }
+
+    let { items, itemRenderer, header }: Props = $props();
+  </script>
+
+  {#if header}
+    <div class="list-header">{@render header()}</div>
+  {/if}
+  <ul>
+    {#each items as item, index}
+      <li>{@render itemRenderer({ item, index })}</li>
+    {/each}
+  </ul>
+  ```
+
+- **Typing DOM Events**
+  - Use standard DOM event types (e.g., `MouseEvent`, `KeyboardEvent`, `Event`, `CustomEvent`) for event handlers.
+  - Cast `event.target` if you need to access specific element properties.
+
+  ```svelte
+  <script lang="ts">
+    function handleInput(event: Event) {
+      // ✅ DO: Cast target to access specific properties
+      const target = event.target as HTMLInputElement;
+      console.log('Input value:', target.value);
+    }
+
+    function handleClick(event: MouseEvent) {
+      console.log('Clicked at:', event.clientX, event.clientY);
+    }
+  </script>
+
+  <input oninput={handleInput} />
+  <button onclick={handleClick}>Click Me</button>
+  ```
+
+- **Typing Element References (`bind:this`)**
+  - Provide the specific HTML element type for variables bound with `bind:this`.
+
+  ```svelte
+  <script lang="ts">
+    // ✅ DO: Type element references
+    let canvasElement: HTMLCanvasElement | undefined = $state();
+    let mainDiv: HTMLDivElement | undefined = $state();
+
+    $effect(() => {
+      if (canvasElement) {
+        const ctx = canvasElement.getContext('2d');
+        // ... use ctx
+      }
+    });
+  </script>
+
+  <div bind:this={mainDiv}>
+    <canvas bind:this={canvasElement}></canvas>
+  </div>
+  ```
+
+- **Typing Wrapper Components (`HTMLAttributes`, `HTMLButtonAttributes`, etc.)**
+  - For components wrapping native elements, import and use the corresponding attribute types from `svelte/elements`.
+  - Spread the rest of the props (`{...rest}`) onto the native element.
+
+  ```svelte
+  <!-- Filename: CustomButton.svelte -->
+  <script lang="ts">
+    import type { HTMLButtonAttributes } from 'svelte/elements';
+
+    // ✅ DO: Use HTML element attribute types for wrappers
+    type Props = HTMLButtonAttributes & { 
+      variant?: 'primary' | 'secondary';
+    };
+
+    let { children, variant = 'primary', ...rest }: Props = $props();
+  </script>
+
+  <button class={`variant-${variant}`} {...rest}>
+    {@render children?.()}
+  </button>
+  ```
+
+- **Extending Svelte HTML Typings**
+  - For custom elements or non-standard attributes/events, augment the `svelteHTML.IntrinsicElements` interface in a `.d.ts` file.
+
+  ```typescript
+  // Filename: global.d.ts
+  declare namespace svelteHTML {
+    interface IntrinsicElements {
+      'my-web-component': {
+        someProp: string;
+        count?: number;
+        'on:customEvent': (e: CustomEvent<{ detail: string }>) => void;
+      };
+    }
+
+    // Add custom attributes to standard elements
+    interface HTMLAttributes<T> {
+      'data-testid'?: string;
+    }
+  }
+  ```
+
+  ```svelte
+  <!-- Filename: App.svelte -->
+  <script lang="ts">
+    function handleCustom(e: CustomEvent<{ detail: string }>) {
+      console.log('Custom event detail:', e.detail);
+    }
+  </script>
+
+  <my-web-component 
+    someProp="value" 
+    count={5}
+    on:customEvent={handleCustom} 
+  />
+
+  <div data-testid="my-div">Standard div with custom attribute</div>
+  ```

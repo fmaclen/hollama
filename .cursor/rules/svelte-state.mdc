@@ -1,0 +1,196 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+- **Use `$state` for Reactive Variables**
+  - Declare reactive state using `let count = $state(0);`.
+  - `$state` makes primitives, objects, and arrays reactive.
+  - Modifications trigger UI updates automatically (e.g., `count++`, `todos.push(...)`).
+  - Use `$state.raw()` for non-reactive state that won't be deeply proxied. Updates require reassignment.
+  - Use `$state.snapshot()` to get a plain, non-reactive copy of state.
+
+  ```svelte
+  <script lang="ts">
+    // ✅ DO: Use $state for reactive variables
+    let count = $state(0);
+    let user = $state({ name: 'Alice', age: 30 });
+    let items = $state(['apple', 'banana']);
+
+    function increment() {
+      count++; // Triggers update
+    }
+    function rename() {
+      user.name = 'Bob'; // Triggers update
+    }
+    function addItem() {
+      items.push('cherry'); // Triggers update
+      items = [...items]; // Also works
+    }
+
+    // Raw state (less common)
+    let rawData = $state.raw({ config: 'value' });
+    function updateRaw() {
+      // rawData.config = 'new'; // ❌ DON'T: Won't trigger update
+      rawData = { ...rawData, config: 'new' }; // ✅ DO: Reassign
+    }
+
+    // Snapshot
+    function logSnapshot() {
+      const plainUser = $state.snapshot(user);
+      console.log(plainUser); // Not a proxy
+    }
+  </script>
+
+  <p>Count: {count}</p>
+  <button onclick={increment}>Increment</button>
+
+  <p>User: {user.name}, Age: {user.age}</p>
+  <button onclick={rename}>Rename</button>
+
+  <ul>
+    {#each items as item}
+      <li>{item}</li>
+    {/each}
+  </ul>
+  <button onclick={addItem}>Add Item</button>
+  ```
+
+- **Use `$derived` for Computed Values**
+  - Calculate values based on `$state` variables: `let doubled = $derived(count * 2);`.
+  - `$derived` automatically tracks dependencies accessed *synchronously*.
+  - Use `$derived.by(() => { ... })` for multi-step computations.
+  - Svelte optimizes updates, only running effects/updates if the *derived value actually changes*.
+  - **Do not** modify state within `$derived`.
+
+  ```svelte
+  <script lang="ts">
+    let count = $state(0);
+    let firstName = $state('John');
+    let lastName = $state('Doe');
+
+    // ✅ DO: Simple derived value
+    let doubled = $derived(count * 2);
+
+    // ✅ DO: Derived value from multiple states
+    let fullName = $derived(`${firstName} ${lastName}`);
+
+    // ✅ DO: Complex calculation with .by
+    let complexValue = $derived.by(() => {
+      console.log('Recalculating complex value...');
+      // Multi-step logic based on count or other state
+      return count % 2 === 0 ? 'Even Count' : 'Odd Count';
+    });
+
+    // ❌ DON'T: Modify state inside $derived
+    // let badDerived = $derived(count++);
+  </script>
+
+  <p>{count} doubled is {doubled}</p>
+  <p>Full Name: {fullName}</p>
+  <p>Complex Value: {complexValue}</p>
+  <button onclick={() => count++}>Increment</button>
+  <button onclick={() => firstName = 'Jane'}>Change First Name</button>
+  ```
+
+- **Use `$effect` for Side Effects**
+  - Run code in response to state changes: `$effect(() => { console.log(count); });`.
+  - Automatically tracks dependencies accessed *synchronously* within the effect.
+  - Runs *after* the DOM has been updated (unless using `$effect.pre`).
+  - Runs only in the browser, not during SSR.
+  - Can return a cleanup function: `$effect(() => { const timer = ...; return () => clearInterval(timer); });`.
+  - **Do not** modify state tracked by the effect within the effect itself to avoid infinite loops. Use `$derived` for computed values.
+
+  ```svelte
+  <script lang="ts">
+    import { tick } from 'svelte';
+
+    let count = $state(0);
+    let size = $state(50);
+    let canvasElement: HTMLCanvasElement | undefined = $state();
+
+    // ✅ DO: Run effect when count changes
+    $effect(() => {
+      console.log(`Count changed to: ${count}`);
+      // Example: Update document title
+      document.title = `Count: ${count}`;
+    });
+
+    // ✅ DO: Effect with cleanup
+    $effect(() => {
+      console.log('Setting up interval...');
+      const interval = setInterval(() => {
+        console.log('Interval tick');
+      }, 1000);
+
+      // Cleanup function runs when dependencies change or component unmounts
+      return () => {
+        console.log('Clearing interval...');
+        clearInterval(interval);
+      };
+    });
+
+    // ✅ DO: Effect interacting with the DOM
+    $effect(() => {
+      if (canvasElement && size) {
+        console.log(`Drawing on canvas with size: ${size}`);
+        const ctx = canvasElement.getContext('2d');
+        if (ctx) {
+          ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+          ctx.fillStyle = 'red';
+          ctx.fillRect(0, 0, size, size);
+        }
+      }
+    });
+
+    // ❌ DON'T: Modify tracked state directly in the effect
+    // $effect(() => {
+    //   count = count + 1; // Infinite loop if count is tracked!
+    // });
+
+    // ✅ DO: Use $effect.pre for actions *before* DOM updates
+    let shouldScroll = $state(false);
+    $effect.pre(() => {
+      if (shouldScroll) {
+        // Perform checks or measurements before the DOM updates
+        console.log('Running pre-effect');
+        tick().then(() => {
+           // Actions after DOM update, if needed
+           console.log('DOM updated after pre-effect');
+        });
+      }
+    });
+
+  </script>
+
+  <p>Count: {count}</p>
+  <button onclick={() => count++}>Increment</button>
+
+  <input type="range" bind:value={size} min="10" max="100" />
+  <canvas bind:this={canvasElement} width="100" height="100" style="border: 1px solid black;"></canvas>
+  ```
+
+- **Passing Reactive State to Functions**
+  - When passing state to external functions, pass getter functions to maintain reactivity.
+
+  ```svelte
+   <script>
+    function add(getA, getB) {
+      // Use getters to access current values
+      return $derived(getA() + getB());
+    }
+
+    let a = $state(1);
+    let b = $state(2);
+
+    // ✅ DO: Pass getters
+    let total = add(() => a, () => b);
+
+    // ❌ DON'T: Pass raw values (won't be reactive)
+    // let staticTotal = add(a, b);
+   </script>
+
+   <p>{a} + {b} = {total}</p>
+   <button onclick={() => a++}>Inc A</button>
+   <button onclick={() => b++}>Inc B</button>
+  ```

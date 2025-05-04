@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Brain, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { Brain, Image, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
 	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
 	import Trash_2 from 'lucide-svelte/icons/trash-2';
@@ -17,18 +17,29 @@
 	import type { Editor, Message, Session } from '$lib/sessions';
 	import { generateRandomId } from '$lib/utils';
 
+	import AttachmentImage from './AttachmentImage.svelte';
 	import KnowledgeSelect from './KnowledgeSelect.svelte';
 
 	type KnowledgeAttachment = {
+		type: 'knowledge';
 		fieldId: string;
 		knowledge?: Knowledge;
 	};
+
+	type ImageAttachment = {
+		type: 'image';
+		id: string;
+		name: string;
+		dataUrl: string;
+	};
+
+	type Attachment = KnowledgeAttachment | ImageAttachment;
 
 	interface Props {
 		editor: Editor;
 		session: Session;
 		modelName: string | undefined;
-		handleSubmit: () => void;
+		handleSubmit: (images?: { data: string; filename: string }[]) => void;
 		stopCompletion: () => void;
 		scrollToBottom: (shouldForceScroll: boolean) => void;
 	}
@@ -42,7 +53,7 @@
 		scrollToBottom
 	}: Props = $props();
 
-	let attachments: KnowledgeAttachment[] = $state([]);
+	let attachments: Attachment[] = $state([]);
 
 	const isOllamaFamily = $derived(
 		$serversStore.find((s) => s.id === session.model?.serverId)?.connectionType ===
@@ -51,6 +62,12 @@
 
 	$effect(() => {
 		attachments.length && scrollToBottom(true);
+	});
+
+	$effect(() => {
+		if (editor.messageIndexToEdit !== null && editor.attachments) {
+			attachments = [...editor.attachments];
+		}
 	});
 
 	function toggleCodeEditor() {
@@ -80,20 +97,81 @@
 
 	function handleSelectKnowledge(fieldId: string, knowledgeId: string) {
 		attachments = attachments.map((a) =>
-			a.fieldId === fieldId ? { ...a, knowledge: loadKnowledge(knowledgeId) } : a
+			a.type === 'knowledge' && a.fieldId === fieldId
+				? { ...a, knowledge: loadKnowledge(knowledgeId) }
+				: a
 		);
 	}
 
-	function handleDeleteAttachment(fieldId: string) {
-		attachments = [...attachments.filter((a) => a.fieldId !== fieldId)];
+	function handleImageUploadClick() {
+		const input = document.createElement('input');
+		input.type = 'file';
+		input.accept = '.png,.jpg,.jpeg,image/png,image/jpeg';
+		input.multiple = true;
+		input.onchange = (e) => {
+			const files = (e.target as HTMLInputElement).files;
+			if (!files || files.length === 0) return;
+
+			const allowedTypes = ['image/png', 'image/jpeg'];
+			const newAttachments: Attachment[] = [];
+			let unsupportedFiles = false;
+
+			const filePromises = Array.from(files).map((file) => {
+				return new Promise<void>((resolve) => {
+					if (!allowedTypes.includes(file.type)) {
+						unsupportedFiles = true;
+						resolve();
+						return;
+					}
+
+					const reader = new FileReader();
+					reader.onload = (event) => {
+						const dataUrl = event.target?.result as string;
+						if (dataUrl) {
+							newAttachments.push({
+								type: 'image',
+								id: generateRandomId(),
+								name: file.name,
+								dataUrl
+							});
+						}
+						resolve();
+					};
+					reader.onerror = () => {
+						console.error('Error reading file:', file.name);
+						resolve();
+					};
+					reader.readAsDataURL(file);
+				});
+			});
+
+			Promise.all(filePromises).then(() => {
+				if (unsupportedFiles) {
+					toast.warning('Some files were ignored. Only PNG and JPEG images are supported.');
+				}
+				if (newAttachments.length > 0) {
+					attachments = [...attachments, ...newAttachments];
+				}
+			});
+		};
+		input.click();
+	}
+
+	function handleDeleteAttachment(id: string) {
+		attachments = [
+			...attachments.filter((a) => (a.type === 'knowledge' ? a.fieldId : a.id) !== id)
+		];
 	}
 
 	function submit() {
-		if (attachments.length) {
-			const attachmentMessages: Message[] = [];
+		const knowledgeAttachments = attachments.filter(
+			(a): a is KnowledgeAttachment => a.type === 'knowledge'
+		);
+		if (knowledgeAttachments.length) {
+			const knowledgeAttachmentMessages: Message[] = [];
 			attachments.forEach((a) => {
-				if (a.knowledge)
-					attachmentMessages.push({
+				if (a.type === 'knowledge' && a.knowledge)
+					knowledgeAttachmentMessages.push({
 						role: 'user',
 						knowledge: a.knowledge,
 						content: `
@@ -104,11 +182,18 @@
 `
 					});
 			});
-			session.messages = [...session.messages, ...attachmentMessages];
-			attachments = [];
+			session.messages = [...session.messages, ...knowledgeAttachmentMessages];
+			attachments = attachments.filter((a) => a.type !== 'knowledge');
 		}
 
-		handleSubmit();
+		const imageAttachments = attachments.filter((a): a is ImageAttachment => a.type === 'image');
+		const imagesPayload = imageAttachments.map((a) => ({
+			filename: a.name,
+			data: a.dataUrl.replace(/^data:image\/[a-zA-Z]+;base64,/, '')
+		}));
+
+		handleSubmit(imagesPayload.length ? imagesPayload : undefined);
+		attachments = [];
 	}
 </script>
 
@@ -174,31 +259,37 @@
 
 		{#if attachments.length}
 			<div class="attachments">
-				{#each attachments as attachment (attachment.fieldId)}
+				{#each attachments as attachment (attachment.type === 'knowledge' ? attachment.fieldId : attachment.id)}
 					<div class="attachment">
-						<div class="attachment__knowledge">
-							<KnowledgeSelect
-								value={attachment.knowledge?.id}
-								options={$knowledgeStore?.filter(
-									(k) =>
-										// Only filter out knowledge that's selected in OTHER attachments
-										!attachments.find(
-											(a) =>
-												a.fieldId !== attachment.fieldId && // Skip current attachment
-												a.knowledge?.id === k.id
-										)
-								)}
-								showLabel={false}
-								fieldId={`attachment-${attachment.fieldId}`}
-								onChange={(knowledgeId) =>
-									knowledgeId && handleSelectKnowledge(attachment.fieldId, knowledgeId)}
-								allowClear={false}
-							/>
-						</div>
+						{#if attachment.type === 'knowledge'}
+							<div class="attachment__knowledge">
+								<KnowledgeSelect
+									value={attachment.knowledge?.id}
+									options={$knowledgeStore?.filter(
+										(k) =>
+											// Only filter out knowledge that's selected in OTHER attachments
+											!attachments.find((a) => {
+												if (a.type !== 'knowledge' || attachment.type !== 'knowledge') return false;
+												return a.fieldId !== attachment.fieldId && a.knowledge?.id === k.id;
+											})
+									)}
+									showLabel={false}
+									fieldId={`attachment-${attachment.fieldId}`}
+									onChange={(knowledgeId) =>
+										knowledgeId && handleSelectKnowledge(attachment.fieldId, knowledgeId)}
+									allowClear={false}
+								/>
+							</div>
+						{:else if attachment.type === 'image'}
+							<AttachmentImage dataUrl={attachment.dataUrl} name={attachment.name} />
+						{/if}
 						<Button
 							variant="outline"
-							on:click={() => handleDeleteAttachment(attachment.fieldId)}
-							data-testid="knowledge-attachment-delete"
+							on:click={() =>
+								handleDeleteAttachment(
+									attachment.type === 'knowledge' ? attachment.fieldId : attachment.id
+								)}
+							data-testid="attachment-delete"
 						>
 							<Trash_2 class="base-icon" />
 						</Button>
@@ -212,11 +303,19 @@
 				<Button
 					variant="outline"
 					on:click={() => {
-						attachments = [...attachments, { fieldId: generateRandomId() }];
+						attachments = [...attachments, { type: 'knowledge', fieldId: generateRandomId() }];
 					}}
 					data-testid="knowledge-attachment"
 				>
 					<Brain class="base-icon" />
+				</Button>
+				<Button
+					variant="outline"
+					on:click={handleImageUploadClick}
+					data-testid="image-attachment"
+					title={'Attach image'}
+				>
+					<Image class="base-icon" />
 				</Button>
 			</div>
 
@@ -287,7 +386,7 @@
 	}
 
 	.prompt-editor__form {
-		@apply overflow-scrollbar flex h-full flex-col gap-y-2;
+		@apply flex h-full min-h-0 flex-col gap-y-2;
 	}
 
 	.prompt-editor__textarea {
@@ -344,7 +443,7 @@
 	}
 
 	.attachments-toolbar {
-		@apply flex h-full;
+		@apply flex h-full gap-x-1;
 	}
 
 	.attachments {

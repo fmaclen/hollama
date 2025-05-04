@@ -12,6 +12,8 @@
 	import { type Message } from '$lib/sessions';
 	import { Sitemap } from '$lib/sitemap';
 
+	import AttachmentImage from './AttachmentImage.svelte';
+
 	export let message: Message;
 	export let retryIndex: number | undefined = undefined;
 	export let handleRetry: ((index: number) => void) | undefined = undefined;
@@ -113,6 +115,13 @@
 		{#if message.content}
 			<Markdown markdown={message.content} />
 		{/if}
+		{#if message.images && message.images.length}
+			<div class="article__images">
+				{#each message.images as img}
+					<AttachmentImage dataUrl={`data:image/png;base64,${img.data}`} name={img.filename} />
+				{/each}
+			</div>
+		{/if}
 	</article>
 {/if}
 
@@ -183,5 +192,9 @@
 
 	.reasoning__button {
 		@apply flex w-full items-center justify-between gap-2 p-2;
+	}
+
+	.article__images {
+		@apply mt-2 flex flex-wrap gap-1;
 	}
 </style>
