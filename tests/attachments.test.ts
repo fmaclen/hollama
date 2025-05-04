@@ -1,3 +1,5 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { expect, test, type Locator } from '@playwright/test';
 
 import {
@@ -28,7 +30,7 @@ const MOCK_ATTACHMENTS_RESPONSE = {
 	eval_duration: 296374000
 };
 
-test.describe('Knowledge Attachments', () => {
+test.describe('Attachments', () => {
 	let knowledgeAttachmentButton: Locator;
 	let knowledgeAttachments: Locator;
 
@@ -201,5 +203,92 @@ test.describe('Knowledge Attachments', () => {
 		await expect(messageHistory.nth(2).locator('.attachment__name')).toContainText(
 			MOCK_KNOWLEDGE[0].name
 		);
+	});
+
+	test('can attach, preview, delete, and send an image (Ollama)', async ({ page }) => {
+		// ESM-compatible path resolution for test image
+		const __filename = fileURLToPath(import.meta.url);
+		const __dirname = path.dirname(__filename);
+		const testImagePath = path.resolve(__dirname, 'docs.test.ts-snapshots', 'motd.png');
+
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		const promptTextarea = page.locator('.prompt-editor__textarea');
+
+		// Check Attach image button exists
+		const attachImageButton = page.getByTestId('image-attachment');
+		await expect(attachImageButton).toBeVisible();
+
+		// Simulate image upload
+		const [fileChooser] = await Promise.all([
+			page.waitForEvent('filechooser'),
+			attachImageButton.click()
+		]);
+		await fileChooser.setFiles(testImagePath);
+
+		// Check preview and filename
+		await expect(page.locator('.attachment__image-preview')).toBeVisible();
+		await expect(page.locator('.attachment__image-name')).toHaveText('motd.png');
+
+		// Delete the image
+		await page.getByTestId('attachment-delete').click();
+		await expect(page.locator('.attachment__image-preview')).not.toBeVisible();
+
+		// Re-attach for payload test
+		const [fileChooser2] = await Promise.all([
+			page.waitForEvent('filechooser'),
+			attachImageButton.click()
+		]);
+		await fileChooser2.setFiles(testImagePath);
+
+		// Intercept outgoing request
+		let requestPayload:
+			| { messages: { role: string; content: string; images?: string[] }[] }
+			| undefined = undefined;
+		await page.route('**/chat', async (route, request) => {
+			const postData = request.postData();
+			if (postData) requestPayload = JSON.parse(postData);
+			// Simulate a streamed response as Ollama would send
+			const responseBody = [
+				JSON.stringify({
+					message: { role: 'assistant', content: 'This is a description of MOTD.png' }
+				}),
+				''
+			].join('\n');
+			await route.fulfill({
+				status: 200,
+				contentType: 'text/event-stream',
+				body: responseBody
+			});
+		});
+
+		await promptTextarea.fill('Describe this image');
+		await page.getByText('Run').click();
+
+		// Assert payload contains images array and prompt
+		if (!requestPayload) throw new Error('No request payload captured');
+		const lastUserMsg = (
+			requestPayload as { messages: { role: string; content: string; images?: string[] }[] }
+		).messages
+			.filter((m) => m.role === 'user')
+			.at(-1);
+		expect(lastUserMsg).toBeTruthy();
+		expect(Array.isArray(lastUserMsg?.images)).toBe(true);
+		expect(lastUserMsg?.images?.length).toBe(1);
+		expect(typeof lastUserMsg?.images?.[0]).toBe('string');
+		expect(lastUserMsg?.content).toContain('Describe this image');
+
+		// Assert attachments UI is cleared
+		expect(await page.locator('.attachment__image-preview').count()).toBe(0);
+
+		// Assert session history contains the image thumbnail and filename
+		const articleImages = page.locator('.article__image-thumbnail');
+		await expect(articleImages).toHaveCount(1);
+		await expect(articleImages.first()).toBeVisible();
+		const articleFilenames = page.locator('.article__image-filename');
+		await expect(articleFilenames).toHaveCount(1);
+		await expect(articleFilenames.first()).toHaveText('Image 1');
 	});
 });
