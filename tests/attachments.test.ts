@@ -300,6 +300,7 @@ test.describe('Attachments', () => {
 		const promptAttachments = page.locator('.prompt-editor .attachment');
 		await expect(promptAttachments).toHaveCount(1);
 		await expect(promptAttachments.locator('.attachment__image-name')).toHaveText('motd.png');
+		await expect(promptAttachments.locator('.attachment__image-name')).not.toHaveText('session.png');
 
 		// Upload second image
 		const secondTestImagePath = path.resolve(__dirname, 'docs.test.ts-snapshots', 'session.png');
@@ -388,6 +389,7 @@ test.describe('Attachments', () => {
 		// Assert only the second image remains
 		await expect(promptAttachments).toHaveCount(1);
 		await expect(promptAttachments.locator('.attachment__image-name')).toHaveText('session.png');
+		await expect(promptAttachments.locator('.attachment__image-name')).not.toHaveText('motd.png');
 
 		// Update prompt text
 		await textEditor.clear();
@@ -435,6 +437,7 @@ test.describe('Attachments', () => {
 		// Assert session history shows re-edited message with only the second image
 		await expect(userMessageArticle.locator('.article__image-thumbnail')).toHaveCount(1);
 		await expect(userMessageArticle.locator('.article__image-filename')).toHaveText('session.png');
+		await expect(userMessageArticle.locator('.article__image-filename')).not.toHaveText('motd.png');
 		await expect(page.getByText('Description of one image')).toBeVisible(); // Check assistant response
 	});
 });
