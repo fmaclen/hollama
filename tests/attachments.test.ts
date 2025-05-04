@@ -281,7 +281,7 @@ test.describe('Attachments', () => {
 		expect(lastUserMsg?.content).toContain('Describe this image');
 
 		// Assert attachments UI is cleared
-		expect(await page.locator('.attachment__image-preview').count()).toBe(0);
+		expect(await page.locator('.prompt-editor .attachment__image-preview').count()).toBe(0);
 
 		// Assert session history contains the image thumbnail and filename
 		const articleImages = page.locator('.article__image-thumbnail');
@@ -290,5 +290,151 @@ test.describe('Attachments', () => {
 		const articleFilenames = page.locator('.article__image-filename');
 		await expect(articleFilenames).toHaveCount(1);
 		await expect(articleFilenames.first()).toHaveText('motd.png');
+
+		// --- Edit the message and add another image ---
+		let userMessageArticle = page.locator('article', { hasText: 'Describe this image' });
+		await userMessageArticle.hover();
+		await userMessageArticle.getByTitle('Edit').click();
+
+		// Assert original image is in attachments
+		const promptAttachments = page.locator('.prompt-editor .attachment');
+		await expect(promptAttachments).toHaveCount(1);
+		await expect(promptAttachments.locator('.attachment__image-name')).toHaveText('motd.png');
+
+		// Upload second image
+		const secondTestImagePath = path.resolve(__dirname, 'docs.test.ts-snapshots', 'session.png');
+		const [fileChooser3] = await Promise.all([
+			page.waitForEvent('filechooser'),
+			attachImageButton.click()
+		]);
+		await fileChooser3.setFiles(secondTestImagePath);
+
+		// Assert both images are in attachments
+		await expect(promptAttachments).toHaveCount(2);
+		await expect(promptAttachments.locator('.attachment__image-name').nth(0)).toHaveText(
+			'motd.png'
+		);
+		await expect(promptAttachments.locator('.attachment__image-name').nth(1)).toHaveText(
+			'session.png'
+		);
+
+		// Update prompt text
+		const textEditor = page.locator('.text-editor .cm-content');
+		await textEditor.clear();
+		await textEditor.fill('Describe these two images');
+
+		// Intercept the EDIT request
+		let editRequestPayload1:
+			| { messages: { role: string; content: string; images?: string[] }[] }
+			| undefined = undefined;
+		await page.route('**/chat', async (route, request) => {
+			const postData = request.postData();
+			if (postData) editRequestPayload1 = JSON.parse(postData);
+			const responseBody = [
+				JSON.stringify({ message: { role: 'assistant', content: 'Description of two images' } }),
+				''
+			].join('\n');
+			await route.fulfill({
+				status: 200,
+				contentType: 'text/event-stream',
+				body: responseBody
+			});
+		});
+
+		// Submit edit
+		await page.getByText('Run').click();
+
+		// Re-find the article after edit
+		userMessageArticle = page.locator('article', { hasText: 'Describe these two images' });
+
+		// Assert EDIT payload contains updated text and both images
+		if (!editRequestPayload1) throw new Error('No edit request payload captured');
+		const editedUserMsg1 = (
+			editRequestPayload1 as { messages: { role: string; content: string; images?: string[] }[] }
+		).messages
+			.filter((m) => m.role === 'user')
+			.at(-1);
+		expect(editedUserMsg1).toBeTruthy();
+		expect(editedUserMsg1?.content).toBe('Describe these two images');
+		expect(Array.isArray(editedUserMsg1?.images)).toBe(true);
+		expect(editedUserMsg1?.images?.length).toBe(2); // Both images sent
+
+		// Assert attachments UI is cleared
+		expect(await page.locator('.prompt-editor .attachment__image-preview').count()).toBe(0);
+
+		// Assert session history shows edited message with both images
+		await expect(userMessageArticle.locator('.article__image-thumbnail')).toHaveCount(2);
+		await expect(userMessageArticle.locator('.article__image-filename').nth(0)).toHaveText(
+			'motd.png'
+		);
+		await expect(userMessageArticle.locator('.article__image-filename').nth(1)).toHaveText(
+			'session.png'
+		);
+		await expect(page.getByText('Description of two images')).toBeVisible(); // Check assistant response
+
+		// --- Edit the message again and remove the first image ---
+		await userMessageArticle.hover();
+		await userMessageArticle.getByTitle('Edit').click();
+
+		// Assert both images are back in attachments
+		await expect(promptAttachments).toHaveCount(2);
+
+		// Delete the first image (motd.png)
+		await promptAttachments
+			.filter({ hasText: 'motd.png' })
+			.getByTestId('attachment-delete')
+			.click();
+
+		// Assert only the second image remains
+		await expect(promptAttachments).toHaveCount(1);
+		await expect(promptAttachments.locator('.attachment__image-name')).toHaveText('session.png');
+
+		// Update prompt text
+		await textEditor.clear();
+		await textEditor.fill('Describe just this one image now');
+
+		// Intercept the SECOND EDIT request
+		let editRequestPayload2:
+			| { messages: { role: string; content: string; images?: string[] }[] }
+			| undefined = undefined;
+		await page.route('**/chat', async (route, request) => {
+			const postData = request.postData();
+			if (postData) editRequestPayload2 = JSON.parse(postData);
+			const responseBody = [
+				JSON.stringify({ message: { role: 'assistant', content: 'Description of one image' } }),
+				''
+			].join('\n');
+			await route.fulfill({
+				status: 200,
+				contentType: 'text/event-stream',
+				body: responseBody
+			});
+		});
+
+		// Submit second edit
+		await page.getByText('Run').click();
+
+		// Re-find the article after second edit
+		userMessageArticle = page.locator('article', { hasText: 'Describe just this one image now' });
+
+		// Assert SECOND EDIT payload contains updated text and only one image
+		if (!editRequestPayload2) throw new Error('No second edit request payload captured');
+		const editedUserMsg2 = (
+			editRequestPayload2 as { messages: { role: string; content: string; images?: string[] }[] }
+		).messages
+			.filter((m) => m.role === 'user')
+			.at(-1);
+		expect(editedUserMsg2).toBeTruthy();
+		expect(editedUserMsg2?.content).toBe('Describe just this one image now');
+		expect(Array.isArray(editedUserMsg2?.images)).toBe(true);
+		expect(editedUserMsg2?.images?.length).toBe(1); // Only one image sent
+
+		// Assert attachments UI is cleared
+		expect(await page.locator('.prompt-editor .attachment__image-preview').count()).toBe(0);
+
+		// Assert session history shows re-edited message with only the second image
+		await expect(userMessageArticle.locator('.article__image-thumbnail')).toHaveCount(1);
+		await expect(userMessageArticle.locator('.article__image-filename')).toHaveText('session.png');
+		await expect(page.getByText('Description of one image')).toBeVisible(); // Check assistant response
 	});
 });
