@@ -188,4 +188,40 @@ test.describe('Session reasoning tag handling', () => {
 		await expect(page.locator('.article--reasoning')).toBeVisible();
 		await expect(page.locator('.article--reasoning')).toHaveText('This is in a thought tag');
 	});
+	
+	test('does not show reasoning components for non-reasoning LLM response', async ({ page }) => {
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.fill('Give me a normal answer.');
+		await expect(page.getByText('Run')).toBeEnabled();
+
+		await mockCompletionResponse(page, {
+			model: MOCK_API_TAGS_RESPONSE.models[0].name,
+			created_at: new Date(),
+			message: {
+				role: 'assistant',
+				content: 'This is just a normal answer.'
+			},
+			done: true,
+			done_reason: 'stop',
+			total_duration: 1000,
+			load_duration: 1000,
+			prompt_eval_count: 1,
+			prompt_eval_duration: 1,
+			eval_count: 1,
+			eval_duration: 1
+		});
+		await page.getByText('Run').click();
+
+		// Wait for the main content to appear
+		await expect(page.getByText('This is just a normal answer.')).toBeVisible();
+
+		// Assert that there are no visible reasoning components
+		await expect(page.locator('.reasoning')).toHaveCount(0);
+		await expect(page.locator('.article--reasoning')).toHaveCount(0);
+		await expect(page.getByRole('button', { name: 'Reasoning' })).toHaveCount(0);
+	});
 });
