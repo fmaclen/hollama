@@ -1,50 +1,29 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ['Version & release']
+    types:
+      - completed
 
 jobs:
-  versioning:
-    name: Versioning
-    runs-on: ubuntu-latest
-    outputs:
-      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
-      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v4
-        with:
-          branches: main
-          tag_format: ${version}
-        id: semantic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-
   cloudflare:
     name: Live demo
-    needs: versioning
-    if: ${{ needs.versioning.outputs.new_release_published == 'true' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: main # Ensure we checkout the commit made by semantic-release
 
-      - name: Update app version in package.json
-        run: node .github/workflows/publish/update-package-json.cjs ${{ needs.versioning.outputs.new_release_version }}
+      # The update-package-json.cjs script is removed, semantic-release handles this.
+      # We assume package.json is updated by the versioning.yml workflow.
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - run: npm ci
       - run: npm run build
 
@@ -56,31 +35,31 @@ jobs:
           command: pages publish .svelte-kit/cloudflare --project-name hollama
 
   electron:
-    needs: versioning
-    if: ${{ needs.versioning.outputs.new_release_published == 'true' }}
-
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Desktop app (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-
+    permissions: # Added based on your reference for electron-builder
+      contents: write
     strategy:
       matrix:
-        os: [macos-13, macos-latest, ubuntu-latest, windows-latest] # macos-13 is the lastest one on x86
+        os: [macos-13, macos-latest, ubuntu-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main # Ensure we checkout the commit made by semantic-release
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
-      - name: Update app version in package.json
-        run: node .github/workflows/publish/update-package-json.cjs ${{ needs.versioning.outputs.new_release_version }}
+      # The update-package-json.cjs script is removed, semantic-release handles this.
 
       - name: Install Electron & SvelteKit's dependencies
         run: npm ci
 
       - name: Build & release Electron app
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }} # Kept as per original, reference uses GITHUB_TOKEN
           CSC_LINK: ${{ secrets.APPLE_CERTIFICATE }}
           CSC_KEY_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -89,17 +68,23 @@ jobs:
         run: npm run electron:build
 
   docker:
-    needs: versioning
-    if: ${{ needs.versioning.outputs.new_release_published == 'true' }}
-
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Docker image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: main # Ensure we checkout the commit made by semantic-release
 
-      - name: Update app version in package.json
-        run: node .github/workflows/publish/update-package-json.cjs ${{ needs.versioning.outputs.new_release_version }}
+      - name: Set up Node.js # Added for reading package.json version
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Extract version from package.json
+        id: package_version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Build & publish
         uses: mr-smithers-excellent/docker-build-push@v6
@@ -108,6 +93,6 @@ jobs:
           registry: ghcr.io
           multiPlatform: true
           platform: linux/amd64,linux/arm64
-          tags: latest, ${{ needs.versioning.outputs.new_release_version }}
+          tags: latest, ${{ steps.package_version.outputs.version }}
           username: ${{ secrets.GH_REGISTRY_USERNAME }}
           password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}

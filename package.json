@@ -1,9 +1,9 @@
 {
 	"name": "hollama",
-	"version": "0.0.0-dev",
+	"version": "0.32.1",
 	"private": true,
 	"homepage": "https://hollama.fernando.is",
-	"description": "A minimal UI for talking to Ollama servers",
+	"description": "A minimal LLM chat app that runs entirely in your browser",
 	"scripts": {
 		"dev": "concurrently \"typesafe-i18n\" \"vite dev --host\"",
 		"build": "svelte-kit sync && vite build",
