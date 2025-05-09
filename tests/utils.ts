@@ -8,6 +8,7 @@ import type { Knowledge } from '$lib/knowledge';
 export const MOCK_API_TAGS_RESPONSE: ListResponse = {
 	models: [
 		{
+			model: 'TheBloke/CodeLlama-70B-Python-AWQ',
 			name: 'TheBloke/CodeLlama-70B-Python-AWQ',
 			modified_at: new Date('2023-12-01T10:06:18.679361519-05:00'),
 			size: 4108928240,
@@ -24,6 +25,7 @@ export const MOCK_API_TAGS_RESPONSE: ListResponse = {
 			size_vram: 4108928240
 		},
 		{
+			model: 'gemma:7b',
 			name: 'gemma:7b',
 			modified_at: new Date('2024-04-08T21:41:35.217983842-04:00'),
 			size: 5011853225,
@@ -40,6 +42,7 @@ export const MOCK_API_TAGS_RESPONSE: ListResponse = {
 			size_vram: 5011853225
 		},
 		{
+			model: 'openhermes2.5-mistral:latest',
 			name: 'openhermes2.5-mistral:latest',
 			modified_at: new Date('2023-12-01T10:06:18.679361519-05:00'),
 			size: 4108928240,
@@ -467,4 +470,109 @@ export function textEditorLocator(page: Page, label: string | RegExp | undefined
 export async function submitWithKeyboardShortcut(page: Page) {
 	const modKey = process.platform === 'darwin' ? 'Meta' : 'Control';
 	await page.keyboard.press(`${modKey}+Enter`);
+}
+
+/**
+ * Creates a manual streaming mock server for LLM completion responses, allowing fine-grained control over when and how chunks are sent to the client during Playwright tests.
+ *
+ * This utility was implemented to enable tests to simulate streaming LLM responses in multiple phases, such as sending only the reasoning portion first, running assertions, and then sending the rest of the completion. This is not possible with the standard mockStreamedCompletionResponse, which streams all chunks in sequence automatically.
+ *
+ * By using this function, tests can:
+ *   - Stream reasoning content, assert UI state (e.g., reasoning block is open)
+ *   - Then stream main completion content, assert UI state again (e.g., reasoning block auto-hides)
+ *
+ * This is especially useful for testing UI logic that depends on the timing and order of streamed content, such as dynamic reasoning blocks that open and close as the LLM responds.
+ *
+ * Usage:
+ *   const stream = await createManualStreamedCompletionMock(page);
+ *   await stream.sendChunk('<think>Reasoning</think>', false);
+ *   // ...assertions...
+ *   await stream.sendChunk('Main content', true);
+ *   // ...assertions...
+ *   stream.close();
+ */
+export async function createManualStreamedCompletionMock(page: Page) {
+	const http = await import('http');
+
+	let resRef: any = null;
+	let isClosed = false;
+
+	const server = http.createServer((req, res) => {
+		// Set CORS headers
+		const corsHeaders = {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+			'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+			'Access-Control-Max-Age': '3600'
+		};
+
+		if (req.method === 'OPTIONS') {
+			res.writeHead(204, corsHeaders);
+			res.end();
+			return;
+		}
+
+		res.writeHead(200, {
+			'Content-Type': 'application/json',
+			'Cache-Control': 'no-cache',
+			Connection: 'keep-alive',
+			'Transfer-Encoding': 'chunked',
+			...corsHeaders
+		});
+
+		// Initial empty response
+		const initialResponse = {
+			...MOCK_SESSION_1_RESPONSE_1,
+			message: { role: 'assistant', content: '' },
+			done: false
+		};
+		res.write(JSON.stringify(initialResponse) + '\n');
+
+		resRef = res;
+
+		req.on('close', () => {
+			isClosed = true;
+		});
+	});
+
+	const serverStartPromise = new Promise<number>((resolve) => {
+		server.listen(0, () => {
+			const address = server.address() as { port: number };
+			resolve(address.port);
+		});
+	});
+
+	const port = await serverStartPromise;
+	const mockStreamUrl = `http://localhost:${port}`;
+
+	await page.route('**/api/chat', (route) => {
+		route.continue({ url: mockStreamUrl });
+	});
+
+	page.once('close', () => {
+		server.close();
+	});
+
+	return {
+		sendChunk: (content: string, done = false) => {
+			if (resRef && !isClosed) {
+				const response = {
+					...MOCK_SESSION_1_RESPONSE_1,
+					message: { role: 'assistant', content },
+					done
+				};
+				resRef.write(JSON.stringify(response) + '\n');
+				if (done) {
+					resRef.end();
+					isClosed = true;
+				}
+			}
+		},
+		close: () => {
+			if (resRef && !isClosed) {
+				resRef.end();
+				isClosed = true;
+			}
+		}
+	};
 }

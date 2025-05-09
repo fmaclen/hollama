@@ -8,7 +8,8 @@ import {
 	MOCK_STREAMED_THOUGHT_TAGS,
 	mockCompletionResponse,
 	mockOllamaModelsResponse,
-	mockStreamedCompletionResponse
+	mockStreamedCompletionResponse,
+	createManualStreamedCompletionMock
 } from './utils';
 
 test.describe('Session reasoning tag handling', () => {
@@ -107,6 +108,42 @@ test.describe('Session reasoning tag handling', () => {
 		await page.getByRole('button', { name: 'Reasoning' }).click();
 		await expect(page.locator('.article--reasoning')).toBeVisible();
 		await expect(page.locator('.article--reasoning')).toHaveText('This is in a thinking tag');
+	});
+
+	test('reasoning block is open by default while reasoning is streaming, then auto-hides when main content starts', async ({ page }) => {
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+
+		// Use the manual streaming mock
+		const stream = await createManualStreamedCompletionMock(page);
+
+		await promptTextarea.fill('How should I test my code?');
+		await page.getByText('Run').click();
+
+		// Stream the reasoning content (simulate streaming <think>...</think>)
+		const reasoningContent = '<think>This is in a thinking tag</think>';
+		stream.sendChunk(reasoningContent, false);
+
+		// Wait for the reasoning button and content to be visible
+		await expect(page.getByRole('button', { name: 'Reasoning' })).toBeVisible();
+		await expect(page.locator('.article--reasoning')).toBeVisible();
+		await expect(page.locator('.article--reasoning')).toHaveText('This is in a thinking tag');
+
+		// Now stream the rest of the completion (simulate streaming main content)
+		const completionContent = 'This is outside a tag';
+		stream.sendChunk(completionContent, true);
+
+		// Wait for the main content to appear
+		await page.waitForFunction(() => {
+			const el = document.querySelector('.article--assistant');
+			return el && el.textContent && el.textContent.includes('This is outside a tag');
+		});
+
+		// Assert the reasoning block is now hidden
+		await expect(page.locator('.article--reasoning')).not.toBeVisible();
 	});
 
 	test('handles streamed <thought> tags (character by character)', async ({ page }) => {
