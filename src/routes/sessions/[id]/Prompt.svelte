@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Brain, Image, LoaderCircle, CircleStop, UnfoldVertical } from 'lucide-svelte';
+	import { Brain, CircleStop, Image, LoaderCircle, UnfoldVertical } from 'lucide-svelte';
 	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
 	import Trash_2 from 'lucide-svelte/icons/trash-2';
@@ -204,7 +204,9 @@
 
 			<nav class="segmented-nav">
 				<div
-					class="segmented-nav__button {editor.view === 'messages' ? 'segmented-nav__button--active' : ''}"
+					class="segmented-nav__button {editor.view === 'messages'
+						? 'segmented-nav__button--active'
+						: ''}"
 				>
 					<Button
 						aria-label={$LL.messages()}
@@ -217,7 +219,9 @@
 					</Button>
 				</div>
 				<div
-					class="segmented-nav__button {editor.view === 'controls' ? 'segmented-nav__button--active' : ''}"
+					class="segmented-nav__button {editor.view === 'controls'
+						? 'segmented-nav__button--active'
+						: ''}"
 				>
 					<Button
 						aria-label={$LL.controls()}

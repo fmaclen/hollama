@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { BrainIcon, ChevronDown, ChevronUp, Pencil, RefreshCw, Trash2 } from 'lucide-svelte';
+	import { Brain, ChevronDown, ChevronUp, Pencil, RefreshCw, Trash2 } from 'lucide-svelte';
 	import { quadInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
 
@@ -74,7 +74,7 @@
 	<article class="attachment">
 		<div class="attachment__content">
 			<div class="attachment__icon">
-				<BrainIcon class="base-icon" />
+				<Brain class="base-icon" />
 			</div>
 			<div class="attachment__name">
 				<Button variant="link" href={generateNewUrl(Sitemap.KNOWLEDGE, message.knowledge?.id)}>
