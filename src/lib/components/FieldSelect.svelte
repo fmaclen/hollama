@@ -124,12 +124,12 @@
 		</div>
 
 		<Combobox.Content sideOffset={4} class="field-combobox-content">
-			{#each filteredOptions as group}
+			{#each filteredOptions as group (group.label)}
 				{#if 'options' in group}
 					<div class="field-combobox-group">
 						<div class="field-combobox-group-label">{group.label}</div>
 						{#if group.options.length > 0}
-							{#each group.options as option}
+							{#each group.options as option (option.value)}
 								{#if option.label}
 									<Combobox.Item
 										value={option.value}
@@ -146,7 +146,7 @@
 											{#if option.badge}
 												{#if Array.isArray(option.badge)}
 													<div class="field-select-badge">
-														{#each option.badge as badge}
+														{#each option.badge as badge (badge)}
 															<Badge
 																variant={badge === 'openai' || badge === 'ollama'
 																	? badge

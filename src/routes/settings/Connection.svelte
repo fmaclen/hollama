@@ -158,7 +158,7 @@
 				name={`label-${server.id}`}
 				label={$LL.label()}
 				bind:value={server.label}
-				placeholder={'my-llama-server'}
+				placeholder="my-llama-server"
 			>
 				<svelte:fragment slot="help">
 					<FieldHelp>

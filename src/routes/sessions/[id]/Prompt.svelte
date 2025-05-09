@@ -61,7 +61,7 @@
 	);
 
 	$effect(() => {
-		attachments.length && scrollToBottom(true);
+		if (attachments.length) scrollToBottom(true);
 	});
 
 	$effect(() => {
@@ -313,7 +313,7 @@
 					variant="outline"
 					on:click={handleImageUploadClick}
 					data-testid="image-attachment"
-					title={'Attach image'}
+					title={$LL.attachImage()}
 				>
 					<Image class="base-icon" />
 				</Button>

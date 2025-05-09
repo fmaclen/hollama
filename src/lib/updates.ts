@@ -63,7 +63,7 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 		hollamaMetadata = await fetch(HOLLAMA_METADATA_ENDPOINT);
 		const metadata = (await hollamaMetadata.json()) as HollamaMetadata;
 		settings.hollamaMetadata = metadata;
-	} catch (_) {
+	} catch {
 		console.error('Failed to fetch Hollama server metadata');
 		updateStatus.couldntCheckForUpdates = true;
 	}
@@ -87,7 +87,7 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 			const releases = await githubReleases.json();
 			if (releases[0]?.tag_name && releases[0].tag_name !== '')
 				updateStatus.latestVersion = releases[0].tag_name;
-		} catch (_) {
+		} catch {
 			console.error('Failed to fetch GitHub releases');
 			updateStatus.couldntCheckForUpdates = true;
 		}
