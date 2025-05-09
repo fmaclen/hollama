@@ -50,7 +50,7 @@
 		"globals": "^16.0.0",
 		"highlight.js": "^11.9.0",
 		"katex": "^0.16.21",
-		"lucide-svelte": "^0.372.0",
+		"lucide-svelte": "^0.509.0",
 		"markdown-it": "^14.1.0",
 		"markdown-it-texmath": "^1.0.0",
 		"ollama": "^0.5.9",
