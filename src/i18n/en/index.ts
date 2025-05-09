@@ -10,6 +10,7 @@ const en = {
 	areYouSureYouWantToDeleteAllSettings: 'Are you sure you want to delete all settings?',
 	areYouSureYouWantToLeave: 'Are you sure you want to leave?\nThe completion in progress will stop',
 	assistant: 'Assistant',
+	attachImage: 'Attach image',
 	automatic: 'Auto',
 	automaticallyCheckForUpdates: 'Automatically check for updates',
 	availableModels: 'Available models',

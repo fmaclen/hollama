@@ -1,4 +1,4 @@
-`2025-03-26`
+`2025-05-04`
 
 ### Message of the day
 
@@ -6,6 +6,7 @@
 
 #### What's new?
 
+- **Added support for vision models** (e.g. `gemma3`, `gpt-4.1`).
 - **Added support for reasoning responses** using [`<think>`](https://ollama.com/library/deepseek-r1) and [`<thought>`](https://ollama.com/library/exaone-deep) tags.
 - **KaTeX math notation** is now supported in model responses.
 - **Session titles** can now be manually edited.

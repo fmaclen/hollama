@@ -1,4 +1,10 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { expect, test, type Locator } from '@playwright/test';
+import type {
+	ChatCompletionContentPart,
+	ChatCompletionMessageParam
+} from 'openai/resources/index.mjs';
 
 import {
 	chooseFromCombobox,
@@ -28,7 +34,7 @@ const MOCK_ATTACHMENTS_RESPONSE = {
 	eval_duration: 296374000
 };
 
-test.describe('Knowledge Attachments', () => {
+test.describe('Attachments', () => {
 	let knowledgeAttachmentButton: Locator;
 	let knowledgeAttachments: Locator;
 
@@ -65,7 +71,7 @@ test.describe('Knowledge Attachments', () => {
 		);
 
 		// Remove first attachment using Trash button
-		await knowledgeAttachments.first().getByTestId('knowledge-attachment-delete').click();
+		await knowledgeAttachments.first().getByTestId('attachment-delete').click();
 		await expect(knowledgeAttachments).toHaveCount(1);
 		await expect(knowledgeAttachments.first().locator('.field-combobox-input')).toHaveValue(
 			MOCK_KNOWLEDGE[1].name
@@ -201,5 +207,348 @@ test.describe('Knowledge Attachments', () => {
 		await expect(messageHistory.nth(2).locator('.attachment__name')).toContainText(
 			MOCK_KNOWLEDGE[0].name
 		);
+	});
+
+	test('can attach, preview, delete, and send an image (Ollama)', async ({ page }) => {
+		// ESM-compatible path resolution for test image
+		const __filename = fileURLToPath(import.meta.url);
+		const __dirname = path.dirname(__filename);
+		const testImagePath = path.resolve(__dirname, 'docs.test.ts-snapshots', 'motd.png');
+
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		const promptTextarea = page.locator('.prompt-editor__textarea');
+
+		// Check Attach image button exists
+		const attachImageButton = page.getByTestId('image-attachment');
+		await expect(attachImageButton).toBeVisible();
+
+		// Simulate image upload
+		const [fileChooser] = await Promise.all([
+			page.waitForEvent('filechooser'),
+			attachImageButton.click()
+		]);
+		await fileChooser.setFiles(testImagePath);
+
+		// Check preview and filename
+		await expect(
+			page.locator('.prompt-editor').getByTestId('attachment-image-preview')
+		).toBeVisible();
+		await expect(page.locator('.prompt-editor').getByTestId('attachment-image-name')).toHaveText(
+			'motd.png'
+		);
+
+		// Delete the image
+		await page.getByTestId('attachment-delete').click();
+		await expect(
+			page.locator('.prompt-editor').getByTestId('attachment-image-preview')
+		).not.toBeVisible();
+
+		// Re-attach for payload test
+		const [fileChooser2] = await Promise.all([
+			page.waitForEvent('filechooser'),
+			attachImageButton.click()
+		]);
+		await fileChooser2.setFiles(testImagePath);
+
+		// Intercept outgoing request
+		let requestPayload:
+			| { messages: { role: string; content: string; images?: string[] }[] }
+			| undefined = undefined;
+		await page.route('**/chat', async (route, request) => {
+			const postData = request.postData();
+			if (postData) requestPayload = JSON.parse(postData);
+			// Simulate a streamed response as Ollama would send
+			const responseBody = [
+				JSON.stringify({
+					message: { role: 'assistant', content: 'This is a description of MOTD.png' }
+				}),
+				''
+			].join('\n');
+			await route.fulfill({
+				status: 200,
+				contentType: 'text/event-stream',
+				body: responseBody
+			});
+		});
+
+		await promptTextarea.fill('Describe this image');
+		await page.getByText('Run').click();
+
+		// Assert payload contains images array and prompt
+		if (!requestPayload) throw new Error('No request payload captured');
+		const lastUserMsg = (
+			requestPayload as { messages: { role: string; content: string; images?: string[] }[] }
+		).messages
+			.filter((m) => m.role === 'user')
+			.at(-1);
+		expect(lastUserMsg).toBeTruthy();
+		expect(Array.isArray(lastUserMsg?.images)).toBe(true);
+		expect(lastUserMsg?.images?.length).toBe(1);
+		expect(typeof lastUserMsg?.images?.[0]).toBe('string');
+		expect(lastUserMsg?.content).toContain('Describe this image');
+
+		// Assert attachments UI is cleared
+		expect(
+			await page.locator('.prompt-editor').getByTestId('attachment-image-preview').count()
+		).toBe(0);
+
+		// Assert session history contains the image thumbnail and filename
+		const articleImages = page.getByTestId('attachment-image-preview');
+		await expect(articleImages).toHaveCount(1);
+		await expect(articleImages.first()).toBeVisible();
+		const articleFilenames = page.getByTestId('attachment-image-name');
+		await expect(articleFilenames).toHaveCount(1);
+		await expect(articleFilenames.first()).toHaveText('motd.png');
+
+		// --- Edit the message and add another image ---
+		let userMessageArticle = page.locator('article', { hasText: 'Describe this image' });
+		await userMessageArticle.hover();
+		await userMessageArticle.getByTitle('Edit').click();
+
+		// Assert original image is in attachments
+		const promptAttachments = page.locator('.prompt-editor .attachment');
+		await expect(promptAttachments).toHaveCount(1);
+		await expect(promptAttachments.getByTestId('attachment-image-name')).toHaveText('motd.png');
+		await expect(promptAttachments.getByTestId('attachment-image-name')).not.toHaveText(
+			'session.png'
+		);
+
+		// Upload second image
+		const secondTestImagePath = path.resolve(__dirname, 'docs.test.ts-snapshots', 'session.png');
+		const [fileChooser3] = await Promise.all([
+			page.waitForEvent('filechooser'),
+			attachImageButton.click()
+		]);
+		await fileChooser3.setFiles(secondTestImagePath);
+
+		// Assert both images are in attachments
+		await expect(promptAttachments).toHaveCount(2);
+		await expect(promptAttachments.getByTestId('attachment-image-name').nth(0)).toHaveText(
+			'motd.png'
+		);
+		await expect(promptAttachments.getByTestId('attachment-image-name').nth(1)).toHaveText(
+			'session.png'
+		);
+
+		// Update prompt text
+		const textEditor = page.locator('.text-editor .cm-content');
+		await textEditor.clear();
+		await textEditor.fill('Describe these two images');
+
+		// Intercept the EDIT request
+		let editRequestPayload1:
+			| { messages: { role: string; content: string; images?: string[] }[] }
+			| undefined = undefined;
+		await page.route('**/chat', async (route, request) => {
+			const postData = request.postData();
+			if (postData) editRequestPayload1 = JSON.parse(postData);
+			const responseBody = [
+				JSON.stringify({ message: { role: 'assistant', content: 'Description of two images' } }),
+				''
+			].join('\n');
+			await route.fulfill({
+				status: 200,
+				contentType: 'text/event-stream',
+				body: responseBody
+			});
+		});
+
+		// Submit edit
+		await page.getByText('Run').click();
+
+		// Re-find the article after edit
+		userMessageArticle = page.locator('article', { hasText: 'Describe these two images' });
+
+		// Assert EDIT payload contains updated text and both images
+		if (!editRequestPayload1) throw new Error('No edit request payload captured');
+		const editedUserMsg1 = (
+			editRequestPayload1 as { messages: { role: string; content: string; images?: string[] }[] }
+		).messages
+			.filter((m) => m.role === 'user')
+			.at(-1);
+		expect(editedUserMsg1).toBeTruthy();
+		expect(editedUserMsg1?.content).toBe('Describe these two images');
+		expect(Array.isArray(editedUserMsg1?.images)).toBe(true);
+		expect(editedUserMsg1?.images?.length).toBe(2); // Both images sent
+
+		// Assert attachments UI is cleared
+		expect(
+			await page.locator('.prompt-editor').getByTestId('attachment-image-preview').count()
+		).toBe(0);
+
+		// Assert session history shows edited message with both images
+		await expect(userMessageArticle.getByTestId('attachment-image-preview')).toHaveCount(2);
+		await expect(userMessageArticle.getByTestId('attachment-image-name').nth(0)).toHaveText(
+			'motd.png'
+		);
+		await expect(userMessageArticle.getByTestId('attachment-image-name').nth(1)).toHaveText(
+			'session.png'
+		);
+		await expect(page.getByText('Description of two images')).toBeVisible(); // Check assistant response
+
+		// --- Edit the message again and remove the first image ---
+		await userMessageArticle.hover();
+		await userMessageArticle.getByTitle('Edit').click();
+
+		// Assert both images are back in attachments
+		await expect(promptAttachments).toHaveCount(2);
+
+		// Delete the first image (motd.png)
+		await promptAttachments
+			.filter({ hasText: 'motd.png' })
+			.getByTestId('attachment-delete')
+			.click();
+
+		// Assert only the second image remains
+		await expect(promptAttachments).toHaveCount(1);
+		await expect(promptAttachments.getByTestId('attachment-image-name')).toHaveText('session.png');
+		await expect(promptAttachments.getByTestId('attachment-image-name')).not.toHaveText('motd.png');
+
+		// Update prompt text
+		await textEditor.clear();
+		await textEditor.fill('Describe just this one image now');
+
+		// Intercept the SECOND EDIT request
+		let editRequestPayload2:
+			| { messages: { role: string; content: string; images?: string[] }[] }
+			| undefined = undefined;
+		await page.route('**/chat', async (route, request) => {
+			const postData = request.postData();
+			if (postData) editRequestPayload2 = JSON.parse(postData);
+			const responseBody = [
+				JSON.stringify({ message: { role: 'assistant', content: 'Description of one image' } }),
+				''
+			].join('\n');
+			await route.fulfill({
+				status: 200,
+				contentType: 'text/event-stream',
+				body: responseBody
+			});
+		});
+
+		// Submit second edit
+		await page.getByText('Run').click();
+
+		// Re-find the article after second edit
+		userMessageArticle = page.locator('article', { hasText: 'Describe just this one image now' });
+
+		// Assert SECOND EDIT payload contains updated text and only one image
+		if (!editRequestPayload2) throw new Error('No second edit request payload captured');
+		const editedUserMsg2 = (
+			editRequestPayload2 as { messages: { role: string; content: string; images?: string[] }[] }
+		).messages
+			.filter((m) => m.role === 'user')
+			.at(-1);
+		expect(editedUserMsg2).toBeTruthy();
+		expect(editedUserMsg2?.content).toBe('Describe just this one image now');
+		expect(Array.isArray(editedUserMsg2?.images)).toBe(true);
+		expect(editedUserMsg2?.images?.length).toBe(1); // Only one image sent
+
+		// Assert attachments UI is cleared
+		expect(
+			await page.locator('.prompt-editor').getByTestId('attachment-image-preview').count()
+		).toBe(0);
+
+		// Assert session history shows re-edited message with only the second image
+		await expect(userMessageArticle.getByTestId('attachment-image-preview')).toHaveCount(1);
+		await expect(userMessageArticle.getByTestId('attachment-image-name')).toHaveText('session.png');
+		await expect(userMessageArticle.getByTestId('attachment-image-name')).not.toHaveText(
+			'motd.png'
+		);
+		await expect(page.getByText('Description of one image')).toBeVisible(); // Check assistant response
+	});
+
+	test('can attach and send an image (OpenAI vision payload)', async ({ page }) => {
+		const { mockOpenAIModelsResponse } = await import('./utils');
+		const { MOCK_OPENAI_MODELS } = await import('./utils');
+
+		// ESM-compatible path resolution for test image
+		const __filename = fileURLToPath(import.meta.url);
+		const __dirname = path.dirname(__filename);
+		const testImagePath = path.resolve(__dirname, 'docs.test.ts-snapshots', 'motd.png');
+
+		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
+
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		// Select an OpenAI model from the mocked list
+		const openaiModelName = 'gpt-4';
+		await chooseModel(page, openaiModelName);
+
+		const promptTextarea = page.locator('.prompt-editor__textarea');
+		const attachImageButton = page.getByTestId('image-attachment');
+
+		// Simulate image upload
+		const [fileChooser] = await Promise.all([
+			page.waitForEvent('filechooser'),
+			attachImageButton.click()
+		]);
+		await fileChooser.setFiles(testImagePath);
+
+		// Intercept outgoing request to OpenAI chat completions endpoint
+		// Use a partial type for the overall payload as the library might not export a full request body type
+		let requestPayload: { messages: ChatCompletionMessageParam[] } | undefined = undefined;
+		await page.route('**/chat/completions', async (route, request) => {
+			const postData = request.postData();
+			if (postData)
+				requestPayload = JSON.parse(postData) as { messages: ChatCompletionMessageParam[] };
+			// Simulate a streamed response as OpenAI would send
+			const responseBody = [
+				JSON.stringify({
+					choices: [{ delta: { content: 'This is a description of MOTD.png' } }]
+				}),
+				''
+			].join('\n');
+			await route.fulfill({
+				status: 200,
+				contentType: 'text/event-stream',
+				body: responseBody
+			});
+		});
+
+		await promptTextarea.fill('Describe this image');
+		await page.getByText('Run').click();
+
+		// Assert payload contains OpenAI vision format
+		expect(requestPayload, 'No request payload captured').toBeDefined();
+
+		// Now TypeScript knows requestPayload is defined
+		const lastUserMsg = requestPayload!.messages.find(
+			(m: ChatCompletionMessageParam) => m.role === 'user'
+		);
+		expect(lastUserMsg).toBeTruthy();
+		if (
+			!lastUserMsg ||
+			typeof lastUserMsg.content === 'string' ||
+			!Array.isArray(lastUserMsg.content)
+		) {
+			throw new Error('User message content is not in the expected format (array of parts)');
+		}
+		expect(Array.isArray(lastUserMsg.content)).toBe(true);
+		// Should have at least one text and one image_url part
+		const textPart = lastUserMsg.content.find(
+			(part: ChatCompletionContentPart) => part.type === 'text'
+		);
+		const imagePart = lastUserMsg.content.find(
+			(part: ChatCompletionContentPart) => part.type === 'image_url'
+		);
+		expect(textPart).toBeTruthy();
+		expect(textPart?.text).toContain('Describe this image');
+		expect(imagePart).toBeTruthy();
+		// Need type guard for image_url part
+		if (imagePart?.type !== 'image_url') {
+			throw new Error('Image part is not of type image_url');
+		}
+		expect(imagePart.image_url.url).toMatch(/^data:image\/(png|jpeg|jpg|webp);base64,/);
+
+		// Assert attachments UI is cleared
+		expect(
+			await page.locator('.prompt-editor').getByTestId('attachment-image-preview').count()
+		).toBe(0);
 	});
 });

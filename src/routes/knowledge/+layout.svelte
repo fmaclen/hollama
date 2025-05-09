@@ -14,7 +14,7 @@
 <Section sitemap={Sitemap.KNOWLEDGE}>
 	<svelte:fragment slot="list-items">
 		{#if $knowledgeStore && $knowledgeStore.length > 0}
-			{#each $knowledgeStore as knowledge}
+			{#each $knowledgeStore as knowledge (knowledge.id)}
 				<SectionListItem
 					sitemap={Sitemap.KNOWLEDGE}
 					id={knowledge.id}

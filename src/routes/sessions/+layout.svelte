@@ -51,7 +51,7 @@
 <Section sitemap={Sitemap.SESSIONS}>
 	<svelte:fragment slot="list-items">
 		{#if $sessionsStore && $sessionsStore.length > 0}
-			{#each $sessionsStore as session}
+			{#each $sessionsStore as session (session.id)}
 				<SectionListItem
 					sitemap={Sitemap.SESSIONS}
 					id={session.id}

@@ -1,11 +1,12 @@
 # Hollama
 
-A minimal web-UI for talking to [Ollama](https://github.com/jmorganca/ollama/) servers.
+A minimal LLM chat app that runs _entirely_ in your browser.
 
 ### Features
 
-- Support for **Ollama** & **OpenAI** models
+- Support for **Ollama** & **OpenAI** servers
 - Multi-server support
+- Text & vision models
 - Large prompt fields
 - Support for reasoning models
 - Markdown rendering with syntax highlighting

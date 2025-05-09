@@ -59,6 +59,10 @@ type RootTranslation = {
 	 */
 	assistant: string
 	/**
+	 * A​t​t​a​c​h​ ​i​m​a​g​e
+	 */
+	attachImage: string
+	/**
 	 * A​u​t​o
 	 */
 	automatic: string
@@ -685,6 +689,10 @@ The completion in progress will stop
 	 * Assistant
 	 */
 	assistant: () => LocalizedString
+	/**
+	 * Attach image
+	 */
+	attachImage: () => LocalizedString
 	/**
 	 * Auto
 	 */

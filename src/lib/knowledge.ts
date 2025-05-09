@@ -18,7 +18,7 @@ export const loadKnowledge = (id: string): Knowledge => {
 	// Find the knowledge with the given id
 	if (currentKnowledges) {
 		const existingKnowledge = currentKnowledges.find((s) => s.id === id);
-		existingKnowledge && (knowledge = existingKnowledge);
+		if (existingKnowledge) knowledge = existingKnowledge;
 	}
 
 	if (!knowledge) {

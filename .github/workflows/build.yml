@@ -1,0 +1,98 @@
+name: Build & publish
+
+on:
+  workflow_run:
+    workflows: ['Version & release']
+    types:
+      - completed
+
+jobs:
+  cloudflare:
+    name: Live demo
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main # Ensure we checkout the commit made by semantic-release
+
+      # The update-package-json.cjs script is removed, semantic-release handles this.
+      # We assume package.json is updated by the versioning.yml workflow.
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run build
+
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          command: pages publish .svelte-kit/cloudflare --project-name hollama
+
+  electron:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: Desktop app (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    permissions: # Added based on your reference for electron-builder
+      contents: write
+    strategy:
+      matrix:
+        os: [macos-13, macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main # Ensure we checkout the commit made by semantic-release
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # The update-package-json.cjs script is removed, semantic-release handles this.
+
+      - name: Install Electron & SvelteKit's dependencies
+        run: npm ci
+
+      - name: Build & release Electron app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }} # Kept as per original, reference uses GITHUB_TOKEN
+          CSC_LINK: ${{ secrets.APPLE_CERTIFICATE }}
+          CSC_KEY_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+        run: npm run electron:build
+
+  docker:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main # Ensure we checkout the commit made by semantic-release
+
+      - name: Set up Node.js # Added for reading package.json version
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Extract version from package.json
+        id: package_version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Build & publish
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: hollama
+          registry: ghcr.io
+          multiPlatform: true
+          platform: linux/amd64,linux/arm64
+          tags: latest, ${{ steps.package_version.outputs.version }}
+          username: ${{ secrets.GH_REGISTRY_USERNAME }}
+          password: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}

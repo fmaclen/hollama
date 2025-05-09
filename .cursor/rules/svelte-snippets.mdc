@@ -1,0 +1,189 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+- **Define Snippets with `{#snippet ...}`**
+  - Snippets are reusable blocks of markup defined within a component using `{#snippet snippetName(param1, param2, ...)} ... {/snippet}`.
+  - They replace Svelte 4's named slots and `let:` directives.
+
+  ```svelte
+  <script lang="ts">
+    type User = { id: number; name: string; email: string };
+    let user: User = $state({ id: 1, name: 'Alice', email: 'alice@example.com' });
+  </script>
+
+  {#snippet userDetail(label, value)}
+    <div>
+      <strong>{label}:</strong> {value}
+    </div>
+  {/snippet}
+
+  <article>
+    {@render userDetail('ID', user.id)}
+    {@render userDetail('Name', user.name)}
+    {@render userDetail('Email', user.email)}
+  </article>
+  ```
+
+- **Render Snippets with `{@render ...}`**
+  - Use `{@render snippetName(arg1, arg2, ...)}` to insert a snippet's content.
+  - Pass arguments to the snippet as needed.
+
+- **Snippet Scope**
+  - Snippets are lexically scoped; they can only be rendered within the block where they are defined (or passed down).
+  - Snippets can render other snippets defined in the same or an outer scope.
+  - Recursive rendering is allowed: `{#snippet countdown(n)} {#if n > 0} {@render countdown(n-1)} {/if} {/snippet}`.
+
+- **Passing Snippets as Props**
+  - Pass snippets to child components like regular props.
+  - The child component declares snippet props in `$props()` and renders them using `{@render ...}`.
+  - This is the Svelte 5 equivalent of named slots.
+
+  ```svelte
+  <!-- Filename: Card.svelte -->
+  <script lang="ts">
+    // ✅ DO: Declare snippet props
+    let { header, body, footer } = $props();
+  </script>
+
+  <div class="card">
+    <header>{@render header?.()}</header> 
+    <main>{@render body()}</main>      
+    <footer>{@render footer?.()}</footer> 
+  </div>
+
+  <style>
+    .card { border: 1px solid #ccc; border-radius: 4px; margin: 1em 0; }
+    header, main, footer { padding: 0.5em; }
+    header { background-color: #eee; border-bottom: 1px solid #ccc; }
+    footer { background-color: #f9f9f9; border-top: 1px solid #ccc; font-size: 0.8em; }
+  </style>
+  ```
+
+  ```svelte
+  <!-- Filename: App.svelte -->
+  <script lang="ts">
+    import Card from './Card.svelte';
+  </script>
+
+  <Card>
+    {#snippet header()} 
+      <h2>Card Title</h2>
+    {/snippet}
+
+    {#snippet body()}
+      <p>This is the main content of the card.</p>
+    {/snippet}
+
+    {#snippet footer()}
+      <p>Card footer information.</p>
+    {/snippet}
+  </Card>
+  ```
+
+- **Default Content (`children` Snippet)**
+  - Any content placed directly inside a component's tags in the parent becomes the implicit `children` snippet prop in the child.
+  - The child renders it using `{@render children()}`.
+  - This replaces the default slot from Svelte 4.
+  - The `children` prop name is reserved and cannot be used for regular props.
+
+  ```svelte
+  <!-- Filename: Button.svelte -->
+  <script lang="ts">
+    // ✅ DO: Access default content via `children` prop
+    let { children, ...props } = $props();
+  </script>
+
+  <button {...props}>
+    {@render children()}
+  </button>
+  ```
+
+  ```svelte
+  <!-- Filename: App.svelte -->
+  <script lang="ts">
+    import Button from './Button.svelte';
+  </script>
+
+  <!-- Content here becomes the `children` snippet -->
+  <Button onclick={() => alert('Clicked!')}>
+    Click Me
+  </Button>
+  ```
+
+- **Optional Snippets**
+  - Check if an optional snippet prop exists before rendering using `{#if snippetProp}` or optional chaining `{@render snippetProp?.()}`.
+
+- **Passing Data to Snippets (from Child)**
+  - Snippets defined in the parent can receive data from the child component when rendered.
+  - The child component passes data as arguments in the `{@render snippetName(data)}` call.
+  - The parent defines the snippet with parameters: `{#snippet snippetName(dataFromChild)} ... {/snippet}`.
+  - This replaces Svelte 4's `let:` directive on slots.
+
+  ```svelte
+  <!-- Filename: List.svelte -->
+  <script lang="ts" generics="T">
+    let { items, itemRenderer, emptyState } = $props<{ 
+      items: T[],
+      itemRenderer: (item: T, index: number) => any, // Snippet function
+      emptyState?: () => any // Optional empty state snippet
+    }>();
+  </script>
+
+  {#if items.length > 0}
+    <ul>
+      {#each items as item, i}
+        <li>
+          <!-- ✅ DO: Pass data to the snippet -->
+          {@render itemRenderer(item, i)}
+        </li>
+      {/each}
+    </ul>
+  {:else}
+    {@render emptyState?.() ?? 'No items.'}
+  {/if}
+  ```
+
+  ```svelte
+  <!-- Filename: App.svelte -->
+  <script lang="ts">
+    import List from './List.svelte';
+    let fruits = $state(['Apple', 'Banana', 'Cherry']);
+  </script>
+
+  <List items={fruits}>
+    <!-- ✅ DO: Define snippet receiving data -->
+    {#snippet itemRenderer(fruit, index)}
+      <span>{index + 1}. {fruit}</span>
+    {/snippet}
+
+    {#snippet emptyState()}
+      <p><i>The fruit bowl is empty!</i></p>
+    {/snippet}
+  </List>
+  ```
+
+- **Exporting Snippets**
+  - Snippets can be exported from a `.svelte` file using `<script module>` and imported elsewhere.
+
+  ```svelte
+  <!-- Filename: formatters.svelte -->
+  <script module lang="ts">
+    export { currency }; // Export the snippet
+  </script>
+
+  {#snippet currency(value, code = 'USD')}
+    {value.toLocaleString('en-US', { style: 'currency', currency: code })}
+  {/snippet}
+  ```
+
+  ```svelte
+  <!-- Filename: App.svelte -->
+  <script lang="ts">
+    import { currency } from './formatters.svelte';
+    let price = $state(123.45);
+  </script>
+
+  <p>Price: {@render currency(price, 'EUR')}</p>
+  ```

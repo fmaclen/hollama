@@ -10,11 +10,11 @@ ENV VITE_ALLOWED_HOSTS='localhost'
 
 COPY . .
 
-# Change ownership of the application files to the non-root user
-RUN chown -R appuser:appgroup /app
-
 # Install dependencies and build as root
 RUN npm ci && npm run build
+
+# Change ownership of the application files to the non-root user
+RUN chown -R appuser:appgroup /app
 
 # Switch to non-root user
 USER appuser
