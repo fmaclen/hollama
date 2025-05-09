@@ -8,8 +8,7 @@ import {
 	MOCK_STREAMED_THOUGHT_TAGS,
 	mockCompletionResponse,
 	mockOllamaModelsResponse,
-	mockStreamedCompletionResponse,
-	createManualStreamedCompletionMock
+	setupStreamedCompletionMock
 } from './utils';
 
 test.describe('Session reasoning tag handling', () => {
@@ -71,8 +70,7 @@ test.describe('Session reasoning tag handling', () => {
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		// Set up fake streaming for the tests
-		// First test - <think> tags
-		await mockStreamedCompletionResponse(page, MOCK_STREAMED_THINK_TAGS);
+		await setupStreamedCompletionMock(page, { chunks: MOCK_STREAMED_THINK_TAGS });
 
 		// Now fill and submit the prompt
 		await promptTextarea.fill('How should I test my code?');
@@ -116,9 +114,11 @@ test.describe('Session reasoning tag handling', () => {
 		await page.getByTestId('new-session').click();
 
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await expect(page.getByText('This is in a thinking tag')).not.toBeVisible();
 
 		// Use the manual streaming mock
-		const stream = await createManualStreamedCompletionMock(page);
+		const stream = await setupStreamedCompletionMock(page, { manual: true });
+		if (!stream) throw new Error('setupStreamedCompletionMock did not return a stream object in manual mode');
 
 		await promptTextarea.fill('How should I test my code?');
 		await page.getByText('Run').click();
@@ -126,11 +126,7 @@ test.describe('Session reasoning tag handling', () => {
 		// Stream the reasoning content (simulate streaming <think>...</think>)
 		const reasoningContent = '<think>This is in a thinking tag</think>';
 		stream.sendChunk(reasoningContent, false);
-
-		// Wait for the reasoning button and content to be visible
-		await expect(page.getByRole('button', { name: 'Reasoning' })).toBeVisible();
-		await expect(page.locator('.article--reasoning')).toBeVisible();
-		await expect(page.locator('.article--reasoning')).toHaveText('This is in a thinking tag');
+		await expect(page.getByText('This is in a thinking tag')).toBeVisible();
 
 		// Now stream the rest of the completion (simulate streaming main content)
 		const completionContent = 'This is outside a tag';
@@ -142,8 +138,9 @@ test.describe('Session reasoning tag handling', () => {
 			return el && el.textContent && el.textContent.includes('This is outside a tag');
 		});
 
-		// Assert the reasoning block is now hidden
-		await expect(page.locator('.article--reasoning')).not.toBeVisible();
+		// Assert the reasoning block is now removed from the DOM
+		await expect(page.locator('.article--reasoning')).toHaveCount(0);
+		await expect(page.getByText('This is in a thinking tag')).not.toBeVisible();
 	});
 
 	test('handles streamed <thought> tags (character by character)', async ({ page }) => {
@@ -154,8 +151,7 @@ test.describe('Session reasoning tag handling', () => {
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		// Set up fake streaming for the tests
-		// Second test - <thought> tags
-		await mockStreamedCompletionResponse(page, MOCK_STREAMED_THOUGHT_TAGS);
+		await setupStreamedCompletionMock(page, { chunks: MOCK_STREAMED_THOUGHT_TAGS });
 
 		// Now fill and submit the prompt
 		await promptTextarea.fill('How should I test my code?');
