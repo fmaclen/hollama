@@ -108,7 +108,9 @@ test.describe('Session reasoning tag handling', () => {
 		await expect(page.locator('.article--reasoning')).toHaveText('This is in a thinking tag');
 	});
 
-	test('reasoning block is open by default while reasoning is streaming, then auto-hides when main content starts', async ({ page }) => {
+	test('reasoning block is open by default while reasoning is streaming, then auto-hides when main content starts', async ({
+		page
+	}) => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
 		await page.getByTestId('new-session').click();
@@ -118,7 +120,8 @@ test.describe('Session reasoning tag handling', () => {
 
 		// Use the manual streaming mock
 		const stream = await setupStreamedCompletionMock(page, { manual: true });
-		if (!stream) throw new Error('setupStreamedCompletionMock did not return a stream object in manual mode');
+		if (!stream)
+			throw new Error('setupStreamedCompletionMock did not return a stream object in manual mode');
 
 		await promptTextarea.fill('How should I test my code?');
 		await page.getByText('Run').click();
@@ -188,7 +191,7 @@ test.describe('Session reasoning tag handling', () => {
 		await expect(page.locator('.article--reasoning')).toBeVisible();
 		await expect(page.locator('.article--reasoning')).toHaveText('This is in a thought tag');
 	});
-	
+
 	test('does not show reasoning components for non-reasoning LLM response', async ({ page }) => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();

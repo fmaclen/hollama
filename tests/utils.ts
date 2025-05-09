@@ -292,7 +292,7 @@ export async function setupStreamedCompletionMock(
 ) {
 	const http = await import('http');
 
-	let resRef: any = null;
+	let resRef: import('http').ServerResponse | null = null;
 	let isClosed = false;
 	let interval: NodeJS.Timeout | null = null;
 
