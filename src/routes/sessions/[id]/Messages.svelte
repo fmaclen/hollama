@@ -49,5 +49,8 @@
 			content: editor.completion || '...',
 			reasoning: editor.reasoning
 		}}
+		isStreamingArticle={true}
+		currentRawReasoning={editor.reasoning}
+		currentRawCompletion={editor.completion}
 	/>
 {/if}
