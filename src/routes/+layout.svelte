@@ -21,8 +21,6 @@
 	$: pathname = $page.url.pathname;
 	const SITEMAP = ['/sessions', '/knowledge', '/settings', '/motd'];
 
-	$: theme = $settingsStore.userTheme;
-
 	onNavigate(async () => {
 		// Check for updates whenever the user follows a link (if auto-check is enabled)
 		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
@@ -89,14 +87,15 @@
 		}
 
 		// Color theme
-		if (!browser || theme) return;
-		$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-			? 'dark'
-			: 'light';
+		if (browser && !$settingsStore.userTheme) {
+			$settingsStore.userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+				? 'dark'
+				: 'light';
+		}
 	});
 
 	function toggleTheme() {
-		theme = theme === 'light' ? 'dark' : 'light';
+		const theme = $settingsStore.userTheme === 'light' ? 'dark' : 'light';
 		document.documentElement.setAttribute('data-color-theme', theme);
 		$settingsStore.userTheme = theme;
 	}
@@ -135,7 +134,7 @@
 			<img class="layout__logo" src="/favicon.png" alt="Hollama logo" />
 		</a>
 
-		{#each SITEMAP as href}
+		{#each SITEMAP as href (href)}
 			<a
 				class="layout__a"
 				class:layout__a--active={pathname.includes(href)}
@@ -160,7 +159,7 @@
 		{/each}
 
 		<button class="layout__button" on:click={toggleTheme}>
-			{#if theme === 'light'}
+			{#if $settingsStore.userTheme === 'light'}
 				<Moon class="base-icon" />
 				<span class="layout__label">{$LL.dark()}</span>
 			{:else}

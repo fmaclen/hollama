@@ -61,7 +61,7 @@
 	);
 
 	$effect(() => {
-		attachments.length && scrollToBottom(true);
+		if (attachments.length) scrollToBottom(true);
 	});
 
 	$effect(() => {

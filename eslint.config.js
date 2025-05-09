@@ -56,8 +56,6 @@ export default ts.config(
 				...globals.node
 			}
 		}
-		// If you had global rules in your old config or from your example, they can go here
-		// rules: { 'no-undef': 'off' } // Example from your reference
 	},
 
 	// Prettier configuration (must be last to override other ESLint formatting rules)
