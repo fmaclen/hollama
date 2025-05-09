@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Brain, Image, LoaderCircle, StopCircle, UnfoldVertical } from 'lucide-svelte';
+	import { Brain, CircleStop, Image, LoaderCircle, UnfoldVertical } from 'lucide-svelte';
 	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
 	import Settings_2 from 'lucide-svelte/icons/settings-2';
 	import Trash_2 from 'lucide-svelte/icons/trash-2';
@@ -197,20 +197,21 @@
 	}
 </script>
 
-<div class="prompt-editor" class:prompt-editor--fullscreen={editor.isCodeEditor}>
+<div class="prompt-editor {editor.isCodeEditor ? 'prompt-editor--fullscreen' : ''}">
 	<div class="prompt-editor__form">
 		<div class="prompt-editor__project">
 			<FieldSelectModel isLabelVisible={false} bind:value={modelName} />
 
 			<nav class="segmented-nav">
 				<div
-					class="segmented-nav__button"
-					class:segmented-nav__button--active={editor.view === 'messages'}
+					class="segmented-nav__button {editor.view === 'messages'
+						? 'segmented-nav__button--active'
+						: ''}"
 				>
 					<Button
 						aria-label={$LL.messages()}
 						variant="icon"
-						on:click={switchToMessages}
+						onclick={switchToMessages}
 						class="h-full"
 						isActive={editor.view === 'messages'}
 					>
@@ -218,13 +219,14 @@
 					</Button>
 				</div>
 				<div
-					class="segmented-nav__button"
-					class:segmented-nav__button--active={editor.view === 'controls'}
+					class="segmented-nav__button {editor.view === 'controls'
+						? 'segmented-nav__button--active'
+						: ''}"
 				>
 					<Button
 						aria-label={$LL.controls()}
 						variant="icon"
-						on:click={switchToControls}
+						onclick={switchToControls}
 						class="h-full"
 						isActive={editor.view === 'controls'}
 					>
@@ -236,7 +238,7 @@
 			<Button
 				variant={editor.isCodeEditor ? 'default' : 'outline'}
 				class="prompt-editor__toggle"
-				on:click={toggleCodeEditor}
+				onclick={toggleCodeEditor}
 			>
 				<UnfoldVertical class="base-icon" />
 			</Button>
@@ -285,7 +287,7 @@
 						{/if}
 						<Button
 							variant="outline"
-							on:click={() =>
+							onclick={() =>
 								handleDeleteAttachment(
 									attachment.type === 'knowledge' ? attachment.fieldId : attachment.id
 								)}
@@ -302,7 +304,7 @@
 			<div class="attachments-toolbar">
 				<Button
 					variant="outline"
-					on:click={() => {
+					onclick={() => {
 						attachments = [...attachments, { type: 'knowledge', fieldId: generateRandomId() }];
 					}}
 					data-testid="knowledge-attachment"
@@ -311,7 +313,7 @@
 				</Button>
 				<Button
 					variant="outline"
-					on:click={handleImageUploadClick}
+					onclick={handleImageUploadClick}
 					data-testid="image-attachment"
 					title={$LL.attachImage()}
 				>
@@ -324,7 +326,7 @@
 					<Button
 						class="h-full"
 						variant="outline"
-						on:click={() => {
+						onclick={() => {
 							editor.prompt = '';
 							editor.messageIndexToEdit = null;
 							editor.isCodeEditor = false;
@@ -347,11 +349,11 @@
 						class="h-full"
 						title={$LL.stopCompletion()}
 						variant="outline"
-						on:click={stopCompletion}
+						onclick={stopCompletion}
 					>
 						<div class="prompt-editor__stop">
 							<span class="prompt-editor__stop-icon">
-								<StopCircle class=" base-icon" />
+								<CircleStop class=" base-icon" />
 							</span>
 							<span class="prompt-editor__loading-icon">
 								<LoaderCircle class="prompt-editor__loading-icon base-icon animate-spin" />

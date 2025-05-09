@@ -8,6 +8,7 @@ import type { Knowledge } from '$lib/knowledge';
 export const MOCK_API_TAGS_RESPONSE: ListResponse = {
 	models: [
 		{
+			model: 'TheBloke/CodeLlama-70B-Python-AWQ',
 			name: 'TheBloke/CodeLlama-70B-Python-AWQ',
 			modified_at: new Date('2023-12-01T10:06:18.679361519-05:00'),
 			size: 4108928240,
@@ -24,6 +25,7 @@ export const MOCK_API_TAGS_RESPONSE: ListResponse = {
 			size_vram: 4108928240
 		},
 		{
+			model: 'gemma:7b',
 			name: 'gemma:7b',
 			modified_at: new Date('2024-04-08T21:41:35.217983842-04:00'),
 			size: 5011853225,
@@ -40,6 +42,7 @@ export const MOCK_API_TAGS_RESPONSE: ListResponse = {
 			size_vram: 5011853225
 		},
 		{
+			model: 'openhermes2.5-mistral:latest',
 			name: 'openhermes2.5-mistral:latest',
 			modified_at: new Date('2023-12-01T10:06:18.679361519-05:00'),
 			size: 4108928240,
@@ -267,20 +270,32 @@ export async function mockCompletionResponse(page: Page, response: ChatResponse)
 }
 
 /**
- * Mocks a streamed completion response by sending chunks one at a time
- * @param page The Playwright page
- * @param chunks Array of string chunks to stream one by one
- * @param delayMs Delay between chunks in milliseconds
+ * Sets up a streaming mock server for LLM completion responses, allowing either automatic or manual control over chunked responses in Playwright tests.
+ *
+ * Usage:
+ *   // Automatic streaming mode (like mockStreamedCompletionResponse)
+ *   await setupStreamedCompletionMock(page, { chunks: ['foo', 'bar'], delayMs: 100 });
+ *
+ *   // Manual streaming mode (like createManualStreamedCompletionMock)
+ *   const stream = await setupStreamedCompletionMock(page, { manual: true });
+ *   await stream.sendChunk('<think>Reasoning</think>', false);
+ *   // ...assertions...
+ *   await stream.sendChunk('Main content', true);
+ *   // ...assertions...
+ *   stream.close();
+ *
+ * This is especially useful for testing UI logic that depends on the timing and order of streamed content, such as dynamic reasoning blocks that open and close as the LLM responds.
  */
-export async function mockStreamedCompletionResponse(
+export async function setupStreamedCompletionMock(
 	page: Page,
-	chunks: string[],
-	delayMs: number = 100
+	options: { chunks?: string[]; delayMs?: number; manual?: boolean }
 ) {
-	// Import Node's http module
 	const http = await import('http');
 
-	// Start a local mock server that streams responses slowly
+	let resRef: import('http').ServerResponse | null = null;
+	let isClosed = false;
+	let interval: NodeJS.Timeout | null = null;
+
 	const server = http.createServer((req, res) => {
 		// Set CORS headers
 		const corsHeaders = {
@@ -290,14 +305,12 @@ export async function mockStreamedCompletionResponse(
 			'Access-Control-Max-Age': '3600'
 		};
 
-		// Handle preflight OPTIONS request
 		if (req.method === 'OPTIONS') {
 			res.writeHead(204, corsHeaders);
 			res.end();
 			return;
 		}
 
-		// Set headers for streaming
 		res.writeHead(200, {
 			'Content-Type': 'application/json',
 			'Cache-Control': 'no-cache',
@@ -306,55 +319,43 @@ export async function mockStreamedCompletionResponse(
 			...corsHeaders
 		});
 
-		// First, send an initial empty response
+		// Initial empty response
 		const initialResponse = {
 			...MOCK_SESSION_1_RESPONSE_1,
-			message: {
-				role: 'assistant',
-				content: ''
-			},
+			message: { role: 'assistant', content: '' },
 			done: false
 		};
 		res.write(JSON.stringify(initialResponse) + '\n');
 
-		let index = 0;
+		resRef = res;
 
-		// Stream each chunk with a delay
-		const interval = setInterval(() => {
-			if (index < chunks.length) {
-				// Create a response object with just the current chunk
-				const response = {
-					...MOCK_SESSION_1_RESPONSE_1,
-					message: {
-						role: 'assistant',
-						content: chunks[index]
-					},
-					done: index === chunks.length - 1
-				};
-
-				// Send this chunk
-				res.write(JSON.stringify(response) + '\n');
-
-				// Move to next chunk
-				index++;
-
-				// If this was the last chunk, end the interval and response
-				if (index === chunks.length) {
-					clearInterval(interval);
-					res.end();
+		if (options.chunks) {
+			// Automatic streaming mode
+			let index = 0;
+			interval = setInterval(() => {
+				if (index < options.chunks!.length) {
+					const response = {
+						...MOCK_SESSION_1_RESPONSE_1,
+						message: { role: 'assistant', content: options.chunks![index] },
+						done: index === options.chunks!.length - 1
+					};
+					res.write(JSON.stringify(response) + '\n');
+					index++;
+					if (index === options.chunks!.length) {
+						clearInterval(interval!);
+						res.end();
+						isClosed = true;
+					}
 				}
-			} else {
-				// Should not get here, but cleanup just in case
-				clearInterval(interval);
-				res.end();
-			}
-		}, delayMs);
+			}, options.delayMs ?? 100);
+			req.on('close', () => interval && clearInterval(interval));
+		}
 
-		// Clean up the interval if the client disconnects
-		req.on('close', () => clearInterval(interval));
+		req.on('close', () => {
+			isClosed = true;
+		});
 	});
 
-	// Start the server on a random port
 	const serverStartPromise = new Promise<number>((resolve) => {
 		server.listen(0, () => {
 			const address = server.address() as { port: number };
@@ -365,16 +366,42 @@ export async function mockStreamedCompletionResponse(
 	const port = await serverStartPromise;
 	const mockStreamUrl = `http://localhost:${port}`;
 
-	// Intercept the API route and redirect to our local streaming server
 	await page.route('**/api/chat', (route) => {
-		// Forward the request to our mock streaming server
 		route.continue({ url: mockStreamUrl });
 	});
 
-	// Ensure the server is closed when the test is done
 	page.once('close', () => {
 		server.close();
 	});
+
+	if (options.chunks) {
+		// Automatic mode: return nothing
+		return;
+	} else if (options.manual) {
+		// Manual mode: return sendChunk/close
+		return {
+			sendChunk: (content: string, done = false) => {
+				if (resRef && !isClosed) {
+					const response = {
+						...MOCK_SESSION_1_RESPONSE_1,
+						message: { role: 'assistant', content },
+						done
+					};
+					resRef.write(JSON.stringify(response) + '\n');
+					if (done) {
+						resRef.end();
+						isClosed = true;
+					}
+				}
+			},
+			close: () => {
+				if (resRef && !isClosed) {
+					resRef.end();
+					isClosed = true;
+				}
+			}
+		};
+	}
 }
 
 // OpenAI mock functions

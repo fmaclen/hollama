@@ -8,7 +8,7 @@ import {
 	MOCK_STREAMED_THOUGHT_TAGS,
 	mockCompletionResponse,
 	mockOllamaModelsResponse,
-	mockStreamedCompletionResponse
+	setupStreamedCompletionMock
 } from './utils';
 
 test.describe('Session reasoning tag handling', () => {
@@ -70,8 +70,7 @@ test.describe('Session reasoning tag handling', () => {
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		// Set up fake streaming for the tests
-		// First test - <think> tags
-		await mockStreamedCompletionResponse(page, MOCK_STREAMED_THINK_TAGS);
+		await setupStreamedCompletionMock(page, { chunks: MOCK_STREAMED_THINK_TAGS });
 
 		// Now fill and submit the prompt
 		await promptTextarea.fill('How should I test my code?');
@@ -109,6 +108,44 @@ test.describe('Session reasoning tag handling', () => {
 		await expect(page.locator('.article--reasoning')).toHaveText('This is in a thinking tag');
 	});
 
+	test('reasoning block is open by default while reasoning is streaming, then auto-hides when main content starts', async ({
+		page
+	}) => {
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await expect(page.getByText('This is in a thinking tag')).not.toBeVisible();
+
+		// Use the manual streaming mock
+		const stream = await setupStreamedCompletionMock(page, { manual: true });
+		if (!stream)
+			throw new Error('setupStreamedCompletionMock did not return a stream object in manual mode');
+
+		await promptTextarea.fill('How should I test my code?');
+		await page.getByText('Run').click();
+
+		// Stream the reasoning content (simulate streaming <think>...</think>)
+		const reasoningContent = '<think>This is in a thinking tag</think>';
+		stream.sendChunk(reasoningContent, false);
+		await expect(page.getByText('This is in a thinking tag')).toBeVisible();
+
+		// Now stream the rest of the completion (simulate streaming main content)
+		const completionContent = 'This is outside a tag';
+		stream.sendChunk(completionContent, true);
+
+		// Wait for the main content to appear
+		await page.waitForFunction(() => {
+			const el = document.querySelector('.article--assistant');
+			return el && el.textContent && el.textContent.includes('This is outside a tag');
+		});
+
+		// Assert the reasoning block is now removed from the DOM
+		await expect(page.locator('.article--reasoning')).toHaveCount(0);
+		await expect(page.getByText('This is in a thinking tag')).not.toBeVisible();
+	});
+
 	test('handles streamed <thought> tags (character by character)', async ({ page }) => {
 		await page.goto('/');
 		await page.getByText('Sessions', { exact: true }).click();
@@ -117,8 +154,7 @@ test.describe('Session reasoning tag handling', () => {
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 
 		// Set up fake streaming for the tests
-		// Second test - <thought> tags
-		await mockStreamedCompletionResponse(page, MOCK_STREAMED_THOUGHT_TAGS);
+		await setupStreamedCompletionMock(page, { chunks: MOCK_STREAMED_THOUGHT_TAGS });
 
 		// Now fill and submit the prompt
 		await promptTextarea.fill('How should I test my code?');
@@ -154,5 +190,41 @@ test.describe('Session reasoning tag handling', () => {
 		await page.getByRole('button', { name: 'Reasoning' }).click();
 		await expect(page.locator('.article--reasoning')).toBeVisible();
 		await expect(page.locator('.article--reasoning')).toHaveText('This is in a thought tag');
+	});
+
+	test('does not show reasoning components for non-reasoning LLM response', async ({ page }) => {
+		await page.goto('/');
+		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('new-session').click();
+
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.fill('Give me a normal answer.');
+		await expect(page.getByText('Run')).toBeEnabled();
+
+		await mockCompletionResponse(page, {
+			model: MOCK_API_TAGS_RESPONSE.models[0].name,
+			created_at: new Date(),
+			message: {
+				role: 'assistant',
+				content: 'This is just a normal answer.'
+			},
+			done: true,
+			done_reason: 'stop',
+			total_duration: 1000,
+			load_duration: 1000,
+			prompt_eval_count: 1,
+			prompt_eval_duration: 1,
+			eval_count: 1,
+			eval_duration: 1
+		});
+		await page.getByText('Run').click();
+
+		// Wait for the main content to appear
+		await expect(page.getByText('This is just a normal answer.')).toBeVisible();
+
+		// Assert that there are no visible reasoning components
+		await expect(page.locator('.reasoning')).toHaveCount(0);
+		await expect(page.locator('.article--reasoning')).toHaveCount(0);
+		await expect(page.getByRole('button', { name: 'Reasoning' })).toHaveCount(0);
 	});
 });
