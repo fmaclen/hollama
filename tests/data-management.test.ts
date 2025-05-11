@@ -18,8 +18,8 @@ test('deletes all preferences and resets to default values', async ({ page }) =>
 
 	// Click the delete button for preferences
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all preferences?'));
-	await expect(page.getByTestId('data-management-preferences')).toContainText('Preferences');
-	await page.getByTestId('data-management-preferences').getByText('Delete').click();
+	await expect(page.getByTestId('data-management-hollama-settings')).toContainText('Preferences');
+	await page.getByTestId('data-management-hollama-settings').getByText('Delete').click();
 
 	// Wait for page reload
 	await page.waitForFunction(() => {
@@ -45,7 +45,7 @@ test('deletes all servers and resets to default values', async ({ page }) => {
 
 	// Click the delete button for servers
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all servers?'));
-	await page.getByTestId('data-management-servers').getByText('Delete').click();
+	await page.getByTestId('data-management-hollama-servers').getByText('Delete').click();
 
 	// Wait for page reload
 	await page.waitForFunction(() => {
@@ -112,9 +112,9 @@ test('all sessions can be deleted', async ({ page }) => {
 	await page.getByText('Settings').click();
 	// Click the delete button
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all sessions?'));
-	await expect(page.getByTestId('data-management-sessions')).toContainText('Sessions');
+	await expect(page.getByTestId('data-management-hollama-sessions')).toContainText('Sessions');
 
-	await page.getByTestId('data-management-sessions').getByText('Delete').click();
+	await page.getByTestId('data-management-hollama-sessions').getByText('Delete').click();
 	await page.getByTestId('sidebar').getByText('Sessions').click();
 	await expect(page.getByText('No sessions')).toBeVisible();
 	await expect(page.getByTestId('session-item')).toHaveCount(0);
@@ -140,9 +140,9 @@ test('all knowledge can be deleted', async ({ page }) => {
 	await page.getByText('Settings').click();
 	// Click the delete button
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all knowledge?'));
-	await expect(page.getByTestId('data-management-knowledge')).toContainText('Knowledge');
+	await expect(page.getByTestId('data-management-hollama-knowledge')).toContainText('Knowledge');
 
-	await page.getByTestId('data-management-knowledge').getByText('Delete').click();
+	await page.getByTestId('data-management-hollama-knowledge').getByText('Delete').click();
 	await page.getByTestId('sidebar').getByText('Knowledge').click();
 	await expect(page.getByText('No knowledge')).toBeVisible();
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);

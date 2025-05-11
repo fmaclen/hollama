@@ -84,7 +84,7 @@
 	{#each dataSources as dataSource (dataSource.storageKey)}
 		<div
 			class="flex flex-grow flex-col gap-2 sm:flex-row"
-			data-testid={`data-management-${dataSource.storageKey.toLowerCase()}`}
+			data-testid={`data-management-${dataSource.storageKey}`}
 		>
 			<div
 				class="inline-flex w-full flex-grow items-center gap-x-2 rounded-md border border-shade-4 p-2 text-sm leading-tight text-muted"
@@ -101,7 +101,7 @@
 				{/if}
 			</div>
 			<input
-				id={`import-${dataSource.storageKey.toLowerCase()}-input`}
+				id={`import-${dataSource.storageKey}-input`}
 				type="file"
 				accept="application/json"
 				style="display: none;"

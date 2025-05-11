@@ -13,7 +13,7 @@ import {
 test.describe('Servers', () => {
 	test('can add and remove multiple server connections', async ({ page }) => {
 		await page.goto('/settings');
-		await expect(page.getByText('Servers')).toBeVisible();
+		await expect(page.getByText('Servers').first()).toBeVisible();
 
 		const emptyMessage = page.getByText('No server connections, add one to start');
 		await expect(emptyMessage).toBeVisible();
