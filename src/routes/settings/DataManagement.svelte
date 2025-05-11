@@ -14,6 +14,20 @@ interface DataSource {
 
 const dataSources: DataSource[] = [
 	{
+		label: 'Servers',
+		storageKey: StorageKey.HollamaServers,
+		fileName: 'hollama-servers.json',
+		defaultValue: '[]',
+		confirmDelete: 'Are you sure you want to delete all servers?'
+	},
+	{
+		label: 'Preferences',
+		storageKey: StorageKey.HollamaSettings,
+		fileName: 'hollama-preferences.json',
+		defaultValue: '{}',
+		confirmDelete: 'Are you sure you want to delete all preferences?'
+	},
+	{
 		label: 'Sessions',
 		storageKey: StorageKey.HollamaSessions,
 		fileName: 'hollama-sessions.json',
@@ -26,20 +40,6 @@ const dataSources: DataSource[] = [
 		fileName: 'hollama-knowledge.json',
 		defaultValue: '[]',
 		confirmDelete: 'Are you sure you want to delete all knowledge?'
-	},
-	{
-		label: 'Preferences',
-		storageKey: StorageKey.HollamaSettings,
-		fileName: 'hollama-preferences.json',
-		defaultValue: '{}',
-		confirmDelete: 'Are you sure you want to delete all preferences?'
-	},
-	{
-		label: 'Servers',
-		storageKey: StorageKey.HollamaServers,
-		fileName: 'hollama-servers.json',
-		defaultValue: '[]',
-		confirmDelete: 'Are you sure you want to delete all servers?'
 	}
 ];
 
@@ -84,14 +84,16 @@ function deleteData(storageKey: StorageKey, confirmDelete: string) {
 <Fieldset>
 	<P><strong>Data Management</strong></P>
 	{#each dataSources as ds}
-		<div class="data-management">
+		{#snippet legend()}
 			<P>{ds.label}</P>
+		{/snippet}
+		<Fieldset legend={legend}>
 			<div style="display: flex; gap: 0.5rem; align-items: center;">
 				<Button variant="outline" on:click={() => exportData(ds.storageKey, ds.fileName, ds.defaultValue)}>Export</Button>
 				<Button variant="outline" on:click={() => document.getElementById(`import-${ds.label.toLowerCase()}-input`)?.click()}>Import</Button>
 				<input id={`import-${ds.label.toLowerCase()}-input`} type="file" accept="application/json" style="display: none;" on:change={(e) => importData(e, ds.storageKey)} />
 				<Button variant="outline" on:click={() => deleteData(ds.storageKey, ds.confirmDelete)}>Delete</Button>
 			</div>
-		</div>
+		</Fieldset>
 	{/each}
 </Fieldset> 
