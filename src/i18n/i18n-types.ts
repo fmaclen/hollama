@@ -448,6 +448,10 @@ type RootTranslation = {
 	 */
 	penalizeNewline: string
 	/**
+	 * P​r​e​f​e​r​e​n​c​e​s
+	 */
+	preferences: string
+	/**
 	 * P​r​e​s​e​n​c​e​ ​p​e​n​a​l​t​y
 	 */
 	presencePenalty: string
@@ -1077,6 +1081,10 @@ The completion in progress will stop
 	 * Penalize newline
 	 */
 	penalizeNewline: () => LocalizedString
+	/**
+	 * Preferences
+	 */
+	preferences: () => LocalizedString
 	/**
 	 * Presence penalty
 	 */

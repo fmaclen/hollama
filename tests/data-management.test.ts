@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test';
+
 import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, mockOllamaModelsResponse } from './utils';
 
 test('deletes all preferences and resets to default values', async ({ page }) => {
 	await mockOllamaModelsResponse(page);
-	
+
 	// Change theme to dark mode
 	await page.getByText('Dark').click();
 	await expect(page.getByText('Light')).toBeVisible();
@@ -16,9 +17,7 @@ test('deletes all preferences and resets to default values', async ({ page }) =>
 	expect(localStorageSettings).toContain('"userTheme":"dark"');
 
 	// Click the delete button for preferences
-	page.on('dialog', (dialog) =>
-		dialog.accept('Are you sure you want to delete all preferences?')
-	);
+	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all preferences?'));
 	await expect(page.getByTestId('data-management-preferences')).toContainText('Preferences');
 	await page.getByTestId('data-management-preferences').getByText('Delete').click();
 
@@ -28,9 +27,7 @@ test('deletes all preferences and resets to default values', async ({ page }) =>
 	});
 
 	// Check the preferences have been reset to defaults
-	localStorageSettings = await page.evaluate(() =>
-		window.localStorage.getItem('hollama-settings')
-	);
+	localStorageSettings = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(localStorageSettings).not.toContain('"userTheme":"dark"');
 	await expect(page.getByText('Dark')).toBeVisible();
 	await expect(page.getByText('Light')).not.toBeVisible();
@@ -47,9 +44,7 @@ test('deletes all servers and resets to default values', async ({ page }) => {
 	expect(localStorageServers).toContain('"baseUrl":"http://localhost:11434"');
 
 	// Click the delete button for servers
-	page.on('dialog', (dialog) =>
-		dialog.accept('Are you sure you want to delete all servers?')
-	);
+	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all servers?'));
 	await page.getByTestId('data-management-servers').getByText('Delete').click();
 
 	// Wait for page reload

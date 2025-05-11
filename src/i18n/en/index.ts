@@ -109,6 +109,7 @@ const en = {
 	openAICompatible: 'OpenAI: Compatible servers (i.e. llama.cpp)',
 	otherModels: 'Other models',
 	penalizeNewline: 'Penalize newline',
+	preferences: 'Preferences',
 	presencePenalty: 'Presence penalty',
 	prompt: 'Prompt',
 	promptPlaceholder: 'Write literally anything',

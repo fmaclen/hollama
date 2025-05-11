@@ -164,7 +164,6 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[1].name })).toBeVisible();
 });
 
-
 test('can use knowledge as system prompt in the session', async ({ page }) => {
 	const sessionArticle = page.locator('.session__history .article');
 	const knowledgeId = page.getByTestId('knowledge-id');

@@ -8,7 +8,6 @@
 	import { StorageKey } from '$lib/localStorage';
 
 	interface DataSource {
-		label: string;
 		storageKey: StorageKey;
 		fileName: string;
 		defaultValue: string;
@@ -17,28 +16,24 @@
 
 	const dataSources: DataSource[] = [
 		{
-			label: 'Servers',
 			storageKey: StorageKey.HollamaServers,
 			fileName: 'hollama-servers.json',
 			defaultValue: '[]',
 			confirmDelete: 'Are you sure you want to delete all servers?'
 		},
 		{
-			label: 'Preferences',
 			storageKey: StorageKey.HollamaSettings,
 			fileName: 'hollama-preferences.json',
 			defaultValue: '{}',
 			confirmDelete: 'Are you sure you want to delete all preferences?'
 		},
 		{
-			label: 'Sessions',
 			storageKey: StorageKey.HollamaSessions,
 			fileName: 'hollama-sessions.json',
 			defaultValue: '[]',
 			confirmDelete: 'Are you sure you want to delete all sessions?'
 		},
 		{
-			label: 'Knowledge',
 			storageKey: StorageKey.HollamaKnowledge,
 			fileName: 'hollama-knowledge.json',
 			defaultValue: '[]',
@@ -69,8 +64,8 @@
 				const data = JSON.parse(e.target?.result as string);
 				localStorage.setItem(storageKey, JSON.stringify(data));
 				location.reload();
-			} catch (err) {
-				alert('Invalid file.');
+			} catch {
+				alert('The file provided is not a valid JSON file');
 			}
 		};
 		reader.readAsText(file);
@@ -86,18 +81,27 @@
 
 <Fieldset>
 	<P><strong>Data management</strong></P>
-	{#each dataSources as dataSource}
+	{#each dataSources as dataSource (dataSource.storageKey)}
 		<div
-			class="flex flex-grow flex-col sm:flex-row gap-2"
-			data-testid={`data-management-${dataSource.label.toLowerCase()}`}
+			class="flex flex-grow flex-col gap-2 sm:flex-row"
+			data-testid={`data-management-${dataSource.storageKey.toLowerCase()}`}
 		>
 			<div
 				class="inline-flex w-full flex-grow items-center gap-x-2 rounded-md border border-shade-4 p-2 text-sm leading-tight text-muted"
 			>
-				{dataSource.label}
+				<!-- HACK: because the labels are reactive we need to define them here -->
+				{#if dataSource.storageKey === StorageKey.HollamaServers}
+					{$LL.servers()}
+				{:else if dataSource.storageKey === StorageKey.HollamaSettings}
+					{$LL.preferences()}
+				{:else if dataSource.storageKey === StorageKey.HollamaSessions}
+					{$LL.sessions()}
+				{:else if dataSource.storageKey === StorageKey.HollamaKnowledge}
+					{$LL.knowledge()}
+				{/if}
 			</div>
 			<input
-				id={`import-${dataSource.label.toLowerCase()}-input`}
+				id={`import-${dataSource.storageKey.toLowerCase()}-input`}
 				type="file"
 				accept="application/json"
 				style="display: none;"
@@ -115,7 +119,7 @@
 			<Button
 				variant="outline"
 				onclick={() =>
-					document.getElementById(`import-${dataSource.label.toLowerCase()}-input`)?.click()}
+					document.getElementById(`import-${dataSource.storageKey.toLowerCase()}-input`)?.click()}
 			>
 				<FolderUp class="base-icon" />
 				{$LL.import()}
