@@ -24,7 +24,8 @@ test.describe('Session management', () => {
 		const newPromptHelp = page.getByText('Write a prompt to start a new session');
 
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await expect(sessionIdLocator).not.toBeVisible();
 		await expect(sessionMetadata).not.toBeVisible();
 		await expect(newPromptHelp).not.toBeVisible();
@@ -58,7 +59,8 @@ test.describe('Session management', () => {
 
 	test('preserves session state after navigation', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -126,7 +128,8 @@ test.describe('Session management', () => {
 
 		// Create a new session
 		await mockCompletionResponse(page, MOCK_SESSION_2_RESPONSE_1);
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[1].name);
 		await promptTextarea.fill('What does the fox say?');
@@ -164,7 +167,8 @@ test.describe('Session management', () => {
 		await page.getByText('Settings').click();
 		await expect(page.getByText('Automatically check for updates')).toBeVisible();
 
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await expect(page.getByRole('link', { name: 'New session' })).toBeVisible();
 		await expect(
 			page.getByText('Create a new session or choose an existing one from the list')
@@ -182,7 +186,8 @@ test.describe('Session management', () => {
 
 	test('deletes a session from the header and sidebar', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await expect(page.getByText('No sessions')).toBeVisible();
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
@@ -229,74 +234,14 @@ test.describe('Session management', () => {
 		expect(await page.getByTestId('session-item').count()).toBe(0);
 	});
 
-	test('all sessions can be deleted', async ({ page }) => {
-		await page.goto('/sessions');
-		await expect(page.getByText('No sessions')).toBeVisible();
-		await expect(page.getByTestId('session-item')).toHaveCount(0);
-
-		// Stage 2 sessions
-		await page.evaluate(
-			({ modelA, modelB }) =>
-				window.localStorage.setItem(
-					'hollama-sessions',
-					JSON.stringify([
-						{
-							id: 'qbhc0q',
-							model: modelA,
-							messages: [
-								{ role: 'user', content: 'Hello world!' },
-								{
-									role: 'assistant',
-									content:
-										"Hello world! 👋 🌎\n\nIt's great to hear from you. What would you like to do today?"
-								}
-							],
-							context: [],
-							updatedAt: new Date().toISOString()
-						},
-						{
-							id: 'm2jjac',
-							model: modelB,
-							messages: [
-								{ role: 'user', content: 'Hello world, again!' },
-								{
-									role: 'assistant',
-									content:
-										"Hello! It's always a pleasure to see you back. How can I assist you today?"
-								}
-							],
-							context: [],
-							updatedAt: new Date().toISOString()
-						}
-					])
-				),
-			{
-				modelA: MOCK_API_TAGS_RESPONSE.models[0].name,
-				modelB: MOCK_API_TAGS_RESPONSE.models[1].name
-			}
-		);
-
-		await page.reload();
-		await expect(page.getByText('No sessions')).not.toBeVisible();
-		await expect(page.getByTestId('session-item')).toHaveCount(2);
-
-		await page.getByText('Settings').click();
-		// Click the delete button
-		page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all sessions?'));
-		await page.getByText('Delete all sessions').click();
-		await page.getByText('Sessions', { exact: true }).click();
-		await expect(page.getByText('No sessions')).toBeVisible();
-		await expect(page.getByTestId('session-item')).toHaveCount(0);
-		expect(await page.evaluate(() => window.localStorage.getItem('hollama-sessions'))).toBe('[]');
-	});
-
 	test('truncates session titles correctly', async ({ page }) => {
 		const longPrompt =
 			'This is a very long prompt that should be truncated in both the page title and the sidebar list item.\nIt contains more than 56 characters to ensure truncation works correctly.';
 		const truncatedPrompt = longPrompt.slice(0, 56);
 
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -320,7 +265,8 @@ test.describe('Session management', () => {
 
 	test('can edit session titles', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);

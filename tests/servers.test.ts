@@ -18,7 +18,7 @@ test.describe('Servers', () => {
 		const emptyMessage = page.getByText('No server connections, add one to start');
 		await expect(emptyMessage).toBeVisible();
 
-		const connections = page.locator('.connection');
+		const connections = page.getByTestId('server');
 		await expect(connections).toHaveCount(0);
 		await expect(page.getByLabel('Connection type')).toHaveValue('');
 
@@ -110,13 +110,13 @@ test.describe('Servers', () => {
 		expect(localStorageServers).toContain('https://api.openai.com/v1');
 		expect(localStorageServers).toContain('sk-validapikey');
 
-		const ollamaConnection = page.locator('.connection').first();
+		const ollamaConnection = page.getByTestId('server').first();
 		await expect(toastMessage).toBeVisible();
 		await expect(ollamaConnection).toBeVisible();
 		await expect(ollamaConnection.locator('.badge', { hasText: 'Ollama' })).toBeVisible();
 		await expect(ollamaConnection.getByLabel('Base URL')).toHaveValue('http://localhost:42069');
 
-		const openaiConnection = page.locator('.connection').last();
+		const openaiConnection = page.getByTestId('server').last();
 		await expect(openaiConnection).toBeVisible();
 		await expect(openaiConnection.locator('.badge', { hasText: 'OpenAI' })).toBeVisible();
 		await expect(openaiConnection.getByLabel('Base URL')).toHaveValue('https://api.openai.com/v1');
@@ -147,7 +147,8 @@ test.describe('Servers', () => {
 		const useModelsFromThisServerCheckbox = page.getByLabel('Use models from this server');
 		await expect(useModelsFromThisServerCheckbox).toBeChecked();
 
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 
 		const modelCombobox = page.getByLabel('Available models');
@@ -160,7 +161,8 @@ test.describe('Servers', () => {
 		await useModelsFromThisServerCheckbox.uncheck();
 		await expect(useModelsFromThisServerCheckbox).not.toBeChecked();
 
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 		await expect(modelCombobox).toBeDisabled();
 
@@ -226,7 +228,7 @@ test.describe('Servers', () => {
 		await expect(page).toHaveURL('/settings');
 
 		// Add an OpenAI official API server
-		const connections = page.locator('.connection');
+		const connections = page.getByTestId('server');
 		await expect(connections).toHaveCount(1);
 		await expect(connections.first().getByLabel('Label')).toHaveValue('');
 		await expect(connections.first().locator('.badge', { hasText: 'OpenAI' })).toBeVisible();
@@ -266,7 +268,8 @@ test.describe('Servers', () => {
 		await connections.last().getByRole('button', { name: 'Verify' }).click();
 		await expect(connectionVerifiedMessage).toHaveCount(2);
 
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 		const modelCombobox = page.getByLabel('Available models');
 		expect(modelCombobox).not.toBeDisabled();

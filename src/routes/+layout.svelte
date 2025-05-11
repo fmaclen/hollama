@@ -129,7 +129,7 @@
 />
 
 <div class="layout">
-	<aside class="layout__aside">
+	<aside class="layout__aside" data-testid="sidebar">
 		<a href="/" class="layout__a layout__a--logo">
 			<img class="layout__logo" src="/favicon.png" alt="Hollama logo" />
 		</a>

@@ -39,7 +39,7 @@
 
 <style lang="postcss">
 	.button {
-		@apply inline-flex items-center justify-center rounded-md;
+		@apply inline-flex items-center justify-center rounded-md gap-2;
 
 		&--default,
 		&--outline {

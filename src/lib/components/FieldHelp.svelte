@@ -1,9 +1,13 @@
-<div class="field-help">
-	<slot />
-</div>
+<script lang="ts">
+	import type { Snippet } from "svelte";
 
-<style lang="postcss">
-	.field-help {
-		@apply my-2 flex flex-col gap-y-1 px-0.5 text-muted;
+	interface Props {
+		children: Snippet;
 	}
-</style>
+
+	let { children }: Props = $props();
+</script>
+
+<div class="my-2 flex flex-col gap-y-1 px-0.5 text-muted">
+	{@render children()}
+</div>

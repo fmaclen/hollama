@@ -21,7 +21,8 @@ test.describe('Session interaction', () => {
 
 	test('sends message and receives response', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -64,7 +65,8 @@ test.describe('Session interaction', () => {
 
 	test('handles multiple messages in a session', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -89,7 +91,8 @@ test.describe('Session interaction', () => {
 
 	test('can copy the raw text of a message or code snippets to clipboard', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -139,7 +142,8 @@ test.describe('Session interaction', () => {
 
 		await page.goto('/');
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
@@ -156,7 +160,8 @@ test.describe('Session interaction', () => {
 	test('can copy the whole session content to clipboard', async ({ page }) => {
 		await page.goto('/');
 		await page.evaluate(() => navigator.clipboard.writeText(''));
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -197,7 +202,8 @@ test.describe('Session interaction', () => {
 		const sessionMetadata = page.getByTestId('session-metadata');
 
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByText('New session', { exact: true }).click();
 		await expect(userMessage).not.toBeVisible();
 		await expect(aiMessage).not.toBeVisible();
@@ -240,7 +246,8 @@ test.describe('Session interaction', () => {
 		const promptEditorToggle = page.locator('.prompt-editor__toggle');
 
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
@@ -282,7 +289,8 @@ test.describe('Session interaction', () => {
 		const messagesCount = page.locator('.article');
 		await page.goto('/');
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 
@@ -336,7 +344,8 @@ test.describe('Session interaction', () => {
 
 		await page.goto('/');
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
@@ -374,7 +383,8 @@ test.describe('Session interaction', () => {
 
 	test('handles errors when generating completion response and retries', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 		await expect(promptTextarea).not.toHaveValue(
 			'Who would win in a fight between Emma Watson and Jessica Alba?'
@@ -433,7 +443,8 @@ test.describe('Session interaction', () => {
 
 	test('ai completion can be retried', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -468,7 +479,8 @@ test.describe('Session interaction', () => {
 		const sessionHistory = page.locator('.session__history');
 
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await newSessionButton.click();
 		await expect(articleLocator).toHaveCount(0);
 
@@ -493,7 +505,8 @@ test.describe('Session interaction', () => {
 	});
 
 	test('handles errors when fetching models', async ({ page }) => {
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
@@ -519,7 +532,8 @@ test.describe('Session interaction', () => {
 		page.on('dialog', async (dialog) => await dialogHandler(dialog));
 
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 
@@ -569,7 +583,8 @@ test.describe('Session interaction', () => {
 
 	test('warns when navigating away with unsaved prompt content', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 
 		// Fill the prompt but don't submit

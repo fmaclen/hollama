@@ -42,7 +42,7 @@ test.describe('Attachments', () => {
 		await mockOllamaModelsResponse(page);
 		await page.goto('/');
 		await seedKnowledgeAndReload(page);
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		knowledgeAttachmentButton = page.getByTestId('knowledge-attachment');
@@ -216,7 +216,8 @@ test.describe('Attachments', () => {
 		const testImagePath = path.resolve(__dirname, 'docs.test.ts-snapshots', 'motd.png');
 
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 		const promptTextarea = page.locator('.prompt-editor__textarea');
@@ -473,7 +474,8 @@ test.describe('Attachments', () => {
 		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 
 		// Select an OpenAI model from the mocked list

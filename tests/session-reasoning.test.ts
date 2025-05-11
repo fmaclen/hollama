@@ -21,7 +21,8 @@ test.describe('Session reasoning tag handling', () => {
 
 	test('handles standard <think> tags in responses', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -64,7 +65,8 @@ test.describe('Session reasoning tag handling', () => {
 
 	test('handles streamed <think> tags (character by character)', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -112,7 +114,8 @@ test.describe('Session reasoning tag handling', () => {
 		page
 	}) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -148,7 +151,8 @@ test.describe('Session reasoning tag handling', () => {
 
 	test('handles streamed <thought> tags (character by character)', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -194,7 +198,8 @@ test.describe('Session reasoning tag handling', () => {
 
 	test('does not show reasoning components for non-reasoning LLM response', async ({ page }) => {
 		await page.goto('/');
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await page.getByTestId('new-session').click();
 
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);

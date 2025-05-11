@@ -175,17 +175,9 @@ type RootTranslation = {
 	 */
 	dark: string
 	/**
-	 * D​e​l​e​t​e​ ​a​l​l​ ​k​n​o​w​l​e​d​g​e
+	 * D​e​l​e​t​e
 	 */
-	deleteAllKnowledge: string
-	/**
-	 * D​e​l​e​t​e​ ​a​l​l​ ​s​e​s​s​i​o​n​s
-	 */
-	deleteAllSessions: string
-	/**
-	 * D​e​l​e​t​e​ ​a​l​l​ ​s​e​t​t​i​n​g​s
-	 */
-	deleteAllSettings: string
+	'delete': string
 	/**
 	 * D​e​l​e​t​e​ ​k​n​o​w​l​e​d​g​e
 	 */
@@ -231,6 +223,10 @@ type RootTranslation = {
 	 */
 	error: string
 	/**
+	 * E​x​p​o​r​t
+	 */
+	'export': string
+	/**
 	 * F​1​6​ ​K​V
 	 */
 	f16Kv: string
@@ -262,6 +258,10 @@ type RootTranslation = {
 	 * H​o​w​ ​t​o​ ​u​p​d​a​t​e​ ​D​o​c​k​e​r​ ​c​o​n​t​a​i​n​e​r​?
 	 */
 	howToUpdateDocker: string
+	/**
+	 * I​m​p​o​r​t
+	 */
+	'import': string
 	/**
 	 * I​n​t​e​r​f​a​c​e
 	 */
@@ -806,17 +806,9 @@ The completion in progress will stop
 	 */
 	dark: () => LocalizedString
 	/**
-	 * Delete all knowledge
+	 * Delete
 	 */
-	deleteAllKnowledge: () => LocalizedString
-	/**
-	 * Delete all sessions
-	 */
-	deleteAllSessions: () => LocalizedString
-	/**
-	 * Delete all settings
-	 */
-	deleteAllSettings: () => LocalizedString
+	'delete': () => LocalizedString
 	/**
 	 * Delete knowledge
 	 */
@@ -862,6 +854,10 @@ The completion in progress will stop
 	 */
 	error: () => LocalizedString
 	/**
+	 * Export
+	 */
+	'export': () => LocalizedString
+	/**
 	 * F16 KV
 	 */
 	f16Kv: () => LocalizedString
@@ -893,6 +889,10 @@ The completion in progress will stop
 	 * How to update Docker container?
 	 */
 	howToUpdateDocker: () => LocalizedString
+	/**
+	 * Import
+	 */
+	'import': () => LocalizedString
 	/**
 	 * Interface
 	 */

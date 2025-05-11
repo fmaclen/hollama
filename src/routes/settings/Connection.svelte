@@ -61,142 +61,117 @@
 	}
 </script>
 
-<fieldset class="connection">
-	<legend class="connection__legend">
-		{#if [ConnectionType.OpenAI, ConnectionType.Ollama].includes(server.connectionType)}
-			<Badge
-				variant={server.connectionType === ConnectionType.OpenAI
-					? ConnectionType.OpenAI
-					: ConnectionType.Ollama}
-			/>
-		{/if}
-		<Badge>{server.label ? server.label : server.connectionType?.toUpperCase()}</Badge>
-	</legend>
-
+<div data-testid="server">
 	<Fieldset>
-		<nav class="connection__nav">
-			<FieldCheckbox label={$LL.useModelsFromThisServer()} bind:checked={server.isEnabled} />
+		{#snippet legend()}
+			{#if [ConnectionType.OpenAI, ConnectionType.Ollama].includes(server.connectionType)}
+				<Badge
+					variant={server.connectionType === ConnectionType.OpenAI
+						? ConnectionType.OpenAI
+						: ConnectionType.Ollama}
+				/>
+			{/if}
+			<Badge>{server.label ? server.label : server.connectionType?.toUpperCase()}</Badge>
+		{/snippet}
 
-			<Button
-				class="max-h-full"
-				variant="outline"
-				on:click={deleteServer}
-				aria-label={$LL.deleteServer()}
-			>
-				<Trash_2 class="base-icon" />
-			</Button>
+		<Fieldset>
+			<nav class="flex items-stretch gap-x-2">
+				<FieldCheckbox label={$LL.useModelsFromThisServer()} bind:checked={server.isEnabled} />
 
-			<Button
-				disabled={isLoading || !server.baseUrl}
-				variant={!server.isVerified ? 'default' : 'outline'}
-				on:click={verifyServer}
-			>
-				{#if isLoading}
-					<LoaderCircle class="base-icon animate-spin" />
-				{:else}
-					{server.isVerified ? $LL.reVerify() : $LL.verify()}
-				{/if}
-			</Button>
-		</nav>
-
-		<div class="connection__grid">
-			<div class="connection__host" class:connection__host--openai={isOpenAiFamily}>
-				<FieldInput
-					name={`server-${server.id}`}
-					label={$LL.baseUrl()}
-					placeholder={server.baseUrl}
-					bind:value={server.baseUrl}
+				<Button
+					class="max-h-full"
+					variant="outline"
+					on:click={deleteServer}
+					aria-label={$LL.deleteServer()}
 				>
-					<svelte:fragment slot="help">
-						{#if isOllamaFamily}
-							<OllamaBaseURLHelp {server} />
-						{/if}
-					</svelte:fragment>
-				</FieldInput>
+					<Trash_2 class="base-icon" />
+				</Button>
 
-				{#if isOpenAiFamily}
+				<Button
+					disabled={isLoading || !server.baseUrl}
+					variant={!server.isVerified ? 'default' : 'outline'}
+					on:click={verifyServer}
+				>
+					{#if isLoading}
+						<LoaderCircle class="base-icon animate-spin" />
+					{:else}
+						{server.isVerified ? $LL.reVerify() : $LL.verify()}
+					{/if}
+				</Button>
+			</nav>
+
+			<div class="flex flex-col gap-2 sm:grid sm:grid-cols-2">
+				<div class="col-span-2 grid gap-2 {isOpenAiFamily ? 'sm:grid sm:grid-cols-2' : ''}">
 					<FieldInput
-						type="password"
-						name={`apiKey-${server.id}`}
-						label={$LL.apiKey()}
-						bind:value={server.apiKey}
+						name={`server-${server.id}`}
+						label={$LL.baseUrl()}
+						placeholder={server.baseUrl}
+						bind:value={server.baseUrl}
 					>
 						<svelte:fragment slot="help">
-							{#if server.connectionType === 'openai'}
-								<FieldHelp>
-									<P>
-										<Button
-											variant="link"
-											href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key"
-											target="_blank"
-										>
-											{$LL.howToObtainOpenAIKey()}
-										</Button>
-									</P>
-								</FieldHelp>
+							{#if isOllamaFamily}
+								<OllamaBaseURLHelp {server} />
 							{/if}
 						</svelte:fragment>
 					</FieldInput>
-				{/if}
+
+					{#if isOpenAiFamily}
+						<FieldInput
+							type="password"
+							name={`apiKey-${server.id}`}
+							label={$LL.apiKey()}
+							bind:value={server.apiKey}
+						>
+							<svelte:fragment slot="help">
+								{#if server.connectionType === 'openai'}
+									<FieldHelp>
+										<P>
+											<Button
+												variant="link"
+												href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key"
+												target="_blank"
+											>
+												{$LL.howToObtainOpenAIKey()}
+											</Button>
+										</P>
+									</FieldHelp>
+								{/if}
+							</svelte:fragment>
+						</FieldInput>
+					{/if}
+				</div>
+				<FieldInput
+					name={`modelsFilter-${server.id}`}
+					label={$LL.modelsFilter()}
+					placeholder="gpt"
+					bind:value={server.modelFilter}
+				>
+					<svelte:fragment slot="help">
+						<FieldHelp>
+							<P>
+								{$LL.modelsFilterHelp()}
+							</P>
+						</FieldHelp>
+					</svelte:fragment>
+				</FieldInput>
+
+				<FieldInput
+					name={`label-${server.id}`}
+					label={$LL.label()}
+					bind:value={server.label}
+					placeholder="my-llama-server"
+				>
+					<svelte:fragment slot="help">
+						<FieldHelp>
+							<P>{$LL.connectionLabelHelp()}</P>
+						</FieldHelp>
+					</svelte:fragment>
+				</FieldInput>
 			</div>
-			<FieldInput
-				name={`modelsFilter-${server.id}`}
-				label={$LL.modelsFilter()}
-				placeholder="gpt"
-				bind:value={server.modelFilter}
-			>
-				<svelte:fragment slot="help">
-					<FieldHelp>
-						<P>
-							{$LL.modelsFilterHelp()}
-						</P>
-					</FieldHelp>
-				</svelte:fragment>
-			</FieldInput>
 
-			<FieldInput
-				name={`label-${server.id}`}
-				label={$LL.label()}
-				bind:value={server.label}
-				placeholder="my-llama-server"
-			>
-				<svelte:fragment slot="help">
-					<FieldHelp>
-						<P>{$LL.connectionLabelHelp()}</P>
-					</FieldHelp>
-				</svelte:fragment>
-			</FieldInput>
-		</div>
-
-		{#if isOllamaFamily}
-			<PullModel {server} />
-		{/if}
+			{#if isOllamaFamily}
+				<PullModel {server} />
+			{/if}
+		</Fieldset>
 	</Fieldset>
-</fieldset>
-
-<style lang="postcss">
-	.connection {
-		@apply rounded-md border border-shade-4 p-4;
-	}
-
-	.connection__legend {
-		@apply flex items-stretch gap-x-2;
-	}
-
-	.connection__nav {
-		@apply flex items-stretch gap-x-2;
-	}
-
-	.connection__grid {
-		@apply flex flex-col gap-2;
-		@apply sm:grid sm:grid-cols-2;
-	}
-
-	.connection__host {
-		@apply col-span-2 grid gap-2;
-
-		&--openai {
-			@apply sm:grid sm:grid-cols-2;
-		}
-	}
-</style>
+</div>
