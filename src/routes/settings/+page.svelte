@@ -2,7 +2,7 @@
 	import LL from '$i18n/i18n-svelte';
 	import Head from '$lib/components/Head.svelte';
 
-	import DangerZone from './DangerZone.svelte';
+	import DataManagement from './DataManagement.svelte';
 	import Interface from './Interface.svelte';
 	import Servers from './Servers.svelte';
 	import Version from './Version.svelte';
@@ -15,7 +15,7 @@
 		<Version />
 		<Servers />
 		<Interface />
-		<DangerZone />
+		<DataManagement />
 	</div>
 </section>
 
