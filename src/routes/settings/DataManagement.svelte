@@ -1,11 +1,19 @@
 <script lang="ts">
 	import { Download, FolderUp, Trash2 } from 'lucide-svelte';
+	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Fieldset from '$lib/components/Fieldset.svelte';
 	import P from '$lib/components/P.svelte';
-	import { StorageKey } from '$lib/localStorage';
+	import {
+		knowledgeStore,
+		serversStore,
+		sessionsStore,
+		settingsStore,
+		StorageKey
+	} from '$lib/localStorage';
+	import { DEFAULT_SETTINGS } from '$lib/settings';
 
 	interface DataSource {
 		storageKey: StorageKey;
@@ -63,9 +71,26 @@
 			try {
 				const data = JSON.parse(e.target?.result as string);
 				localStorage.setItem(storageKey, JSON.stringify(data));
-				location.reload();
-			} catch {
-				alert('The file provided is not a valid JSON file');
+				switch (storageKey) {
+					case StorageKey.HollamaSettings:
+						$settingsStore = data;
+						break;
+					case StorageKey.HollamaServers:
+						$serversStore = data;
+						break;
+					case StorageKey.HollamaSessions:
+						$sessionsStore = data;
+						break;
+					case StorageKey.HollamaKnowledge:
+						$knowledgeStore = data;
+						break;
+				}
+				toast.success($LL.importSuccess());
+			} catch (error) {
+				console.error(error);
+				toast.error($LL.importError(), {
+					description: error instanceof Error ? error.message : 'Unknown error'
+				});
 			}
 		};
 		reader.readAsText(file);
@@ -74,7 +99,21 @@
 	function deleteData(storageKey: StorageKey, confirmDelete: string) {
 		if (confirm(confirmDelete)) {
 			localStorage.removeItem(storageKey);
-			location.reload();
+			switch (storageKey) {
+				case StorageKey.HollamaSettings:
+					$settingsStore = DEFAULT_SETTINGS;
+					break;
+				case StorageKey.HollamaServers:
+					$serversStore = [];
+					break;
+				case StorageKey.HollamaSessions:
+					$sessionsStore = [];
+					break;
+				case StorageKey.HollamaKnowledge:
+					$knowledgeStore = [];
+					break;
+			}
+			toast.info($LL.deleteSuccess());
 		}
 	}
 </script>

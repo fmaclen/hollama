@@ -653,6 +653,18 @@ type RootTranslation = {
 	 * C​o​u​l​d​n​'​t​ ​c​o​p​y​ ​c​o​n​t​e​n​t​.​ ​C​o​n​n​e​c​t​i​o​n​ ​i​s​ ​n​o​t​ ​p​r​i​v​a​t​e
 	 */
 	notCopiedNotPrivate: string
+	/**
+	 * I​m​p​o​r​t​ ​s​u​c​c​e​s​s​f​u​l
+	 */
+	importSuccess: string
+	/**
+	 * I​m​p​o​r​t​ ​f​a​i​l​e​d
+	 */
+	importError: string
+	/**
+	 * D​e​l​e​t​e​d​ ​s​u​c​c​e​s​s​f​u​l​l​y
+	 */
+	deleteSuccess: string
 }
 
 export type TranslationFunctions = {
@@ -1285,6 +1297,18 @@ The completion in progress will stop
 	 * Couldn't copy content. Connection is not private
 	 */
 	notCopiedNotPrivate: () => LocalizedString
+	/**
+	 * Import successful
+	 */
+	importSuccess: () => LocalizedString
+	/**
+	 * Import failed
+	 */
+	importError: () => LocalizedString
+	/**
+	 * Deleted successfully
+	 */
+	deleteSuccess: () => LocalizedString
 }
 
 export type Formatters = {}

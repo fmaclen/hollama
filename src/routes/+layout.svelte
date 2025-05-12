@@ -122,7 +122,7 @@
 			error: 'text-red-50 bg-red-700',
 			success: 'text-emerald-50 bg-emerald-700',
 			warning: 'text-yellow-50 bg-yellow-700',
-			info: 'bg-shade-4 text-indigo-50'
+			info: 'bg-shade-1 text-neutral-500'
 		}
 	}}
 	position="top-center"

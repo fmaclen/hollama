@@ -1,3 +1,4 @@
+import { promises as fs } from 'fs';
 import { expect, test } from '@playwright/test';
 
 import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, mockOllamaModelsResponse } from './utils';
@@ -147,4 +148,148 @@ test('all knowledge can be deleted', async ({ page }) => {
 	await expect(page.getByText('No knowledge')).toBeVisible();
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
 	expect(await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'))).toBe('[]');
+});
+
+test('exports server data to a JSON file', async ({ page }, testInfo) => {
+	await mockOllamaModelsResponse(page);
+	await page.goto('/settings');
+	await expect(page.getByLabel('Base URL')).toHaveValue('http://localhost:11434');
+
+	// Check if we have server data to export
+	const localStorageServers = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-servers')
+	);
+	expect(localStorageServers).toContain('"baseUrl":"http://localhost:11434"');
+
+	// Setup download listener
+	const downloadPromise = page.waitForEvent('download');
+
+	// Click export button for servers
+	await page.getByTestId('data-management-hollama-servers').getByText('Export').click();
+
+	// Wait for download to start
+	const download = await downloadPromise;
+	expect(download.suggestedFilename()).toBe('hollama-servers.json');
+
+	// Save to the test-results directory
+	const filePath = testInfo.outputPath('downloaded-servers.json');
+	await download.saveAs(filePath);
+
+	// Verify content of the file
+	const fileContent = await fs.readFile(filePath, 'utf8');
+	expect(fileContent).toContain('"baseUrl":"http://localhost:11434"');
+});
+
+test('exports preferences data to a JSON file', async ({ page }, testInfo) => {
+	await mockOllamaModelsResponse(page);
+	await page.goto('/settings');
+
+	// Change theme to dark mode to have some preference to export
+	await page.getByText('Dark').click();
+	await expect(page.getByText('Light')).toBeVisible();
+
+	// Verify we have preference data
+	const localStorageSettings = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-settings')
+	);
+	expect(localStorageSettings).toContain('"userTheme":"dark"');
+
+	// Setup download listener
+	const downloadPromise = page.waitForEvent('download');
+
+	// Click export button for preferences
+	await page.getByTestId('data-management-hollama-settings').getByText('Export').click();
+
+	// Wait for download to start
+	const download = await downloadPromise;
+	expect(download.suggestedFilename()).toBe('hollama-preferences.json');
+
+	// Save to the test-results directory
+	const filePath = testInfo.outputPath('downloaded-preferences.json');
+	await download.saveAs(filePath);
+
+	// Verify content of the file
+	const fileContent = await fs.readFile(filePath, 'utf8');
+	expect(fileContent).toContain('"userTheme":"dark"');
+});
+
+test('imports server configuration from JSON file', async ({ page }, testInfo) => {
+	await page.goto('/settings');
+
+	// Create a file with custom server configuration
+	const customServerConfig = [
+		{
+			id: 'test-server-1',
+			name: 'Test Server',
+			baseUrl: 'http://test-server:11434'
+		}
+	];
+
+	const filePath = testInfo.outputPath('test-servers.json');
+	await fs.writeFile(filePath, JSON.stringify(customServerConfig));
+
+	// Get the file input element
+	const fileInputSelector = 'input#import-hollama-servers-input';
+
+	// Click the import button to get the file input
+	await page.getByTestId('data-management-hollama-servers').getByText('Import').click();
+
+	// Upload the file
+	await page.setInputFiles(fileInputSelector, filePath);
+
+	// Handle the page reload
+	await page.waitForFunction(() => {
+		return window.localStorage.getItem('hollama-servers') !== null;
+	});
+
+	// Verify the data was imported
+	const storedServers = await page.evaluate(() =>
+		JSON.parse(window.localStorage.getItem('hollama-servers') || '[]')
+	);
+
+	expect(storedServers).toHaveLength(1);
+	expect(storedServers[0].name).toBe('Test Server');
+	expect(storedServers[0].baseUrl).toBe('http://test-server:11434');
+});
+
+test('imports session data from JSON file', async ({ page }, testInfo) => {
+	await page.goto('/settings');
+
+	// Create a file with test session data
+	const testSessions = [
+		{
+			id: 'test-session-1',
+			model: MOCK_API_TAGS_RESPONSE.models[0].name,
+			messages: [
+				{ role: 'user', content: 'Test message' },
+				{ role: 'assistant', content: 'Test response' }
+			],
+			context: [],
+			updatedAt: new Date().toISOString()
+		}
+	];
+
+	const filePath = testInfo.outputPath('test-sessions.json');
+	await fs.writeFile(filePath, JSON.stringify(testSessions));
+
+	// Get the file input element
+	const fileInputSelector = 'input#import-hollama-sessions-input';
+
+	// Click the import button to get the file input
+	await page.getByTestId('data-management-hollama-sessions').getByText('Import').click();
+
+	// Upload the file
+	await page.setInputFiles(fileInputSelector, filePath);
+
+	// Handle the page reload
+	await page.waitForFunction(() => {
+		return window.localStorage.getItem('hollama-sessions') !== null;
+	});
+
+	// Navigate to sessions to verify import
+	await page.getByTestId('sidebar').getByText('Sessions').click();
+
+	// Verify sessions are visible
+	await expect(page.getByText('No sessions')).not.toBeVisible();
+	await expect(page.getByTestId('session-item')).toHaveCount(1);
 });
