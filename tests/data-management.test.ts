@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs';
 import { expect, test } from '@playwright/test';
+import { chooseFromCombobox } from './utils';
 
 import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, mockOllamaModelsResponse } from './utils';
 
@@ -17,10 +18,16 @@ test('deletes all preferences and resets to default values', async ({ page }) =>
 	);
 	expect(localStorageSettings).toContain('"userTheme":"dark"');
 
+	// Verify toast is not visible before deletion
+	await expect(page.getByText('Deleted successfully')).not.toBeVisible();
+
 	// Click the delete button for preferences
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all preferences?'));
 	await expect(page.getByTestId('data-management-hollama-settings')).toContainText('Preferences');
 	await page.getByTestId('data-management-hollama-settings').getByText('Delete').click();
+
+	// Verify toast is visible after deletion
+	await expect(page.getByText('Deleted successfully')).toBeVisible();
 
 	// Wait for page reload
 	await page.waitForFunction(() => {
@@ -44,9 +51,15 @@ test('deletes all servers and resets to default values', async ({ page }) => {
 	);
 	expect(localStorageServers).toContain('"baseUrl":"http://localhost:11434"');
 
+	// Verify toast is not visible before deletion
+	await expect(page.getByText('Deleted successfully')).not.toBeVisible();
+
 	// Click the delete button for servers
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all servers?'));
 	await page.getByTestId('data-management-hollama-servers').getByText('Delete').click();
+
+	// Verify toast is visible after deletion
+	await expect(page.getByText('Deleted successfully')).toBeVisible();
 
 	// Wait for page reload
 	await page.waitForFunction(() => {
@@ -111,11 +124,19 @@ test('all sessions can be deleted', async ({ page }) => {
 	await expect(page.getByTestId('session-item')).toHaveCount(2);
 
 	await page.getByText('Settings').click();
+
+	// Verify toast is not visible before deletion
+	await expect(page.getByText('Deleted successfully')).not.toBeVisible();
+
 	// Click the delete button
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all sessions?'));
 	await expect(page.getByTestId('data-management-hollama-sessions')).toContainText('Sessions');
 
 	await page.getByTestId('data-management-hollama-sessions').getByText('Delete').click();
+
+	// Verify toast is visible after deletion
+	await expect(page.getByText('Deleted successfully')).toBeVisible();
+
 	await page.getByTestId('sidebar').getByText('Sessions').click();
 	await expect(page.getByText('No sessions')).toBeVisible();
 	await expect(page.getByTestId('session-item')).toHaveCount(0);
@@ -139,11 +160,19 @@ test('all knowledge can be deleted', async ({ page }) => {
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(2);
 
 	await page.getByText('Settings').click();
+
+	// Verify toast is not visible before deletion
+	await expect(page.getByText('Deleted successfully')).not.toBeVisible();
+
 	// Click the delete button
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all knowledge?'));
 	await expect(page.getByTestId('data-management-hollama-knowledge')).toContainText('Knowledge');
 
 	await page.getByTestId('data-management-hollama-knowledge').getByText('Delete').click();
+
+	// Verify toast is visible after deletion
+	await expect(page.getByText('Deleted successfully')).toBeVisible();
+
 	await page.getByTestId('sidebar').getByText('Knowledge').click();
 	await expect(page.getByText('No knowledge')).toBeVisible();
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
@@ -228,6 +257,12 @@ test('imports server configuration from JSON file', async ({ page }, testInfo) =
 	const filePath = testInfo.outputPath('test-servers.json');
 	await fs.writeFile(filePath, JSON.stringify(customServerConfig));
 
+	// Verify toast is not visible before import
+	await expect(page.getByText('Import successful')).not.toBeVisible();
+
+	// Setup dialog handler to accept the confirmation
+	page.on('dialog', (dialog) => dialog.accept());
+
 	// Get the file input element
 	const fileInputSelector = 'input#import-hollama-servers-input';
 
@@ -237,19 +272,21 @@ test('imports server configuration from JSON file', async ({ page }, testInfo) =
 	// Upload the file
 	await page.setInputFiles(fileInputSelector, filePath);
 
+	// Verify toast is visible after import
+	await expect(page.getByText('Import successful')).toBeVisible();
+
 	// Handle the page reload
 	await page.waitForFunction(() => {
 		return window.localStorage.getItem('hollama-servers') !== null;
 	});
 
 	// Verify the data was imported
-	const storedServers = await page.evaluate(() =>
-		JSON.parse(window.localStorage.getItem('hollama-servers') || '[]')
-	);
+	const serversConfigRaw = await page.evaluate(() => window.localStorage.getItem('hollama-servers'));
+	const serversConfig = JSON.parse(serversConfigRaw || '[]');
 
-	expect(storedServers).toHaveLength(1);
-	expect(storedServers[0].name).toBe('Test Server');
-	expect(storedServers[0].baseUrl).toBe('http://test-server:11434');
+	expect(serversConfig).toHaveLength(1);
+	expect(serversConfig[0].name).toBe('Test Server');
+	expect(serversConfig[0].baseUrl).toBe('http://test-server:11434');
 });
 
 test('imports session data from JSON file', async ({ page }, testInfo) => {
@@ -272,6 +309,12 @@ test('imports session data from JSON file', async ({ page }, testInfo) => {
 	const filePath = testInfo.outputPath('test-sessions.json');
 	await fs.writeFile(filePath, JSON.stringify(testSessions));
 
+	// Verify toast is not visible before import
+	await expect(page.getByText('Import successful')).not.toBeVisible();
+
+	// Setup dialog handler to accept the confirmation
+	page.on('dialog', (dialog) => dialog.accept());
+
 	// Get the file input element
 	const fileInputSelector = 'input#import-hollama-sessions-input';
 
@@ -280,6 +323,9 @@ test('imports session data from JSON file', async ({ page }, testInfo) => {
 
 	// Upload the file
 	await page.setInputFiles(fileInputSelector, filePath);
+
+	// Verify toast is visible after import
+	await expect(page.getByText('Import successful')).toBeVisible();
 
 	// Handle the page reload
 	await page.waitForFunction(() => {

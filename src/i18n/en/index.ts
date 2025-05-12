@@ -8,6 +8,7 @@ const en = {
 	areYouSureYouWantToDeleteAllKnowledge: 'Are you sure you want to delete all knowledge?',
 	areYouSureYouWantToDeleteAllSessions: 'Are you sure you want to delete all sessions?',
 	areYouSureYouWantToDeleteAllSettings: 'Are you sure you want to delete all settings?',
+	areYouSureYouWantToImportData: 'Are you sure you want to import? This will overwrite your existing data.',
 	areYouSureYouWantToLeave: 'Are you sure you want to leave?\nThe completion in progress will stop',
 	assistant: 'Assistant',
 	attachImage: 'Attach image',
@@ -164,7 +165,11 @@ const en = {
 	notCopiedNotPrivate: "Couldn't copy content. Connection is not private",
 	importSuccess: 'Import successful',
 	importError: 'Import failed',
-	deleteSuccess: 'Deleted successfully'
+	deleteSuccess: 'Deleted successfully',
+	serversDescription: 'Connections, model filters and labels',
+	preferencesDescription: 'Language, theme, recently used models, etc',
+	sessionsDescription: 'Entire session history, attachments and custom model settings',
+	knowledgeDescription: 'Entire knowledge base'
 } satisfies BaseTranslation;
 
 export default en;

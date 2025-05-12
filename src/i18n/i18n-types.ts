@@ -50,6 +50,10 @@ type RootTranslation = {
 	 */
 	areYouSureYouWantToDeleteAllSettings: string
 	/**
+	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​i​m​p​o​r​t​?​ ​T​h​i​s​ ​w​i​l​l​ ​o​v​e​r​w​r​i​t​e​ ​y​o​u​r​ ​e​x​i​s​t​i​n​g​ ​d​a​t​a​.
+	 */
+	areYouSureYouWantToImportData: string
+	/**
 	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​l​e​a​v​e​?​
 ​T​h​e​ ​c​o​m​p​l​e​t​i​o​n​ ​i​n​ ​p​r​o​g​r​e​s​s​ ​w​i​l​l​ ​s​t​o​p
 	 */
@@ -665,6 +669,22 @@ type RootTranslation = {
 	 * D​e​l​e​t​e​d​ ​s​u​c​c​e​s​s​f​u​l​l​y
 	 */
 	deleteSuccess: string
+	/**
+	 * C​o​n​n​e​c​t​i​o​n​s​,​ ​m​o​d​e​l​ ​f​i​l​t​e​r​s​ ​a​n​d​ ​l​a​b​e​l​s
+	 */
+	serversDescription: string
+	/**
+	 * L​a​n​g​u​a​g​e​,​ ​t​h​e​m​e​,​ ​r​e​c​e​n​t​l​y​ ​u​s​e​d​ ​m​o​d​e​l​s​,​ ​e​t​c
+	 */
+	preferencesDescription: string
+	/**
+	 * E​n​t​i​r​e​ ​s​e​s​s​i​o​n​ ​h​i​s​t​o​r​y​,​ ​a​t​t​a​c​h​m​e​n​t​s​ ​a​n​d​ ​c​u​s​t​o​m​ ​m​o​d​e​l​ ​s​e​t​t​i​n​g​s
+	 */
+	sessionsDescription: string
+	/**
+	 * E​n​t​i​r​e​ ​k​n​o​w​l​e​d​g​e​ ​b​a​s​e
+	 */
+	knowledgeDescription: string
 }
 
 export type TranslationFunctions = {
@@ -696,6 +716,10 @@ export type TranslationFunctions = {
 	 * Are you sure you want to delete all settings?
 	 */
 	areYouSureYouWantToDeleteAllSettings: () => LocalizedString
+	/**
+	 * Are you sure you want to import? This will overwrite your existing data.
+	 */
+	areYouSureYouWantToImportData: () => LocalizedString
 	/**
 	 * Are you sure you want to leave?
 The completion in progress will stop
@@ -1309,6 +1333,22 @@ The completion in progress will stop
 	 * Deleted successfully
 	 */
 	deleteSuccess: () => LocalizedString
+	/**
+	 * Connections, model filters and labels
+	 */
+	serversDescription: () => LocalizedString
+	/**
+	 * Language, theme, recently used models, etc
+	 */
+	preferencesDescription: () => LocalizedString
+	/**
+	 * Entire session history, attachments and custom model settings
+	 */
+	sessionsDescription: () => LocalizedString
+	/**
+	 * Entire knowledge base
+	 */
+	knowledgeDescription: () => LocalizedString
 }
 
 export type Formatters = {}

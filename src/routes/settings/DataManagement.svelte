@@ -66,6 +66,12 @@
 		const input = event.target as HTMLInputElement;
 		if (!input.files || input.files.length === 0) return;
 		const file = input.files[0];
+		
+		if (!confirm($LL.areYouSureYouWantToImportData())) {
+			input.value = ''; // Reset the file input
+			return;
+		}
+		
 		const reader = new FileReader();
 		reader.onload = (e) => {
 			try {
@@ -125,20 +131,6 @@
 			class="flex flex-grow flex-col gap-2 sm:flex-row"
 			data-testid={`data-management-${dataSource.storageKey}`}
 		>
-			<div
-				class="inline-flex w-full flex-grow items-center gap-x-2 rounded-md border border-shade-4 p-2 text-sm leading-tight text-muted"
-			>
-				<!-- HACK: because the labels are reactive we need to define them here -->
-				{#if dataSource.storageKey === StorageKey.HollamaServers}
-					{$LL.servers()}
-				{:else if dataSource.storageKey === StorageKey.HollamaSettings}
-					{$LL.preferences()}
-				{:else if dataSource.storageKey === StorageKey.HollamaSessions}
-					{$LL.sessions()}
-				{:else if dataSource.storageKey === StorageKey.HollamaKnowledge}
-					{$LL.knowledge()}
-				{/if}
-			</div>
 			<input
 				id={`import-${dataSource.storageKey}-input`}
 				type="file"
@@ -146,30 +138,54 @@
 				style="display: none;"
 				onchange={(e) => importData(e, dataSource.storageKey)}
 			/>
+			<div
+				class="inline-flex w-full flex-grow items-center justify-between gap-x-2 rounded-md border border-shade-4 p-2 text-sm leading-tight"
+			>
+				<div class="flex flex-col">
+					<!-- HACK: because the labels are reactive we need to define them here -->
+					{#if dataSource.storageKey === StorageKey.HollamaServers}
+						<P><strong>{$LL.servers()}</strong></P>
+						<span class="text-xs text-muted">{$LL.serversDescription()}</span>
+					{:else if dataSource.storageKey === StorageKey.HollamaSettings}
+						<P><strong>{$LL.preferences()}</strong></P>
+						<span class="text-xs text-muted">{$LL.preferencesDescription()}</span>
+					{:else if dataSource.storageKey === StorageKey.HollamaSessions}
+						<P><strong>{$LL.sessions()}</strong></P>
+						<span class="text-xs text-muted">{$LL.sessionsDescription()}</span>
+					{:else if dataSource.storageKey === StorageKey.HollamaKnowledge}
+						<P><strong>{$LL.knowledge()}</strong></P>
+						<span class="text-xs text-muted">{$LL.knowledgeDescription()}</span>
+					{/if}
+				</div>
 
-			<Button
-				variant="outline"
-				onclick={() =>
-					exportData(dataSource.storageKey, dataSource.fileName, dataSource.defaultValue)}
-			>
-				<Download class="base-icon" />
-				{$LL.export()}
-			</Button>
-			<Button
-				variant="outline"
-				onclick={() =>
-					document.getElementById(`import-${dataSource.storageKey.toLowerCase()}-input`)?.click()}
-			>
-				<FolderUp class="base-icon" />
-				{$LL.import()}
-			</Button>
-			<Button
-				variant="outline"
-				onclick={() => deleteData(dataSource.storageKey, dataSource.confirmDelete)}
-			>
-				<Trash2 class="base-icon" />
-				{$LL.delete()}
-			</Button>
+				<nav class="flex">
+					<Button
+						variant="icon"
+						onclick={() =>
+							exportData(dataSource.storageKey, dataSource.fileName, dataSource.defaultValue)}
+					>
+						<Download class="base-icon" />
+						{$LL.export()}
+					</Button>
+					<Button
+						variant="icon"
+						onclick={() =>
+							document
+								.getElementById(`import-${dataSource.storageKey.toLowerCase()}-input`)
+								?.click()}
+					>
+						<FolderUp class="base-icon" />
+						{$LL.import()}
+					</Button>
+					<Button
+						variant="icon"
+						onclick={() => deleteData(dataSource.storageKey, dataSource.confirmDelete)}
+					>
+						<Trash2 class="base-icon" />
+						{$LL.delete()}
+					</Button>
+				</nav>
+			</div>
 		</div>
 	{/each}
 </Fieldset>
