@@ -33,6 +33,10 @@
 			loadLocale($settingsStore.userLanguage);
 			setLocale($settingsStore.userLanguage);
 		}
+
+		if ($settingsStore.userTheme) {
+			document.documentElement.setAttribute('data-color-theme', $settingsStore.userTheme);
+		}
 	});
 
 	onMount(() => {
@@ -104,9 +108,7 @@
 	});
 
 	function toggleTheme() {
-		const theme = $settingsStore.userTheme === 'light' ? 'dark' : 'light';
-		document.documentElement.setAttribute('data-color-theme', theme);
-		$settingsStore.userTheme = theme;
+		$settingsStore.userTheme = $settingsStore.userTheme === 'light' ? 'dark' : 'light';
 	}
 </script>
 
