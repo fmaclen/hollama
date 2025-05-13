@@ -43,14 +43,14 @@ export function deleteStoreItem<T extends { id: string }>(store: T[], id: string
 
 export const LOCAL_STORAGE_PREFIX = 'hollama';
 export enum StorageKey {
-	HollamaSettings = `${LOCAL_STORAGE_PREFIX}-settings`,
+	HollamaPreferences = `${LOCAL_STORAGE_PREFIX}-settings`,
 	HollamaServers = `${LOCAL_STORAGE_PREFIX}-servers`,
 	HollamaSessions = `${LOCAL_STORAGE_PREFIX}-sessions`,
 	HollamaKnowledge = `${LOCAL_STORAGE_PREFIX}-knowledge`
 }
 
 export const settingsStore = createLocalStorageStore<Settings>(
-	StorageKey.HollamaSettings,
+	StorageKey.HollamaPreferences,
 	DEFAULT_SETTINGS
 );
 export const serversStore = createLocalStorageStore<Server[]>(StorageKey.HollamaServers, []);

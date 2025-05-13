@@ -25,25 +25,25 @@
 	const dataSources: DataSource[] = [
 		{
 			storageKey: StorageKey.HollamaServers,
-			fileName: 'hollama-servers.json',
+			fileName: `hollama-servers.json`,
 			defaultValue: '[]',
 			confirmDelete: 'Are you sure you want to delete all servers?'
 		},
 		{
-			storageKey: StorageKey.HollamaSettings,
-			fileName: 'hollama-preferences.json',
+			storageKey: StorageKey.HollamaPreferences,
+			fileName: `hollama-preferences.json`,
 			defaultValue: '{}',
 			confirmDelete: 'Are you sure you want to delete all preferences?'
 		},
 		{
 			storageKey: StorageKey.HollamaSessions,
-			fileName: 'hollama-sessions.json',
+			fileName: `hollama-sessions.json`,
 			defaultValue: '[]',
 			confirmDelete: 'Are you sure you want to delete all sessions?'
 		},
 		{
 			storageKey: StorageKey.HollamaKnowledge,
-			fileName: 'hollama-knowledge.json',
+			fileName: `hollama-knowledge.json`,
 			defaultValue: '[]',
 			confirmDelete: 'Are you sure you want to delete all knowledge?'
 		}
@@ -78,7 +78,7 @@
 				const data = JSON.parse(e.target?.result as string);
 				localStorage.setItem(storageKey, JSON.stringify(data));
 				switch (storageKey) {
-					case StorageKey.HollamaSettings:
+					case StorageKey.HollamaPreferences:
 						$settingsStore = data;
 						break;
 					case StorageKey.HollamaServers:
@@ -106,7 +106,7 @@
 		if (confirm(confirmDelete)) {
 			localStorage.removeItem(storageKey);
 			switch (storageKey) {
-				case StorageKey.HollamaSettings:
+				case StorageKey.HollamaPreferences:
 					$settingsStore = DEFAULT_SETTINGS;
 					break;
 				case StorageKey.HollamaServers:
@@ -146,7 +146,7 @@
 					{#if dataSource.storageKey === StorageKey.HollamaServers}
 						<P><strong>{$LL.servers()}</strong></P>
 						<span class="text-xs text-muted">{$LL.serversDescription()}</span>
-					{:else if dataSource.storageKey === StorageKey.HollamaSettings}
+					{:else if dataSource.storageKey === StorageKey.HollamaPreferences}
 						<P><strong>{$LL.preferences()}</strong></P>
 						<span class="text-xs text-muted">{$LL.preferencesDescription()}</span>
 					{:else if dataSource.storageKey === StorageKey.HollamaSessions}

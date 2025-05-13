@@ -243,14 +243,32 @@ test('exports preferences data to a JSON file', async ({ page }, testInfo) => {
 });
 
 test('imports server configuration from JSON file', async ({ page }, testInfo) => {
-	await page.goto('/settings');
+	await page.goto('/');
+	await page.getByTestId('sidebar').getByText('Settings').click();
+
+	// Negative assertions: No servers in UI or localStorage
+	await expect(page.getByTestId('server')).toHaveCount(0);
+	const beforeServers = await page.evaluate(() => window.localStorage.getItem('hollama-servers'));
+	expect(beforeServers === null || beforeServers === '[]').toBeTruthy();
 
 	// Create a file with custom server configuration
 	const customServerConfig = [
 		{
 			id: 'test-server-1',
 			name: 'Test Server',
-			baseUrl: 'http://test-server:11434'
+			baseUrl: 'http://test-server:11434',
+			connectionType: 'ollama',
+			isVerified: null,
+			isEnabled: true
+		},
+		{
+			id: 'test-server-2',
+			name: 'OpenAI Server',
+			baseUrl: 'https://api.openai.com/v1',
+			connectionType: 'openai',
+			apiKey: 'my-secret-api-key',
+			isVerified: null,
+			isEnabled: true
 		}
 	];
 
@@ -280,17 +298,27 @@ test('imports server configuration from JSON file', async ({ page }, testInfo) =
 		return window.localStorage.getItem('hollama-servers') !== null;
 	});
 
-	// Verify the data was imported
+	// Positive assertions: UI and localStorage
 	const serversConfigRaw = await page.evaluate(() => window.localStorage.getItem('hollama-servers'));
 	const serversConfig = JSON.parse(serversConfigRaw || '[]');
-
-	expect(serversConfig).toHaveLength(1);
+	expect(serversConfig).toHaveLength(2);
 	expect(serversConfig[0].name).toBe('Test Server');
-	expect(serversConfig[0].baseUrl).toBe('http://test-server:11434');
+	expect(serversConfig[1].baseUrl).toBe('https://api.openai.com/v1');
+	// UI: Check both servers are visible
+	await expect(page.getByTestId('server')).toHaveCount(2);
+	await expect(page.getByLabel('Base URL').nth(0)).toHaveValue('http://test-server:11434');
+	await expect(page.getByLabel('Base URL').nth(1)).toHaveValue('https://api.openai.com/v1');
+	await expect(page.getByLabel('API Key').nth(0)).toHaveValue('my-secret-api-key');
 });
 
 test('imports session data from JSON file', async ({ page }, testInfo) => {
-	await page.goto('/settings');
+	await page.goto('/');
+	await page.getByTestId('sidebar').getByText('Sessions').click();
+	await expect(page.getByText('No sessions')).toBeVisible();
+	await expect(page.getByTestId('session-item')).toHaveCount(0);
+	const beforeSessions = await page.evaluate(() => window.localStorage.getItem('hollama-sessions'));
+	expect(beforeSessions === null || beforeSessions === '[]').toBeTruthy();
+	await page.getByTestId('sidebar').getByText('Settings').click();
 
 	// Create a file with test session data
 	const testSessions = [
@@ -335,7 +363,108 @@ test('imports session data from JSON file', async ({ page }, testInfo) => {
 	// Navigate to sessions to verify import
 	await page.getByTestId('sidebar').getByText('Sessions').click();
 
-	// Verify sessions are visible
+	// Positive assertions: UI and localStorage
 	await expect(page.getByText('No sessions')).not.toBeVisible();
 	await expect(page.getByTestId('session-item')).toHaveCount(1);
+	// UI: Check session message is visible
+	await page.getByTestId('session-item').first().click();
+	await expect(page.getByText('Test message')).toBeVisible();
+	await expect(page.getByText('Test response')).toBeVisible();
+	const afterSessions = await page.evaluate(() => window.localStorage.getItem('hollama-sessions'));
+	expect(afterSessions).toContain('Test message');
+});
+
+test('imports knowledge data from JSON file', async ({ page }, testInfo) => {
+	await page.goto('/');
+	await page.getByTestId('sidebar').getByText('Knowledge').click();
+
+	// Negative assertions: No knowledge in UI or localStorage
+	await expect(page.getByText('No knowledge')).toBeVisible();
+	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
+	const beforeKnowledge = await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'));
+	expect(beforeKnowledge === null || beforeKnowledge === '[]').toBeTruthy();
+
+	// Create a file with test knowledge data
+	const testKnowledge = [
+		{
+			id: 'r3vpuu',
+			name: 'Susan',
+			content: 'Tu nombre es Susan',
+			updatedAt: '2025-05-13T20:47:41.780Z'
+		}
+	];
+
+	const filePath = testInfo.outputPath('test-knowledge.json');
+	await fs.writeFile(filePath, JSON.stringify(testKnowledge));
+
+	// Verify toast is not visible before import
+	await page.getByTestId('sidebar').getByText('Settings').click();
+	await expect(page.getByText('Import successful')).not.toBeVisible();
+
+	// Setup dialog handler to accept the confirmation
+	page.on('dialog', (dialog) => dialog.accept());
+
+	// Get the file input element
+	const fileInputSelector = 'input#import-hollama-knowledge-input';
+
+	// Click the import button to get the file input
+	await page.getByTestId('data-management-hollama-knowledge').getByText('Import').click();
+
+	// Upload the file
+	await page.setInputFiles(fileInputSelector, filePath);
+
+	// Verify toast is visible after import
+	await expect(page.getByText('Import successful')).toBeVisible();
+
+	// Handle the page reload
+	await page.waitForFunction(() => {
+		return window.localStorage.getItem('hollama-knowledge') !== null;
+	});
+
+	// Go back to Knowledge section to see imported data
+	await page.getByTestId('sidebar').getByText('Knowledge').click();
+
+	// Positive assertions: UI and localStorage
+	await expect(page.getByTestId('knowledge-item')).toHaveCount(1);
+	await expect(page.getByText('Susan')).toBeVisible();
+	await page.getByText('Susan').click();
+	await expect(page.getByText('Tu nombre es Susan')).toBeVisible();
+	const afterKnowledge = await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'));
+	expect(afterKnowledge).toContain('Susan');
+});
+
+test('imports preferences data from JSON file', async ({ page }, testInfo) => {
+	await page.goto('/');
+	await page.getByTestId('sidebar').getByText('Settings').click();
+
+	// Negative assertions: Language is not Spanish in UI or localStorage
+	await expect(page.getByLabel('Language')).toHaveValue('English');
+	const beforeSettings = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
+	expect(beforeSettings === null || !beforeSettings.includes('"userLanguage":"es"')).toBeTruthy();
+
+	// Create a file with test preferences data
+	const testPreferences = {
+		userLanguage: 'es',
+		userTheme: 'dark'
+	};
+
+	const filePath = testInfo.outputPath('test-preferences.json');
+	await fs.writeFile(filePath, JSON.stringify(testPreferences));
+	await expect(page.getByText('Import successful')).not.toBeVisible();
+
+	page.on('dialog', (dialog) => dialog.accept());
+	const fileInputSelector = 'input#import-hollama-settings-input';
+	await page.getByTestId('data-management-hollama-settings').getByText('Import').click();
+	await page.setInputFiles(fileInputSelector, filePath);
+	await expect(page.getByText('Import successful')).toBeVisible();
+
+	// Handle the page reload
+	await page.waitForFunction(() => {
+		return window.localStorage.getItem('hollama-settings') !== null;
+	});
+
+	// Positive assertions: UI and localStorage
+	await expect(page.getByLabel('Idioma')).toHaveValue('Español');
+	const afterSettings = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
+	expect(afterSettings).toContain('"userLanguage":"es"');
 });
