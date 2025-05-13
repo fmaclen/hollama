@@ -8,7 +8,8 @@ const en = {
 	areYouSureYouWantToDeleteAllKnowledge: 'Are you sure you want to delete all knowledge?',
 	areYouSureYouWantToDeleteAllSessions: 'Are you sure you want to delete all sessions?',
 	areYouSureYouWantToDeleteAllSettings: 'Are you sure you want to delete all settings?',
-	areYouSureYouWantToImportData: 'Are you sure you want to import? This will overwrite your existing data.',
+	areYouSureYouWantToImportData:
+		'Are you sure you want to import? This will overwrite your existing data.',
 	areYouSureYouWantToLeave: 'Are you sure you want to leave?\nThe completion in progress will stop',
 	assistant: 'Assistant',
 	attachImage: 'Attach image',

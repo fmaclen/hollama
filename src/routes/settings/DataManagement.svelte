@@ -66,12 +66,12 @@
 		const input = event.target as HTMLInputElement;
 		if (!input.files || input.files.length === 0) return;
 		const file = input.files[0];
-		
+
 		if (!confirm($LL.areYouSureYouWantToImportData())) {
 			input.value = ''; // Reset the file input
 			return;
 		}
-		
+
 		const reader = new FileReader();
 		reader.onload = (e) => {
 			try {

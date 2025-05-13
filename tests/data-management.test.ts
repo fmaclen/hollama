@@ -1,40 +1,28 @@
 import { promises as fs } from 'fs';
 import { expect, test } from '@playwright/test';
-import { chooseFromCombobox } from './utils';
 
 import { MOCK_API_TAGS_RESPONSE, MOCK_KNOWLEDGE, mockOllamaModelsResponse } from './utils';
 
 test('deletes all preferences and resets to default values', async ({ page }) => {
 	await mockOllamaModelsResponse(page);
-
-	// Change theme to dark mode
 	await page.getByText('Dark').click();
 	await expect(page.getByText('Light')).toBeVisible();
 	await expect(page.getByText('Dark')).not.toBeVisible();
 
-	// Check the preferences have been saved to localStorage
 	let localStorageSettings = await page.evaluate(() =>
 		window.localStorage.getItem('hollama-settings')
 	);
 	expect(localStorageSettings).toContain('"userTheme":"dark"');
-
-	// Verify toast is not visible before deletion
 	await expect(page.getByText('Deleted successfully')).not.toBeVisible();
 
-	// Click the delete button for preferences
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all preferences?'));
 	await expect(page.getByTestId('data-management-hollama-settings')).toContainText('Preferences');
 	await page.getByTestId('data-management-hollama-settings').getByText('Delete').click();
-
-	// Verify toast is visible after deletion
 	await expect(page.getByText('Deleted successfully')).toBeVisible();
 
-	// Wait for page reload
 	await page.waitForFunction(() => {
 		return window.localStorage.getItem('hollama-settings') !== null;
 	});
-
-	// Check the preferences have been reset to defaults
 	localStorageSettings = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(localStorageSettings).not.toContain('"userTheme":"dark"');
 	await expect(page.getByText('Dark')).toBeVisible();
@@ -45,28 +33,19 @@ test('deletes all servers and resets to default values', async ({ page }) => {
 	await mockOllamaModelsResponse(page);
 	await expect(page.getByLabel('Base URL')).toHaveValue('http://localhost:11434');
 
-	// Check if the settings store is updated with the selected server
 	let localStorageServers = await page.evaluate(() =>
 		window.localStorage.getItem('hollama-servers')
 	);
 	expect(localStorageServers).toContain('"baseUrl":"http://localhost:11434"');
-
-	// Verify toast is not visible before deletion
 	await expect(page.getByText('Deleted successfully')).not.toBeVisible();
 
-	// Click the delete button for servers
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all servers?'));
 	await page.getByTestId('data-management-hollama-servers').getByText('Delete').click();
-
-	// Verify toast is visible after deletion
 	await expect(page.getByText('Deleted successfully')).toBeVisible();
 
-	// Wait for page reload
 	await page.waitForFunction(() => {
 		return window.localStorage.getItem('hollama-servers') !== null;
 	});
-
-	// Check the servers have been removed completely
 	localStorageServers = await page.evaluate(() => window.localStorage.getItem('hollama-servers'));
 	expect(localStorageServers).not.toContain('"baseUrl":"http://localhost:11434"');
 	await expect(page.getByText('Base URL')).not.toBeVisible();
@@ -148,7 +127,6 @@ test('all knowledge can be deleted', async ({ page }) => {
 	await expect(page.getByText('No knowledge')).toBeVisible();
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
 
-	// Stage 2 knowledge
 	await page.evaluate(
 		({ mockKnowledge }) =>
 			window.localStorage.setItem('hollama-knowledge', JSON.stringify(mockKnowledge)),
@@ -160,17 +138,12 @@ test('all knowledge can be deleted', async ({ page }) => {
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(2);
 
 	await page.getByText('Settings').click();
-
-	// Verify toast is not visible before deletion
 	await expect(page.getByText('Deleted successfully')).not.toBeVisible();
 
-	// Click the delete button
 	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all knowledge?'));
 	await expect(page.getByTestId('data-management-hollama-knowledge')).toContainText('Knowledge');
 
 	await page.getByTestId('data-management-hollama-knowledge').getByText('Delete').click();
-
-	// Verify toast is visible after deletion
 	await expect(page.getByText('Deleted successfully')).toBeVisible();
 
 	await page.getByTestId('sidebar').getByText('Knowledge').click();
@@ -184,27 +157,18 @@ test('exports server data to a JSON file', async ({ page }, testInfo) => {
 	await page.goto('/settings');
 	await expect(page.getByLabel('Base URL')).toHaveValue('http://localhost:11434');
 
-	// Check if we have server data to export
 	const localStorageServers = await page.evaluate(() =>
 		window.localStorage.getItem('hollama-servers')
 	);
 	expect(localStorageServers).toContain('"baseUrl":"http://localhost:11434"');
 
-	// Setup download listener
 	const downloadPromise = page.waitForEvent('download');
-
-	// Click export button for servers
 	await page.getByTestId('data-management-hollama-servers').getByText('Export').click();
-
-	// Wait for download to start
 	const download = await downloadPromise;
 	expect(download.suggestedFilename()).toBe('hollama-servers.json');
 
-	// Save to the test-results directory
 	const filePath = testInfo.outputPath('downloaded-servers.json');
 	await download.saveAs(filePath);
-
-	// Verify content of the file
 	const fileContent = await fs.readFile(filePath, 'utf8');
 	expect(fileContent).toContain('"baseUrl":"http://localhost:11434"');
 });
@@ -273,7 +237,9 @@ test('imports server configuration from JSON file', async ({ page }, testInfo) =
 	await page.waitForFunction(() => {
 		return window.localStorage.getItem('hollama-servers') !== null;
 	});
-	const serversConfigRaw = await page.evaluate(() => window.localStorage.getItem('hollama-servers'));
+	const serversConfigRaw = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-servers')
+	);
 	const serversConfig = JSON.parse(serversConfigRaw || '[]');
 	expect(serversConfig).toHaveLength(2);
 	expect(serversConfig[0].name).toBe('Test Server');
@@ -341,7 +307,9 @@ test('imports knowledge data from JSON file', async ({ page }, testInfo) => {
 	await expect(page.getByText('No knowledge')).toBeVisible();
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
 
-	const beforeKnowledge = await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'));
+	const beforeKnowledge = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-knowledge')
+	);
 	expect(beforeKnowledge === null || beforeKnowledge === '[]').toBeTruthy();
 
 	// Create a file with test knowledge data
@@ -379,7 +347,9 @@ test('imports knowledge data from JSON file', async ({ page }, testInfo) => {
 	await page.getByText('Susan').click();
 	await expect(page.getByText('Tu nombre es Susan')).toBeVisible();
 
-	const afterKnowledge = await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'));
+	const afterKnowledge = await page.evaluate(() =>
+		window.localStorage.getItem('hollama-knowledge')
+	);
 	expect(afterKnowledge).toContain('Susan');
 });
 
@@ -414,9 +384,8 @@ test('imports preferences data from JSON file', async ({ page }, testInfo) => {
 	await page.waitForFunction(() => {
 		return window.localStorage.getItem('hollama-settings') !== null;
 	});
-
-	// Positive assertions: UI and localStorage
 	await expect(page.getByLabel('Idioma')).toHaveValue('Español');
+
 	const afterSettings = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(afterSettings).toContain('"userLanguage":"es"');
 	await expect(page.getByText('Dark')).not.toBeVisible();
