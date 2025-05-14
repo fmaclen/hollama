@@ -29,15 +29,14 @@
 	});
 
 	$effect(() => {
-		if ($settingsStore.userLanguage) {
-			loadLocale($settingsStore.userLanguage);
-			setLocale($settingsStore.userLanguage);
-		}
-
-		if ($settingsStore.userTheme) {
-			document.documentElement.setAttribute('data-color-theme', $settingsStore.userTheme);
-		}
+		if (!$settingsStore.userLanguage) return;
+		loadLocale($settingsStore.userLanguage);
+		setLocale($settingsStore.userLanguage);
 	});
+
+	$effect(() =>
+		document.documentElement.setAttribute('data-color-theme', $settingsStore.userTheme)
+	);
 
 	onMount(() => {
 		// Language
