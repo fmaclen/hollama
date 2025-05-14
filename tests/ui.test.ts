@@ -84,7 +84,8 @@ test.describe('FieldSelect', () => {
 		await page.goto('/settings');
 		await mockOllamaModelsResponse(page);
 
-		await page.getByText('Sessions', { exact: true }).click();
+		await page.getByTestId('sidebar').getByText('Sessions').click();
+
 		await newSessionButton.click();
 
 		// Mock a session with a specific model

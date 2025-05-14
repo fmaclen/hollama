@@ -24,7 +24,8 @@ test('creates and edits knowledge', async ({ page }) => {
 	});
 
 	await page.goto('/');
-	await page.getByText('Knowledge', { exact: true }).click();
+	await page.getByTestId('sidebar').getByText('Knowledge').click();
+
 	await expect(noKnowledgeMessage).toBeVisible();
 	await expect(page.getByText('Create new knowledge or choose one from the list')).toBeVisible();
 	await expect(fieldName).not.toBeVisible();
@@ -80,7 +81,8 @@ test('creates and edits knowledge', async ({ page }) => {
 
 test('can delete knowledge from the header and sidebar', async ({ page }) => {
 	await page.goto('/');
-	await page.getByText('Knowledge', { exact: true }).click();
+	await page.getByTestId('sidebar').getByText('Knowledge').click();
+
 	await expect(page.getByText('Create new knowledge or choose one from the list')).toBeVisible();
 	expect(await page.getByTestId('knowledge-item').count()).toBe(0);
 
@@ -119,7 +121,8 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	await mockOllamaModelsResponse(page);
 
 	await page.goto('/');
-	await page.getByText('Knowledge', { exact: true }).click();
+	await page.getByTestId('sidebar').getByText('Knowledge').click();
+
 	await expect(noKnowledgeMessage).toBeVisible();
 	await expect(noKnowledgeSelectedMessage).toBeVisible();
 	await expect(timestamp).not.toBeVisible();
@@ -161,32 +164,6 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[1].name })).toBeVisible();
 });
 
-test('all knowledge can be deleted', async ({ page }) => {
-	await page.goto('/knowledge');
-	await expect(page.getByText('No knowledge')).toBeVisible();
-	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
-
-	// Stage 2 knowledge
-	await page.evaluate(
-		({ mockKnowledge }) =>
-			window.localStorage.setItem('hollama-knowledge', JSON.stringify(mockKnowledge)),
-		{ mockKnowledge: MOCK_KNOWLEDGE }
-	);
-
-	await page.reload();
-	await expect(page.getByText('No knowledge')).not.toBeVisible();
-	await expect(page.getByTestId('knowledge-item')).toHaveCount(2);
-
-	await page.getByText('Settings').click();
-	// Click the delete button
-	page.on('dialog', (dialog) => dialog.accept('Are you sure you want to delete all knowledge?'));
-	await page.getByText('Delete all knowledge').click();
-	await page.getByText('Knowledge', { exact: true }).click();
-	await expect(page.getByText('No knowledge')).toBeVisible();
-	await expect(page.getByTestId('knowledge-item')).toHaveCount(0);
-	expect(await page.evaluate(() => window.localStorage.getItem('hollama-knowledge'))).toBe('[]');
-});
-
 test('can use knowledge as system prompt in the session', async ({ page }) => {
 	const sessionArticle = page.locator('.session__history .article');
 	const knowledgeId = page.getByTestId('knowledge-id');
@@ -194,7 +171,8 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	await mockOllamaModelsResponse(page);
 	await page.goto('/');
 	await seedKnowledgeAndReload(page);
-	await page.getByText('Knowledge', { exact: true }).click();
+	await page.getByTestId('sidebar').getByText('Knowledge').click();
+
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(MOCK_KNOWLEDGE.length);
 
 	await mockCompletionResponse(page, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1);

@@ -39,7 +39,7 @@
 
 <style lang="postcss">
 	.button {
-		@apply inline-flex items-center justify-center rounded-md;
+		@apply inline-flex items-center justify-center gap-2 rounded-md;
 
 		&--default,
 		&--outline {
@@ -65,8 +65,7 @@
 
 		&--icon {
 			@apply px-2.5 py-2 text-muted;
-			@apply hover:text-base;
-			@apply active:text-active;
+			@apply hover:text-active;
 		}
 
 		&--is-active {

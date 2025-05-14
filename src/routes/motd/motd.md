@@ -1,4 +1,4 @@
-`2025-05-04`
+`2025-05-14`
 
 ### Message of the day
 
@@ -6,13 +6,14 @@
 
 #### What's new?
 
+- **Import & export** options in [Settings](/settings).
 - **Added support for vision models** (e.g. `gemma3`, `gpt-4.1`).
-- **Added support for reasoning responses** using [`<think>`](https://ollama.com/library/deepseek-r1) and [`<thought>`](https://ollama.com/library/exaone-deep) tags.
-- **KaTeX math notation** is now supported in model responses.
-- **Session titles** can now be manually edited.
 
 #### Previously, in Hollama
 
+- **Added support for reasoning responses** using [`<think>`](https://ollama.com/library/deepseek-r1) and [`<thought>`](https://ollama.com/library/exaone-deep) tags.
+- **KaTeX math notation** is now supported in model responses.
+- **Session titles** can now be manually edited.
 - **Multiple-server support** allows you to connect to one or more Ollama (and/or OpenAI) servers at the same time.
 - **Models list can be filtered** by keyword for each server.
 - **Servers can be labeled** to help you identify them in the models list.

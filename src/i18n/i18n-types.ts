@@ -46,9 +46,17 @@ type RootTranslation = {
 	 */
 	areYouSureYouWantToDeleteAllSessions: string
 	/**
-	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​s​e​t​t​i​n​g​s​?
+	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​p​r​e​f​e​r​e​n​c​e​s​?
 	 */
-	areYouSureYouWantToDeleteAllSettings: string
+	areYouSureYouWantToDeleteAllPreferences: string
+	/**
+	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​s​e​r​v​e​r​s​?
+	 */
+	areYouSureYouWantToDeleteAllServers: string
+	/**
+	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​i​m​p​o​r​t​?​ ​T​h​i​s​ ​w​i​l​l​ ​o​v​e​r​w​r​i​t​e​ ​a​n​y​ ​e​x​i​s​t​i​n​g​ ​d​a​t​a
+	 */
+	areYouSureYouWantToImportData: string
 	/**
 	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​l​e​a​v​e​?​
 ​T​h​e​ ​c​o​m​p​l​e​t​i​o​n​ ​i​n​ ​p​r​o​g​r​e​s​s​ ​w​i​l​l​ ​s​t​o​p
@@ -175,17 +183,9 @@ type RootTranslation = {
 	 */
 	dark: string
 	/**
-	 * D​e​l​e​t​e​ ​a​l​l​ ​k​n​o​w​l​e​d​g​e
+	 * D​e​l​e​t​e
 	 */
-	deleteAllKnowledge: string
-	/**
-	 * D​e​l​e​t​e​ ​a​l​l​ ​s​e​s​s​i​o​n​s
-	 */
-	deleteAllSessions: string
-	/**
-	 * D​e​l​e​t​e​ ​a​l​l​ ​s​e​t​t​i​n​g​s
-	 */
-	deleteAllSettings: string
+	'delete': string
 	/**
 	 * D​e​l​e​t​e​ ​k​n​o​w​l​e​d​g​e
 	 */
@@ -231,6 +231,10 @@ type RootTranslation = {
 	 */
 	error: string
 	/**
+	 * E​x​p​o​r​t
+	 */
+	'export': string
+	/**
 	 * F​1​6​ ​K​V
 	 */
 	f16Kv: string
@@ -262,6 +266,10 @@ type RootTranslation = {
 	 * H​o​w​ ​t​o​ ​u​p​d​a​t​e​ ​D​o​c​k​e​r​ ​c​o​n​t​a​i​n​e​r​?
 	 */
 	howToUpdateDocker: string
+	/**
+	 * I​m​p​o​r​t
+	 */
+	'import': string
 	/**
 	 * I​n​t​e​r​f​a​c​e
 	 */
@@ -447,6 +455,10 @@ type RootTranslation = {
 	 * P​e​n​a​l​i​z​e​ ​n​e​w​l​i​n​e
 	 */
 	penalizeNewline: string
+	/**
+	 * P​r​e​f​e​r​e​n​c​e​s
+	 */
+	preferences: string
 	/**
 	 * P​r​e​s​e​n​c​e​ ​p​e​n​a​l​t​y
 	 */
@@ -649,6 +661,34 @@ type RootTranslation = {
 	 * C​o​u​l​d​n​'​t​ ​c​o​p​y​ ​c​o​n​t​e​n​t​.​ ​C​o​n​n​e​c​t​i​o​n​ ​i​s​ ​n​o​t​ ​p​r​i​v​a​t​e
 	 */
 	notCopiedNotPrivate: string
+	/**
+	 * I​m​p​o​r​t​ ​s​u​c​c​e​s​s​f​u​l
+	 */
+	importSuccess: string
+	/**
+	 * I​m​p​o​r​t​ ​f​a​i​l​e​d
+	 */
+	importError: string
+	/**
+	 * D​e​l​e​t​e​d​ ​s​u​c​c​e​s​s​f​u​l​l​y
+	 */
+	deleteSuccess: string
+	/**
+	 * C​o​n​n​e​c​t​i​o​n​s​,​ ​m​o​d​e​l​ ​f​i​l​t​e​r​s​ ​a​n​d​ ​l​a​b​e​l​s
+	 */
+	serversDescription: string
+	/**
+	 * L​a​n​g​u​a​g​e​,​ ​t​h​e​m​e​,​ ​r​e​c​e​n​t​l​y​ ​u​s​e​d​ ​m​o​d​e​l​s​,​ ​e​t​c
+	 */
+	preferencesDescription: string
+	/**
+	 * E​n​t​i​r​e​ ​s​e​s​s​i​o​n​ ​h​i​s​t​o​r​y​,​ ​a​t​t​a​c​h​m​e​n​t​s​ ​a​n​d​ ​c​u​s​t​o​m​ ​m​o​d​e​l​ ​s​e​t​t​i​n​g​s
+	 */
+	sessionsDescription: string
+	/**
+	 * E​n​t​i​r​e​ ​k​n​o​w​l​e​d​g​e​ ​b​a​s​e
+	 */
+	knowledgeDescription: string
 }
 
 export type TranslationFunctions = {
@@ -677,9 +717,17 @@ export type TranslationFunctions = {
 	 */
 	areYouSureYouWantToDeleteAllSessions: () => LocalizedString
 	/**
-	 * Are you sure you want to delete all settings?
+	 * Are you sure you want to delete all preferences?
 	 */
-	areYouSureYouWantToDeleteAllSettings: () => LocalizedString
+	areYouSureYouWantToDeleteAllPreferences: () => LocalizedString
+	/**
+	 * Are you sure you want to delete all servers?
+	 */
+	areYouSureYouWantToDeleteAllServers: () => LocalizedString
+	/**
+	 * Are you sure you want to import? This will overwrite any existing data
+	 */
+	areYouSureYouWantToImportData: () => LocalizedString
 	/**
 	 * Are you sure you want to leave?
 The completion in progress will stop
@@ -806,17 +854,9 @@ The completion in progress will stop
 	 */
 	dark: () => LocalizedString
 	/**
-	 * Delete all knowledge
+	 * Delete
 	 */
-	deleteAllKnowledge: () => LocalizedString
-	/**
-	 * Delete all sessions
-	 */
-	deleteAllSessions: () => LocalizedString
-	/**
-	 * Delete all settings
-	 */
-	deleteAllSettings: () => LocalizedString
+	'delete': () => LocalizedString
 	/**
 	 * Delete knowledge
 	 */
@@ -862,6 +902,10 @@ The completion in progress will stop
 	 */
 	error: () => LocalizedString
 	/**
+	 * Export
+	 */
+	'export': () => LocalizedString
+	/**
 	 * F16 KV
 	 */
 	f16Kv: () => LocalizedString
@@ -893,6 +937,10 @@ The completion in progress will stop
 	 * How to update Docker container?
 	 */
 	howToUpdateDocker: () => LocalizedString
+	/**
+	 * Import
+	 */
+	'import': () => LocalizedString
 	/**
 	 * Interface
 	 */
@@ -1077,6 +1125,10 @@ The completion in progress will stop
 	 * Penalize newline
 	 */
 	penalizeNewline: () => LocalizedString
+	/**
+	 * Preferences
+	 */
+	preferences: () => LocalizedString
 	/**
 	 * Presence penalty
 	 */
@@ -1277,6 +1329,34 @@ The completion in progress will stop
 	 * Couldn't copy content. Connection is not private
 	 */
 	notCopiedNotPrivate: () => LocalizedString
+	/**
+	 * Import successful
+	 */
+	importSuccess: () => LocalizedString
+	/**
+	 * Import failed
+	 */
+	importError: () => LocalizedString
+	/**
+	 * Deleted successfully
+	 */
+	deleteSuccess: () => LocalizedString
+	/**
+	 * Connections, model filters and labels
+	 */
+	serversDescription: () => LocalizedString
+	/**
+	 * Language, theme, recently used models, etc
+	 */
+	preferencesDescription: () => LocalizedString
+	/**
+	 * Entire session history, attachments and custom model settings
+	 */
+	sessionsDescription: () => LocalizedString
+	/**
+	 * Entire knowledge base
+	 */
+	knowledgeDescription: () => LocalizedString
 }
 
 export type Formatters = {}

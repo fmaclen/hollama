@@ -7,7 +7,10 @@ const en = {
 	apiKey: 'API key',
 	areYouSureYouWantToDeleteAllKnowledge: 'Are you sure you want to delete all knowledge?',
 	areYouSureYouWantToDeleteAllSessions: 'Are you sure you want to delete all sessions?',
-	areYouSureYouWantToDeleteAllSettings: 'Are you sure you want to delete all settings?',
+	areYouSureYouWantToDeleteAllPreferences: 'Are you sure you want to delete all preferences?',
+	areYouSureYouWantToDeleteAllServers: 'Are you sure you want to delete all servers?',
+	areYouSureYouWantToImportData:
+		'Are you sure you want to import? This will overwrite any existing data',
 	areYouSureYouWantToLeave: 'Are you sure you want to leave?\nThe completion in progress will stop',
 	assistant: 'Assistant',
 	attachImage: 'Attach image',
@@ -41,9 +44,7 @@ const en = {
 	currentVersion: 'Current version',
 	dangerZone: 'Danger zone',
 	dark: 'Dark',
-	deleteAllKnowledge: 'Delete all knowledge',
-	deleteAllSessions: 'Delete all sessions',
-	deleteAllSettings: 'Delete all settings',
+	delete: 'Delete',
 	deleteKnowledge: 'Delete knowledge',
 	deleteServer: 'Delete server',
 	deleteSession: 'Delete session',
@@ -55,6 +56,7 @@ const en = {
 	emptyKnowledge: 'No knowledge',
 	emptySessions: 'No sessions',
 	error: 'Error',
+	export: 'Export',
 	f16Kv: 'F16 KV',
 	frequencyPenalty: 'Frequency penalty',
 	genericError: 'Sorry, something went wrong',
@@ -63,6 +65,7 @@ const en = {
 	goToReleases: 'Go to releases',
 	howToObtainOpenAIKey: 'How to obtain an API key from OpenAI?',
 	howToUpdateDocker: 'How to update Docker container?',
+	import: 'Import',
 	interface: 'Interface',
 	internalServerError: 'There was an internal server error, please try again later',
 	isCurrentVersionLatest: 'You are on the latest version',
@@ -109,6 +112,7 @@ const en = {
 	openAICompatible: 'OpenAI: Compatible servers (i.e. llama.cpp)',
 	otherModels: 'Other models',
 	penalizeNewline: 'Penalize newline',
+	preferences: 'Preferences',
 	presencePenalty: 'Presence penalty',
 	prompt: 'Prompt',
 	promptPlaceholder: 'Write literally anything',
@@ -160,7 +164,14 @@ const en = {
 	writePromptToStart: 'Write a prompt to start a new session',
 	you: 'You',
 	copiedNotPrivate: 'Content copied, but your connection is not private',
-	notCopiedNotPrivate: "Couldn't copy content. Connection is not private"
+	notCopiedNotPrivate: "Couldn't copy content. Connection is not private",
+	importSuccess: 'Import successful',
+	importError: 'Import failed',
+	deleteSuccess: 'Deleted successfully',
+	serversDescription: 'Connections, model filters and labels',
+	preferencesDescription: 'Language, theme, recently used models, etc',
+	sessionsDescription: 'Entire session history, attachments and custom model settings',
+	knowledgeDescription: 'Entire knowledge base'
 } satisfies BaseTranslation;
 
 export default en;

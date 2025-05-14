@@ -7,13 +7,17 @@
 	import P from '$lib/components/P.svelte';
 	import { settingsStore } from '$lib/localStorage';
 
-	let value: Locales = $settingsStore.userLanguage || 'en';
+	let value: Locales = $state($settingsStore.userLanguage || 'en');
 
-	function changeLanguage(locale: Locales) {
-		if (!locale) return;
-		loadLocale(locale);
-		setLocale(locale);
-		$settingsStore.userLanguage = locale;
+	$effect(() => {
+		value = $settingsStore.userLanguage || 'en';
+	});
+
+	function changeLanguage() {
+		if (!value) return;
+		loadLocale(value);
+		setLocale(value);
+		$settingsStore.userLanguage = value;
 	}
 </script>
 
@@ -26,7 +30,7 @@
 		bind:value
 		allowClear={false}
 		allowSearch={false}
-		onChange={() => changeLanguage(value)}
+		onChange={changeLanguage}
 		options={[
 			{ value: 'en', label: 'English' },
 			{ value: 'de', label: 'Deutsch' },

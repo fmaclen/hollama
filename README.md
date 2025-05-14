@@ -16,6 +16,7 @@ A minimal LLM chat app that runs _entirely_ in your browser.
 - Copy code snippets, messages or entire sessions
 - Edit & retry messages
 - Stores data locally on your browser
+- Import & export stored data
 - Responsive layout
 - Light & dark themes
 - Multi-language interface

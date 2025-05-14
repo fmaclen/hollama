@@ -40,7 +40,8 @@ test('can navigate between session messages and controls', async ({ page }) => {
 	);
 
 	await page.reload();
-	await page.getByText('Sessions', { exact: true }).click();
+	await page.getByTestId('sidebar').getByText('Sessions').click();
+
 	await page.getByText("What's the NATO phonetic alphabet?").click();
 	await expect(page.getByText('Zulu')).toBeVisible();
 	await expect(page.getByText('System prompt')).not.toBeVisible();
@@ -66,7 +67,8 @@ test('can navigate between session messages and controls', async ({ page }) => {
 
 test('can set ollama model and runtime options', async ({ page }) => {
 	await page.goto('/');
-	await page.getByText('Sessions', { exact: true }).click();
+	await page.getByTestId('sidebar').getByText('Sessions').click();
+
 	await page.getByTestId('new-session').click();
 
 	const modelName = MOCK_API_TAGS_RESPONSE.models[1].name;

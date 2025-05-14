@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Brain, MessageSquareText, Moon, NotebookText, Settings2, Sun } from 'lucide-svelte';
-	import { onMount } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import { toast, Toaster } from 'svelte-sonner';
 	import { detectLocale, navigatorDetector } from 'typesafe-i18n/detectors';
 
@@ -13,18 +13,30 @@
 	import { env } from '$env/dynamic/public';
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { ConnectionType, getDefaultServer } from '$lib/connections';
 	import { serversStore, settingsStore, StorageKey } from '$lib/localStorage';
 	import { checkForUpdates, updateStatusStore } from '$lib/updates';
 
-	$: pathname = $page.url.pathname;
+	let { children }: { children: Snippet } = $props();
+
+	const pathname = $derived(page.url.pathname);
 	const SITEMAP = ['/sessions', '/knowledge', '/settings', '/motd'];
 
 	onNavigate(async () => {
 		// Check for updates whenever the user follows a link (if auto-check is enabled)
 		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
 	});
+
+	$effect(() => {
+		if (!$settingsStore.userLanguage) return;
+		loadLocale($settingsStore.userLanguage);
+		setLocale($settingsStore.userLanguage);
+	});
+
+	$effect(() =>
+		document.documentElement.setAttribute('data-color-theme', $settingsStore.userTheme)
+	);
 
 	onMount(() => {
 		// Language
@@ -39,7 +51,7 @@
 		setLocale($settingsStore.userLanguage);
 
 		// Migrate old server settings to new format
-		const settingsLocalStorage = localStorage.getItem(StorageKey.HollamaSettings);
+		const settingsLocalStorage = localStorage.getItem(StorageKey.HollamaPreferences);
 		if (settingsLocalStorage) {
 			const settings = JSON.parse(settingsLocalStorage);
 
@@ -78,7 +90,7 @@
 				}
 
 				// Reset the settings store with the removed keys
-				localStorage.removeItem(StorageKey.HollamaSettings);
+				localStorage.removeItem(StorageKey.HollamaPreferences);
 				settingsStore.set(settings);
 
 				// Ask the user to re-verify the server connections
@@ -95,9 +107,7 @@
 	});
 
 	function toggleTheme() {
-		const theme = $settingsStore.userTheme === 'light' ? 'dark' : 'light';
-		document.documentElement.setAttribute('data-color-theme', theme);
-		$settingsStore.userTheme = theme;
+		$settingsStore.userTheme = $settingsStore.userTheme === 'light' ? 'dark' : 'light';
 	}
 </script>
 
@@ -122,14 +132,14 @@
 			error: 'text-red-50 bg-red-700',
 			success: 'text-emerald-50 bg-emerald-700',
 			warning: 'text-yellow-50 bg-yellow-700',
-			info: 'bg-shade-4 text-indigo-50'
+			info: 'bg-shade-1 text-neutral-500'
 		}
 	}}
 	position="top-center"
 />
 
 <div class="layout">
-	<aside class="layout__aside">
+	<aside class="layout__aside" data-testid="sidebar">
 		<a href="/" class="layout__a layout__a--logo">
 			<img class="layout__logo" src="/favicon.png" alt="Hollama logo" />
 		</a>
@@ -158,7 +168,7 @@
 			</a>
 		{/each}
 
-		<button class="layout__button" on:click={toggleTheme}>
+		<button class="layout__button" onclick={toggleTheme}>
 			{#if $settingsStore.userTheme === 'light'}
 				<Moon class="base-icon" />
 				<span class="layout__label">{$LL.dark()}</span>
@@ -170,7 +180,7 @@
 	</aside>
 
 	<main class="layout__main">
-		<slot />
+		{@render children()}
 	</main>
 </div>
 
