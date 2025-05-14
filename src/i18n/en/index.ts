@@ -7,9 +7,10 @@ const en = {
 	apiKey: 'API key',
 	areYouSureYouWantToDeleteAllKnowledge: 'Are you sure you want to delete all knowledge?',
 	areYouSureYouWantToDeleteAllSessions: 'Are you sure you want to delete all sessions?',
-	areYouSureYouWantToDeleteAllSettings: 'Are you sure you want to delete all settings?',
+	areYouSureYouWantToDeleteAllPreferences: 'Are you sure you want to delete all preferences?',
+	areYouSureYouWantToDeleteAllServers: 'Are you sure you want to delete all servers?',
 	areYouSureYouWantToImportData:
-		'Are you sure you want to import? This will overwrite your existing data.',
+		'Are you sure you want to import? This will overwrite any existing data',
 	areYouSureYouWantToLeave: 'Are you sure you want to leave?\nThe completion in progress will stop',
 	assistant: 'Assistant',
 	attachImage: 'Attach image',

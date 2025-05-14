@@ -19,33 +19,28 @@
 		storageKey: StorageKey;
 		fileName: string;
 		defaultValue: string;
-		confirmDelete: string;
 	}
 
 	const dataSources: DataSource[] = [
 		{
 			storageKey: StorageKey.HollamaServers,
 			fileName: `hollama-servers.json`,
-			defaultValue: '[]',
-			confirmDelete: 'Are you sure you want to delete all servers?'
+			defaultValue: '[]'
 		},
 		{
 			storageKey: StorageKey.HollamaPreferences,
 			fileName: `hollama-preferences.json`,
-			defaultValue: '{}',
-			confirmDelete: 'Are you sure you want to delete all preferences?'
+			defaultValue: '{}'
 		},
 		{
 			storageKey: StorageKey.HollamaSessions,
 			fileName: `hollama-sessions.json`,
-			defaultValue: '[]',
-			confirmDelete: 'Are you sure you want to delete all sessions?'
+			defaultValue: '[]'
 		},
 		{
 			storageKey: StorageKey.HollamaKnowledge,
 			fileName: `hollama-knowledge.json`,
-			defaultValue: '[]',
-			confirmDelete: 'Are you sure you want to delete all knowledge?'
+			defaultValue: '[]'
 		}
 	];
 
@@ -102,7 +97,24 @@
 		reader.readAsText(file);
 	}
 
-	function deleteData(storageKey: StorageKey, confirmDelete: string) {
+	function deleteData(storageKey: StorageKey) {
+		let confirmDelete = '';
+
+		switch (storageKey) {
+			case StorageKey.HollamaPreferences:
+				confirmDelete = $LL.areYouSureYouWantToDeleteAllPreferences();
+				break;
+			case StorageKey.HollamaServers:
+				confirmDelete = $LL.areYouSureYouWantToDeleteAllServers();
+				break;
+			case StorageKey.HollamaSessions:
+				confirmDelete = $LL.areYouSureYouWantToDeleteAllSessions();
+				break;
+			case StorageKey.HollamaKnowledge:
+				confirmDelete = $LL.areYouSureYouWantToDeleteAllKnowledge();
+				break;
+		}
+
 		if (confirm(confirmDelete)) {
 			localStorage.removeItem(storageKey);
 			switch (storageKey) {
@@ -177,10 +189,7 @@
 						<FolderUp class="base-icon" />
 						{$LL.import()}
 					</Button>
-					<Button
-						variant="icon"
-						onclick={() => deleteData(dataSource.storageKey, dataSource.confirmDelete)}
-					>
+					<Button variant="icon" onclick={() => deleteData(dataSource.storageKey)}>
 						<Trash2 class="base-icon" />
 						{$LL.delete()}
 					</Button>

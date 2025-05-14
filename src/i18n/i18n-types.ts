@@ -46,11 +46,15 @@ type RootTranslation = {
 	 */
 	areYouSureYouWantToDeleteAllSessions: string
 	/**
-	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​s​e​t​t​i​n​g​s​?
+	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​p​r​e​f​e​r​e​n​c​e​s​?
 	 */
-	areYouSureYouWantToDeleteAllSettings: string
+	areYouSureYouWantToDeleteAllPreferences: string
 	/**
-	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​i​m​p​o​r​t​?​ ​T​h​i​s​ ​w​i​l​l​ ​o​v​e​r​w​r​i​t​e​ ​y​o​u​r​ ​e​x​i​s​t​i​n​g​ ​d​a​t​a​.
+	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​s​e​r​v​e​r​s​?
+	 */
+	areYouSureYouWantToDeleteAllServers: string
+	/**
+	 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​i​m​p​o​r​t​?​ ​T​h​i​s​ ​w​i​l​l​ ​o​v​e​r​w​r​i​t​e​ ​a​n​y​ ​e​x​i​s​t​i​n​g​ ​d​a​t​a
 	 */
 	areYouSureYouWantToImportData: string
 	/**
@@ -713,11 +717,15 @@ export type TranslationFunctions = {
 	 */
 	areYouSureYouWantToDeleteAllSessions: () => LocalizedString
 	/**
-	 * Are you sure you want to delete all settings?
+	 * Are you sure you want to delete all preferences?
 	 */
-	areYouSureYouWantToDeleteAllSettings: () => LocalizedString
+	areYouSureYouWantToDeleteAllPreferences: () => LocalizedString
 	/**
-	 * Are you sure you want to import? This will overwrite your existing data.
+	 * Are you sure you want to delete all servers?
+	 */
+	areYouSureYouWantToDeleteAllServers: () => LocalizedString
+	/**
+	 * Are you sure you want to import? This will overwrite any existing data
 	 */
 	areYouSureYouWantToImportData: () => LocalizedString
 	/**
