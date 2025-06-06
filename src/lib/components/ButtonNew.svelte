@@ -8,9 +8,13 @@
 	import Button from './Button.svelte';
 	import { generateNewUrl } from './ButtonNew';
 
-	export let sitemap: Sitemap;
-	let newId: string;
-	let href: string;
+	interface Props {
+		sitemap: Sitemap;
+	}
+
+	let { sitemap }: Props = $props();
+	let newId = $state('');
+	let href = $state('');
 
 	function setId() {
 		newId = generateRandomId();
@@ -20,13 +24,13 @@
 	onMount(setId);
 </script>
 
-<div class="flex gap-x-2 border-b p-6">
+<div class="flex gap-x-2 p-4">
 	<Button
 		data-testid={sitemap === Sitemap.SESSIONS ? 'new-session' : 'new-knowledge'}
 		class="w-full"
 		variant="outline"
 		{href}
-		on:click={setId}
+		onclick={setId}
 	>
 		{sitemap === Sitemap.SESSIONS ? $LL.newSession() : $LL.newKnowledge()}
 	</Button>
