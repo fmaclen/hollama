@@ -1,53 +1,22 @@
 <script lang="ts">
 	import { type Snippet } from 'svelte';
 
-	import LL from '$i18n/i18n-svelte';
-	import CollapsibleSidebar from '$lib/components/CollapsibleSidebar.svelte';
-	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
-	import SectionListItem from '$lib/components/SectionListItem.svelte';
-	import { knowledgeStore, sessionsStore } from '$lib/localStorage';
-	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
-	import { Sitemap } from '$lib/sitemap';
-	import { formatTimestampToNow } from '$lib/utils';
+	import SidebarToggle from '$lib/components/SidebarToggle.svelte';
 
 	let { children }: { children: Snippet } = $props();
 </script>
 
 <RobotsNoIndex />
 
-<CollapsibleSidebar>
-	{#snippet sessionsContent()}
-		{#if $sessionsStore && $sessionsStore.length > 0}
-			{#each $sessionsStore as session (session.id)}
-				<SectionListItem
-					sitemap={Sitemap.SESSIONS}
-					id={session.id}
-					title={getSessionTitle(session)}
-					subtitle={formatSessionMetadata(session)}
-				/>
-			{/each}
-		{:else}
-			<EmptyMessage>{$LL.emptySessions()}</EmptyMessage>
-		{/if}
-	{/snippet}
+<div class="flex h-full w-full">
+	<main class="flex min-w-0 flex-1 flex-col bg-shade-1 lg:rounded-xl lg:border">
+		<div class="flex items-center gap-2 border-b p-4 lg:border-b-0">
+			<SidebarToggle />
+		</div>
 
-	{#snippet knowledgeContent()}
-		{#if $knowledgeStore && $knowledgeStore.length > 0}
-			{#each $knowledgeStore as knowledge (knowledge.id)}
-				<SectionListItem
-					sitemap={Sitemap.KNOWLEDGE}
-					id={knowledge.id}
-					title={knowledge.name}
-					subtitle={formatTimestampToNow(knowledge.updatedAt)}
-				/>
-			{/each}
-		{:else}
-			<EmptyMessage>{$LL.emptyKnowledge()}</EmptyMessage>
-		{/if}
-	{/snippet}
-</CollapsibleSidebar>
-
-<main class="flex-1 overflow-auto bg-shade-1 lg:rounded-xl lg:border">
-	{@render children()}
-</main>
+		<div class="flex-1 overflow-auto">
+			{@render children()}
+		</div>
+	</main>
+</div>

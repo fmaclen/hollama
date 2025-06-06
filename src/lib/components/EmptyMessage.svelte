@@ -8,6 +8,6 @@
 	let { children }: Props = $props();
 </script>
 
-<p class="align-center flex h-full w-full items-center justify-center text-muted">
+<p class="align-center flex h-full w-full items-center justify-center text-balance p-4 text-muted">
 	{@render children?.()}
 </p>

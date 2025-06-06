@@ -12,15 +12,12 @@
 	import { env } from '$env/dynamic/public';
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
-	import { page } from '$app/state';
+	import CollapsibleSidebar from '$lib/components/CollapsibleSidebar.svelte';
 	import { ConnectionType, getDefaultServer } from '$lib/connections';
 	import { serversStore, settingsStore, StorageKey } from '$lib/localStorage';
 	import { checkForUpdates } from '$lib/updates';
-	import CollapsibleSidebar from '$lib/components/CollapsibleSidebar.svelte';
 
 	let { children }: { children: Snippet } = $props();
-
-	const pathname = $derived(page.url.pathname);
 
 	onNavigate(async () => {
 		// Check for updates whenever the user follows a link (if auto-check is enabled)
@@ -104,7 +101,6 @@
 				: 'light';
 		}
 	});
-
 </script>
 
 <svelte:head>
@@ -134,7 +130,8 @@
 	position="top-center"
 />
 
-<div class="flex h-dvh max-h-dvh w-screen bg-shade-2 lg:gap-4 lg:p-4">
+<div class="flex h-dvh w-screen bg-shade-2 lg:p-4">
+	<CollapsibleSidebar />
 	{@render children()}
 </div>
 
