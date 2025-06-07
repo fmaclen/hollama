@@ -43,9 +43,9 @@
 
 	function setActiveSection(section: 'sessions' | 'knowledge') {
 		activeSection = section;
-		if (section === 'sessions' && !pathname.includes('/sessions')) {
+		if (section === 'sessions') {
 			goto('/sessions');
-		} else if (section === 'knowledge' && !pathname.includes('/knowledge')) {
+		} else if (section === 'knowledge') {
 			goto('/knowledge');
 		}
 	}
@@ -56,11 +56,12 @@
 		class="absolute inset-0 bg-neutral-900/50 lg:relative lg:bg-transparent"
 		transition:fade={{ duration: 100 }}
 	>
-		<aside
+		<nav
 			class="
 		flex h-full w-[90vw] flex-shrink-0 flex-col bg-shade-1 lg:mr-4 lg:w-80 lg:rounded-xl lg:border
 	"
 			transition:slide={{ delay: 50, duration: 100, axis: 'x' }}
+			aria-label="Main navigation"
 		>
 			<div class="flex items-center justify-between border-b p-4">
 				<a href="/" class="flex items-center gap-3">
@@ -71,13 +72,16 @@
 				<SidebarToggle class="lg:hidden" />
 			</div>
 
-			<div class="flex bg-shade-2 px-3 py-2 text-xs">
+			<div class="flex bg-shade-2 px-3 py-2 text-sm" role="tablist" aria-label="Content sections">
 				<button
 					onclick={() => setActiveSection('sessions')}
 					class="flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 font-medium {activeSection ===
 					'sessions'
 						? 'bg-shade-0 text-active shadow-sm'
 						: 'text-muted'}"
+					role="tab"
+					aria-selected={activeSection === 'sessions'}
+					aria-controls="sessions-panel"
 				>
 					<MessageSquareText class="h-4 w-4" />
 					{$LL.sessions()}
@@ -88,46 +92,64 @@
 					'knowledge'
 						? 'bg-shade-0 text-active shadow-sm'
 						: 'text-muted'}"
+					role="tab"
+					aria-selected={activeSection === 'knowledge'}
+					aria-controls="knowledge-panel"
 				>
 					<Brain class="h-4 w-4" />
 					{$LL.knowledge()}
 				</button>
 			</div>
-			<div class="px-3 pb-3 pt-5">
+			<div class="px-3 pt-0 pb-3 bg-shade-2">
 				<ButtonNew sitemap={activeSection === 'sessions' ? Sitemap.SESSIONS : Sitemap.KNOWLEDGE} />
 			</div>
 
 			<div class="flex flex-1 flex-col overflow-hidden">
 				<div class="flex-1 overflow-auto">
-					<SectionList>
+					<section
+						id="sessions-panel"
+						aria-labelledby="sessions-tab"
+						hidden={activeSection !== 'sessions'}
+					>
 						{#if activeSection === 'sessions'}
-							{#if $sessionsStore && $sessionsStore.length > 0}
-								{#each $sessionsStore as session (session.id)}
-									<SectionListItem
-										sitemap={Sitemap.SESSIONS}
-										id={session.id}
-										title={getSessionTitle(session)}
-										subtitle={formatSessionMetadata(session)}
-									/>
-								{/each}
-							{:else}
-								<EmptyMessage>{$LL.emptySessions()}</EmptyMessage>
-							{/if}
-						{:else if activeSection === 'knowledge'}
-							{#if $knowledgeStore && $knowledgeStore.length > 0}
-								{#each $knowledgeStore as knowledge (knowledge.id)}
-									<SectionListItem
-										sitemap={Sitemap.KNOWLEDGE}
-										id={knowledge.id}
-										title={knowledge.name}
-										subtitle={formatTimestampToNow(knowledge.updatedAt)}
-									/>
-								{/each}
-							{:else}
-								<EmptyMessage>{$LL.emptyKnowledge()}</EmptyMessage>
-							{/if}
+							<SectionList>
+								{#if $sessionsStore && $sessionsStore.length > 0}
+									{#each $sessionsStore as session (session.id)}
+										<SectionListItem
+											sitemap={Sitemap.SESSIONS}
+											id={session.id}
+											title={getSessionTitle(session)}
+											subtitle={formatSessionMetadata(session)}
+										/>
+									{/each}
+								{:else}
+									<EmptyMessage>{$LL.emptySessions()}</EmptyMessage>
+								{/if}
+							</SectionList>
 						{/if}
-					</SectionList>
+					</section>
+					<section
+						id="knowledge-panel"
+						aria-labelledby="knowledge-tab"
+						hidden={activeSection !== 'knowledge'}
+					>
+						{#if activeSection === 'knowledge'}
+							<SectionList>
+								{#if $knowledgeStore && $knowledgeStore.length > 0}
+									{#each $knowledgeStore as knowledge (knowledge.id)}
+										<SectionListItem
+											sitemap={Sitemap.KNOWLEDGE}
+											id={knowledge.id}
+											title={knowledge.name}
+											subtitle={formatTimestampToNow(knowledge.updatedAt)}
+										/>
+									{/each}
+								{:else}
+									<EmptyMessage>{$LL.emptyKnowledge()}</EmptyMessage>
+								{/if}
+							</SectionList>
+						{/if}
+					</section>
 				</div>
 			</div>
 
@@ -170,6 +192,6 @@
 					{/if}
 				</button>
 			</div>
-		</aside>
+		</nav>
 	</div>
 {/if}

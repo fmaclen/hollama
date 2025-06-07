@@ -140,7 +140,7 @@
 	}
 
 	.section-list-item__a {
-		@apply relative z-0 w-full overflow-hidden text-ellipsis px-6 py-3;
+		@apply relative z-0 w-full overflow-hidden text-ellipsis pl-5 pr-0 py-3;
 		@apply hover:text-active;
 	}
 
