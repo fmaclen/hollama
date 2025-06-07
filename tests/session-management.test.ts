@@ -77,7 +77,6 @@ test.describe('Session management', () => {
 
 	test('can navigate older sessions from sidebar', async ({ page }) => {
 		const sessionTab = page.getByRole('tab', { name: 'Sessions' });
-		const settingsLink = page.getByRole('link', { name: 'Settings' });
 
 		await page.goto('/');
 		await expect(sessionTab).toHaveAttribute('aria-selected', 'true');
