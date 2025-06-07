@@ -30,7 +30,7 @@ export const DEFAULT_SETTINGS: Settings = {
 	autoCheckForUpdates: false,
 	userTheme: 'light',
 	userLanguage: null,
-	sidebarExpanded: false,
+	sidebarExpanded: true,
 	hollamaMetadata: {
 		currentVersion: version,
 		isDesktop: env.PUBLIC_ADAPTER === 'electron-node',
