@@ -84,7 +84,7 @@ test.describe('FieldSelect', () => {
 		await page.goto('/settings');
 		await mockOllamaModelsResponse(page);
 
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await newSessionButton.click();
 
