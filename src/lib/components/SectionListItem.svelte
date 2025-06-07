@@ -136,7 +136,7 @@
 	}
 
 	.section-list-item--active {
-		@apply bg-shade-1;
+		@apply bg-shade-0;
 	}
 
 	.section-list-item__a {

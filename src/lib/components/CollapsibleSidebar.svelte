@@ -58,10 +58,11 @@
 	>
 		<nav
 			class="
-		flex h-full w-[90vw] flex-shrink-0 flex-col bg-shade-1 lg:mr-4 lg:w-80 lg:rounded-xl lg:border
+		flex h-full w-[90vw] flex-shrink-0 flex-col bg-shade-1 lg:mr-4 lg:w-96 lg:rounded-xl lg:border
 	"
 			transition:slide={{ delay: 50, duration: 100, axis: 'x' }}
 			aria-label="Main navigation"
+			data-testid="sidebar"
 		>
 			<div class="flex items-center justify-between border-b p-4">
 				<a href="/" class="flex items-center gap-3">
@@ -75,9 +76,11 @@
 			<div class="flex bg-shade-2 px-3 py-2 text-sm" role="tablist" aria-label="Content sections">
 				<button
 					onclick={() => setActiveSection('sessions')}
-					class="flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 font-medium {activeSection ===
-					'sessions'
-						? 'bg-shade-0 text-active shadow-sm'
+					class="flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 font-medium transition-colors duration-25 hover:text-active {activeSection ===
+					'sessions' && pathname.includes('/sessions')
+						? 'bg-shade-0 text-active shadow-sm' :
+						activeSection === 'sessions' && !pathname.includes('/sessions')
+						? 'bg-shade-1 shadow-sm text-muted'
 						: 'text-muted'}"
 					role="tab"
 					aria-selected={activeSection === 'sessions'}
@@ -88,7 +91,7 @@
 				</button>
 				<button
 					onclick={() => setActiveSection('knowledge')}
-					class="flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 font-medium {activeSection ===
+					class="flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 font-medium transition-colors duration-25 hover:text-active {activeSection ===
 					'knowledge'
 						? 'bg-shade-0 text-active shadow-sm'
 						: 'text-muted'}"
@@ -154,16 +157,21 @@
 			</div>
 
 			<div class="border-t px-2 py-3">
-				<a href="/motd" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-muted">
+				<a 
+					href="/motd" 
+					class="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors duration-25 hover:text-active {pathname.includes('/motd') ? 'text-active' : 'text-muted'}"
+					aria-current={pathname.includes('/motd') ? 'page' : undefined}
+				>
 					<NotebookText class="h-4 w-4" />
 					{$LL.motd()}
 				</a>
 
 				<a
 					href="/settings"
-					class="relative flex items-center gap-3 px-4 py-3 text-sm font-medium text-muted {$updateStatusStore.showSidebarNotification
-						? 'before:absolute before:left-0 before:top-1/2 before:h-2 before:w-2 before:-translate-x-3 before:-translate-y-1/2 before:rounded-full before:bg-warning'
+					class="relative flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors duration-25 hover:text-active {pathname.includes('/settings') ? 'text-active' : 'text-muted'} {$updateStatusStore.showSidebarNotification
+						? 'before:absolute before:left-0 before:top-1/2 before:h-2 before:w-2 before:-translate-y-1/2 before:rounded-full before:bg-warning'
 						: ''}"
+					aria-current={pathname.includes('/settings') ? 'page' : undefined}
 				>
 					<Settings2 class="h-4 w-4" />
 					{$LL.settings()}
@@ -173,7 +181,7 @@
 					href="https://github.com/fmaclen/hollama"
 					target="_blank"
 					rel="noopener noreferrer"
-					class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-muted"
+					class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-muted transition-colors duration-25 hover:text-active"
 				>
 					<Github class="h-4 w-4" />
 					GitHub
@@ -181,7 +189,7 @@
 
 				<button
 					onclick={toggleTheme}
-					class="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-muted"
+					class="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-muted transition-colors duration-25 hover:text-active"
 				>
 					{#if $settingsStore.userTheme === 'light'}
 						<Moon class="h-4 w-4" />
