@@ -23,7 +23,6 @@
 	import EmptyMessage from './EmptyMessage.svelte';
 	import SectionList from './SectionList.svelte';
 	import SectionListItem from './SectionListItem.svelte';
-	import SidebarToggle from './SidebarToggle.svelte';
 
 	let activeSection = $state<'sessions' | 'knowledge'>('sessions');
 
@@ -53,7 +52,7 @@
 
 {#if $settingsStore.sidebarExpanded}
 	<div
-		class="absolute inset-0 bg-neutral-900/50 lg:relative lg:bg-transparent z-20"
+		class="absolute inset-0 z-20 bg-neutral-900/50 lg:relative lg:bg-transparent"
 		transition:fade={{ duration: 100 }}
 	>
 		<nav
@@ -65,7 +64,7 @@
 			data-testid="sidebar"
 		>
 			<div class="flex items-center justify-between border-b py-4">
-				<a href="/" class="flex items-center gap-2 mx-auto pr-8">
+				<a href="/" class="mx-auto flex items-center gap-2 pr-4">
 					<img class="h-8 w-8" src="/favicon.png" alt="Hollama logo" />
 					<span class="text-lg font-semibold tracking-tight">Hollama</span>
 				</a>
@@ -101,14 +100,14 @@
 					{$LL.knowledge()}
 				</button>
 			</div>
-			<div class="bg-shade-2 px-3 pb-3 pt-0">
+			<div class="border-b bg-shade-2 px-3 pb-3 pt-0">
 				<ButtonNew sitemap={activeSection === 'sessions' ? Sitemap.SESSIONS : Sitemap.KNOWLEDGE} />
 			</div>
 
 			<div class="flex flex-1 flex-col overflow-hidden">
 				<div class="flex-1 overflow-auto">
 					<section
-					class="h-full"
+						class="h-full"
 						id="sessions-panel"
 						aria-labelledby="sessions-tab"
 						hidden={activeSection !== 'sessions'}
@@ -132,6 +131,7 @@
 					</section>
 					<section
 						id="knowledge-panel"
+						class="h-full"
 						aria-labelledby="knowledge-tab"
 						hidden={activeSection !== 'knowledge'}
 					>

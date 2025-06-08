@@ -20,9 +20,17 @@
 
 	let { children }: { children: Snippet } = $props();
 
-	onNavigate(async () => {
+	onNavigate(async (navigation) => {
 		// Check for updates whenever the user follows a link (if auto-check is enabled)
 		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
+
+		// Auto-collapse sidebar on mobile when navigating (except for exact /sessions and /knowledge)
+		if (browser && window.innerWidth < 1024) {
+			const pathname = navigation.to?.url.pathname;
+			if (pathname && pathname !== '/sessions' && pathname !== '/knowledge') {
+				$settingsStore.sidebarExpanded = false;
+			}
+		}
 	});
 
 	$effect(() => {
@@ -131,10 +139,10 @@
 	position="top-center"
 />
 
-<div class="flex h-dvh w-screen bg-shade-2 lg:p-4 relative">
+<div class="relative flex h-dvh w-screen bg-shade-2 lg:p-4">
 	<CollapsibleSidebar />
 	<div class="relative flex-1">
-		<SidebarToggle class="absolute top-4 left-4 z-30" />
+		<SidebarToggle class="absolute left-4 top-4 z-30" />
 		{@render children()}
 	</div>
 </div>

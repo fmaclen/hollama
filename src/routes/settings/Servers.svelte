@@ -49,7 +49,9 @@
 
 	<div class="servers">
 		{#if !$serversStore.length}
-			<div class="col-span-full -mt-3 flex text-center text-balance rounded-md border border-shade-3">
+			<div
+				class="col-span-full -mt-3 flex text-balance rounded-md border border-shade-3 text-center"
+			>
 				<EmptyMessage>{$LL.noServerConnections()}</EmptyMessage>
 			</div>
 		{/if}

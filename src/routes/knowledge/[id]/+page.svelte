@@ -49,15 +49,15 @@
 <div class="knowledge">
 	<Header confirmDeletion={shouldConfirmDeletion}>
 		{#snippet headline()}
-		<p data-testid="knowledge-id" class="font-bold leading-none">
-			{$LL.knowledge()}
-			<Button variant="link" href={`/knowledge/${knowledge.id}`}>
-				#{knowledge.id}
-			</Button>
-		</p>
-		<Metadata dataTestid="knowledge-metadata">
-			{isNewKnowledge ? $LL.newKnowledge() : formatTimestampToNow(knowledge.updatedAt)}
-		</Metadata>
+			<p data-testid="knowledge-id" class="font-bold leading-none">
+				{$LL.knowledge()}
+				<Button variant="link" href={`/knowledge/${knowledge.id}`}>
+					#{knowledge.id}
+				</Button>
+			</p>
+			<Metadata dataTestid="knowledge-metadata">
+				{isNewKnowledge ? $LL.newKnowledge() : formatTimestampToNow(knowledge.updatedAt)}
+			</Metadata>
 		{/snippet}
 
 		{#snippet nav()}
