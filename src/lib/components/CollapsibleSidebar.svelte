@@ -53,7 +53,7 @@
 
 {#if $settingsStore.sidebarExpanded}
 	<div
-		class="absolute inset-0 bg-neutral-900/50 lg:relative lg:bg-transparent"
+		class="absolute inset-0 bg-neutral-900/50 lg:relative lg:bg-transparent z-10"
 		transition:fade={{ duration: 100 }}
 	>
 		<nav
@@ -64,13 +64,11 @@
 			aria-label="Main navigation"
 			data-testid="sidebar"
 		>
-			<div class="flex items-center justify-between border-b p-4">
-				<a href="/" class="flex items-center gap-3">
+			<div class="flex items-center justify-between border-b py-4">
+				<a href="/" class="flex items-center gap-2 mx-auto pr-8">
 					<img class="h-8 w-8" src="/favicon.png" alt="Hollama logo" />
 					<span class="text-lg font-semibold tracking-tight">Hollama</span>
 				</a>
-
-				<SidebarToggle class="lg:hidden" />
 			</div>
 
 			<div class="flex bg-shade-2 px-3 py-2 text-sm" role="tablist" aria-label="Content sections">

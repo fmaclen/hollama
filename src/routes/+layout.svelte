@@ -131,7 +131,7 @@
 	position="top-center"
 />
 
-<div class="flex h-dvh w-screen bg-shade-2 lg:p-4">
+<div class="flex h-dvh w-screen bg-shade-2 lg:p-4 relative">
 	<CollapsibleSidebar />
 	<div class="relative flex-1">
 		<SidebarToggle class="absolute top-4 left-4 z-10" />

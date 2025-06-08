@@ -16,7 +16,7 @@
 
 <style lang="postcss">
 	.motd {
-		@apply base-section base-section-fullscreen px-8;
+		@apply base-section base-section-fullscreen px-5;
 	}
 
 	.motd-markdown {
