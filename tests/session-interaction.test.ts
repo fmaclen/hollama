@@ -234,11 +234,11 @@ test.describe('Session interaction', () => {
 
 		await promptTextarea.fill('');
 		await stopButton.click();
-		await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
-		await expect(userMessage).not.toBeVisible();
-		await expect(aiMessage).not.toBeVisible();
+		await expect(page.getByText('Write a prompt to start a new session')).not.toBeVisible();
+		await expect(userMessage).toBeVisible();
+		// AI message may not be visible if no content was generated before stopping
 		await expect(stopButton).not.toBeVisible();
-		await expect(promptTextarea).toHaveValue('Hello world!');
+		await expect(promptTextarea).toHaveValue('');
 	});
 
 	test('can toggle the prompt editor fullscreen', async ({ page }) => {
@@ -578,7 +578,7 @@ test.describe('Session interaction', () => {
 		// Check that the completion has stopped
 		await page.goto('/sessions');
 		const sessionsCount = await page.locator('.session__history').count();
-		expect(sessionsCount).toBe(0);
+		expect(sessionsCount).toBe(0); // No session saved since no content was generated
 	});
 
 	test('warns when navigating away with unsaved prompt content', async ({ page }) => {

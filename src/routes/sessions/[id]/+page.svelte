@@ -241,12 +241,25 @@
 	}
 
 	function stopCompletion() {
-		editor.prompt = session.messages[session.messages.length - 1].content; // Reset the prompt to the last sent message
 		editor.abortController?.abort();
+
+		// Add the incomplete message to session if there's any content
+		if (editor.completion || editor.reasoning) {
+			const message: Message = {
+				role: 'assistant',
+				content: editor.completion || '',
+				reasoning: editor.reasoning || ''
+			};
+			session.messages = [...session.messages, message];
+			session.updatedAt = new Date().toISOString();
+			saveSession(session);
+		}
+
+		// Clear editor state
 		editor.completion = '';
+		editor.reasoning = '';
 		editor.isCompletionInProgress = false;
-		session.messages = session.messages.slice(0, -1); // Remove the "incomplete" AI response
-		editor.isNewSession = !session.messages.length;
+		editor.shouldFocusTextarea = true;
 	}
 
 	function handleError(error: Error) {
@@ -255,7 +268,18 @@
 		} else {
 			toast.error($LL.genericError(), { description: error.toString() });
 		}
-		stopCompletion();
+
+		// For errors, restore the prompt so user can retry
+		const lastUserMessage = session.messages.filter((m) => m.role === 'user').at(-1);
+		if (lastUserMessage) {
+			editor.prompt = lastUserMessage.content;
+		}
+
+		editor.abortController?.abort();
+		editor.completion = '';
+		editor.reasoning = '';
+		editor.isCompletionInProgress = false;
+		editor.shouldFocusTextarea = true;
 	}
 
 	function handleScroll() {
