@@ -151,7 +151,7 @@
 				onchange={(e) => importData(e, dataSource.storageKey)}
 			/>
 			<div
-				class="inline-flex w-full flex-grow items-center justify-between gap-x-2 rounded-md border border-shade-4 p-2 text-sm leading-tight"
+				class="inline-flex w-full flex-grow sm:flex-row flex-col sm:items-center justify-between gap-x-2 rounded-md border border-shade-4 p-2 text-sm leading-tight text-balance"
 			>
 				<div class="flex flex-col">
 					<!-- HACK: because the labels are reactive we need to define them here -->
@@ -170,7 +170,7 @@
 					{/if}
 				</div>
 
-				<nav class="flex">
+				<nav class="flex justify-between mt-4 sm:mt-0">
 					<Button
 						variant="icon"
 						onclick={() =>

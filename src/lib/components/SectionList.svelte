@@ -8,12 +8,6 @@
 	let { children }: Props = $props();
 </script>
 
-<nav class="section-list">
+<nav class="overflow-scrollbar flex h-full flex-col">
 	{@render children?.()}
 </nav>
-
-<style lang="postcss">
-	.section-list {
-		@apply overflow-scrollbar flex h-full flex-col;
-	}
-</style>

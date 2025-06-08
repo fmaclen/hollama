@@ -53,7 +53,7 @@
 
 {#if $settingsStore.sidebarExpanded}
 	<div
-		class="absolute inset-0 bg-neutral-900/50 lg:relative lg:bg-transparent z-10"
+		class="absolute inset-0 bg-neutral-900/50 lg:relative lg:bg-transparent z-20"
 		transition:fade={{ duration: 100 }}
 	>
 		<nav
@@ -108,6 +108,7 @@
 			<div class="flex flex-1 flex-col overflow-hidden">
 				<div class="flex-1 overflow-auto">
 					<section
+					class="h-full"
 						id="sessions-panel"
 						aria-labelledby="sessions-tab"
 						hidden={activeSection !== 'sessions'}

@@ -49,7 +49,7 @@
 
 	<div class="servers">
 		{#if !$serversStore.length}
-			<div class="servers__empty">
+			<div class="col-span-full -mt-3 flex text-center text-balance rounded-md border border-shade-3">
 				<EmptyMessage>{$LL.noServerConnections()}</EmptyMessage>
 			</div>
 		{/if}
@@ -71,9 +71,5 @@
 
 	.servers {
 		@apply flex flex-col gap-y-4;
-	}
-
-	.servers__empty {
-		@apply col-span-full -mt-3 flex justify-center rounded-md border border-shade-3 p-8;
 	}
 </style>
