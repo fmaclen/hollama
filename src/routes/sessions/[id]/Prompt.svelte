@@ -95,6 +95,72 @@
 		submit();
 	}
 
+	function handlePaste(event: ClipboardEvent) {
+		const clipboardData = event.clipboardData;
+		if (!clipboardData) return;
+
+		const items = Array.from(clipboardData.items);
+		const imageItems = items.filter((item) => item.type.startsWith('image/'));
+
+		if (imageItems.length === 0) return;
+
+		// Prevent default paste behavior when images are detected
+		event.preventDefault();
+
+		const allowedTypes = ['image/png', 'image/jpeg'];
+		const newAttachments: ImageAttachment[] = [];
+		let unsupportedFiles = false;
+
+		const imagePromises = imageItems.map((item, index) => {
+			return new Promise<void>((resolve) => {
+				if (!allowedTypes.includes(item.type)) {
+					unsupportedFiles = true;
+					resolve();
+					return;
+				}
+
+				const file = item.getAsFile();
+				if (!file) {
+					resolve();
+					return;
+				}
+
+				const reader = new FileReader();
+				reader.onload = (event) => {
+					const dataUrl = event.target?.result as string;
+					if (dataUrl) {
+						// Generate a filename based on timestamp and index
+						const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+						const extension = item.type === 'image/png' ? 'png' : 'jpg';
+						const filename = `pasted-image-${timestamp}-${index + 1}.${extension}`;
+
+						newAttachments.push({
+							type: 'image',
+							id: generateRandomId(),
+							name: filename,
+							dataUrl
+						});
+					}
+					resolve();
+				};
+				reader.onerror = () => {
+					console.error('Error reading pasted image');
+					resolve();
+				};
+				reader.readAsDataURL(file);
+			});
+		});
+
+		Promise.all(imagePromises).then(() => {
+			if (unsupportedFiles) {
+				toast.warning('Some images were ignored. Only PNG and JPEG images are supported.');
+			}
+			if (newAttachments.length > 0) {
+				attachments = [...attachments, ...newAttachments];
+			}
+		});
+	}
+
 	function handleSelectKnowledge(fieldId: string, knowledgeId: string) {
 		attachments = attachments.map((a) =>
 			a.type === 'knowledge' && a.fieldId === fieldId
@@ -255,6 +321,7 @@
 					bind:this={editor.promptTextarea}
 					bind:value={editor.prompt}
 					onkeydown={handleKeyDown}
+					onpaste={handlePaste}
 				></textarea>
 			</Field>
 		{/if}
