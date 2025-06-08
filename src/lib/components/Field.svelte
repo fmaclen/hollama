@@ -46,7 +46,7 @@
 		}
 
 		&--text-editor {
-			@apply overflow-scrollbar min-h-max flex-grow;
+			@apply overflow-scrollbar flex-grow;
 		}
 	}
 
