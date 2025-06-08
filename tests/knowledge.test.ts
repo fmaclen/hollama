@@ -19,7 +19,7 @@ test('creates and edits knowledge', async ({ page }) => {
 	const fieldContent = textEditorLocator(page, 'Content');
 	const buttonSave = page.locator('button', { hasText: 'Save' });
 	const noKnowledgeMessage = page.getByText('No knowledge');
-	const mockedKnowledgeInSidebar = page.locator('.section-list', {
+	const mockedKnowledgeInSidebar = page.locator('.section-list-item', {
 		hasText: MOCK_KNOWLEDGE[0].name
 	});
 
@@ -76,7 +76,7 @@ test('creates and edits knowledge', async ({ page }) => {
 	await fieldName.fill("Wally's chabot");
 	await buttonSave.click();
 	await expect(mockedKnowledgeInSidebar).not.toBeVisible();
-	await expect(page.locator('.section-list', { hasText: "Wally's chabot" })).toBeVisible();
+	await expect(page.locator('.section-list-item', { hasText: "Wally's chabot" })).toBeVisible();
 });
 
 test('can delete knowledge from the header and sidebar', async ({ page }) => {

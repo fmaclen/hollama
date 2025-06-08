@@ -171,7 +171,9 @@ const en = {
 	serversDescription: 'Connections, model filters and labels',
 	preferencesDescription: 'Language, theme, recently used models, etc',
 	sessionsDescription: 'Entire session history, attachments and custom model settings',
-	knowledgeDescription: 'Entire knowledge base'
+	knowledgeDescription: 'Entire knowledge base',
+	expandSidebar: 'Expand sidebar',
+	collapseSidebar: 'Collapse sidebar'
 } satisfies BaseTranslation;
 
 export default en;

@@ -165,7 +165,7 @@ test.describe('Session interaction', () => {
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
-		await expect(page.locator('.header').getByTitle('Copy')).toHaveCount(0);
+		await expect(page.locator('header').getByTitle('Copy')).toHaveCount(0);
 
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await page.getByText('Run').click();
@@ -174,10 +174,10 @@ test.describe('Session interaction', () => {
 				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
 			)
 		).toBeVisible();
-		await expect(page.locator('.header').getByTitle('Copy')).toHaveCount(1);
+		await expect(page.locator('header').getByTitle('Copy')).toHaveCount(1);
 		expect(await page.evaluate(() => navigator.clipboard.readText())).toEqual('');
 
-		await page.locator('.header').getByTitle('Copy').first().click();
+		await page.locator('header').getByTitle('Copy').first().click();
 		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))).toHaveLength(2);
 
 		expect(JSON.parse(await page.evaluate(() => navigator.clipboard.readText()))[0]).toEqual({

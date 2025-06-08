@@ -689,6 +689,14 @@ type RootTranslation = {
 	 * E​n​t​i​r​e​ ​k​n​o​w​l​e​d​g​e​ ​b​a​s​e
 	 */
 	knowledgeDescription: string
+	/**
+	 * E​x​p​a​n​d​ ​s​i​d​e​b​a​r
+	 */
+	expandSidebar: string
+	/**
+	 * C​o​l​l​a​p​s​e​ ​s​i​d​e​b​a​r
+	 */
+	collapseSidebar: string
 }
 
 export type TranslationFunctions = {
@@ -1357,6 +1365,14 @@ The completion in progress will stop
 	 * Entire knowledge base
 	 */
 	knowledgeDescription: () => LocalizedString
+	/**
+	 * Expand sidebar
+	 */
+	expandSidebar: () => LocalizedString
+	/**
+	 * Collapse sidebar
+	 */
+	collapseSidebar: () => LocalizedString
 }
 
 export type Formatters = {}
