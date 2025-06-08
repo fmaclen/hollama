@@ -24,7 +24,9 @@
 	import SectionList from './SectionList.svelte';
 	import SectionListItem from './SectionListItem.svelte';
 
-	let activeSection = $state<'sessions' | 'knowledge'>('sessions');
+	type SidebarSection = 'sessions' | 'knowledge';
+
+	let activeSection: SidebarSection = $state('sessions');
 
 	const pathname = $derived(page.url.pathname);
 
@@ -40,7 +42,7 @@
 		$settingsStore.userTheme = $settingsStore.userTheme === 'light' ? 'dark' : 'light';
 	}
 
-	function setActiveSection(section: 'sessions' | 'knowledge') {
+	function setActiveSection(section: SidebarSection) {
 		activeSection = section;
 		if (section === 'sessions') {
 			goto('/sessions');
