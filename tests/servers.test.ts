@@ -147,7 +147,7 @@ test.describe('Servers', () => {
 		const useModelsFromThisServerCheckbox = page.getByLabel('Use models from this server');
 		await expect(useModelsFromThisServerCheckbox).toBeChecked();
 
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 
@@ -161,7 +161,7 @@ test.describe('Servers', () => {
 		await useModelsFromThisServerCheckbox.uncheck();
 		await expect(useModelsFromThisServerCheckbox).not.toBeChecked();
 
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 		await expect(modelCombobox).toBeDisabled();
@@ -268,7 +268,7 @@ test.describe('Servers', () => {
 		await connections.last().getByRole('button', { name: 'Verify' }).click();
 		await expect(connectionVerifiedMessage).toHaveCount(2);
 
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 		const modelCombobox = page.getByLabel('Available models');
@@ -294,7 +294,7 @@ test.describe('Servers', () => {
 		expect(servers[0].id).toMatch(/^[a-z0-9]{6}$/); // Should match format from generateRandomId()
 
 		// Models aren't saved to localStorage until we load a new or existing session
-		await page.getByRole('link', { name: 'Sessions' }).click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 		await page.getByTestId('new-session').click();
 		await expect(page.getByText('Write a prompt to start a new session')).toBeVisible();
 

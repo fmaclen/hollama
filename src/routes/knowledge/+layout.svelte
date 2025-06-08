@@ -1,31 +1,17 @@
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
-	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
+	import { type Snippet } from 'svelte';
+
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
-	import Section from '$lib/components/Section.svelte';
-	import SectionListItem from '$lib/components/SectionListItem.svelte';
-	import { knowledgeStore } from '$lib/localStorage';
-	import { Sitemap } from '$lib/sitemap';
-	import { formatTimestampToNow } from '$lib/utils';
+
+	let { children }: { children: Snippet } = $props();
 </script>
 
 <RobotsNoIndex />
 
-<Section sitemap={Sitemap.KNOWLEDGE}>
-	<svelte:fragment slot="list-items">
-		{#if $knowledgeStore && $knowledgeStore.length > 0}
-			{#each $knowledgeStore as knowledge (knowledge.id)}
-				<SectionListItem
-					sitemap={Sitemap.KNOWLEDGE}
-					id={knowledge.id}
-					title={knowledge.name}
-					subtitle={formatTimestampToNow(knowledge.updatedAt)}
-				/>
-			{/each}
-		{:else}
-			<EmptyMessage>{$LL.emptyKnowledge()}</EmptyMessage>
-		{/if}
-	</svelte:fragment>
-
-	<slot />
-</Section>
+<div class="flex h-full w-full">
+	<main class="flex min-w-0 flex-1 flex-col bg-shade-1 lg:rounded-xl lg:border">
+		<div class="flex-1 overflow-auto">
+			{@render children()}
+		</div>
+	</main>
+</div>

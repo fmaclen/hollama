@@ -40,7 +40,7 @@ test('can navigate between session messages and controls', async ({ page }) => {
 	);
 
 	await page.reload();
-	await page.getByTestId('sidebar').getByText('Sessions').click();
+	await page.getByRole('tab', { name: 'Sessions' }).click();
 
 	await page.getByText("What's the NATO phonetic alphabet?").click();
 	await expect(page.getByText('Zulu')).toBeVisible();
@@ -67,7 +67,7 @@ test('can navigate between session messages and controls', async ({ page }) => {
 
 test('can set ollama model and runtime options', async ({ page }) => {
 	await page.goto('/');
-	await page.getByTestId('sidebar').getByText('Sessions').click();
+	await page.getByRole('tab', { name: 'Sessions' }).click();
 
 	await page.getByTestId('new-session').click();
 

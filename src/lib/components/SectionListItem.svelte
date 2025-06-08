@@ -136,11 +136,11 @@
 	}
 
 	.section-list-item--active {
-		@apply bg-shade-1;
+		@apply bg-shade-0;
 	}
 
 	.section-list-item__a {
-		@apply relative z-0 w-full overflow-hidden text-ellipsis px-6 py-3;
+		@apply relative z-0 w-full overflow-hidden text-ellipsis py-3 pl-5 pr-0;
 		@apply hover:text-active;
 	}
 

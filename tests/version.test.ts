@@ -147,12 +147,12 @@ test('performs automatic update check on navigation when enabled', async ({ page
 	expect(localStorageValue).toContain('"lastUpdateCheck":null');
 	await expect(autoUpdateCheckbox).not.toBeVisible();
 
-	const settingsLink = page.locator('.layout__a', { hasText: 'Settings' });
-	await expect(settingsLink).not.toHaveClass(/ layout__a--notification/);
+	const settingsLink = page.getByLabel('Main navigation').getByRole('link', { name: 'Settings' });
+	await expect(settingsLink).not.toHaveClass(/before:bg-warning/);
 
-	await page.locator('.layout__a', { hasText: 'Motd' }).click();
+	await page.getByRole('link', { name: 'Motd' }).click();
 	await expect(autoUpdateCheckbox).not.toBeVisible();
-	await expect(settingsLink).toHaveClass(/ layout__a--notification/);
+	await expect(settingsLink).toHaveClass(/before:bg-warning/);
 	await expect(page.getByText('A newer version is available')).not.toBeVisible();
 
 	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
@@ -160,7 +160,7 @@ test('performs automatic update check on navigation when enabled', async ({ page
 
 	await settingsLink.click();
 	await expect(page.getByText('A newer version is available')).toBeVisible();
-	await expect(settingsLink).not.toHaveClass(/ layout__a--notification/);
+	await expect(settingsLink).not.toHaveClass(/before:bg-warning/);
 	await expect(autoUpdateCheckbox).toBeVisible();
 	localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 });
@@ -187,11 +187,11 @@ test('skips automatic update check on navigation when disabled', async ({ page }
 	expect(localStorageValue).toContain('"autoCheckForUpdates":false');
 	expect(localStorageValue).toContain('"lastUpdateCheck":null');
 
-	const settingsLink = page.locator('.layout__a', { hasText: 'Settings' });
-	await expect(settingsLink).not.toHaveClass(/ layout__a--notification/);
+	const settingsLink = page.getByLabel('Main navigation').getByRole('link', { name: 'Settings' });
+	await expect(settingsLink).not.toHaveClass(/before:bg-warning/);
 
-	await page.locator('.layout__a', { hasText: 'Knowledge' }).click();
-	await expect(settingsLink).not.toHaveClass(/ layout__a--notification/);
+	await page.getByRole('tab', { name: 'Knowledge' }).click();
+	await expect(settingsLink).not.toHaveClass(/before:bg-warning/);
 
 	await settingsLink.click();
 	await expect(page.getByLabel('Automatically check for updates')).not.toBeChecked();

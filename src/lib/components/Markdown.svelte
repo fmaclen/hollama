@@ -105,11 +105,11 @@
 	}
 
 	.markdown :global(h1) {
-		@apply my-10 max-w-[22ch] text-4xl font-bold;
+		@apply my-10 max-w-[22ch] text-3xl font-bold md:text-4xl;
 	}
 
 	.markdown :global(h2) {
-		@apply mt-8 text-2xl font-semibold;
+		@apply mt-8 text-xl font-semibold md:text-2xl;
 	}
 
 	.markdown :global(h3) {
@@ -117,7 +117,7 @@
 	}
 
 	.markdown :global(h4) {
-		@apply mt-8 text-lg font-semibold;
+		@apply mt-8 text-lg font-semibold md:text-xl;
 	}
 
 	.markdown :global(h5),
@@ -125,13 +125,13 @@
 		@apply mt-8 font-semibold;
 	}
 
-	.markdown :global(p),
-	.markdown :global(li) {
-		@apply max-w-prose;
+	.markdown :global(p) {
+		@apply my-3;
 	}
 
-	.markdown :global(p) {
-		@apply my-3 text-sm;
+	.markdown :global(p),
+	.markdown :global(li) {
+		@apply max-w-prose text-sm;
 		@apply md:text-base;
 	}
 
@@ -146,6 +146,10 @@
 
 	.markdown :global(ul) {
 		@apply list-disc;
+	}
+
+	.markdown :global(li) {
+		@apply my-0.5;
 	}
 
 	.markdown :global(blockquote) {

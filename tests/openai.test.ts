@@ -59,7 +59,7 @@ test.describe('OpenAI Integration', () => {
 		await mockOllamaModelsResponse(page);
 		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 		await page.getByLabel('Available models').click();
@@ -72,7 +72,7 @@ test.describe('OpenAI Integration', () => {
 	test('OpenAI model is added to recently used list after use', async ({ page }) => {
 		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 		await page.getByLabel('Available models').click();
@@ -94,7 +94,7 @@ test.describe('OpenAI Integration', () => {
 	test('OpenAI model is saved to localStorage for specific session', async ({ page }) => {
 		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
 
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 		await page.getByLabel('Available models').click();
@@ -117,7 +117,7 @@ test.describe('OpenAI Integration', () => {
 		expect(MOCK_OPENAI_MODELS[2].id).toContain('text-davinci-003');
 		await expect(page.getByLabel('Model names filter')).toHaveValue('gpt');
 
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 		await page.getByLabel('Available models').click();

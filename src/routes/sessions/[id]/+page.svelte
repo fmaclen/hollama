@@ -278,22 +278,24 @@
 		title={[editor.isNewSession ? $LL.newSession() : getSessionTitle(session), $LL.sessions()]}
 	/>
 	<Header confirmDeletion={shouldConfirmDeletion}>
-		<p data-testid="session-id" class="font-bold leading-none">
-			{$LL.session()}
-			<Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
-		</p>
-		<Metadata dataTestid="session-metadata">
-			{editor.isNewSession ? $LL.newSession() : formatSessionMetadata(session)}
-		</Metadata>
+		{#snippet headline()}
+			<p data-testid="session-id" class="font-bold leading-none">
+				{$LL.session()}
+				<Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
+			</p>
+			<Metadata dataTestid="session-metadata">
+				{editor.isNewSession ? $LL.newSession() : formatSessionMetadata(session)}
+			</Metadata>
+		{/snippet}
 
-		<svelte:fragment slot="nav">
+		{#snippet nav()}
 			{#if !editor.isNewSession}
 				{#if !shouldConfirmDeletion}
 					<ButtonCopy content={JSON.stringify(session.messages, null, 2)} />
 				{/if}
 				<ButtonDelete sitemap={Sitemap.SESSIONS} id={session.id} bind:shouldConfirmDeletion />
 			{/if}
-		</svelte:fragment>
+		{/snippet}
 	</Header>
 
 	{#if editor.view === 'controls'}

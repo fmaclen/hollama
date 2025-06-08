@@ -100,7 +100,7 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	await expect(page.getByText('System prompt')).toBeVisible();
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'session-controls.png' });
 
-	await page.locator('.layout__a', { hasText: 'Knowledge' }).click();
+	await page.getByRole('tab', { name: 'Knowledge' }).click();
 	await expect(page.getByText('No knowledge')).toBeVisible();
 
 	await seedKnowledgeAndReload(page);

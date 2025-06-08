@@ -19,12 +19,12 @@ test('creates and edits knowledge', async ({ page }) => {
 	const fieldContent = textEditorLocator(page, 'Content');
 	const buttonSave = page.locator('button', { hasText: 'Save' });
 	const noKnowledgeMessage = page.getByText('No knowledge');
-	const mockedKnowledgeInSidebar = page.locator('.section-list', {
+	const mockedKnowledgeInSidebar = page.locator('.section-list-item', {
 		hasText: MOCK_KNOWLEDGE[0].name
 	});
 
 	await page.goto('/');
-	await page.getByTestId('sidebar').getByText('Knowledge').click();
+	await page.getByRole('tab', { name: 'Knowledge' }).click();
 
 	await expect(noKnowledgeMessage).toBeVisible();
 	await expect(page.getByText('Create new knowledge or choose one from the list')).toBeVisible();
@@ -76,12 +76,12 @@ test('creates and edits knowledge', async ({ page }) => {
 	await fieldName.fill("Wally's chabot");
 	await buttonSave.click();
 	await expect(mockedKnowledgeInSidebar).not.toBeVisible();
-	await expect(page.locator('.section-list', { hasText: "Wally's chabot" })).toBeVisible();
+	await expect(page.locator('.section-list-item', { hasText: "Wally's chabot" })).toBeVisible();
 });
 
 test('can delete knowledge from the header and sidebar', async ({ page }) => {
 	await page.goto('/');
-	await page.getByTestId('sidebar').getByText('Knowledge').click();
+	await page.getByRole('tab', { name: 'Knowledge' }).click();
 
 	await expect(page.getByText('Create new knowledge or choose one from the list')).toBeVisible();
 	expect(await page.getByTestId('knowledge-item').count()).toBe(0);
@@ -121,7 +121,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	await mockOllamaModelsResponse(page);
 
 	await page.goto('/');
-	await page.getByTestId('sidebar').getByText('Knowledge').click();
+	await page.getByRole('tab', { name: 'Knowledge' }).click();
 
 	await expect(noKnowledgeMessage).toBeVisible();
 	await expect(noKnowledgeSelectedMessage).toBeVisible();
@@ -133,7 +133,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	await expect(knowledgeItems).toHaveCount(MOCK_KNOWLEDGE.length);
 
 	// Check the knowledge is available in the session
-	await page.getByText('Sessions').click();
+	await page.getByRole('tab', { name: 'Sessions' }).click();
 	await page.getByTestId('new-session').click();
 	await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 	await page.getByLabel('Controls').click();
@@ -143,7 +143,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[0].name })).toBeVisible();
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[1].name })).toBeVisible();
 
-	await page.locator('a', { hasText: 'Knowledge' }).click();
+	await page.getByRole('tab', { name: 'Knowledge' }).click();
 	await page.getByText(MOCK_KNOWLEDGE[0].name).click();
 	await expect(noKnowledgeSelectedMessage).not.toBeVisible();
 	await expect(timestamp).toBeVisible();
@@ -155,7 +155,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	await expect(noKnowledgeSelectedMessage).toBeVisible();
 
 	// Check is no longer in the session
-	await page.getByText('Sessions').click();
+	await page.getByRole('tab', { name: 'Sessions' }).click();
 	await page.getByTestId('new-session').click();
 	await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 	await page.getByLabel('Controls').click();
@@ -171,12 +171,12 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	await mockOllamaModelsResponse(page);
 	await page.goto('/');
 	await seedKnowledgeAndReload(page);
-	await page.getByTestId('sidebar').getByText('Knowledge').click();
+	await page.getByRole('tab', { name: 'Knowledge' }).click();
 
 	await expect(page.getByTestId('knowledge-item')).toHaveCount(MOCK_KNOWLEDGE.length);
 
 	await mockCompletionResponse(page, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1);
-	await page.getByText('Sessions').click();
+	await page.getByRole('tab', { name: 'Sessions' }).click();
 	await page.getByTestId('new-session').click();
 	await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
 	await expect(sessionArticle).not.toBeVisible();

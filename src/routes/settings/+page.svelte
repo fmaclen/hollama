@@ -21,7 +21,7 @@
 
 <style lang="postcss">
 	.settings {
-		@apply base-section base-section-fullscreen gap-y-8 px-6;
+		@apply base-section base-section-fullscreen gap-y-8 px-4;
 	}
 
 	.settings-fieldsets {

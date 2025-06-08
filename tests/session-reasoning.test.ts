@@ -21,7 +21,7 @@ test.describe('Session reasoning tag handling', () => {
 
 	test('handles standard <think> tags in responses', async ({ page }) => {
 		await page.goto('/');
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 
@@ -65,7 +65,7 @@ test.describe('Session reasoning tag handling', () => {
 
 	test('handles streamed <think> tags (character by character)', async ({ page }) => {
 		await page.goto('/');
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 
@@ -114,7 +114,7 @@ test.describe('Session reasoning tag handling', () => {
 		page
 	}) => {
 		await page.goto('/');
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 
@@ -151,7 +151,7 @@ test.describe('Session reasoning tag handling', () => {
 
 	test('handles streamed <thought> tags (character by character)', async ({ page }) => {
 		await page.goto('/');
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 
@@ -198,7 +198,7 @@ test.describe('Session reasoning tag handling', () => {
 
 	test('does not show reasoning components for non-reasoning LLM response', async ({ page }) => {
 		await page.goto('/');
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 

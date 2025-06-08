@@ -24,7 +24,7 @@ test.describe('Session management', () => {
 		const newPromptHelp = page.getByText('Write a prompt to start a new session');
 
 		await page.goto('/');
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await expect(sessionIdLocator).not.toBeVisible();
 		await expect(sessionMetadata).not.toBeVisible();
@@ -59,7 +59,7 @@ test.describe('Session management', () => {
 
 	test('preserves session state after navigation', async ({ page }) => {
 		await page.goto('/');
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 
@@ -76,12 +76,11 @@ test.describe('Session management', () => {
 	});
 
 	test('can navigate older sessions from sidebar', async ({ page }) => {
-		const sessionLink = page.locator('.layout__a', { hasText: 'Sessions' });
-		const settingsLink = page.locator('.layout__a', { hasText: 'Settings' });
+		const sessionTab = page.getByRole('tab', { name: 'Sessions' });
 
 		await page.goto('/');
-		await expect(sessionLink).toHaveClass(/ layout__a--active/);
-		await expect(settingsLink).not.toHaveClass(/ layout__a--active/);
+		await expect(sessionTab).toHaveAttribute('aria-selected', 'true');
+		await expect(sessionTab).toHaveClass(/text-active/);
 		await expect(page.getByText('No sessions')).toBeVisible();
 		await expect(
 			page.locator('aside', {
@@ -110,7 +109,7 @@ test.describe('Session management', () => {
 		expect(await page.getByTestId('session-item').count()).toBe(1);
 
 		// Leave the conversation by visiting the sessions index
-		await sessionLink.click();
+		await sessionTab.click();
 		await expect(
 			page.getByText(
 				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
@@ -128,7 +127,7 @@ test.describe('Session management', () => {
 
 		// Create a new session
 		await mockCompletionResponse(page, MOCK_SESSION_2_RESPONSE_1);
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await page.getByTestId('new-session').click();
 		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[1].name);
@@ -167,7 +166,7 @@ test.describe('Session management', () => {
 		await page.getByText('Settings').click();
 		await expect(page.getByText('Automatically check for updates')).toBeVisible();
 
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await expect(page.getByRole('link', { name: 'New session' })).toBeVisible();
 		await expect(
@@ -186,7 +185,7 @@ test.describe('Session management', () => {
 
 	test('deletes a session from the header and sidebar', async ({ page }) => {
 		await page.goto('/');
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await expect(page.getByText('No sessions')).toBeVisible();
 
@@ -240,7 +239,7 @@ test.describe('Session management', () => {
 		const truncatedPrompt = longPrompt.slice(0, 56);
 
 		await page.goto('/');
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();
@@ -265,7 +264,7 @@ test.describe('Session management', () => {
 
 	test('can edit session titles', async ({ page }) => {
 		await page.goto('/');
-		await page.getByTestId('sidebar').getByText('Sessions').click();
+		await page.getByRole('tab', { name: 'Sessions' }).click();
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByTestId('new-session').click();

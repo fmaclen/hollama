@@ -1,19 +1,16 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { type Snippet } from 'svelte';
 
-	import LL from '$i18n/i18n-svelte';
+	import { browser } from '$app/environment';
 	import { getLastUsedModels } from '$lib/chat';
 	import { OllamaStrategy } from '$lib/chat/ollama';
 	import { OpenAIStrategy } from '$lib/chat/openai';
-	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
-	import Section from '$lib/components/Section.svelte';
-	import SectionListItem from '$lib/components/SectionListItem.svelte';
 	import { ConnectionType } from '$lib/connections';
-	import { serversStore, sessionsStore, settingsStore } from '$lib/localStorage';
-	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
+	import { serversStore, settingsStore } from '$lib/localStorage';
 	import { type Model } from '$lib/settings';
-	import { Sitemap } from '$lib/sitemap';
+
+	let { children }: { children: Snippet } = $props();
 
 	async function listModels(): Promise<Model[]> {
 		const models: Model[] = [];
@@ -35,34 +32,26 @@
 		return models.sort((a, b) => {
 			const nameA = a.name;
 			const nameB = b.name;
-			// Compare ignoring case and accents
 			return nameA.localeCompare(nameB, undefined, { sensitivity: 'base' });
 		});
 	}
 
-	onMount(async () => {
-		$settingsStore.models = await listModels();
-		$settingsStore.lastUsedModels = getLastUsedModels();
+	$effect(() => {
+		if (browser) {
+			listModels().then((models) => {
+				$settingsStore.models = models;
+				$settingsStore.lastUsedModels = getLastUsedModels();
+			});
+		}
 	});
 </script>
 
 <RobotsNoIndex />
 
-<Section sitemap={Sitemap.SESSIONS}>
-	<svelte:fragment slot="list-items">
-		{#if $sessionsStore && $sessionsStore.length > 0}
-			{#each $sessionsStore as session (session.id)}
-				<SectionListItem
-					sitemap={Sitemap.SESSIONS}
-					id={session.id}
-					title={getSessionTitle(session)}
-					subtitle={formatSessionMetadata(session)}
-				/>
-			{/each}
-		{:else}
-			<EmptyMessage>{$LL.emptySessions()}</EmptyMessage>
-		{/if}
-	</svelte:fragment>
-
-	<slot />
-</Section>
+<div class="flex h-full w-full">
+	<main class="flex min-w-0 flex-1 flex-col bg-shade-1 lg:rounded-xl lg:border">
+		<div class="flex-1 overflow-auto">
+			{@render children()}
+		</div>
+	</main>
+</div>

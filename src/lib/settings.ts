@@ -19,6 +19,7 @@ export interface Settings {
 	autoCheckForUpdates: boolean;
 	userTheme: 'light' | 'dark';
 	userLanguage: Locales | null;
+	sidebarExpanded: boolean;
 	hollamaMetadata: HollamaMetadata;
 }
 
@@ -29,6 +30,7 @@ export const DEFAULT_SETTINGS: Settings = {
 	autoCheckForUpdates: false,
 	userTheme: 'light',
 	userLanguage: null,
+	sidebarExpanded: true,
 	hollamaMetadata: {
 		currentVersion: version,
 		isDesktop: env.PUBLIC_ADAPTER === 'electron-node',
