@@ -7,11 +7,12 @@
 #### What's new?
 
 - **Redesigned sidebar navigation** with improved accessibility and mobile experience.
-- **Import & export** options in [Settings](/settings).
-- **Added support for vision models** (e.g. `gemma3`, `gpt-4.1`).
+- **Copy & paste images** directly into the prompt field for quick image attachments.
 
 #### Previously, in Hollama
 
+- **Import & export** options in [Settings](/settings).
+- **Added support for vision models** (e.g. `gemma3`, `gpt-4.1`).
 - **Added support for reasoning responses** using [`<think>`](https://ollama.com/library/deepseek-r1) and [`<thought>`](https://ollama.com/library/exaone-deep) tags.
 - **KaTeX math notation** is now supported in model responses.
 - **Session titles** can now be manually edited.

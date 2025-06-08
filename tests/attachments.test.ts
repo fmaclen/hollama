@@ -553,4 +553,153 @@ test.describe('Attachments', () => {
 			await page.locator('.prompt-editor').getByTestId('attachment-image-preview').count()
 		).toBe(0);
 	});
+
+	test('can paste an image from clipboard', async ({ page }) => {
+		// ESM-compatible path resolution for test image
+		const __filename = fileURLToPath(import.meta.url);
+		const __dirname = path.dirname(__filename);
+		const testImagePath = path.resolve(__dirname, 'docs.test.ts-snapshots', 'motd.png');
+
+		await page.goto('/');
+		await page.getByRole('tab', { name: 'Sessions' }).click();
+
+		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		const promptTextarea = page.locator('.prompt-editor__textarea');
+
+		// Focus the textarea
+		await promptTextarea.focus();
+
+		// Read the test image file and create a clipboard data transfer
+		const fs = await import('fs');
+		const imageBuffer = fs.readFileSync(testImagePath);
+		const imageBase64 = imageBuffer.toString('base64');
+		const dataUrl = `data:image/png;base64,${imageBase64}`;
+
+		// Simulate pasting an image by dispatching a paste event with clipboard data
+		await page.evaluate((dataUrl) => {
+			const textarea = document.querySelector('.prompt-editor__textarea') as HTMLTextAreaElement;
+			if (!textarea) throw new Error('Textarea not found');
+
+			// Create a mock clipboard event with image data
+			const clipboardData = new DataTransfer();
+
+			// Convert base64 to blob
+			const byteCharacters = atob(dataUrl.split(',')[1]);
+			const byteNumbers = new Array(byteCharacters.length);
+			for (let i = 0; i < byteCharacters.length; i++) {
+				byteNumbers[i] = byteCharacters.charCodeAt(i);
+			}
+			const byteArray = new Uint8Array(byteNumbers);
+			const blob = new Blob([byteArray], { type: 'image/png' });
+
+			// Create a file from the blob
+			const file = new File([blob], 'pasted-image.png', { type: 'image/png' });
+			clipboardData.items.add(file);
+
+			// Create and dispatch paste event
+			const pasteEvent = new ClipboardEvent('paste', {
+				clipboardData: clipboardData,
+				bubbles: true,
+				cancelable: true
+			});
+
+			textarea.dispatchEvent(pasteEvent);
+		}, dataUrl);
+
+		// Wait for the image to be processed and appear in attachments
+		await expect(
+			page.locator('.prompt-editor').getByTestId('attachment-image-preview')
+		).toBeVisible();
+
+		// Check that the filename contains "pasted-image" and has proper extension
+		const attachmentName = page.locator('.prompt-editor').getByTestId('attachment-image-name');
+		await expect(attachmentName).toBeVisible();
+		const nameText = await attachmentName.textContent();
+		expect(nameText).toMatch(/^pasted-image-.*\.png$/);
+
+		// Verify the image can be deleted
+		await page.getByTestId('attachment-delete').click();
+		await expect(
+			page.locator('.prompt-editor').getByTestId('attachment-image-preview')
+		).not.toBeVisible();
+
+		// Test pasting multiple images
+		await promptTextarea.focus();
+
+		// Paste the same image twice by dispatching two paste events
+		for (let i = 0; i < 2; i++) {
+			await page.evaluate((dataUrl) => {
+				const textarea = document.querySelector('.prompt-editor__textarea') as HTMLTextAreaElement;
+				if (!textarea) throw new Error('Textarea not found');
+
+				const clipboardData = new DataTransfer();
+				const byteCharacters = atob(dataUrl.split(',')[1]);
+				const byteNumbers = new Array(byteCharacters.length);
+				for (let j = 0; j < byteCharacters.length; j++) {
+					byteNumbers[j] = byteCharacters.charCodeAt(j);
+				}
+				const byteArray = new Uint8Array(byteNumbers);
+				const blob = new Blob([byteArray], { type: 'image/png' });
+				const file = new File([blob], 'pasted-image.png', { type: 'image/png' });
+				clipboardData.items.add(file);
+
+				const pasteEvent = new ClipboardEvent('paste', {
+					clipboardData: clipboardData,
+					bubbles: true,
+					cancelable: true
+				});
+
+				textarea.dispatchEvent(pasteEvent);
+			}, dataUrl);
+
+			// Small delay between pastes
+			await page.waitForTimeout(100);
+		}
+
+		// Verify both images are attached
+		await expect(
+			page.locator('.prompt-editor').getByTestId('attachment-image-preview')
+		).toHaveCount(2);
+
+		// Intercept outgoing request to verify images are sent
+		let requestPayload:
+			| { messages: { role: string; content: string; images?: string[] }[] }
+			| undefined = undefined;
+		await page.route('**/chat', async (route, request) => {
+			const postData = request.postData();
+			if (postData) requestPayload = JSON.parse(postData);
+			const responseBody = [
+				JSON.stringify({
+					message: { role: 'assistant', content: 'I can see the pasted images' }
+				}),
+				''
+			].join('\n');
+			await route.fulfill({
+				status: 200,
+				contentType: 'text/event-stream',
+				body: responseBody
+			});
+		});
+
+		await promptTextarea.fill('Describe these pasted images');
+		await page.getByText('Run').click();
+
+		// Assert payload contains both pasted images
+		if (!requestPayload) throw new Error('No request payload captured');
+		const lastUserMsg = (
+			requestPayload as { messages: { role: string; content: string; images?: string[] }[] }
+		).messages
+			.filter((m) => m.role === 'user')
+			.at(-1);
+		expect(lastUserMsg).toBeTruthy();
+		expect(Array.isArray(lastUserMsg?.images)).toBe(true);
+		expect(lastUserMsg?.images?.length).toBe(2);
+		expect(lastUserMsg?.content).toContain('Describe these pasted images');
+
+		// Assert attachments UI is cleared after submission
+		expect(
+			await page.locator('.prompt-editor').getByTestId('attachment-image-preview').count()
+		).toBe(0);
+	});
 });
