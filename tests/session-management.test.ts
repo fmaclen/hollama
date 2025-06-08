@@ -80,7 +80,7 @@ test.describe('Session management', () => {
 
 		await page.goto('/');
 		await expect(sessionTab).toHaveAttribute('aria-selected', 'true');
-		// Settings link doesn't have active state styling in the new design
+		await expect(sessionTab).toHaveClass(/text-active/);
 		await expect(page.getByText('No sessions')).toBeVisible();
 		await expect(
 			page.locator('aside', {

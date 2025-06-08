@@ -367,7 +367,8 @@ test('imports preferences data from JSON file', async ({ page }, testInfo) => {
 	// Create a file with test preferences data
 	const testPreferences = {
 		userLanguage: 'es',
-		userTheme: 'dark'
+		userTheme: 'dark',
+		sidebarExpanded: true
 	};
 
 	const filePath = testInfo.outputPath('test-preferences.json');
@@ -384,19 +385,11 @@ test('imports preferences data from JSON file', async ({ page }, testInfo) => {
 	await page.waitForFunction(() => {
 		return window.localStorage.getItem('hollama-settings') !== null;
 	});
-
-	// Reload the page to ensure translations are applied
-	await page.reload();
-	await page.waitForLoadState('networkidle');
-
 	await expect(page.getByLabel('Idioma')).toHaveValue('Español');
 
 	const afterSettings = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
 	expect(afterSettings).toContain('"userLanguage":"es"');
 
-	// The main test is that the language changed - the theme button text is secondary
-	// Since we set userTheme to "dark", the button should show the opposite (Light/Claro)
-	// But let's just verify the language change worked and skip the theme button text check
-	// as it might be affected by timing issues with i18n loading
 	await expect(page.getByText('Dark')).not.toBeVisible();
+	await expect(page.getByText('Claro')).toBeVisible();
 });

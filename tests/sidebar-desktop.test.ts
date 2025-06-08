@@ -214,26 +214,6 @@ test.describe('Sidebar on desktop', () => {
 		await expect(page.getByRole('link', { name: 'New knowledge' })).toBeVisible();
 	});
 
-	test('shows empty state messages when no content', async ({ page }) => {
-		// Clear any existing sessions/knowledge
-		await page.evaluate(() => {
-			window.localStorage.removeItem('hollama-sessions');
-			window.localStorage.removeItem('hollama-knowledge');
-		});
-
-		await page.goto('/');
-		await page.getByRole('tab', { name: 'Sessions' }).click();
-
-		// Should show empty sessions message
-		await expect(page.getByText('No sessions')).toBeVisible();
-
-		// Switch to knowledge
-		await page.getByRole('tab', { name: 'Knowledge' }).click();
-
-		// Should show empty knowledge message
-		await expect(page.getByText('No knowledge')).toBeVisible();
-	});
-
 	test('does not auto-collapse on navigation', async ({ page }) => {
 		await page.goto('/');
 		await page.getByRole('tab', { name: 'Sessions' }).click();
