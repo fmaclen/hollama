@@ -55,10 +55,10 @@ const config = {
 						{}
 				},
 				'.base-section': {
-					'@apply h-full w-full overflow-scrollbar border-t bg-shade-2 lg:rounded-xl lg:border': {}
+					'@apply h-full w-full overflow-scrollbar bg-shade-2 lg:rounded-xl lg:border': {}
 				},
 				'.base-section-fullscreen': {
-					'@apply base-section flex border-spacing-1 flex-col bg-shade-1 py-12 lg:py-20 items-center':
+					'@apply base-section flex border-spacing-1 flex-col bg-shade-1 py-20 items-center':
 						{}
 				},
 				'.base-fieldset-container': {

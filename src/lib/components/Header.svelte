@@ -1,31 +1,21 @@
 <script lang="ts">
-	export let confirmDeletion: boolean = false;
+	import type { Snippet } from 'svelte';
+
+	interface Props {
+		confirmDeletion?: boolean;
+		headline: Snippet;
+		nav: Snippet;
+	}
+
+	let { confirmDeletion = false, headline, nav }: Props = $props();
 </script>
 
-<header class="header" class:header--confirm-deletion={confirmDeletion}>
-	<div class="header__headline">
-		<slot />
+<header class="flex py-4 items-center justify-between border-b bg-shade-1 pl-16 pr-3 text-xs rounded-tl-xl rounded-tr-xl {confirmDeletion ? 'confirm-deletion' : ''}">
+	<div class="flex flex-start gap-1 flex-col">
+		{@render headline()}
 	</div>
 
-	<nav class="header__nav">
-		<slot name="nav" />
+	<nav class="flex flex-row items-center">
+		{@render nav()}
 	</nav>
 </header>
-
-<style lang="postcss">
-	.header {
-		@apply flex min-h-10 items-center justify-between border-b bg-shade-1 px-4 text-xs;
-
-		&--confirm-deletion {
-			@apply confirm-deletion;
-		}
-	}
-
-	.header__headline {
-		@apply flex items-center gap-2;
-	}
-
-	.header__nav {
-		@apply flex flex-row items-center;
-	}
-</style>

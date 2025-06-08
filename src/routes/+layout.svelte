@@ -13,6 +13,7 @@
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
 	import CollapsibleSidebar from '$lib/components/CollapsibleSidebar.svelte';
+	import SidebarToggle from '$lib/components/SidebarToggle.svelte';
 	import { ConnectionType, getDefaultServer } from '$lib/connections';
 	import { serversStore, settingsStore, StorageKey } from '$lib/localStorage';
 	import { checkForUpdates } from '$lib/updates';
@@ -132,7 +133,10 @@
 
 <div class="flex h-dvh w-screen bg-shade-2 lg:p-4">
 	<CollapsibleSidebar />
-	{@render children()}
+	<div class="relative flex-1">
+		<SidebarToggle class="absolute top-4 left-4 z-10" />
+		{@render children()}
+	</div>
 </div>
 
 <style lang="postcss">

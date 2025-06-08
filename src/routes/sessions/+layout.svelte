@@ -6,7 +6,6 @@
 	import { OllamaStrategy } from '$lib/chat/ollama';
 	import { OpenAIStrategy } from '$lib/chat/openai';
 	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
-	import SidebarToggle from '$lib/components/SidebarToggle.svelte';
 	import { ConnectionType } from '$lib/connections';
 	import { serversStore, settingsStore } from '$lib/localStorage';
 	import { type Model } from '$lib/settings';
@@ -51,10 +50,6 @@
 
 <div class="flex h-full w-full">
 	<main class="flex min-w-0 flex-1 flex-col bg-shade-1 lg:rounded-xl lg:border">
-		<div class="flex items-center gap-2 border-b p-4 lg:border-b-0">
-			<SidebarToggle />
-		</div>
-
 		<div class="flex-1 overflow-auto">
 			{@render children()}
 		</div>

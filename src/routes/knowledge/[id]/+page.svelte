@@ -48,6 +48,7 @@
 <Head title={[knowledge.name ? knowledge.name : $LL.newKnowledge(), $LL.knowledge()]} />
 <div class="knowledge">
 	<Header confirmDeletion={shouldConfirmDeletion}>
+		{#snippet headline()}
 		<p data-testid="knowledge-id" class="font-bold leading-none">
 			{$LL.knowledge()}
 			<Button variant="link" href={`/knowledge/${knowledge.id}`}>
@@ -57,12 +58,13 @@
 		<Metadata dataTestid="knowledge-metadata">
 			{isNewKnowledge ? $LL.newKnowledge() : formatTimestampToNow(knowledge.updatedAt)}
 		</Metadata>
+		{/snippet}
 
-		<svelte:fragment slot="nav">
+		{#snippet nav()}
 			{#if !isNewKnowledge}
 				<ButtonDelete sitemap={Sitemap.KNOWLEDGE} id={knowledge.id} bind:shouldConfirmDeletion />
 			{/if}
-		</svelte:fragment>
+		{/snippet}
 	</Header>
 
 	<div class="knowledge__form">
