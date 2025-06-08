@@ -8,6 +8,7 @@
 
 - **Redesigned sidebar navigation** with improved accessibility and mobile experience.
 - **Copy & paste images** directly into the prompt field for quick image attachments.
+- **Improved stop completion** now preserves partial responses instead of discarding them.
 
 #### Previously, in Hollama
 
