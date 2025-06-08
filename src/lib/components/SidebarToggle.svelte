@@ -4,12 +4,6 @@
 	import LL from '$i18n/i18n-svelte';
 	import { settingsStore } from '$lib/localStorage';
 
-	interface Props {
-		class?: string;
-	}
-
-	let { class: className = '' }: Props = $props();
-
 	function toggleExpanded() {
 		$settingsStore.sidebarExpanded = !$settingsStore.sidebarExpanded;
 	}
@@ -17,7 +11,7 @@
 
 <button
 	onclick={toggleExpanded}
-	class="rounded-lg border bg-shade-1 p-2 transition-colors hover:bg-shade-2 {className}"
+	class="absolute left-4 top-4 z-30 rounded-lg border bg-shade-1 p-2 transition-colors hover:bg-shade-2"
 	aria-label={$settingsStore.sidebarExpanded ? $LL.collapseSidebar() : $LL.expandSidebar()}
 	title={$settingsStore.sidebarExpanded ? $LL.collapseSidebar() : $LL.expandSidebar()}
 >

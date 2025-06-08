@@ -142,7 +142,7 @@
 <div class="relative flex h-dvh w-screen bg-shade-2 lg:p-4">
 	<CollapsibleSidebar />
 	<div class="relative flex-1">
-		<SidebarToggle class="absolute left-4 top-4 z-30" />
+		<SidebarToggle />
 		{@render children()}
 	</div>
 </div>
