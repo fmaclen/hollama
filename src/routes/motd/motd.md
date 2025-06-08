@@ -1,4 +1,4 @@
-`2025-05-14`
+`2025-06-08`
 
 ### Message of the day
 
@@ -6,6 +6,7 @@
 
 #### What's new?
 
+- **Redesigned sidebar navigation** with improved accessibility and mobile experience.
 - **Import & export** options in [Settings](/settings).
 - **Added support for vision models** (e.g. `gemma3`, `gpt-4.1`).
 
