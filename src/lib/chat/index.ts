@@ -16,6 +16,7 @@ export interface ChatRequest {
 	model: string;
 	messages: Message[];
 	stream?: boolean;
+	format?: string; // For structured output (e.g., 'json')
 	options?: Partial<OllamaOptions>;
 }
 
