@@ -155,7 +155,6 @@ const en = {
 		'If you want to connect to an Ollama server that is not available on {hostname:string} or {ip:string} try',
 	typicalP: 'Typical P',
 	unsavedChangesWillBeLost: 'You have unsaved changes that will be lost. Continue?',
-	untitledSession: 'Untitled session',
 	useMlock: 'Use MLOCK',
 	useMmap: 'Use MMAP',
 	useModelsFromThisServer: 'Use models from this server',

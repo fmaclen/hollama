@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { slide } from 'svelte/transition';
-
 	import LL from '$i18n/i18n-svelte';
 	import { page } from '$app/state';
 	import { sessionsStore } from '$lib/localStorage';

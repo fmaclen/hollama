@@ -120,11 +120,8 @@ export function formatSessionMetadata(session: Session) {
 	return subtitles.join(' • ');
 }
 
-export function getSessionTitle(session: Session, fallback?: string) {
+export function getSessionTitle(session: Session) {
 	if (session.title) return session.title;
-
-	// If no title and fallback provided, use fallback (e.g., localized "Untitled session")
-	if (fallback) return fallback;
 
 	const firstUserMessage = session.messages.find(
 		(m) => m.role === 'user' && m.content && !m.knowledge
@@ -180,13 +177,9 @@ export async function generateSessionTitle(
 
 	// Get the title from LLM
 	let response = '';
-	try {
-		await strategy.chat(titlePrompt, new AbortController().signal, (chunk) => {
-			response += chunk;
-		});
-	} catch (error) {
-		throw error;
-	}
+	await strategy.chat(titlePrompt, new AbortController().signal, (chunk) => {
+		response += chunk;
+	});
 
 	// Parse JSON response
 	try {
@@ -197,7 +190,9 @@ export async function generateSessionTitle(
 		const finalTitle = title.slice(0, 56);
 
 		return finalTitle;
-	} catch (parseError) {
+	} catch (error) {
+		console.error('Failed to parse JSON response:', error);
+
 		// Fallback: try to extract JSON from markdown code blocks
 		const jsonMatch = response.match(/```(?:json)?\s*(\{.*?\})\s*```/s);
 		if (jsonMatch) {
@@ -207,8 +202,8 @@ export async function generateSessionTitle(
 				const finalTitle = title.slice(0, 56);
 
 				return finalTitle;
-			} catch (codeBlockError) {
-				// Continue to text fallback
+			} catch (error) {
+				console.error('Failed to parse JSON from markdown code blocks:', error);
 			}
 		}
 

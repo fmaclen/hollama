@@ -111,13 +111,6 @@
 		if (images && images.length) message.images = images;
 		session.messages = [...session.messages, message];
 
-		// Set localized "Untitled session" immediately for first message so it appears in sidebar
-		if (session.messages.length === 1 && !session.title) {
-			session.title = $LL.untitledSession();
-			session.updatedAt = new Date().toISOString();
-			saveSession(session);
-		}
-
 		await scrollToBottom(true); // Force scroll after submitting prompt
 		await handleCompletion(session.messages);
 	}
@@ -234,8 +227,7 @@
 			};
 
 			// Check if we need to generate a title BEFORE adding the message
-			const shouldGenerateTitle =
-				session.messages.length === 1 && session.title === $LL.untitledSession();
+			const shouldGenerateTitle = session.messages.length === 1 && !session.title;
 
 			if (shouldGenerateTitle) {
 				try {
@@ -252,6 +244,8 @@
 						await animateTitle(generatedTitle);
 					}
 				} catch (error) {
+					console.error('Failed to generate title:', error);
+
 					// Fallback to first 56 characters of user's first message
 					const firstUserMessage = session.messages.find(
 						(m) => m.role === 'user' && m.content && !m.knowledge
@@ -331,10 +325,7 @@
 
 <div class="session">
 	<Head
-		title={[
-			editor.isNewSession ? $LL.newSession() : getSessionTitle(session, $LL.untitledSession()),
-			$LL.sessions()
-		]}
+		title={[editor.isNewSession ? $LL.newSession() : getSessionTitle(session), $LL.sessions()]}
 	/>
 	<Header confirmDeletion={shouldConfirmDeletion}>
 		{#snippet headline()}

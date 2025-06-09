@@ -121,7 +121,7 @@
 										<SectionListItem
 											sitemap={Sitemap.SESSIONS}
 											id={session.id}
-											title={getSessionTitle(session, $LL.untitledSession())}
+											title={getSessionTitle(session)}
 											subtitle={formatSessionMetadata(session)}
 										/>
 									{/each}
