@@ -237,12 +237,6 @@
 			const shouldGenerateTitle = session.messages.length === 1 && session.title === $LL.untitledSession();
 			
 			if (shouldGenerateTitle) {
-				console.log('🎯 Session page: Triggering title generation', {
-					sessionId: session.id,
-					messageCount: session.messages.length + 1, // +1 for the message we're about to add
-					currentTitle: session.title
-				});
-				
 				try {
 					// Create a temporary session with the new message for title generation
 					const tempSession = {
@@ -251,17 +245,12 @@
 					};
 					
 					const generatedTitle = await generateSessionTitle(tempSession, strategy);
-					console.log('✅ Session page: Title generated successfully', { generatedTitle });
 					
 					if (generatedTitle) {
 						// Implement typewriter effect
 						await animateTitle(generatedTitle);
-					} else {
-						console.warn('⚠️ Session page: Generated title is empty');
 					}
 				} catch (error) {
-					console.error('❌ Session page: Failed to generate title:', error);
-					
 					// Fallback to first 56 characters of user's first message
 					const firstUserMessage = session.messages.find(
 						(m) => m.role === 'user' && m.content && !m.knowledge
@@ -269,16 +258,9 @@
 					
 					if (firstUserMessage?.content) {
 						const fallbackTitle = firstUserMessage.content.slice(0, 56);
-						console.log('🔧 Session page: Using fallback title from first message', { fallbackTitle });
 						await animateTitle(fallbackTitle);
 					}
 				}
-			} else {
-				console.log('🔍 Session page: Skipping title generation', {
-					messageCount: session.messages.length + 1,
-					currentTitle: session.title,
-					shouldGenerate: shouldGenerateTitle
-				});
 			}
 
 			// Now add the message and save everything at once
@@ -331,8 +313,6 @@
 	}
 
 	async function animateTitle(fullTitle: string) {
-		console.log('🎬 Session page: Starting typewriter animation', { fullTitle });
-		
 		// Clear the current title and start building character by character
 		session.title = "";
 		const chars = fullTitle.split('');
@@ -342,17 +322,9 @@
 			session.updatedAt = new Date().toISOString();
 			saveSession(session);
 			
-			console.log('⌨️ Session page: Added character', { 
-				char, 
-				currentTitle: session.title, 
-				progress: `${session.title.length}/${fullTitle.length}` 
-			});
-			
 			// Wait 50ms between each character for typewriter effect
 			await new Promise(resolve => setTimeout(resolve, 50));
 		}
-		
-		console.log('✅ Session page: Typewriter animation complete', { finalTitle: session.title });
 	}
 </script>
 
