@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 
-import type { OllamaOptions } from '$lib/chat/ollama';
 import type { ChatRequest, ChatStrategy } from '$lib/chat';
+import type { OllamaOptions } from '$lib/chat/ollama';
 import { sessionsStore, settingsStore, sortStore } from '$lib/localStorage';
 
 import { getLastUsedModels } from './chat';
@@ -166,27 +166,24 @@ export async function generateSessionTitle(
 		messages: [
 			{
 				role: 'system',
-				content: 'Generate a concise, descriptive title (max 56 characters) for this conversation. Respond with a JSON object in this exact format:\n{"title": "Your generated title here"}'
+				content:
+					'Generate a concise, descriptive title (max 56 characters) for this conversation, in the given language. Respond with a JSON object in this exact format:\n{"title": "Your generated title here"}'
 			},
 			...chatMessages
 		],
 		format: 'json', // Use structured output
 		options: {
 			temperature: 0.3, // Lower temperature for consistent titles
-			num_predict: 50  // Limit response length
+			num_predict: 50 // Limit response length
 		}
 	};
 
 	// Get the title from LLM
 	let response = '';
 	try {
-		await strategy.chat(
-			titlePrompt,
-			new AbortController().signal,
-			(chunk) => { 
-				response += chunk;
-			}
-		);
+		await strategy.chat(titlePrompt, new AbortController().signal, (chunk) => {
+			response += chunk;
+		});
 	} catch (error) {
 		throw error;
 	}
@@ -194,11 +191,11 @@ export async function generateSessionTitle(
 	// Parse JSON response
 	try {
 		const parsed = JSON.parse(response.trim());
-		
+
 		// Extract title from the expected JSON structure
 		const title = parsed.title || '';
 		const finalTitle = title.slice(0, 56);
-		
+
 		return finalTitle;
 	} catch (parseError) {
 		// Fallback: try to extract JSON from markdown code blocks
@@ -208,13 +205,13 @@ export async function generateSessionTitle(
 				const parsed = JSON.parse(jsonMatch[1]);
 				const title = parsed.title || '';
 				const finalTitle = title.slice(0, 56);
-				
+
 				return finalTitle;
 			} catch (codeBlockError) {
 				// Continue to text fallback
 			}
 		}
-		
+
 		// Final fallback: extract plain text
 		const cleanedResponse = response
 			.trim()
@@ -223,7 +220,7 @@ export async function generateSessionTitle(
 			.replace(/^["']|["']$/g, '') // Remove surrounding quotes
 			.replace(/^(Title:|Subject:|Topic:)\s*/i, '') // Remove common prefixes
 			.slice(0, 56);
-			
+
 		return cleanedResponse;
 	}
 }

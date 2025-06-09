@@ -110,14 +110,14 @@
 		const message: Message = { role: 'user', content: editor.prompt };
 		if (images && images.length) message.images = images;
 		session.messages = [...session.messages, message];
-		
+
 		// Set localized "Untitled session" immediately for first message so it appears in sidebar
 		if (session.messages.length === 1 && !session.title) {
 			session.title = $LL.untitledSession();
 			session.updatedAt = new Date().toISOString();
 			saveSession(session);
 		}
-		
+
 		await scrollToBottom(true); // Force scroll after submitting prompt
 		await handleCompletion(session.messages);
 	}
@@ -234,8 +234,9 @@
 			};
 
 			// Check if we need to generate a title BEFORE adding the message
-			const shouldGenerateTitle = session.messages.length === 1 && session.title === $LL.untitledSession();
-			
+			const shouldGenerateTitle =
+				session.messages.length === 1 && session.title === $LL.untitledSession();
+
 			if (shouldGenerateTitle) {
 				try {
 					// Create a temporary session with the new message for title generation
@@ -243,9 +244,9 @@
 						...session,
 						messages: [...session.messages, message]
 					};
-					
+
 					const generatedTitle = await generateSessionTitle(tempSession, strategy);
-					
+
 					if (generatedTitle) {
 						// Implement typewriter effect
 						await animateTitle(generatedTitle);
@@ -255,7 +256,7 @@
 					const firstUserMessage = session.messages.find(
 						(m) => m.role === 'user' && m.content && !m.knowledge
 					);
-					
+
 					if (firstUserMessage?.content) {
 						const fallbackTitle = firstUserMessage.content.slice(0, 56);
 						await animateTitle(fallbackTitle);
@@ -314,23 +315,26 @@
 
 	async function animateTitle(fullTitle: string) {
 		// Clear the current title and start building character by character
-		session.title = "";
+		session.title = '';
 		const chars = fullTitle.split('');
-		
+
 		for (const char of chars) {
 			session.title += char;
 			session.updatedAt = new Date().toISOString();
 			saveSession(session);
-			
+
 			// Wait 50ms between each character for typewriter effect
-			await new Promise(resolve => setTimeout(resolve, 50));
+			await new Promise((resolve) => setTimeout(resolve, 50));
 		}
 	}
 </script>
 
 <div class="session">
 	<Head
-		title={[editor.isNewSession ? $LL.newSession() : getSessionTitle(session, $LL.untitledSession()), $LL.sessions()]}
+		title={[
+			editor.isNewSession ? $LL.newSession() : getSessionTitle(session, $LL.untitledSession()),
+			$LL.sessions()
+		]}
 	/>
 	<Header confirmDeletion={shouldConfirmDeletion}>
 		{#snippet headline()}

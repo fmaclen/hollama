@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { slide } from 'svelte/transition';
+
 	import LL from '$i18n/i18n-svelte';
 	import { page } from '$app/state';
 	import { sessionsStore } from '$lib/localStorage';
@@ -8,7 +10,6 @@
 	import ButtonDelete from './ButtonDelete.svelte';
 	import ButtonEdit from './ButtonEdit.svelte';
 	import Metadata from './Metadata.svelte';
-	import { slide } from 'svelte/transition';
 
 	interface Props {
 		sitemap: Sitemap;
@@ -49,7 +50,6 @@
 		isEditing = false;
 	}
 </script>
-
 
 {#key id}
 	<div
