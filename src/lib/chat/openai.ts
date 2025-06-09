@@ -60,13 +60,20 @@ export class OpenAIStrategy implements ChatStrategy {
 			}
 		);
 
-		const response = await this.openai.chat.completions.create({
+		const completionParams: any = {
 			model: payload.model,
 			messages: formattedMessages,
 			stream: true
-		});
+		};
 
-		for await (const chunk of response) {
+		// Add response_format for JSON output if format is specified
+		if (payload.format === 'json') {
+			completionParams.response_format = { type: 'json_object' };
+		}
+
+		const response = await this.openai.chat.completions.create(completionParams);
+
+		for await (const chunk of response as any) {
 			if (abortSignal.aborted) break;
 			onChunk(chunk.choices[0].delta.content || '');
 		}

@@ -8,6 +8,7 @@
 	import ButtonDelete from './ButtonDelete.svelte';
 	import ButtonEdit from './ButtonEdit.svelte';
 	import Metadata from './Metadata.svelte';
+	import { slide } from 'svelte/transition';
 
 	interface Props {
 		sitemap: Sitemap;
@@ -49,13 +50,13 @@
 	}
 </script>
 
-<!-- Need to use `#key id` to re-render the delete nav after deletion -->
-{#key id}
+
 	<div
 		class="section-list-item"
 		class:section-list-item--active={page.url.pathname.includes(id)}
 		class:section-list-item--confirm-deletion={isDeleting}
 		class:section-list-item--editing={isEditing}
+		transition:slide
 	>
 		{#if isEditing && isSession}
 			<div class="section-list-item__content">
@@ -102,11 +103,12 @@
 			{/if}
 		</nav>
 	</div>
-{/key}
+
 
 <style lang="postcss">
 	.section-list-item {
 		@apply flex flex-row items-center justify-between border-b pr-3;
+		@apply first:border-t-0;
 		@apply last:border-b-0;
 
 		&--confirm-deletion {

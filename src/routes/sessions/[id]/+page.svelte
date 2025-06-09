@@ -17,6 +17,7 @@
 	import { serversStore, settingsStore } from '$lib/localStorage';
 	import {
 		formatSessionMetadata,
+		generateSessionTitle,
 		getSessionTitle,
 		loadSession,
 		saveSession,
@@ -224,6 +225,45 @@
 				reasoning: editor.reasoning
 			};
 
+			// Check if we need to generate a title BEFORE adding the message
+			const shouldGenerateTitle = session.messages.length === 1 && !session.title;
+			
+			if (shouldGenerateTitle) {
+				console.log('🎯 Session page: Triggering title generation', {
+					sessionId: session.id,
+					messageCount: session.messages.length + 1, // +1 for the message we're about to add
+					hasTitle: !!session.title
+				});
+				
+				try {
+					// Create a temporary session with the new message for title generation
+					const tempSession = {
+						...session,
+						messages: [...session.messages, message]
+					};
+					
+					const generatedTitle = await generateSessionTitle(tempSession, strategy);
+					console.log('✅ Session page: Title generated successfully', { generatedTitle });
+					
+					if (generatedTitle) {
+						session.title = generatedTitle;
+						console.log('💾 Session page: Title will be saved with session', { title: session.title });
+					} else {
+						console.warn('⚠️ Session page: Generated title is empty');
+					}
+				} catch (error) {
+					console.error('❌ Session page: Failed to generate title:', error);
+					// Continue without title - fallback to existing behavior
+				}
+			} else {
+				console.log('🔍 Session page: Skipping title generation', {
+					messageCount: session.messages.length + 1,
+					hasTitle: !!session.title,
+					shouldGenerate: shouldGenerateTitle
+				});
+			}
+
+			// Now add the message and save everything at once
 			session.messages = [...session.messages, message];
 			session.updatedAt = new Date().toISOString();
 			saveSession(session);
