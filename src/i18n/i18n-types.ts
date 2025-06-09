@@ -622,6 +622,10 @@ type RootTranslation = {
 	 */
 	unsavedChangesWillBeLost: string
 	/**
+	 * U​n​t​i​t​l​e​d​ ​s​e​s​s​i​o​n
+	 */
+	untitledSession: string
+	/**
 	 * U​s​e​ ​M​L​O​C​K
 	 */
 	useMlock: string
@@ -1297,6 +1301,10 @@ The completion in progress will stop
 	 * You have unsaved changes that will be lost. Continue?
 	 */
 	unsavedChangesWillBeLost: () => LocalizedString
+	/**
+	 * Untitled session
+	 */
+	untitledSession: () => LocalizedString
 	/**
 	 * Use MLOCK
 	 */

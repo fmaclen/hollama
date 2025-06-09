@@ -110,6 +110,14 @@
 		const message: Message = { role: 'user', content: editor.prompt };
 		if (images && images.length) message.images = images;
 		session.messages = [...session.messages, message];
+		
+		// Set localized "Untitled session" immediately for first message so it appears in sidebar
+		if (session.messages.length === 1 && !session.title) {
+			session.title = $LL.untitledSession();
+			session.updatedAt = new Date().toISOString();
+			saveSession(session);
+		}
+		
 		await scrollToBottom(true); // Force scroll after submitting prompt
 		await handleCompletion(session.messages);
 	}
@@ -226,13 +234,13 @@
 			};
 
 			// Check if we need to generate a title BEFORE adding the message
-			const shouldGenerateTitle = session.messages.length === 1 && !session.title;
+			const shouldGenerateTitle = session.messages.length === 1 && session.title === $LL.untitledSession();
 			
 			if (shouldGenerateTitle) {
 				console.log('🎯 Session page: Triggering title generation', {
 					sessionId: session.id,
 					messageCount: session.messages.length + 1, // +1 for the message we're about to add
-					hasTitle: !!session.title
+					currentTitle: session.title
 				});
 				
 				try {
@@ -246,19 +254,29 @@
 					console.log('✅ Session page: Title generated successfully', { generatedTitle });
 					
 					if (generatedTitle) {
-						session.title = generatedTitle;
-						console.log('💾 Session page: Title will be saved with session', { title: session.title });
+						// Implement typewriter effect
+						await animateTitle(generatedTitle);
 					} else {
 						console.warn('⚠️ Session page: Generated title is empty');
 					}
 				} catch (error) {
 					console.error('❌ Session page: Failed to generate title:', error);
-					// Continue without title - fallback to existing behavior
+					
+					// Fallback to first 56 characters of user's first message
+					const firstUserMessage = session.messages.find(
+						(m) => m.role === 'user' && m.content && !m.knowledge
+					);
+					
+					if (firstUserMessage?.content) {
+						const fallbackTitle = firstUserMessage.content.slice(0, 56);
+						console.log('🔧 Session page: Using fallback title from first message', { fallbackTitle });
+						await animateTitle(fallbackTitle);
+					}
 				}
 			} else {
 				console.log('🔍 Session page: Skipping title generation', {
 					messageCount: session.messages.length + 1,
-					hasTitle: !!session.title,
+					currentTitle: session.title,
 					shouldGenerate: shouldGenerateTitle
 				});
 			}
@@ -311,11 +329,36 @@
 			if (messagesWindow) messagesWindow.scrollTop = messagesWindow.scrollHeight;
 		});
 	}
+
+	async function animateTitle(fullTitle: string) {
+		console.log('🎬 Session page: Starting typewriter animation', { fullTitle });
+		
+		// Clear the current title and start building character by character
+		session.title = "";
+		const chars = fullTitle.split('');
+		
+		for (const char of chars) {
+			session.title += char;
+			session.updatedAt = new Date().toISOString();
+			saveSession(session);
+			
+			console.log('⌨️ Session page: Added character', { 
+				char, 
+				currentTitle: session.title, 
+				progress: `${session.title.length}/${fullTitle.length}` 
+			});
+			
+			// Wait 50ms between each character for typewriter effect
+			await new Promise(resolve => setTimeout(resolve, 50));
+		}
+		
+		console.log('✅ Session page: Typewriter animation complete', { finalTitle: session.title });
+	}
 </script>
 
 <div class="session">
 	<Head
-		title={[editor.isNewSession ? $LL.newSession() : getSessionTitle(session), $LL.sessions()]}
+		title={[editor.isNewSession ? $LL.newSession() : getSessionTitle(session, $LL.untitledSession()), $LL.sessions()]}
 	/>
 	<Header confirmDeletion={shouldConfirmDeletion}>
 		{#snippet headline()}

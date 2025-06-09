@@ -51,12 +51,12 @@
 </script>
 
 
+{#key id}
 	<div
 		class="section-list-item"
 		class:section-list-item--active={page.url.pathname.includes(id)}
 		class:section-list-item--confirm-deletion={isDeleting}
 		class:section-list-item--editing={isEditing}
-		transition:slide
 	>
 		{#if isEditing && isSession}
 			<div class="section-list-item__content">
@@ -103,7 +103,7 @@
 			{/if}
 		</nav>
 	</div>
-
+{/key}
 
 <style lang="postcss">
 	.section-list-item {

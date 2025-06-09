@@ -120,8 +120,11 @@ export function formatSessionMetadata(session: Session) {
 	return subtitles.join(' • ');
 }
 
-export function getSessionTitle(session: Session) {
+export function getSessionTitle(session: Session, fallback?: string) {
 	if (session.title) return session.title;
+
+	// If no title and fallback provided, use fallback (e.g., localized "Untitled session")
+	if (fallback) return fallback;
 
 	const firstUserMessage = session.messages.find(
 		(m) => m.role === 'user' && m.content && !m.knowledge
@@ -139,26 +142,14 @@ export async function generateSessionTitle(
 	session: Session,
 	strategy: ChatStrategy
 ): Promise<string> {
-	console.log('🔍 generateSessionTitle: Starting title generation', {
-		sessionId: session.id,
-		modelName: session.model?.name,
-		messageCount: session.messages.length
-	});
-
 	if (!session.model?.name) {
-		console.error('❌ generateSessionTitle: No model available');
 		throw new Error('No model available for title generation');
 	}
 
 	// Only use the first user message and assistant response for context
 	const contextMessages = session.messages.slice(0, 2);
-	console.log('📝 generateSessionTitle: Context messages', {
-		messageCount: contextMessages.length,
-		messages: contextMessages.map(m => ({ role: m.role, contentLength: m.content.length }))
-	});
 
 	if (contextMessages.length < 2) {
-		console.error('❌ generateSessionTitle: Not enough messages', { count: contextMessages.length });
 		throw new Error('Not enough messages for title generation');
 	}
 
@@ -186,13 +177,6 @@ export async function generateSessionTitle(
 		}
 	};
 
-	console.log('🚀 generateSessionTitle: Sending title request', {
-		model: titlePrompt.model,
-		format: titlePrompt.format,
-		messageCount: titlePrompt.messages.length,
-		systemPrompt: titlePrompt.messages[0].content
-	});
-
 	// Get the title from LLM
 	let response = '';
 	try {
@@ -201,55 +185,33 @@ export async function generateSessionTitle(
 			new AbortController().signal,
 			(chunk) => { 
 				response += chunk;
-				console.log('📥 generateSessionTitle: Received chunk', { chunk, totalLength: response.length });
 			}
 		);
 	} catch (error) {
-		console.error('❌ generateSessionTitle: Chat strategy failed', error);
 		throw error;
 	}
-
-	console.log('📤 generateSessionTitle: Full response received', {
-		response,
-		responseLength: response.length
-	});
 
 	// Parse JSON response
 	try {
 		const parsed = JSON.parse(response.trim());
-		console.log('✅ generateSessionTitle: JSON parsed successfully', parsed);
 		
 		// Extract title from the expected JSON structure
 		const title = parsed.title || '';
 		const finalTitle = title.slice(0, 56);
 		
-		console.log('🎯 generateSessionTitle: Extracted title', { 
-			originalTitle: title, 
-			finalTitle,
-			titleLength: finalTitle.length 
-		});
-		
 		return finalTitle;
 	} catch (parseError) {
-		console.warn('⚠️ generateSessionTitle: JSON parse failed, trying fallbacks', { parseError, response });
-		
 		// Fallback: try to extract JSON from markdown code blocks
 		const jsonMatch = response.match(/```(?:json)?\s*(\{.*?\})\s*```/s);
 		if (jsonMatch) {
-			console.log('🔧 generateSessionTitle: Found JSON in code block', jsonMatch[1]);
 			try {
 				const parsed = JSON.parse(jsonMatch[1]);
 				const title = parsed.title || '';
 				const finalTitle = title.slice(0, 56);
 				
-				console.log('✅ generateSessionTitle: Code block JSON parsed', { 
-					originalTitle: title, 
-					finalTitle 
-				});
-				
 				return finalTitle;
 			} catch (codeBlockError) {
-				console.warn('⚠️ generateSessionTitle: Code block JSON parse failed', codeBlockError);
+				// Continue to text fallback
 			}
 		}
 		
@@ -262,11 +224,6 @@ export async function generateSessionTitle(
 			.replace(/^(Title:|Subject:|Topic:)\s*/i, '') // Remove common prefixes
 			.slice(0, 56);
 			
-		console.log('🔧 generateSessionTitle: Using text fallback', { 
-			originalResponse: response,
-			cleanedResponse 
-		});
-		
 		return cleanedResponse;
 	}
 }
