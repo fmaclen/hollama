@@ -653,4 +653,42 @@ test.describe('Session interaction', () => {
 		expect(eqElements).toBe(3);
 		expect(katexSpans).toBe(4);
 	});
+
+	test('can submit prompt with image attachment and no text', async ({ page }) => {
+		await page.goto('/');
+		await page.getByRole('tab', { name: 'Sessions' }).click();
+
+		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await expect(page.getByText('Run')).toBeDisabled();
+
+		// Add an image attachment by simulating file upload
+		const fileChooserPromise = page.waitForEvent('filechooser');
+		await page.getByTestId('image-attachment').click();
+		const fileChooser = await fileChooserPromise;
+
+		// Create a test image blob
+		const testImageData =
+			'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+		const testImageBuffer = Buffer.from(testImageData, 'base64');
+
+		await fileChooser.setFiles({
+			name: 'test-image.png',
+			mimeType: 'image/png',
+			buffer: testImageBuffer
+		});
+
+		await expect(page.getByTestId('attachment-delete')).toBeVisible();
+		await expect(promptTextarea).toHaveValue('');
+		await expect(page.getByText('Run')).toBeEnabled();
+		await expect(page.locator('article', { hasText: 'You' })).not.toBeVisible();
+
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await page.getByText('Run').click();
+		await expect(page.locator('article', { hasText: 'You' })).toBeVisible();
+		await expect(page.locator('article', { hasText: 'Assistant' })).toBeVisible();
+		await expect(
+			page.locator('article', { hasText: 'You' }).getByText('test-image.png')
+		).toBeVisible();
+	});
 });
