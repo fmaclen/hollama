@@ -406,7 +406,9 @@
 				<ButtonSubmit
 					handleSubmit={submit}
 					hasMetaKey={editor.isCodeEditor}
-					disabled={!editor.prompt || !session.model || editor.isCompletionInProgress}
+					disabled={(!editor.prompt && !attachments.filter((a) => a.type === 'image').length) ||
+						!session.model ||
+						editor.isCompletionInProgress}
 				>
 					{$LL.run()}
 				</ButtonSubmit>

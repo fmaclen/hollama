@@ -134,7 +134,7 @@
 	}
 
 	function handleSubmit(images?: { data: string; filename: string }[]) {
-		if (!editor.prompt) return;
+		if (!editor.prompt && (!images || images.length === 0)) return;
 		if (!session.model) return;
 		editor.isCodeEditor = false;
 		editor.isNewSession = false;
