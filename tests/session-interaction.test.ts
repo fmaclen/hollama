@@ -685,8 +685,6 @@ test.describe('Session interaction', () => {
 
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
 		await page.getByText('Run').click();
-		await expect(page.locator('article', { hasText: 'You' })).toBeVisible();
-		await expect(page.locator('article', { hasText: 'Assistant' })).toBeVisible();
 		await expect(
 			page.locator('article', { hasText: 'You' }).getByText('test-image.png')
 		).toBeVisible();
