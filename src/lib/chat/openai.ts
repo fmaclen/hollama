@@ -1,6 +1,8 @@
 import OpenAI from 'openai';
 import type {
+	ChatCompletionChunk,
 	ChatCompletionContentPart,
+	ChatCompletionCreateParams,
 	ChatCompletionMessageParam
 } from 'openai/resources/index.mjs';
 
@@ -60,13 +62,20 @@ export class OpenAIStrategy implements ChatStrategy {
 			}
 		);
 
-		const response = await this.openai.chat.completions.create({
+		const completionParams: ChatCompletionCreateParams = {
 			model: payload.model,
 			messages: formattedMessages,
 			stream: true
-		});
+		};
 
-		for await (const chunk of response) {
+		// Add response_format for JSON output if format is specified
+		if (payload.format === 'json') {
+			completionParams.response_format = { type: 'json_object' };
+		}
+
+		const response = await this.openai.chat.completions.create(completionParams);
+
+		for await (const chunk of response as AsyncIterable<ChatCompletionChunk>) {
 			if (abortSignal.aborted) break;
 			onChunk(chunk.choices[0].delta.content || '');
 		}

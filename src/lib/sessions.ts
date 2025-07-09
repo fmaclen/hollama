@@ -1,5 +1,6 @@
 import { get } from 'svelte/store';
 
+import type { ChatRequest, ChatStrategy } from '$lib/chat';
 import type { OllamaOptions } from '$lib/chat/ollama';
 import { sessionsStore, settingsStore, sortStore } from '$lib/localStorage';
 
@@ -132,4 +133,89 @@ export function getSessionTitle(session: Session) {
 	}
 
 	return '';
+}
+
+export async function generateSessionTitle(
+	session: Session,
+	strategy: ChatStrategy
+): Promise<string> {
+	if (!session.model?.name) {
+		throw new Error('No model available for title generation');
+	}
+
+	// Only use the first user message and assistant response for context
+	const contextMessages = session.messages.slice(0, 2);
+
+	if (contextMessages.length < 2) {
+		throw new Error('Not enough messages for title generation');
+	}
+
+	// Convert messages to chat format (images as string arrays)
+	const chatMessages = contextMessages.map((msg) => ({
+		role: msg.role,
+		content: msg.content,
+		images: msg.images?.map((img) => img.data) // Extract just the data part
+	}));
+
+	// Create a specialized prompt to generate a title
+	const titlePrompt: ChatRequest = {
+		model: session.model.name,
+		messages: [
+			{
+				role: 'system',
+				content:
+					'Generate a concise, descriptive title (max 56 characters) for this conversation, in the given language. Respond with a JSON object in this exact format:\n{"title": "Your generated title here"}'
+			},
+			...chatMessages
+		],
+		format: 'json', // Use structured output
+		options: {
+			temperature: 0.3, // Lower temperature for consistent titles
+			num_predict: 50 // Limit response length
+		}
+	};
+
+	// Get the title from LLM
+	let response = '';
+	await strategy.chat(titlePrompt, new AbortController().signal, (chunk) => {
+		response += chunk;
+	});
+
+	// Parse JSON response
+	try {
+		const parsed = JSON.parse(response.trim());
+
+		// Extract title from the expected JSON structure
+		const title = parsed.title || '';
+		const finalTitle = title.slice(0, 56);
+
+		return finalTitle;
+	} catch (error) {
+		console.error('Failed to parse JSON response:', error);
+
+		// Fallback: try to extract JSON from markdown code blocks
+		const jsonMatch = response.match(/```(?:json)?\s*(\{.*?\})\s*```/s);
+		if (jsonMatch) {
+			try {
+				const parsed = JSON.parse(jsonMatch[1]);
+				const title = parsed.title || '';
+				const finalTitle = title.slice(0, 56);
+
+				return finalTitle;
+			} catch (error) {
+				console.error('Failed to parse JSON from markdown code blocks:', error);
+			}
+		}
+
+		// Final fallback: extract plain text
+		const cleanedResponse = response
+			.trim()
+			.replace(/^```(?:json)?\s*|\s*```$/g, '') // Remove code blocks
+			.replace(/^\{.*?"title":\s*"([^"]+)".*\}$/s, '$1') // Extract from JSON string
+			.replace(/^["']|["']$/g, '') // Remove surrounding quotes
+			.replace(/^(Title:|Subject:|Topic:)\s*/i, '') // Remove common prefixes
+			.slice(0, 56);
+
+		return cleanedResponse;
+	}
 }

@@ -137,7 +137,7 @@
 
 	.markdown :global(ul),
 	.markdown :global(ol) {
-		@apply mx-7 my-2 flex list-outside flex-col gap-y-1;
+		@apply mx-7 flex list-outside flex-col gap-y-1;
 	}
 
 	.markdown :global(ol) {
@@ -146,10 +146,6 @@
 
 	.markdown :global(ul) {
 		@apply list-disc;
-	}
-
-	.markdown :global(li) {
-		@apply my-0.5;
 	}
 
 	.markdown :global(blockquote) {

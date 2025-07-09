@@ -1,5 +1,4 @@
 import type {
-	ChatRequest,
 	ChatResponse,
 	ErrorResponse,
 	ListResponse,
@@ -11,7 +10,7 @@ import type {
 import type { Server } from '$lib/connections';
 import type { Model } from '$lib/settings';
 
-import type { ChatStrategy } from './index';
+import type { ChatRequest, ChatStrategy } from './index';
 
 export interface OllamaOptions {
 	numa: boolean;
