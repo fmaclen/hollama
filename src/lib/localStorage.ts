@@ -1,3 +1,4 @@
+import { toast } from 'svelte-sonner';
 import { writable } from 'svelte/store';
 
 import { browser } from '$app/environment';
@@ -16,7 +17,13 @@ function createLocalStorageStore<T>(key: string, defaultValue: T) {
 
 	store.subscribe((value) => {
 		if (browser) {
-			localStorage.setItem(key, JSON.stringify(value));
+			try {
+				localStorage.setItem(key, JSON.stringify(value));
+			} catch (error) {
+				toast.warning('Failed to save to localStorage', {
+					description: (error as Error).message
+				});
+			}
 		}
 	});
 
