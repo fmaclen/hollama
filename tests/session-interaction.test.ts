@@ -689,4 +689,49 @@ test.describe('Session interaction', () => {
 			page.locator('article', { hasText: 'You' }).getByText('test-image.png')
 		).toBeVisible();
 	});
+
+	test('warning toast should be shown when localStorage is full', async ({ page }) => {
+		await page.goto('/');
+		await page.getByTestId('new-session').click();
+
+		// Mock a full localStorage scenario
+		await page.waitForFunction(() => {
+			let chunkSize = 1024 * 1024; // Starting with 1MB chunks
+			let filler = '';
+			let attempts = 0;
+			const MAX_ATTEMPTS = 1000; // Prevent infinite loop
+			while (chunkSize > 1 && attempts < MAX_ATTEMPTS) {
+				const chunk = 'x'.repeat(chunkSize);
+				try {
+					localStorage.setItem('hollama-localStorage-full-test', filler + chunk);
+					filler += chunk;
+				} catch {
+					chunkSize = Math.floor(chunkSize / 2); // Reduce chunk size if quota exceeded
+				} finally {
+					attempts++;
+				}
+			}
+			return true;
+		});
+
+		// Interact with the chat to trigger a localStorage  write
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await promptTextarea.fill(
+			'Who would win in a fight between Sydney Sweeney and Olivia Rodrigo?'
+		);
+		await page.getByText('Run').click();
+
+		expect(
+			page
+				.locator('ol[data-sonner-toaster] li', { hasText: 'Failed to save to localStorage' })
+				.first()
+		).toBeVisible();
+
+		// Remove the filler key to clean up localStorage
+		await page.waitForFunction(() => {
+			localStorage.removeItem('hollama-localStorage-full-test');
+			return localStorage.getItem('hollama-localStorage-full-test') === null;
+		});
+	});
 });
