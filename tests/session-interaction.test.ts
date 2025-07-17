@@ -722,16 +722,12 @@ test.describe('Session interaction', () => {
 		);
 		await page.getByText('Run').click();
 
-		expect(
-			page
-				.locator('ol[data-sonner-toaster] li', { hasText: 'Failed to save to localStorage' })
-				.first()
-		).toBeVisible();
-
-		// Remove the filler key to clean up localStorage
-		await page.waitForFunction(() => {
-			localStorage.removeItem('hollama-localStorage-full-test');
-			return localStorage.getItem('hollama-localStorage-full-test') === null;
-		});
+		const toastLocator = page.locator('ol[data-sonner-toaster] li[data-type="warning"]');
+		await expect(toastLocator).toBeVisible();
+		await expect(toastLocator).toHaveCount(1);
+		await expect(toastLocator).toContainText('Localstorage is full');
+		await expect(toastLocator).toContainText(
+			'You have reached the storage limit for your browser. Please delete some sessions, knowledge, or preferences to free up space.'
+		);
 	});
 });

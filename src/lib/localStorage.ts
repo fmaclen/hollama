@@ -20,9 +20,20 @@ function createLocalStorageStore<T>(key: string, defaultValue: T) {
 			try {
 				localStorage.setItem(key, JSON.stringify(value));
 			} catch (error) {
-				toast.warning('Failed to save to localStorage', {
-					description: (error as Error).message
-				});
+				// Handle localStorage quota exceeded error
+				if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+					toast.warning('Localstorage is full', {
+						id: 'localstorage-full-toast',
+						description:
+							'You have reached the storage limit for your browser. Please delete some sessions, knowledge, or preferences to free up space.'
+					});
+				} else {
+					// Handle other errors, such as JSON serialization issues
+					toast.warning('Failed to save to localStorage', {
+						id: 'localstorage-error-toast',
+						description: (error as Error).message
+					});
+				}
 			}
 		}
 	});
