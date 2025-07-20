@@ -689,4 +689,45 @@ test.describe('Session interaction', () => {
 			page.locator('article', { hasText: 'You' }).getByText('test-image.png')
 		).toBeVisible();
 	});
+
+	test('warning toast should be shown when localStorage is full', async ({ page }) => {
+		await page.goto('/');
+		await page.getByTestId('new-session').click();
+
+		// Mock a full localStorage scenario
+		await page.waitForFunction(() => {
+			let chunkSize = 1024 * 1024; // Starting with 1MB chunks
+			let filler = '';
+			let attempts = 0;
+			const MAX_ATTEMPTS = 1000; // Prevent infinite loop
+			while (chunkSize > 1 && attempts < MAX_ATTEMPTS) {
+				const chunk = 'x'.repeat(chunkSize);
+				try {
+					localStorage.setItem('hollama-localStorage-full-test', filler + chunk);
+					filler += chunk;
+				} catch {
+					chunkSize = Math.floor(chunkSize / 2); // Reduce chunk size if quota exceeded
+				} finally {
+					attempts++;
+				}
+			}
+			return true;
+		});
+
+		// Interact with the chat to trigger a localStorage  write
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await promptTextarea.fill(
+			'Who would win in a fight between Sydney Sweeney and Olivia Rodrigo?'
+		);
+		await page.getByText('Run').click();
+
+		const toastLocator = page.locator('ol[data-sonner-toaster] li[data-type="warning"]');
+		await expect(toastLocator).toBeVisible();
+		await expect(toastLocator).toHaveCount(1);
+		await expect(toastLocator).toContainText('Local storage is full');
+		await expect(toastLocator).toContainText(
+			'You have reached the storage limit for your browser. Please delete some sessions, knowledge, or preferences to free up space.'
+		);
+	});
 });

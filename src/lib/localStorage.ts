@@ -1,3 +1,4 @@
+import { toast } from 'svelte-sonner';
 import { writable } from 'svelte/store';
 
 import { browser } from '$app/environment';
@@ -16,7 +17,24 @@ function createLocalStorageStore<T>(key: string, defaultValue: T) {
 
 	store.subscribe((value) => {
 		if (browser) {
-			localStorage.setItem(key, JSON.stringify(value));
+			try {
+				localStorage.setItem(key, JSON.stringify(value));
+			} catch (error) {
+				// Handle localStorage quota exceeded error
+				if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+					toast.warning('Local storage is full', {
+						id: 'localstorage-full-toast',
+						description:
+							'You have reached the storage limit for your browser. Please delete some sessions, knowledge, or preferences to free up space.'
+					});
+				} else {
+					// Handle other errors, such as JSON serialization issues
+					toast.warning('Failed to save to localStorage', {
+						id: 'localstorage-error-toast',
+						description: (error as Error).message
+					});
+				}
+			}
 		}
 	});
 
