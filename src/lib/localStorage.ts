@@ -22,7 +22,7 @@ function createLocalStorageStore<T>(key: string, defaultValue: T) {
 			} catch (error) {
 				// Handle localStorage quota exceeded error
 				if (error instanceof DOMException && error.name === 'QuotaExceededError') {
-					toast.warning('Localstorage is full', {
+					toast.warning('Local storage is full', {
 						id: 'localstorage-full-toast',
 						description:
 							'You have reached the storage limit for your browser. Please delete some sessions, knowledge, or preferences to free up space.'
