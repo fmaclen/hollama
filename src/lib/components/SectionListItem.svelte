@@ -49,7 +49,6 @@
 	}
 </script>
 
-<!-- Need to use `#key id` to re-render the delete nav after deletion -->
 {#key id}
 	<div
 		class="section-list-item"
@@ -107,6 +106,7 @@
 <style lang="postcss">
 	.section-list-item {
 		@apply flex flex-row items-center justify-between border-b pr-3;
+		@apply first:border-t-0;
 		@apply last:border-b-0;
 
 		&--confirm-deletion {

@@ -437,8 +437,8 @@
 
 <style lang="postcss">
 	.prompt-editor {
-		@apply sticky bottom-0 z-10 mx-auto flex w-full flex-col border-t bg-shade-1 p-3;
-		@apply md:p-4;
+		@apply sticky bottom-0 z-10 mx-auto flex w-full flex-col rounded-b-xl border-t bg-shade-1 p-3;
+		@apply md:p-4 2xl:rounded-b-none;
 		@apply lg:p-6;
 		@apply 2xl:max-w-[80ch] 2xl:rounded-t-lg 2xl:border-l 2xl:border-r;
 	}
