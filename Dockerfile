@@ -7,18 +7,14 @@ WORKDIR /app
 ENV PUBLIC_ADAPTER='docker-node'
 ENV VITE_ALLOWED_HOSTS='localhost'
 
-# Copy package files
+# Copy package files first (for better layer caching)
 COPY package*.json ./
 
 # Install all dependencies (including devDependencies needed for build)
 RUN npm ci
 
-# Copy source files and configs needed for build
-COPY src ./src
-COPY static ./static
-COPY svelte.config.js vite.config.ts tsconfig.json ./
-COPY postcss.config.cjs tailwind.config.js ./
-COPY .typesafe-i18n.json ./
+# Copy everything else (.dockerignore handles exclusions)
+COPY . .
 
 # Build the application
 RUN npm run build
@@ -33,7 +29,6 @@ WORKDIR /app
 
 # Set runtime environment
 ENV PUBLIC_ADAPTER='docker-node'
-ENV VITE_ALLOWED_HOSTS='localhost'
 
 # Copy only the built application from builder stage
 COPY --from=builder --chown=appuser:appgroup /app/build ./build
