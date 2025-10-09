@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+build/
+dist/
+.svelte-kit/
+.wrangler/
+
+# Electron artifacts
+electron/
+electron-builder.yml
+out/
+
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# IDE and editor files
+.vscode/
+.idea/
+.cursor/
+.claude/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+tests/
+test/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+playwright.config.ts
+
+# CI/CD
+.github/
+
+# Documentation
+README.md
+CONTRIBUTING.md
+LICENSE
+
+# Development configs
+.prettierrc
+.prettierignore
+.eslintrc*
+eslint.config.js
+.npmrc
+.nvmrc
+.releaserc.json
+
+# Environment files
+.env
+.env.*
