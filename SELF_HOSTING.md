@@ -10,7 +10,7 @@
 To host your own Hollama server, [install Docker](https://www.docker.com/products/docker-desktop/) and run the command below in your favorite terminal:
 
 ```shell
-docker run --rm -d -p 4173:4173 --name hollama ghcr.io/fmaclen/hollama:latest
+docker run --rm -d -p 4173:3000 --name hollama ghcr.io/fmaclen/hollama:latest
 ```
 
 Then visit [http://localhost:4173](http://localhost:4173)
@@ -32,7 +32,7 @@ docker pull ghcr.io/fmaclen/hollama:latest
 Finally, start the container again:
 
 ```shell
-docker run --rm -d -p 4173:4173 --name hollama ghcr.io/fmaclen/hollama:latest
+docker run --rm -d -p 4173:3000 --name hollama ghcr.io/fmaclen/hollama:latest
 ```
 
 ## Connecting to an Ollama server hosted elsewhere
@@ -48,7 +48,7 @@ OLLAMA_ORIGINS=https://hollama.fernando.is ollama serve
 When hosting Hollama behind a reverse proxy or in a Kubernetes environment, you'll need to specify which domains are allowed to access the application. Use the `VITE_ALLOWED_HOSTS` environment variable to set this:
 
 ```shell
-docker run --rm -d -p 4173:4173 \
+docker run --rm -d -p 4173:3000 \
   -e VITE_ALLOWED_HOSTS='your-domain.com,another-domain.com' \
   --name hollama ghcr.io/fmaclen/hollama:latest
 ```
