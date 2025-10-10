@@ -30,6 +30,8 @@ WORKDIR /app
 
 # Set runtime environment
 ENV PUBLIC_ADAPTER='docker-node'
+ENV VITE_ALLOWED_HOSTS='localhost'
+ENV PORT=4173
 
 # Copy only the built application from builder stage
 COPY --from=builder --chown=appuser:appgroup /app/build ./build
