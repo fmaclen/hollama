@@ -6,6 +6,7 @@ WORKDIR /app
 # Set build environment
 ENV PUBLIC_ADAPTER='docker-node'
 ENV VITE_ALLOWED_HOSTS='localhost'
+ENV PORT=4173
 
 # Copy package files first (for better layer caching)
 COPY package*.json ./
@@ -36,8 +37,8 @@ COPY --from=builder --chown=appuser:appgroup /app/build ./build
 # Switch to non-root user
 USER appuser
 
-# Expose port (SvelteKit default is 3000)
-EXPOSE 3000
+# Expose port (vite preview default)
+EXPOSE 4173
 
 # Run the built application directly (no dependencies needed!)
 CMD ["node", "build/index.js"]
