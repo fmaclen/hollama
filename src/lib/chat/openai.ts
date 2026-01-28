@@ -66,9 +66,28 @@ export class OpenAIStrategy implements ChatStrategy {
 			stream: true
 		});
 
+		let isThinking = false;
 		for await (const chunk of response) {
 			if (abortSignal.aborted) break;
-			onChunk(chunk.choices[0].delta.content || '');
+
+			const { content, reasoning, reasoning_content, thinking } = chunk.choices[0].delta as any
+			const think = reasoning || reasoning_content || thinking
+
+			if (think) {
+				if (!isThinking) {
+					isThinking = true;
+					onChunk('<think>')
+				}
+				onChunk(think);
+			}
+
+			if (content) {
+				if (isThinking) {
+					isThinking = false;
+					onChunk('</think>')
+				}
+				onChunk(content);
+			}
 		}
 	}
 

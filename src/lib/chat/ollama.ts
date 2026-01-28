@@ -69,6 +69,7 @@ export class OllamaStrategy implements ChatStrategy {
 		const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 		let isCompletionDone = false;
 
+		let isThinking = false;
 		while (!isCompletionDone) {
 			const { value, done } = await reader.read();
 
@@ -83,8 +84,23 @@ export class OllamaStrategy implements ChatStrategy {
 			const chatResponses = value.split('\n').filter((line) => line);
 
 			for (const chatResponse of chatResponses) {
-				const { message } = JSON.parse(chatResponse) as ChatResponse;
-				onChunk(message.content);
+				const { content, thinking } = JSON.parse(chatResponse).message;
+
+				if (thinking) {
+					if (!isThinking) {
+						isThinking = true;
+						onChunk('<think>')
+					}
+					onChunk(thinking);
+				}
+
+				if (content) {
+					if (isThinking) {
+						isThinking = false;
+						onChunk('</think>')
+					}
+					onChunk(content);
+				}
 			}
 		}
 	}
