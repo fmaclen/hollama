@@ -4,7 +4,7 @@ A minimal LLM chat app that runs _entirely_ in your browser. The "Spark" fork in
 
 ## Fork To-Dos
 
-- Make local llama.cpp a first-class citizen.
+- M**ake local llama.cpp a first-class citizen.**
 - Streamline support for llama-swap - seamless multi-model via a single llama-server instance.
 - Add some nice-to-haves (in-line thinking toggle, AI-generated chat titles, etc).
 - Write a companion script (bash/powershell/python) for managing llama-server and model downloads (from HuggingFace).
@@ -12,9 +12,9 @@ A minimal LLM chat app that runs _entirely_ in your browser. The "Spark" fork in
 - Allow a chat to spawn sub-agents with their own unique prompts.
 - Support loading multiple models via multiple llama-server instances at once.
 - Support cross-chat communication for agent swarm workflows (i.e. Gemma and Nemotron collaboration).
-- stretch: Build a llama-server proxy API for local ops (i.e. local file read/write).
-- stretch: Teach in-line file updates (grep on keywords, read line chunks around keywords, modify file by those chunks only).
-- stretch: Long-term chat history via vector embeddings and a recall tool.
+- _stretch:_ Build a llama-server proxy API for local ops (i.e. local file read/write).
+- _stretch:_ Teach in-line file updates (grep on keywords, read line chunks around keywords, modify file by those chunks only).
+- _stretch:_ Long-term chat history via vector embeddings and a recall tool.
 
 ## Features
 
