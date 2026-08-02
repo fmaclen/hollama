@@ -13,6 +13,13 @@ import type { Model } from '$lib/settings';
 
 import type { ChatStrategy } from './index';
 
+// Ollama streaming chat can return message.thinking / reasoning_content and message.content
+interface StreamMessage {
+	content?: string;
+	thinking?: string;
+	reasoning_content?: string;
+}
+
 export interface OllamaOptions {
 	numa: boolean;
 	num_ctx: number;
@@ -46,6 +53,7 @@ export interface OllamaOptions {
 	mirostat_tau: number;
 	mirostat_eta: number;
 	penalize_newline: boolean;
+	thinking: boolean;
 	stop: string[];
 }
 
@@ -55,12 +63,23 @@ export class OllamaStrategy implements ChatStrategy {
 	async chat(
 		payload: ChatRequest,
 		abortSignal: AbortSignal,
-		onChunk: (content: string) => void
+		onChunk: (part: { content?: string; thinking?: string }) => void
 	): Promise<void> {
+		const requestPayload = { ...payload };
+		if (payload.options && payload.options.thinking !== undefined) {
+			const options = {
+				...payload.options,
+				think: payload.options.thinking,
+				thinking: payload.options.thinking
+			};
+			requestPayload.options = options;
+			(requestPayload as any).think = payload.options.thinking;
+		}
+
 		const response = await fetch(`${this.server.baseUrl}/api/chat`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'text/event-stream' },
-			body: JSON.stringify(payload),
+			body: JSON.stringify(requestPayload),
 			signal: abortSignal
 		});
 
@@ -83,8 +102,17 @@ export class OllamaStrategy implements ChatStrategy {
 			const chatResponses = value.split('\n').filter((line) => line);
 
 			for (const chatResponse of chatResponses) {
-				const { message } = JSON.parse(chatResponse) as ChatResponse;
-				onChunk(message.content);
+				const parsed = JSON.parse(chatResponse) as ChatResponse & { message?: StreamMessage };
+				const message = parsed.message;
+				if (!message) continue;
+
+				const thinkingText = message.thinking ?? message.reasoning_content;
+				if (thinkingText != null) {
+					onChunk({ thinking: thinkingText });
+				}
+				if (message.content != null) {
+					onChunk({ content: message.content });
+				}
 			}
 		}
 	}

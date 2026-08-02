@@ -23,7 +23,7 @@ export interface ChatStrategy {
 	chat(
 		payload: ChatRequest,
 		abortSignal: AbortSignal,
-		onChunk: (content: string) => void
+		onChunk: (part: { content?: string; thinking?: string }) => void
 	): Promise<void>;
 
 	getModels(): Promise<Model[]>;

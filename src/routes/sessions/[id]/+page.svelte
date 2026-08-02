@@ -209,10 +209,15 @@
 				}
 			);
 
-			await strategy.chat(chatRequest, editor.abortController.signal, async (chunk) => {
-				// Process the chunk using the FSM-based processor
-				reasoningProcessor.processChunk(chunk);
-				await scrollToBottom();
+			await strategy.chat(chatRequest, editor.abortController.signal, async (part) => {
+				if (part.thinking != null) {
+					editor.reasoning += part.thinking;
+					await scrollToBottom();
+				}
+				if (part.content != null) {
+					reasoningProcessor.processChunk(part.content);
+					await scrollToBottom();
+				}
 			});
 
 			// Finalize processing of any remaining content

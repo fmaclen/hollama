@@ -233,6 +233,11 @@
 				bind:checked={session.options.penalize_newline}
 				name="penalize_newline"
 			/>
+			<FieldCheckbox
+				label={$LL.thinking ? $LL.thinking() : 'Thinking'}
+				bind:checked={session.options.thinking}
+				name="thinking"
+			/>
 		</div>
 	</Fieldset>
 

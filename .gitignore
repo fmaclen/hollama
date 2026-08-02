@@ -13,3 +13,5 @@ vite.config.ts.timestamp-*
 /test-results
 /ai/models
 /sessions/*.json
+
+/.idea

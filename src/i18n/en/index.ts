@@ -148,6 +148,7 @@ const en = {
 	system: 'System',
 	systemPrompt: 'System prompt',
 	temperature: 'Temperature',
+	thinking: 'Thinking',
 	tfsZ: 'TFS Z',
 	topK: 'Top K',
 	topP: 'Top P',
