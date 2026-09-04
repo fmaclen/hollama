@@ -35,6 +35,7 @@
 					placeholder={$LL.connectionType()}
 					options={[
 						{ value: ConnectionType.Ollama, label: $LL.ollama() },
+						{ value: ConnectionType.Llmman, label: $LL.llmman() },
 						{ value: ConnectionType.OpenAI, label: $LL.openAIOfficialAPI() },
 						{ value: ConnectionType.OpenAICompatible, label: $LL.openAICompatible() }
 					]}

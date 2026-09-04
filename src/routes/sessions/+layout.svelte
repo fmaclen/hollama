@@ -20,6 +20,7 @@
 
 			switch (server.connectionType) {
 				case ConnectionType.Ollama:
+				case ConnectionType.Llmman:
 					models.push(...(await new OllamaStrategy(server).getModels().catch(() => [])));
 					break;
 				case ConnectionType.OpenAI:

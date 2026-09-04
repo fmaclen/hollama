@@ -4,7 +4,7 @@ A minimal LLM chat app that runs _entirely_ in your browser.
 
 ### Features
 
-- Support for **Ollama** & **OpenAI** servers
+- Support for **Ollama**, [**llmman**](https://github.com/llmmanorg/llmman) & **OpenAI** servers
 - Multi-server support
 - Text & vision models
 - Large prompt fields

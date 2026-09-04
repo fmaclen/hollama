@@ -31,7 +31,9 @@
 	const isOpenAiFamily = $derived(
 		[ConnectionType.OpenAI, ConnectionType.OpenAICompatible].includes(server.connectionType)
 	);
-	const isOllamaFamily = $derived([ConnectionType.Ollama].includes(server.connectionType));
+	const isOllamaFamily = $derived(
+		[ConnectionType.Ollama, ConnectionType.Llmman].includes(server.connectionType)
+	);
 
 	$effect(() => {
 		serversStore.update((servers) => {

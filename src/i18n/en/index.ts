@@ -76,6 +76,7 @@ const en = {
 	language: 'Language',
 	lastUsedModels: 'Recently used models',
 	light: 'Light',
+	llmman: 'llmman (Ollama-compatible API)',
 	lowVram: 'Low VRAM',
 	mainGpu: 'Main GPU',
 	messageOfTheDay: 'Message of the day',

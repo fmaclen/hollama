@@ -311,6 +311,10 @@ type RootTranslation = {
 	 */
 	light: string
 	/**
+	 * l​l​m​m​a​n​ ​(​O​l​l​a​m​a​-​c​o​m​p​a​t​i​b​l​e​ ​A​P​I​)
+	 */
+	llmman: string
+	/**
 	 * L​o​w​ ​V​R​A​M
 	 */
 	lowVram: string
@@ -989,6 +993,10 @@ The completion in progress will stop
 	 * Light
 	 */
 	light: () => LocalizedString
+	/**
+	 * llmman (Ollama-compatible API)
+	 */
+	llmman: () => LocalizedString
 	/**
 	 * Low VRAM
 	 */

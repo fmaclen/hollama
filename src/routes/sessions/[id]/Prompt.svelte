@@ -56,8 +56,9 @@
 	let attachments: Attachment[] = $state([]);
 
 	const isOllamaFamily = $derived(
-		$serversStore.find((s) => s.id === session.model?.serverId)?.connectionType ===
-			ConnectionType.Ollama
+		[ConnectionType.Ollama, ConnectionType.Llmman].includes(
+			$serversStore.find((s) => s.id === session.model?.serverId)?.connectionType as ConnectionType
+		)
 	);
 
 	$effect(() => {

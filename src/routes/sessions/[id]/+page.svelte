@@ -189,6 +189,7 @@
 			let strategy: ChatStrategy | undefined = undefined;
 			switch (server.connectionType) {
 				case ConnectionType.Ollama:
+				case ConnectionType.Llmman:
 					strategy = new OllamaStrategy(server);
 					break;
 				case ConnectionType.OpenAI:

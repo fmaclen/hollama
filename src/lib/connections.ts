@@ -2,6 +2,8 @@ import { generateRandomId } from './utils';
 
 export enum ConnectionType {
 	Ollama = 'ollama',
+	// llmman speaks the Ollama API on a different port: https://github.com/llmmanorg/llmman
+	Llmman = 'llmman',
 	OpenAI = 'openai',
 	OpenAICompatible = 'openai-compatible'
 }
@@ -24,6 +26,9 @@ export function getDefaultServer(connectionType: ConnectionType): Server {
 	switch (connectionType) {
 		case ConnectionType.Ollama:
 			baseUrl = 'http://localhost:11434';
+			break;
+		case ConnectionType.Llmman:
+			baseUrl = 'http://localhost:17434';
 			break;
 		case ConnectionType.OpenAI:
 			baseUrl = 'https://api.openai.com/v1';
