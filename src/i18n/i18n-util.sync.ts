@@ -14,6 +14,7 @@ import pt_br from './pt-br'
 import tr from './tr'
 import vi from './vi'
 import zh_cn from './zh-cn'
+import it from './it'
 
 const localeTranslations = {
 	de,
@@ -25,6 +26,7 @@ const localeTranslations = {
 	tr,
 	vi,
 	'zh-cn': zh_cn,
+	it,
 }
 
 export const loadLocale = (locale: Locales): void => {

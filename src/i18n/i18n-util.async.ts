@@ -15,6 +15,7 @@ const localeTranslationLoaders = {
 	tr: () => import('./tr'),
 	vi: () => import('./vi'),
 	'zh-cn': () => import('./zh-cn'),
+	it: () => import('./it'),
 }
 
 const updateDictionary = (locale: Locales, dictionary: Partial<Translations>): Translations =>

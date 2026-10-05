@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
 	import { toast, Toaster } from 'svelte-sonner';
-	import { detectLocale, navigatorDetector } from 'typesafe-i18n/detectors';
+	import { navigatorDetector } from 'typesafe-i18n/detectors';
 
 	import LL, { setLocale } from '$i18n/i18n-svelte';
+	import { detectLocale } from '$i18n/i18n-util';
 	import { loadLocale } from '$i18n/i18n-util.sync';
 
 	import '../app.pcss';
 
-	import type { Locales } from '$i18n/i18n-types';
 	import { env } from '$env/dynamic/public';
 	import { browser } from '$app/environment';
 	import { onNavigate } from '$app/navigation';
@@ -45,12 +45,7 @@
 
 	onMount(() => {
 		// Language
-		if (!$settingsStore.userLanguage)
-			$settingsStore.userLanguage = detectLocale(
-				'en',
-				['en', 'de', 'zh-cn', 'es', 'fr', 'pt-br', 'ja', 'tr', 'vi'],
-				navigatorDetector
-			) as Locales;
+		if (!$settingsStore.userLanguage) $settingsStore.userLanguage = detectLocale(navigatorDetector);
 
 		loadLocale($settingsStore.userLanguage);
 		setLocale($settingsStore.userLanguage);

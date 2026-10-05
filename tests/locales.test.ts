@@ -172,4 +172,20 @@ test.describe('Locales', () => {
 			);
 		});
 	});
+
+	test.describe('Italian', () => {
+		test.use({ locale: 'it-IT' });
+		test('default language is italian', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('it-IT');
+
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Current version')).not.toBeVisible();
+			await expect(page.getByText('Versione corrente')).toBeVisible();
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"it"'
+			);
+		});
+	});
 });

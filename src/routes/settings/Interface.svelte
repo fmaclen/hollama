@@ -37,6 +37,7 @@
 			{ value: 'zh-cn', label: '中文 (简体)' },
 			{ value: 'es', label: 'Español' },
 			{ value: 'fr', label: 'Français' },
+			{ value: 'it', label: 'Italiano' },
 			{ value: 'pt-br', label: 'Português (Brasil)' },
 			{ value: 'ja', label: '日本語' },
 			{ value: 'tr', label: 'Türkçe' },
