@@ -1,10 +1,16 @@
 import net from 'net';
 import { join } from 'path';
-import { app, BrowserWindow, dialog, utilityProcess } from 'electron';
+import { app, BrowserWindow, dialog, shell, utilityProcess } from 'electron';
 
 // Vite default dev & production ports
 const hollamaPort = app.isPackaged ? '4173' : '5173';
 const HOLLAMA_HOST = '127.0.0.1';
+const HOLLAMA_ORIGIN = `http://${HOLLAMA_HOST}:${hollamaPort}`;
+
+function openInBrowser(url) {
+	const { protocol } = new URL(url);
+	if (protocol === 'http:' || protocol === 'https:') shell.openExternal(url);
+}
 
 function createWindow() {
 	const mainWindow = new BrowserWindow({
@@ -15,7 +21,20 @@ function createWindow() {
 	});
 
 	mainWindow.menuBarVisible = false; // Windows: hides the menu bar
-	mainWindow.loadURL(`http://${HOLLAMA_HOST}:${hollamaPort}`);
+
+	// Links that would leave the app (new windows or navigating away from Hollama)
+	// open in the default browser instead, so the app window always shows Hollama
+	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+		openInBrowser(url);
+		return { action: 'deny' };
+	});
+	mainWindow.webContents.on('will-navigate', (event) => {
+		if (new URL(event.url).origin === HOLLAMA_ORIGIN) return;
+		event.preventDefault();
+		openInBrowser(event.url);
+	});
+
+	mainWindow.loadURL(HOLLAMA_ORIGIN);
 }
 
 function checkServerAvailability(port) {
