@@ -4,17 +4,17 @@
 	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';
-	import { OllamaStrategy } from '$lib/chat/ollama';
-	import { OpenAIStrategy } from '$lib/chat/openai';
-	import Badge from '$lib/components/Badge.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import FieldCheckbox from '$lib/components/FieldCheckbox.svelte';
-	import FieldHelp from '$lib/components/FieldHelp.svelte';
-	import FieldInput from '$lib/components/FieldInput.svelte';
-	import Fieldset from '$lib/components/Fieldset.svelte';
-	import P from '$lib/components/P.svelte';
-	import { ConnectionType, type Server } from '$lib/connections';
-	import { serversStore } from '$lib/localStorage';
+	import { OllamaStrategy } from '#lib/chat/ollama.js';
+	import { OpenAIStrategy } from '#lib/chat/openai.js';
+	import Badge from '#lib/components/Badge.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import FieldCheckbox from '#lib/components/FieldCheckbox.svelte';
+	import FieldHelp from '#lib/components/FieldHelp.svelte';
+	import FieldInput from '#lib/components/FieldInput.svelte';
+	import Fieldset from '#lib/components/Fieldset.svelte';
+	import P from '#lib/components/P.svelte';
+	import { ConnectionType, type Server } from '#lib/connections.js';
+	import { serversStore } from '#lib/localStorage.js';
 
 	import OllamaBaseURLHelp from './ollama/BaseURLHelp.svelte';
 	import PullModel from './ollama/PullModel.svelte';

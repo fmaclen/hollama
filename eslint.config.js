@@ -1,10 +1,11 @@
 import js from '@eslint/js';
+import { loadConfig } from '@sveltejs/load-config';
 import prettier from 'eslint-config-prettier';
 import svelte from 'eslint-plugin-svelte';
 import globals from 'globals';
 import ts from 'typescript-eslint';
 
-import svelteConfig from './svelte.config.js'; // Assuming this file exists, as per your example
+const svelteConfig = (await loadConfig('./', { traverse: false }))?.config; // Assuming this file exists, as per your example
 
 export default ts.config(
 	{

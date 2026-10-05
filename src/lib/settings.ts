@@ -1,6 +1,6 @@
 import type { Locales } from '$i18n/i18n-types';
-import { env } from '$env/dynamic/public';
-import { version } from '$app/environment';
+import { version } from '$app/env';
+import { PUBLIC_ADAPTER } from '$app/env/public';
 
 import type { HollamaMetadata } from '../routes/api/metadata/+server';
 
@@ -33,6 +33,6 @@ export const DEFAULT_SETTINGS: Settings = {
 	sidebarExpanded: true,
 	hollamaMetadata: {
 		currentVersion: version,
-		isDocker: env.PUBLIC_ADAPTER === 'docker-node'
+		isDocker: PUBLIC_ADAPTER === 'docker-node'
 	}
 };

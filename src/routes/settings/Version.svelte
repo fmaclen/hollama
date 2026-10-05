@@ -1,15 +1,15 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
-	import { version } from '$app/environment';
-	import Badge from '$lib/components/Badge.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import FieldCheckbox from '$lib/components/FieldCheckbox.svelte';
-	import FieldHelp from '$lib/components/FieldHelp.svelte';
-	import Fieldset from '$lib/components/Fieldset.svelte';
-	import P from '$lib/components/P.svelte';
-	import { GITHUB_RELEASES_URL } from '$lib/github';
-	import { settingsStore } from '$lib/localStorage';
-	import { checkForUpdates, updateStatusStore } from '$lib/updates';
+	import { version } from '$app/env';
+	import Badge from '#lib/components/Badge.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import FieldCheckbox from '#lib/components/FieldCheckbox.svelte';
+	import FieldHelp from '#lib/components/FieldHelp.svelte';
+	import Fieldset from '#lib/components/Fieldset.svelte';
+	import P from '#lib/components/P.svelte';
+	import { GITHUB_RELEASES_URL } from '#lib/github.js';
+	import { settingsStore } from '#lib/localStorage.js';
+	import { checkForUpdates, updateStatusStore } from '#lib/updates.js';
 
 	// If this component is mounted we don't want the sidebar notification badge to be visible
 	$: if ($updateStatusStore) $updateStatusStore.showSidebarNotification = false;

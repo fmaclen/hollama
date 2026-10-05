@@ -2,11 +2,11 @@
 	import { onMount } from 'svelte';
 
 	import LL from '$i18n/i18n-svelte';
-	import Badge from '$lib/components/Badge.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import FieldHelp from '$lib/components/FieldHelp.svelte';
-	import P from '$lib/components/P.svelte';
-	import type { Server } from '$lib/connections';
+	import Badge from '#lib/components/Badge.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import FieldHelp from '#lib/components/FieldHelp.svelte';
+	import P from '#lib/components/P.svelte';
+	import type { Server } from '#lib/connections.js';
 
 	interface Props {
 		server: Server;

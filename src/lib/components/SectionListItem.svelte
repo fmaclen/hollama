@@ -1,9 +1,9 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
 	import { page } from '$app/state';
-	import { sessionsStore } from '$lib/localStorage';
-	import { saveSession } from '$lib/sessions';
-	import { Sitemap } from '$lib/sitemap';
+	import { sessionsStore } from '#lib/localStorage.js';
+	import { saveSession } from '#lib/sessions.js';
+	import { Sitemap } from '#lib/sitemap.js';
 
 	import ButtonDelete from './ButtonDelete.svelte';
 	import ButtonEdit from './ButtonEdit.svelte';

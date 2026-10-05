@@ -3,18 +3,18 @@
 
 	import LL from '$i18n/i18n-svelte';
 	import { afterNavigate } from '$app/navigation';
-	import Button from '$lib/components/Button.svelte';
-	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
-	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
-	import FieldInput from '$lib/components/FieldInput.svelte';
-	import Fieldset from '$lib/components/Fieldset.svelte';
-	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
-	import Head from '$lib/components/Head.svelte';
-	import Header from '$lib/components/Header.svelte';
-	import Metadata from '$lib/components/Metadata.svelte';
-	import { loadKnowledge, saveKnowledge, type Knowledge } from '$lib/knowledge';
-	import { Sitemap } from '$lib/sitemap';
-	import { formatTimestampToNow, getUpdatedAtDate } from '$lib/utils';
+	import Button from '#lib/components/Button.svelte';
+	import ButtonDelete from '#lib/components/ButtonDelete.svelte';
+	import ButtonSubmit from '#lib/components/ButtonSubmit.svelte';
+	import FieldInput from '#lib/components/FieldInput.svelte';
+	import Fieldset from '#lib/components/Fieldset.svelte';
+	import FieldTextEditor from '#lib/components/FieldTextEditor.svelte';
+	import Head from '#lib/components/Head.svelte';
+	import Header from '#lib/components/Header.svelte';
+	import Metadata from '#lib/components/Metadata.svelte';
+	import { loadKnowledge, saveKnowledge, type Knowledge } from '#lib/knowledge.js';
+	import { Sitemap } from '#lib/sitemap.js';
+	import { formatTimestampToNow, getUpdatedAtDate } from '#lib/utils.js';
 
 	import type { PageData } from './$types';
 
@@ -38,7 +38,9 @@
 		toast.success($LL.knowledgeSaved());
 	}
 
-	afterNavigate(() => {
+	afterNavigate(({ shallow }) => {
+		if (shallow) return;
+
 		knowledge = loadKnowledge(data.id);
 		name = knowledge.name;
 		content = knowledge.content;

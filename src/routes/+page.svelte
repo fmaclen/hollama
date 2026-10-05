@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { serversStore } from '$lib/localStorage';
+	import { serversStore } from '#lib/localStorage.js';
 
 	$effect.pre(() => {
 		// If at least one server is verified, redirect to the sessions page

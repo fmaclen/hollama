@@ -4,13 +4,13 @@
 	import { slide } from 'svelte/transition';
 
 	import LL from '$i18n/i18n-svelte';
-	import Badge from '$lib/components/Badge.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
-	import { generateNewUrl } from '$lib/components/ButtonNew';
-	import Markdown from '$lib/components/Markdown.svelte';
-	import { type Message } from '$lib/sessions';
-	import { Sitemap } from '$lib/sitemap';
+	import Badge from '#lib/components/Badge.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import ButtonCopy from '#lib/components/ButtonCopy.svelte';
+	import { generateNewUrl } from '#lib/components/ButtonNew.js';
+	import Markdown from '#lib/components/Markdown.svelte';
+	import { type Message } from '#lib/sessions.js';
+	import { Sitemap } from '#lib/sitemap.js';
 
 	import AttachmentImage from './AttachmentImage.svelte';
 

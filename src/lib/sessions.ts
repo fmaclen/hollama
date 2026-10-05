@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 
-import type { OllamaOptions } from '$lib/chat/ollama';
-import { sessionsStore, settingsStore, sortStore } from '$lib/localStorage';
+import type { OllamaOptions } from '#lib/chat/ollama.js';
+import { sessionsStore, settingsStore, sortStore } from '#lib/localStorage.js';
 
 import { getLastUsedModels } from './chat';
 import type { Knowledge } from './knowledge';
