@@ -19,11 +19,16 @@ export interface ChatRequest {
 	options?: Partial<OllamaOptions>;
 }
 
+export interface ChatChunk {
+	content?: string;
+	reasoning?: string;
+}
+
 export interface ChatStrategy {
 	chat(
 		payload: ChatRequest,
 		abortSignal: AbortSignal,
-		onChunk: (content: string) => void
+		onChunk: (chunk: ChatChunk) => void
 	): Promise<void>;
 
 	getModels(): Promise<Model[]>;

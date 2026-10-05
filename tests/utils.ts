@@ -420,11 +420,18 @@ export async function mockOpenAIModelsResponse(page: Page, models: OpenAI.Models
 
 export async function mockOpenAICompletionResponse(
 	page: Page,
-	responseChunks: OpenAI.Chat.Completions.ChatCompletionChunk
+	responseChunks:
+		| OpenAI.Chat.Completions.ChatCompletionChunk
+		| OpenAI.Chat.Completions.ChatCompletionChunk[]
 ) {
 	await page.route('**/v1/chat/completions', async (route: Route) => {
 		const encoder = new TextEncoder();
-		const chunks = encoder.encode(`data: ${JSON.stringify(responseChunks)}\n\n`);
+		const chunks = encoder.encode(
+			[responseChunks]
+				.flat()
+				.map((chunk) => `data: ${JSON.stringify(chunk)}\n\n`)
+				.join('')
+		);
 		const buffer = Buffer.from(chunks);
 
 		await route.fulfill({

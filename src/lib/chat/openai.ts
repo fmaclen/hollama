@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import type {
+	ChatCompletionChunk,
 	ChatCompletionContentPart,
 	ChatCompletionMessageParam
 } from 'openai/resources/index.mjs';
@@ -7,7 +8,14 @@ import type {
 import type { Server } from '$lib/connections';
 import type { Model } from '$lib/settings';
 
-import type { ChatRequest, ChatStrategy, Message } from './index';
+import type { ChatChunk, ChatRequest, ChatStrategy, Message } from './index';
+
+// Not part of OpenAI's spec: Ollama and OpenRouter stream reasoning as `reasoning`,
+// DeepSeek and vLLM as `reasoning_content`.
+type OpenAICompatibleDelta = ChatCompletionChunk.Choice.Delta & {
+	reasoning?: string;
+	reasoning_content?: string;
+};
 
 export class OpenAIStrategy implements ChatStrategy {
 	private openai: OpenAI;
@@ -23,7 +31,7 @@ export class OpenAIStrategy implements ChatStrategy {
 	async chat(
 		payload: ChatRequest,
 		abortSignal: AbortSignal,
-		onChunk: (content: string) => void
+		onChunk: (chunk: ChatChunk) => void
 	): Promise<void> {
 		const formattedMessages = payload.messages.map(
 			(message: Message): ChatCompletionMessageParam => {
@@ -68,7 +76,12 @@ export class OpenAIStrategy implements ChatStrategy {
 
 		for await (const chunk of response) {
 			if (abortSignal.aborted) break;
-			onChunk(chunk.choices[0].delta.content || '');
+
+			const delta = chunk.choices[0]?.delta as OpenAICompatibleDelta | undefined;
+			if (!delta) continue;
+
+			const reasoning = delta.reasoning || delta.reasoning_content;
+			if (delta.content || reasoning) onChunk({ content: delta.content ?? undefined, reasoning });
 		}
 	}
 
