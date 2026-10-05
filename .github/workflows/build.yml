@@ -41,6 +41,7 @@ jobs:
     permissions: # Added based on your reference for electron-builder
       contents: write
     strategy:
+      fail-fast: false
       matrix:
         os: [macos-15-intel, macos-latest, ubuntu-latest, windows-latest]
 
