@@ -1,4 +1,4 @@
-`2025-07-02`
+`2026-10-05`
 
 ### Message of the day
 
@@ -6,20 +6,17 @@
 
 #### What's new?
 
-- **Can submit images as prompts** without entering text.
+- **Reasoning is back** for thinking models like `qwen3` and `gpt-oss`, on Ollama and OpenAI-compatible servers. Thanks [@AndSDev](https://github.com/AndSDev)!
+- **Italian and Georgian translations**, thanks to [@Manu-sh](https://github.com/Manu-sh) and [@EkaterinePapava](https://github.com/EkaterinePapava).
+- **Multiple tabs stay in sync** and no longer overwrite each other's sessions.
+- **Desktop app** opens links in your browser, and the download is less than half the size.
 
 #### Previously, in Hollama
 
+- **Submit images as prompts** without entering text.
 - **Redesigned sidebar navigation** with improved accessibility and mobile experience.
 - **Copy & paste images** directly into the prompt field for quick image attachments.
 - **Improved stop completion** now preserves partial responses instead of discarding them.
-- **Import & export** options in [Settings](/settings).
-
-#### What's next?
-
-- [In the works](https://github.com/fmaclen/hollama/pulls)
-- [Short-term priorities](https://github.com/fmaclen/hollama/issues?q=is%3Aissue+is%3Aopen+label%3Apriority)
-- And we are **always tweaking the UI**
 
 #### Community Resources
 
