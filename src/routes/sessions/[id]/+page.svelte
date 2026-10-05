@@ -199,7 +199,7 @@
 
 			if (!strategy) throw new Error('Invalid strategy');
 
-			// Create a reasoning processor to handle tag parsing
+			// Some models still inline their reasoning in `<think>` tags within the content
 			const reasoningProcessor = createReasoningProcessor(
 				(text) => {
 					editor.completion += text;
@@ -209,11 +209,15 @@
 				}
 			);
 
-			await strategy.chat(chatRequest, editor.abortController.signal, async (chunk) => {
-				// Process the chunk using the FSM-based processor
-				reasoningProcessor.processChunk(chunk);
-				await scrollToBottom();
-			});
+			await strategy.chat(
+				chatRequest,
+				editor.abortController.signal,
+				async ({ content, reasoning }) => {
+					if (reasoning) editor.reasoning += reasoning;
+					if (content) reasoningProcessor.processChunk(content);
+					await scrollToBottom();
+				}
+			);
 
 			// Finalize processing of any remaining content
 			reasoningProcessor.finalize();

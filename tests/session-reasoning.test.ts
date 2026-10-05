@@ -1,13 +1,20 @@
 import { expect, test, type Locator } from '@playwright/test';
+import type { ChatResponse } from 'ollama/browser';
+import type OpenAI from 'openai';
 
 import {
 	chooseModel,
 	MOCK_API_TAGS_RESPONSE,
+	MOCK_OPENAI_COMPLETION_RESPONSE_1,
+	MOCK_OPENAI_MODELS,
 	MOCK_RESPONSE_WITH_REASONING,
+	MOCK_SESSION_1_RESPONSE_1,
 	MOCK_STREAMED_THINK_TAGS,
 	MOCK_STREAMED_THOUGHT_TAGS,
 	mockCompletionResponse,
 	mockOllamaModelsResponse,
+	mockOpenAICompletionResponse,
+	mockOpenAIModelsResponse,
 	setupStreamedCompletionMock
 } from './utils';
 
@@ -194,6 +201,62 @@ test.describe('Session reasoning tag handling', () => {
 		await page.getByRole('button', { name: 'Reasoning' }).click();
 		await expect(page.locator('.article--reasoning')).toBeVisible();
 		await expect(page.locator('.article--reasoning')).toHaveText('This is in a thought tag');
+	});
+
+	test('shows reasoning sent by Ollama in the `thinking` field', async ({ page }) => {
+		await page.goto('/');
+		await page.getByRole('tab', { name: 'Sessions' }).click();
+		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+
+		await mockCompletionResponse(page, {
+			...MOCK_SESSION_1_RESPONSE_1,
+			message: {
+				role: 'assistant',
+				content: 'The answer is 391.',
+				thinking: '17 times 23 is 391.'
+			} as ChatResponse['message']
+		});
+		await promptTextarea.fill('What is 17*23?');
+		await page.getByText('Run').click();
+
+		await expect(page.locator('.article--assistant')).toContainText('The answer is 391.');
+		await expect(page.locator('.article--assistant')).not.toContainText('17 times 23 is 391.');
+
+		await page.getByRole('button', { name: 'Reasoning' }).click();
+		await expect(page.locator('.article--reasoning')).toHaveText('17 times 23 is 391.');
+	});
+
+	test('shows reasoning sent by OpenAI-compatible servers', async ({ page }) => {
+		await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
+		await page.getByRole('tab', { name: 'Sessions' }).click();
+		await page.getByTestId('new-session').click();
+		await page.getByLabel('Available models').click();
+		await page.getByRole('option', { name: 'gpt-3.5-turbo' }).click();
+
+		const withDelta = (
+			delta: OpenAI.Chat.Completions.ChatCompletionChunk.Choice.Delta & {
+				reasoning?: string;
+				reasoning_content?: string;
+			}
+		): OpenAI.Chat.Completions.ChatCompletionChunk => ({
+			...MOCK_OPENAI_COMPLETION_RESPONSE_1,
+			choices: [{ index: 0, delta, finish_reason: null }]
+		});
+		await mockOpenAICompletionResponse(page, [
+			// Ollama and OpenRouter use `reasoning`, DeepSeek and vLLM use `reasoning_content`
+			withDelta({ role: 'assistant', content: '', reasoning: '17 times 23 ' }),
+			withDelta({ content: null, reasoning_content: 'is 391.' }),
+			withDelta({ content: 'The answer is 391.' })
+		]);
+		await promptTextarea.fill('What is 17*23?');
+		await page.getByRole('button', { name: 'Run' }).click();
+
+		await expect(page.locator('.article--assistant')).toContainText('The answer is 391.');
+		await expect(page.locator('.article--assistant')).not.toContainText('17 times 23');
+
+		await page.getByRole('button', { name: 'Reasoning' }).click();
+		await expect(page.locator('.article--reasoning')).toHaveText('17 times 23 is 391.');
 	});
 
 	test('does not show reasoning components for non-reasoning LLM response', async ({ page }) => {

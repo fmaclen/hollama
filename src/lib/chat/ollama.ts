@@ -11,7 +11,14 @@ import type {
 import type { Server } from '$lib/connections';
 import type { Model } from '$lib/settings';
 
-import type { ChatStrategy } from './index';
+import type { ChatChunk, ChatStrategy } from './index';
+
+// Reasoning models stream their thoughts in `thinking`, separate from `content`.
+// Ollama can also report an error mid-stream on a line of its own.
+type OllamaChatLine = Partial<ChatResponse> & {
+	message?: { content?: string; thinking?: string };
+	error?: string;
+};
 
 export interface OllamaOptions {
 	numa: boolean;
@@ -55,7 +62,7 @@ export class OllamaStrategy implements ChatStrategy {
 	async chat(
 		payload: ChatRequest,
 		abortSignal: AbortSignal,
-		onChunk: (content: string) => void
+		onChunk: (chunk: ChatChunk) => void
 	): Promise<void> {
 		const response = await fetch(`${this.server.baseUrl}/api/chat`, {
 			method: 'POST',
@@ -67,9 +74,11 @@ export class OllamaStrategy implements ChatStrategy {
 		if (!response.body) throw new Error('Ollama response is missing body');
 
 		const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+		// A network read can end partway through a JSON line, so hold the
+		// unfinished tail until the rest of it arrives.
+		let buffer = '';
 		let isCompletionDone = false;
 
-		let isThinking = false;
 		while (!isCompletionDone) {
 			const { value, done } = await reader.read();
 
@@ -81,28 +90,22 @@ export class OllamaStrategy implements ChatStrategy {
 			if (!response.ok && value) throw new Error(JSON.parse(value).error);
 			if (!value) continue;
 
-			const chatResponses = value.split('\n').filter((line) => line);
-
-			for (const chatResponse of chatResponses) {
-				const { content, thinking } = JSON.parse(chatResponse).message;
-
-				if (thinking) {
-					if (!isThinking) {
-						isThinking = true;
-						onChunk('<think>')
-					}
-					onChunk(thinking);
-				}
-
-				if (content) {
-					if (isThinking) {
-						isThinking = false;
-						onChunk('</think>')
-					}
-					onChunk(content);
-				}
-			}
+			const lines = (buffer + value).split('\n');
+			buffer = lines.pop() ?? '';
+			for (const line of lines) this.handleChatLine(line, onChunk);
 		}
+
+		this.handleChatLine(buffer, onChunk);
+	}
+
+	private handleChatLine(line: string, onChunk: (chunk: ChatChunk) => void) {
+		if (!line.trim()) return;
+
+		const chatResponse = JSON.parse(line) as OllamaChatLine;
+		if (chatResponse.error) throw new Error(chatResponse.error);
+
+		const { content, thinking } = chatResponse.message ?? {};
+		if (content || thinking) onChunk({ content, reasoning: thinking });
 	}
 
 	async getModels(): Promise<Model[]> {
