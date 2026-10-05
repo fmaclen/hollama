@@ -101,6 +101,7 @@ test('seed data and take screenshots for README.md', async ({ page }) => {
 	expect(await page.screenshot()).toMatchSnapshot({ name: 'session-controls.png' });
 
 	await page.getByRole('tab', { name: 'Knowledge' }).click();
+	await expect(page).toHaveURL('/knowledge');
 	await expect(page.getByText('No knowledge')).toBeVisible();
 
 	await seedKnowledgeAndReload(page);

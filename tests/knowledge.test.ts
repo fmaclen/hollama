@@ -202,19 +202,21 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 		use_mmap: false,
 		use_mlock: false
 	};
-	expect(requestPostData).toContain(
-		JSON.stringify({
-			model: MOCK_API_TAGS_RESPONSE.models[0].name,
-			options: DEFAULT_OLLAMA_OPTIONS,
-			messages: [
-				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
-				{ role: 'user', content: 'What is this about?' }
-			]
-		})
-	);
-	expect(await sessionArticle.count()).toBe(2);
-	expect(await sessionArticle.first().textContent()).toContain('What is this about?');
-	expect(await sessionArticle.last().textContent()).toContain(
+	await expect
+		.poll(() => requestPostData)
+		.toContain(
+			JSON.stringify({
+				model: MOCK_API_TAGS_RESPONSE.models[0].name,
+				options: DEFAULT_OLLAMA_OPTIONS,
+				messages: [
+					{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
+					{ role: 'user', content: 'What is this about?' }
+				]
+			})
+		);
+	await expect(sessionArticle).toHaveCount(2);
+	await expect(sessionArticle.first()).toContainText('What is this about?');
+	await expect(sessionArticle.last()).toContainText(
 		MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.message.content
 	);
 	await expect(knowledgeId).not.toBeVisible();
@@ -222,19 +224,21 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 	// Retrying the ai completion should include the system prompt
 	await mockCompletionResponse(page, MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1);
 	await page.getByTitle('Retry').click();
-	expect(requestPostData).toContain(
-		JSON.stringify({
-			model: MOCK_API_TAGS_RESPONSE.models[0].name,
-			options: DEFAULT_OLLAMA_OPTIONS,
-			messages: [
-				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
-				{ role: 'user', content: 'What is this about?' }
-			]
-		})
-	);
-	expect(await sessionArticle.count()).toBe(2);
-	expect(await sessionArticle.first().textContent()).toContain('What is this about?');
-	expect(await sessionArticle.last().textContent()).toContain(
+	await expect
+		.poll(() => requestPostData)
+		.toContain(
+			JSON.stringify({
+				model: MOCK_API_TAGS_RESPONSE.models[0].name,
+				options: DEFAULT_OLLAMA_OPTIONS,
+				messages: [
+					{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
+					{ role: 'user', content: 'What is this about?' }
+				]
+			})
+		);
+	await expect(sessionArticle).toHaveCount(2);
+	await expect(sessionArticle.first()).toContainText('What is this about?');
+	await expect(sessionArticle.last()).toContainText(
 		MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.message.content
 	);
 
@@ -245,23 +249,25 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 
 	await page.locator('.prompt-editor__textarea').fill('Gotcha, thanks for the clarification');
 	await page.getByText('Run').click();
-	expect(requestPostData).toContain(
-		JSON.stringify({
-			model: MOCK_API_TAGS_RESPONSE.models[0].name,
-			options: DEFAULT_OLLAMA_OPTIONS,
-			messages: [
-				{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
-				{ role: 'user', content: 'What is this about?' },
-				{
-					role: 'assistant',
-					content: MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.message.content,
-					reasoning: ''
-				},
-				{ role: 'user', content: 'Gotcha, thanks for the clarification' }
-			]
-		})
-	);
-	expect(await sessionArticle.count()).toBe(4);
+	await expect
+		.poll(() => requestPostData)
+		.toContain(
+			JSON.stringify({
+				model: MOCK_API_TAGS_RESPONSE.models[0].name,
+				options: DEFAULT_OLLAMA_OPTIONS,
+				messages: [
+					{ role: 'system', content: MOCK_KNOWLEDGE[0].content, knowledge: MOCK_KNOWLEDGE[0] },
+					{ role: 'user', content: 'What is this about?' },
+					{
+						role: 'assistant',
+						content: MOCK_SESSION_WITH_KNOWLEDGE_RESPONSE_1.message.content,
+						reasoning: ''
+					},
+					{ role: 'user', content: 'Gotcha, thanks for the clarification' }
+				]
+			})
+		);
+	await expect(sessionArticle).toHaveCount(4);
 });
 
 test('can use shortcut to create knowledge from session', async ({ page }) => {
