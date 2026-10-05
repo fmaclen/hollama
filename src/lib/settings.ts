@@ -33,7 +33,6 @@ export const DEFAULT_SETTINGS: Settings = {
 	sidebarExpanded: true,
 	hollamaMetadata: {
 		currentVersion: version,
-		isDesktop: env.PUBLIC_ADAPTER === 'electron-node',
 		isDocker: env.PUBLIC_ADAPTER === 'docker-node'
 	}
 };

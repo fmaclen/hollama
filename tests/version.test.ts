@@ -53,7 +53,6 @@ test('displays Docker-specific update instructions in Docker environment', async
 		route.fulfill({
 			json: {
 				currentVersion: currentVersion,
-				isDesktop: false,
 				isDocker: true
 			}
 		})
@@ -74,7 +73,6 @@ test('shows download link for updates in Desktop environment', async ({ page }) 
 		route.fulfill({
 			json: {
 				currentVersion: currentVersion,
-				isDesktop: true,
 				isDocker: false
 			}
 		})
@@ -104,7 +102,6 @@ test('performs automatic update check on navigation when enabled', async ({ page
 		route.fulfill({
 			json: {
 				currentVersion: currentVersion,
-				isDesktop: true,
 				isDocker: false
 			}
 		})
@@ -132,7 +129,6 @@ test('performs automatic update check on navigation when enabled', async ({ page
 		route.fulfill({
 			json: {
 				currentVersion: MOCK_NEWER_VERSION,
-				isDesktop: true,
 				isDocker: false
 			}
 		})
@@ -170,7 +166,6 @@ test('skips automatic update check on navigation when disabled', async ({ page }
 		route.fulfill({
 			json: {
 				currentVersion: currentVersion,
-				isDesktop: true,
 				isDocker: false
 			}
 		})
