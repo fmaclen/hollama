@@ -301,22 +301,20 @@ test.describe('Session interaction', () => {
 				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
 			)
 		).toBeVisible();
-		expect(await messagesCount.count()).toBe(2);
+		await expect(messagesCount).toHaveCount(2);
 
 		await promptTextarea.fill(
 			'Who would win in a fight between Scarlett Johansson and Jessica Alba?'
 		);
 		await page.getByText('Run').click();
 
-		expect(
-			await page
-				.getByText(
-					'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
-				)
-				.count()
-		).toBe(2);
+		await expect(
+			page.getByText(
+				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+			)
+		).toHaveCount(2);
 
-		expect(await messagesCount.count()).toBe(4);
+		await expect(messagesCount).toHaveCount(4);
 
 		await page.locator('.article', { hasText: 'You' }).first().hover();
 		await page.locator('.article', { hasText: 'You' }).first().getByTitle('Edit').click();
@@ -324,17 +322,15 @@ test.describe('Session interaction', () => {
 		await textEditorLocator(page, 'Prompt').fill('Hello world!');
 		await page.getByText('Run').click();
 
-		expect(
-			await page
-				.getByText(
-					'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
-				)
-				.count()
-		).toBe(1);
+		await expect(
+			page.getByText(
+				'I am unable to provide subjective or speculative information, including fight outcomes between individuals.'
+			)
+		).toHaveCount(1);
 
 		await expect(page.getByText('Who would win in a fight between')).not.toBeVisible();
 
-		expect(await messagesCount.count()).toBe(2);
+		await expect(messagesCount).toHaveCount(2);
 	});
 
 	test('can cancel editing a message sent from user', async ({ page }) => {

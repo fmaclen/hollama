@@ -78,7 +78,7 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	const modelName = MOCK_API_TAGS_RESPONSE.models[1].name;
 	await chooseFromCombobox(page, 'Available models', modelName);
 
-	let requestPayload;
+	let requestPayload: unknown;
 
 	await page.route('**/api/chat', async (route) => {
 		const request = route.request();
@@ -93,16 +93,18 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	const promptTextarea = page.locator('.prompt-editor__textarea');
 	await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 	await page.getByText('Run').click();
-	expect(requestPayload).toEqual({
-		model: 'gemma:7b',
-		options: {},
-		messages: [
-			{
-				role: 'user',
-				content: 'Who would win in a fight between Emma Watson and Jessica Alba?'
-			}
-		]
-	});
+	await expect
+		.poll(() => requestPayload)
+		.toEqual({
+			model: 'gemma:7b',
+			options: {},
+			messages: [
+				{
+					role: 'user',
+					content: 'Who would win in a fight between Emma Watson and Jessica Alba?'
+				}
+			]
+		});
 	await expect(
 		page.locator('article', {
 			hasText: 'Who would win in a fight between Emma Watson and Jessica Alba?'
@@ -203,25 +205,27 @@ test('can set ollama model and runtime options', async ({ page }) => {
 		use_mlock: true
 	};
 
-	expect(requestPayload).toEqual({
-		model: 'gemma:7b',
-		options: customizedOptions,
-		messages: [
-			{
-				role: 'user',
-				content: 'Who would win in a fight between Emma Watson and Jessica Alba?'
-			},
-			{
-				role: 'assistant',
-				reasoning: '',
-				content: MOCK_SESSION_1_RESPONSE_1.message.content
-			},
-			{
-				role: 'user',
-				content: 'Whatever...'
-			}
-		]
-	});
+	await expect
+		.poll(() => requestPayload)
+		.toEqual({
+			model: 'gemma:7b',
+			options: customizedOptions,
+			messages: [
+				{
+					role: 'user',
+					content: 'Who would win in a fight between Emma Watson and Jessica Alba?'
+				},
+				{
+					role: 'assistant',
+					reasoning: '',
+					content: MOCK_SESSION_1_RESPONSE_1.message.content
+				},
+				{
+					role: 'user',
+					content: 'Whatever...'
+				}
+			]
+		});
 
 	// Check the options persist when navigating between sessions
 	await page.getByTestId('new-session').click();
@@ -244,16 +248,18 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await promptTextarea.fill('What does the fox say?');
 	await chooseFromCombobox(page, 'Available models', 'openhermes2.5-mistral:latest');
 	await page.getByRole('button', { name: 'Run' }).click();
-	expect(requestPayload).toEqual({
-		model: 'openhermes2.5-mistral:latest',
-		options: {},
-		messages: [
-			{
-				role: 'user',
-				content: 'What does the fox say?'
-			}
-		]
-	});
+	await expect
+		.poll(() => requestPayload)
+		.toEqual({
+			model: 'openhermes2.5-mistral:latest',
+			options: {},
+			messages: [
+				{
+					role: 'user',
+					content: 'What does the fox say?'
+				}
+			]
+		});
 	await expect(page.locator('article', { hasText: 'What does the fox say?' })).toBeVisible();
 
 	await page
@@ -293,35 +299,37 @@ test('can set ollama model and runtime options', async ({ page }) => {
 
 	await page.getByRole('button', { name: 'Run' }).click();
 	// Model is retained from last session
-	expect(requestPayload).toEqual({
-		model: 'gemma:7b',
-		options: customizedOptions,
-		messages: [
-			{
-				role: 'user',
-				content: 'Who would win in a fight between Emma Watson and Jessica Alba?'
-			},
-			{
-				role: 'assistant',
-				reasoning: '',
-				content: MOCK_SESSION_1_RESPONSE_1.message.content
-			},
-			{
-				role: 'user',
-				content: 'Whatever...'
-			},
-			{
-				role: 'assistant',
-				reasoning: '',
-				content: MOCK_SESSION_1_RESPONSE_2.message.content
-			},
-			{
-				role: 'user',
-				content:
-					'Write a Python function to calculate the odds of the winner in a fight between Emma Watson and Jessica Alba'
-			}
-		]
-	});
+	await expect
+		.poll(() => requestPayload)
+		.toEqual({
+			model: 'gemma:7b',
+			options: customizedOptions,
+			messages: [
+				{
+					role: 'user',
+					content: 'Who would win in a fight between Emma Watson and Jessica Alba?'
+				},
+				{
+					role: 'assistant',
+					reasoning: '',
+					content: MOCK_SESSION_1_RESPONSE_1.message.content
+				},
+				{
+					role: 'user',
+					content: 'Whatever...'
+				},
+				{
+					role: 'assistant',
+					reasoning: '',
+					content: MOCK_SESSION_1_RESPONSE_2.message.content
+				},
+				{
+					role: 'user',
+					content:
+						'Write a Python function to calculate the odds of the winner in a fight between Emma Watson and Jessica Alba'
+				}
+			]
+		});
 
 	await page.getByLabel('Controls').click();
 	// Model options

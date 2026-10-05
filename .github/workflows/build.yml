@@ -23,7 +23,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
       - run: npm ci
       - run: npm run build
 
@@ -32,7 +32,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          command: pages publish .svelte-kit/cloudflare --project-name hollama
+          command: pages deploy .svelte-kit/cloudflare --project-name hollama
 
   electron:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -41,8 +41,9 @@ jobs:
     permissions: # Added based on your reference for electron-builder
       contents: write
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-13, macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-15-intel, macos-latest, ubuntu-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -50,7 +51,7 @@ jobs:
           ref: main # Ensure we checkout the commit made by semantic-release
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       # The update-package-json.cjs script is removed, semantic-release handles this.
 
@@ -80,7 +81,7 @@ jobs:
       - name: Set up Node.js # Added for reading package.json version
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Extract version from package.json
         id: package_version

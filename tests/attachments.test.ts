@@ -256,8 +256,7 @@ test.describe('Attachments', () => {
 
 		// Intercept outgoing request
 		let requestPayload:
-			| { messages: { role: string; content: string; images?: string[] }[] }
-			| undefined = undefined;
+			{ messages: { role: string; content: string; images?: string[] }[] } | undefined = undefined;
 		await page.route('**/chat', async (route, request) => {
 			const postData = request.postData();
 			if (postData) requestPayload = JSON.parse(postData);
@@ -279,6 +278,7 @@ test.describe('Attachments', () => {
 		await page.getByText('Run').click();
 
 		// Assert payload contains images array and prompt
+		await expect.poll(() => requestPayload).toBeDefined();
 		if (!requestPayload) throw new Error('No request payload captured');
 		const lastUserMsg = (
 			requestPayload as { messages: { role: string; content: string; images?: string[] }[] }
@@ -341,8 +341,7 @@ test.describe('Attachments', () => {
 
 		// Intercept the EDIT request
 		let editRequestPayload1:
-			| { messages: { role: string; content: string; images?: string[] }[] }
-			| undefined = undefined;
+			{ messages: { role: string; content: string; images?: string[] }[] } | undefined = undefined;
 		await page.route('**/chat', async (route, request) => {
 			const postData = request.postData();
 			if (postData) editRequestPayload1 = JSON.parse(postData);
@@ -364,6 +363,7 @@ test.describe('Attachments', () => {
 		userMessageArticle = page.locator('article', { hasText: 'Describe these two images' });
 
 		// Assert EDIT payload contains updated text and both images
+		await expect.poll(() => editRequestPayload1).toBeDefined();
 		if (!editRequestPayload1) throw new Error('No edit request payload captured');
 		const editedUserMsg1 = (
 			editRequestPayload1 as { messages: { role: string; content: string; images?: string[] }[] }
@@ -414,8 +414,7 @@ test.describe('Attachments', () => {
 
 		// Intercept the SECOND EDIT request
 		let editRequestPayload2:
-			| { messages: { role: string; content: string; images?: string[] }[] }
-			| undefined = undefined;
+			{ messages: { role: string; content: string; images?: string[] }[] } | undefined = undefined;
 		await page.route('**/chat', async (route, request) => {
 			const postData = request.postData();
 			if (postData) editRequestPayload2 = JSON.parse(postData);
@@ -437,6 +436,7 @@ test.describe('Attachments', () => {
 		userMessageArticle = page.locator('article', { hasText: 'Describe just this one image now' });
 
 		// Assert SECOND EDIT payload contains updated text and only one image
+		await expect.poll(() => editRequestPayload2).toBeDefined();
 		if (!editRequestPayload2) throw new Error('No second edit request payload captured');
 		const editedUserMsg2 = (
 			editRequestPayload2 as { messages: { role: string; content: string; images?: string[] }[] }
@@ -664,8 +664,7 @@ test.describe('Attachments', () => {
 
 		// Intercept outgoing request to verify images are sent
 		let requestPayload:
-			| { messages: { role: string; content: string; images?: string[] }[] }
-			| undefined = undefined;
+			{ messages: { role: string; content: string; images?: string[] }[] } | undefined = undefined;
 		await page.route('**/chat', async (route, request) => {
 			const postData = request.postData();
 			if (postData) requestPayload = JSON.parse(postData);
