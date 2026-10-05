@@ -314,4 +314,36 @@ test.describe('Session management', () => {
 		await expect(sessionListItem).not.toContainText('Canceled title');
 		await expect(sessionListItem).toContainText('New title');
 	});
+
+	test('keeps sessions created in different tabs', async ({ page, context }) => {
+		const otherPage = await context.newPage();
+		await otherPage.route('**/api/tags', (route) =>
+			route.fulfill({ json: MOCK_API_TAGS_RESPONSE })
+		);
+		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_1);
+		await mockCompletionResponse(otherPage, MOCK_SESSION_2_RESPONSE_1);
+
+		// Both tabs load before either one saves a session
+		await page.goto('/sessions');
+		await otherPage.goto('/sessions');
+
+		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
+		await page.getByText('Run').click();
+		await expect(page.getByText('I am unable to provide subjective')).toBeVisible();
+
+		await otherPage.getByTestId('new-session').click();
+		await chooseModel(otherPage, MOCK_API_TAGS_RESPONSE.models[1].name);
+		await otherPage.locator('.prompt-editor__textarea').fill('What does the fox say?');
+		await otherPage.getByText('Run').click();
+		await expect(otherPage.getByText('The fox says various things')).toBeVisible();
+
+		const sessionTitles = ['What does the fox say?', 'Who would win in a fight'];
+		for (const tab of [page, otherPage]) {
+			await expect(tab.getByTestId('session-item')).toContainText(sessionTitles);
+			await tab.reload();
+			await expect(tab.getByTestId('session-item')).toContainText(sessionTitles);
+		}
+	});
 });

@@ -87,25 +87,21 @@ export const loadSession = (id: string): Session => {
 };
 
 export const saveSession = (session: Session): void => {
-	// Retrieve the current sessions
-	const currentSessions = get(sessionsStore) || [];
+	sessionsStore.update((currentSessions) => {
+		// Find the index of the session with the same id, if it exists
+		const existingIndex = currentSessions.findIndex((k) => k.id === session.id);
 
-	// Find the index of the session with the same id, if it exists
-	const existingIndex = currentSessions.findIndex((k) => k.id === session.id);
+		if (existingIndex !== -1) {
+			// Update the existing session
+			currentSessions[existingIndex] = session;
+		} else {
+			// Add the new session if it doesn't exist
+			currentSessions.push(session);
+		}
 
-	if (existingIndex !== -1) {
-		// Update the existing session
-		currentSessions[existingIndex] = session;
-	} else {
-		// Add the new session if it doesn't exist
-		currentSessions.push(session);
-	}
-
-	// Sort the sessions by updatedAt in descending order (most recent first)
-	const sortedSessions = sortStore(currentSessions);
-
-	// Update the store with the sorted sessions
-	sessionsStore.set(sortedSessions);
+		// Sort the sessions by updatedAt in descending order (most recent first)
+		return sortStore(currentSessions);
+	});
 
 	// Update the last used models
 	const lastUsedModels = getLastUsedModels();

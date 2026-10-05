@@ -1,5 +1,5 @@
 import { toast } from 'svelte-sonner';
-import { writable } from 'svelte/store';
+import { get, writable, type Updater } from 'svelte/store';
 
 import { browser } from '$app/environment';
 import type { Session } from '$lib/sessions';
@@ -9,11 +9,19 @@ import type { Knowledge } from './knowledge';
 import { DEFAULT_SETTINGS, type Settings } from './settings';
 
 function createLocalStorageStore<T>(key: string, defaultValue: T) {
-	const initialValue: T = browser
-		? JSON.parse(localStorage.getItem(key) || 'null') || defaultValue
-		: defaultValue;
+	function read(): T {
+		return JSON.parse(localStorage.getItem(key) || 'null') || defaultValue;
+	}
 
-	const store = writable<T>(initialValue);
+	const store = writable<T>(browser ? read() : defaultValue);
+
+	// Pick up changes saved by other tabs, otherwise our next save would write
+	// a stale copy over them.
+	if (browser) {
+		window.addEventListener('storage', (event) => {
+			if (event.key === key) store.set(read());
+		});
+	}
 
 	store.subscribe((value) => {
 		if (browser) {
@@ -40,6 +48,9 @@ function createLocalStorageStore<T>(key: string, defaultValue: T) {
 
 	return {
 		...store,
+		// Start from what's in localStorage right now, not the in-memory copy,
+		// so a save can't drop changes another tab made a moment ago.
+		update: (updater: Updater<T>) => store.set(updater(browser ? read() : get(store))),
 		reset: () => {
 			store.set(defaultValue);
 		}
