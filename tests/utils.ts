@@ -2,8 +2,8 @@ import { expect, type Locator, type Page, type Route } from '@playwright/test';
 import type { ChatResponse, ListResponse } from 'ollama/browser';
 import type OpenAI from 'openai';
 
-import { ConnectionType, getDefaultServer } from '$lib/connections';
-import type { Knowledge } from '$lib/knowledge';
+import { ConnectionType, getDefaultServer } from '#lib/connections.ts';
+import type { Knowledge } from '#lib/knowledge.ts';
 
 export const MOCK_API_TAGS_RESPONSE: ListResponse = {
 	models: [

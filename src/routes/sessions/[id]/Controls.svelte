@@ -1,12 +1,12 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
-	import FieldCheckbox from '$lib/components/FieldCheckbox.svelte';
-	import FieldInput from '$lib/components/FieldInput.svelte';
-	import Fieldset from '$lib/components/Fieldset.svelte';
-	import P from '$lib/components/P.svelte';
-	import { loadKnowledge } from '$lib/knowledge';
-	import { knowledgeStore } from '$lib/localStorage';
-	import type { Session } from '$lib/sessions';
+	import FieldCheckbox from '#lib/components/FieldCheckbox.svelte';
+	import FieldInput from '#lib/components/FieldInput.svelte';
+	import Fieldset from '#lib/components/Fieldset.svelte';
+	import P from '#lib/components/P.svelte';
+	import { loadKnowledge } from '#lib/knowledge.js';
+	import { knowledgeStore } from '#lib/localStorage.js';
+	import type { Session } from '#lib/sessions.js';
 
 	import KnowledgeSelect from './KnowledgeSelect.svelte';
 

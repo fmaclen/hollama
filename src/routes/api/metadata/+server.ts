@@ -1,7 +1,5 @@
-import { json } from '@sveltejs/kit';
-
-import { env } from '$env/dynamic/public';
-import { version } from '$app/environment';
+import { version } from '$app/env';
+import { PUBLIC_ADAPTER } from '$app/env/public';
 
 export interface HollamaMetadata {
 	currentVersion: string;
@@ -10,8 +8,8 @@ export interface HollamaMetadata {
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET() {
-	return json({
+	return Response.json({
 		currentVersion: version,
-		isDocker: env.PUBLIC_ADAPTER === 'docker-node'
+		isDocker: PUBLIC_ADAPTER === 'docker-node'
 	} as HollamaMetadata);
 }

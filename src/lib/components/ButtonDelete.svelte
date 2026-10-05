@@ -3,8 +3,8 @@
 
 	import LL from '$i18n/i18n-svelte';
 	import { goto } from '$app/navigation';
-	import { deleteStoreItem, knowledgeStore, sessionsStore } from '$lib/localStorage';
-	import { Sitemap } from '$lib/sitemap';
+	import { deleteStoreItem, knowledgeStore, sessionsStore } from '#lib/localStorage.js';
+	import { Sitemap } from '#lib/sitemap.js';
 
 	import Button from './Button.svelte';
 

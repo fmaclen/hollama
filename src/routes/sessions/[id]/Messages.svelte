@@ -1,7 +1,7 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
-	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
-	import { saveSession, type Editor, type Message, type Session } from '$lib/sessions';
+	import EmptyMessage from '#lib/components/EmptyMessage.svelte';
+	import { saveSession, type Editor, type Message, type Session } from '#lib/sessions.js';
 
 	import Article from './Article.svelte';
 

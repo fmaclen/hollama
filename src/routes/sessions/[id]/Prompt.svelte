@@ -6,16 +6,16 @@
 	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';
-	import Button from '$lib/components/Button.svelte';
-	import ButtonSubmit from '$lib/components/ButtonSubmit.svelte';
-	import Field from '$lib/components/Field.svelte';
-	import FieldSelectModel from '$lib/components/FieldSelectModel.svelte';
-	import FieldTextEditor from '$lib/components/FieldTextEditor.svelte';
-	import { ConnectionType } from '$lib/connections';
-	import { loadKnowledge, type Knowledge } from '$lib/knowledge';
-	import { knowledgeStore, serversStore } from '$lib/localStorage';
-	import type { Editor, Message, Session } from '$lib/sessions';
-	import { generateRandomId } from '$lib/utils';
+	import Button from '#lib/components/Button.svelte';
+	import ButtonSubmit from '#lib/components/ButtonSubmit.svelte';
+	import Field from '#lib/components/Field.svelte';
+	import FieldSelectModel from '#lib/components/FieldSelectModel.svelte';
+	import FieldTextEditor from '#lib/components/FieldTextEditor.svelte';
+	import { ConnectionType } from '#lib/connections.js';
+	import { loadKnowledge, type Knowledge } from '#lib/knowledge.js';
+	import { knowledgeStore, serversStore } from '#lib/localStorage.js';
+	import type { Editor, Message, Session } from '#lib/sessions.js';
+	import { generateRandomId } from '#lib/utils.js';
 
 	import AttachmentImage from './AttachmentImage.svelte';
 	import KnowledgeSelect from './KnowledgeSelect.svelte';

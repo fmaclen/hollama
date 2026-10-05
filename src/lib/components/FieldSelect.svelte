@@ -4,9 +4,9 @@
 	import type { LocalizedString } from 'typesafe-i18n';
 
 	import LL from '$i18n/i18n-svelte';
-	import Badge from '$lib/components/Badge.svelte';
-	import Button from '$lib/components/Button.svelte';
-	import Field from '$lib/components/Field.svelte';
+	import Badge from '#lib/components/Badge.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import Field from '#lib/components/Field.svelte';
 
 	export let name: string;
 	export let label: LocalizedString;

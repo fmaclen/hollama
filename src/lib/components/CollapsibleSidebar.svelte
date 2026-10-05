@@ -5,11 +5,11 @@
 	import LL from '$i18n/i18n-svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
-	import { knowledgeStore, sessionsStore, settingsStore } from '$lib/localStorage';
-	import { formatSessionMetadata, getSessionTitle } from '$lib/sessions';
-	import { Sitemap } from '$lib/sitemap';
-	import { updateStatusStore } from '$lib/updates';
-	import { formatTimestampToNow } from '$lib/utils';
+	import { knowledgeStore, sessionsStore, settingsStore } from '#lib/localStorage.js';
+	import { formatSessionMetadata, getSessionTitle } from '#lib/sessions.js';
+	import { Sitemap } from '#lib/sitemap.js';
+	import { updateStatusStore } from '#lib/updates.js';
+	import { formatTimestampToNow } from '#lib/utils.js';
 
 	import ButtonNew from './ButtonNew.svelte';
 	import EmptyMessage from './EmptyMessage.svelte';

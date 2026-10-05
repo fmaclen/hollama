@@ -5,8 +5,8 @@ import type {
 	ChatCompletionMessageParam
 } from 'openai/resources/index.mjs';
 
-import type { Server } from '$lib/connections';
-import type { Model } from '$lib/settings';
+import type { Server } from '#lib/connections.js';
+import type { Model } from '#lib/settings.js';
 
 import type { ChatChunk, ChatRequest, ChatStrategy, Message } from './index';
 

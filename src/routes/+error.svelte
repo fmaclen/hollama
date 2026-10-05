@@ -1,19 +1,19 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
-	import { page } from '$app/stores';
-	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
+	import { page } from '$app/state';
+	import EmptyMessage from '#lib/components/EmptyMessage.svelte';
 </script>
 
 <section class="error">
 	<div class="error-message">
-		{#if $page.status === 404}
+		{#if page.status === 404}
 			<EmptyMessage>
-				<strong>{$LL.error()} {$page.status}</strong>
+				<strong>{$LL.error()} {page.status}</strong>
 				<span>{$LL.notFound()}</span>
 			</EmptyMessage>
-		{:else if $page.status !== 200}
+		{:else if page.status !== 200}
 			<EmptyMessage>
-				<strong>{$LL.error()} {$page.status}</strong>
+				<strong>{$LL.error()} {page.status}</strong>
 				<span>{$LL.internalServerError()}</span>
 			</EmptyMessage>
 		{/if}

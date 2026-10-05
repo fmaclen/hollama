@@ -2,8 +2,8 @@
 	import { onMount } from 'svelte';
 
 	import LL from '$i18n/i18n-svelte';
-	import { Sitemap } from '$lib/sitemap';
-	import { generateRandomId } from '$lib/utils';
+	import { Sitemap } from '#lib/sitemap.js';
+	import { generateRandomId } from '#lib/utils.js';
 
 	import Button from './Button.svelte';
 	import { generateNewUrl } from './ButtonNew';

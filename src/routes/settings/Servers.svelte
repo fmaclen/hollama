@@ -1,12 +1,12 @@
 <script lang="ts">
 	import LL from '$i18n/i18n-svelte';
-	import Button from '$lib/components/Button.svelte';
-	import EmptyMessage from '$lib/components/EmptyMessage.svelte';
-	import FieldSelect from '$lib/components/FieldSelect.svelte';
-	import Fieldset from '$lib/components/Fieldset.svelte';
-	import P from '$lib/components/P.svelte';
-	import { ConnectionType, getDefaultServer } from '$lib/connections';
-	import { serversStore } from '$lib/localStorage';
+	import Button from '#lib/components/Button.svelte';
+	import EmptyMessage from '#lib/components/EmptyMessage.svelte';
+	import FieldSelect from '#lib/components/FieldSelect.svelte';
+	import Fieldset from '#lib/components/Fieldset.svelte';
+	import P from '#lib/components/P.svelte';
+	import { ConnectionType, getDefaultServer } from '#lib/connections.js';
+	import { serversStore } from '#lib/localStorage.js';
 
 	import Connection from './Connection.svelte';
 

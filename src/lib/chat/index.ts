@@ -1,8 +1,8 @@
 import type { ErrorResponse, ProgressResponse, PullRequest, StatusResponse } from 'ollama/browser';
 import { get } from 'svelte/store';
 
-import { sessionsStore, settingsStore } from '$lib/localStorage';
-import type { Model } from '$lib/settings';
+import { sessionsStore, settingsStore } from '#lib/localStorage.js';
+import type { Model } from '#lib/settings.js';
 
 import { type OllamaOptions } from './ollama';
 

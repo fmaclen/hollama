@@ -2,7 +2,7 @@
 	import { PanelLeftClose, PanelLeftOpen } from '@lucide/svelte';
 
 	import LL from '$i18n/i18n-svelte';
-	import { settingsStore } from '$lib/localStorage';
+	import { settingsStore } from '#lib/localStorage.js';
 
 	function toggleExpanded() {
 		$settingsStore.sidebarExpanded = !$settingsStore.sidebarExpanded;

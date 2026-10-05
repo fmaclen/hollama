@@ -1,8 +1,8 @@
 import { toast } from 'svelte-sonner';
 import { get, writable, type Updater } from 'svelte/store';
 
-import { browser } from '$app/environment';
-import type { Session } from '$lib/sessions';
+import { browser } from '$app/env';
+import type { Session } from '#lib/sessions.js';
 
 import type { Server } from './connections';
 import type { Knowledge } from './knowledge';

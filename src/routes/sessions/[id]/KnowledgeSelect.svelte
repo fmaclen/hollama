@@ -2,11 +2,11 @@
 	import { Brain } from '@lucide/svelte';
 
 	import LL from '$i18n/i18n-svelte';
-	import Button from '$lib/components/Button.svelte';
-	import { generateNewUrl } from '$lib/components/ButtonNew';
-	import FieldSelect from '$lib/components/FieldSelect.svelte';
-	import { type Knowledge } from '$lib/knowledge';
-	import { Sitemap } from '$lib/sitemap';
+	import Button from '#lib/components/Button.svelte';
+	import { generateNewUrl } from '#lib/components/ButtonNew.js';
+	import FieldSelect from '#lib/components/FieldSelect.svelte';
+	import { type Knowledge } from '#lib/knowledge.js';
+	import { Sitemap } from '#lib/sitemap.js';
 
 	export let value: string | undefined = undefined;
 	export let options: Knowledge[] = [];

@@ -4,17 +4,17 @@
 
 	import LL from '$i18n/i18n-svelte';
 	import { beforeNavigate } from '$app/navigation';
-	import { type ChatRequest, type ChatStrategy } from '$lib/chat';
-	import { OllamaStrategy } from '$lib/chat/ollama';
-	import { OpenAIStrategy } from '$lib/chat/openai';
-	import Button from '$lib/components/Button.svelte';
-	import ButtonCopy from '$lib/components/ButtonCopy.svelte';
-	import ButtonDelete from '$lib/components/ButtonDelete.svelte';
-	import Head from '$lib/components/Head.svelte';
-	import Header from '$lib/components/Header.svelte';
-	import Metadata from '$lib/components/Metadata.svelte';
-	import { ConnectionType } from '$lib/connections';
-	import { serversStore, settingsStore } from '$lib/localStorage';
+	import { type ChatRequest, type ChatStrategy } from '#lib/chat/index.js';
+	import { OllamaStrategy } from '#lib/chat/ollama.js';
+	import { OpenAIStrategy } from '#lib/chat/openai.js';
+	import Button from '#lib/components/Button.svelte';
+	import ButtonCopy from '#lib/components/ButtonCopy.svelte';
+	import ButtonDelete from '#lib/components/ButtonDelete.svelte';
+	import Head from '#lib/components/Head.svelte';
+	import Header from '#lib/components/Header.svelte';
+	import Metadata from '#lib/components/Metadata.svelte';
+	import { ConnectionType } from '#lib/connections.js';
+	import { serversStore, settingsStore } from '#lib/localStorage.js';
 	import {
 		formatSessionMetadata,
 		getSessionTitle,
@@ -22,8 +22,8 @@
 		saveSession,
 		type Editor,
 		type Message
-	} from '$lib/sessions';
-	import { Sitemap } from '$lib/sitemap';
+	} from '#lib/sessions.js';
+	import { Sitemap } from '#lib/sitemap.js';
 
 	import type { PageData } from './$types';
 	import Controls from './Controls.svelte';
@@ -74,6 +74,8 @@
 	});
 
 	beforeNavigate((navigation) => {
+		if (navigation.shallow) return;
+
 		if (editor.isCompletionInProgress) {
 			const userConfirmed = confirm($LL.areYouSureYouWantToLeave());
 			if (userConfirmed) {

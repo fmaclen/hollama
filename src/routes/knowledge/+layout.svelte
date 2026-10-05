@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { type Snippet } from 'svelte';
 
-	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
+	import RobotsNoIndex from '#lib/components/RobotsNoIndex.svelte';
 
 	let { children }: { children: Snippet } = $props();
 </script>

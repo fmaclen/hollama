@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
-	import Button from '$lib/components/Button.svelte';
+	import { browser } from '$app/env';
+	import Button from '#lib/components/Button.svelte';
 
 	export let handleSubmit;
 	export let disabled: boolean | undefined = false;

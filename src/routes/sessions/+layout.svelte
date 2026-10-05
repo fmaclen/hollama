@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { type Snippet } from 'svelte';
 
-	import { browser } from '$app/environment';
-	import { getLastUsedModels } from '$lib/chat';
-	import { OllamaStrategy } from '$lib/chat/ollama';
-	import { OpenAIStrategy } from '$lib/chat/openai';
-	import RobotsNoIndex from '$lib/components/RobotsNoIndex.svelte';
-	import { ConnectionType } from '$lib/connections';
-	import { serversStore, settingsStore } from '$lib/localStorage';
-	import { type Model } from '$lib/settings';
+	import { browser } from '$app/env';
+	import { getLastUsedModels } from '#lib/chat/index.js';
+	import { OllamaStrategy } from '#lib/chat/ollama.js';
+	import { OpenAIStrategy } from '#lib/chat/openai.js';
+	import RobotsNoIndex from '#lib/components/RobotsNoIndex.svelte';
+	import { ConnectionType } from '#lib/connections.js';
+	import { serversStore, settingsStore } from '#lib/localStorage.js';
+	import { type Model } from '#lib/settings.js';
 
 	let { children }: { children: Snippet } = $props();
 

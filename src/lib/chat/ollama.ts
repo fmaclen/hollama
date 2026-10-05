@@ -8,8 +8,8 @@ import type {
 	StatusResponse
 } from 'ollama/browser';
 
-import type { Server } from '$lib/connections';
-import type { Model } from '$lib/settings';
+import type { Server } from '#lib/connections.js';
+import type { Model } from '#lib/settings.js';
 
 import type { ChatChunk, ChatStrategy } from './index';
 

@@ -9,18 +9,24 @@
 
 	import '../app.pcss';
 
-	import { env } from '$env/dynamic/public';
-	import { browser } from '$app/environment';
+	import { browser } from '$app/env';
+	import {
+		PUBLIC_PLAUSIBLE_API,
+		PUBLIC_PLAUSIBLE_DOMAIN,
+		PUBLIC_PLAUSIBLE_SRC
+	} from '$app/env/public';
 	import { onNavigate } from '$app/navigation';
-	import CollapsibleSidebar from '$lib/components/CollapsibleSidebar.svelte';
-	import SidebarToggle from '$lib/components/SidebarToggle.svelte';
-	import { ConnectionType, getDefaultServer } from '$lib/connections';
-	import { serversStore, settingsStore, StorageKey } from '$lib/localStorage';
-	import { checkForUpdates } from '$lib/updates';
+	import CollapsibleSidebar from '#lib/components/CollapsibleSidebar.svelte';
+	import SidebarToggle from '#lib/components/SidebarToggle.svelte';
+	import { ConnectionType, getDefaultServer } from '#lib/connections.js';
+	import { serversStore, settingsStore, StorageKey } from '#lib/localStorage.js';
+	import { checkForUpdates } from '#lib/updates.js';
 
 	let { children }: { children: Snippet } = $props();
 
 	onNavigate(async (navigation) => {
+		if (navigation.shallow) return;
+
 		// Check for updates whenever the user follows a link (if auto-check is enabled)
 		if (!($settingsStore.autoCheckForUpdates === false)) await checkForUpdates();
 
@@ -108,12 +114,12 @@
 </script>
 
 <svelte:head>
-	{#if env.PUBLIC_PLAUSIBLE_DOMAIN}
+	{#if PUBLIC_PLAUSIBLE_DOMAIN}
 		<script
 			defer
-			data-domain={env.PUBLIC_PLAUSIBLE_DOMAIN}
-			data-api={env.PUBLIC_PLAUSIBLE_API}
-			src={env.PUBLIC_PLAUSIBLE_SRC}
+			data-domain={PUBLIC_PLAUSIBLE_DOMAIN}
+			data-api={PUBLIC_PLAUSIBLE_API}
+			src={PUBLIC_PLAUSIBLE_SRC}
 		></script>
 	{/if}
 </svelte:head>

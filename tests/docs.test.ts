@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
-import type { Model } from '$lib/settings';
-import { generateRandomId } from '$lib/utils';
+import type { Model } from '#lib/settings.ts';
+import { generateRandomId } from '#lib/utils.ts';
 
 import {
 	MOCK_API_TAGS_RESPONSE,

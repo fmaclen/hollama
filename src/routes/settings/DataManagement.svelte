@@ -3,17 +3,17 @@
 	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';
-	import Button from '$lib/components/Button.svelte';
-	import Fieldset from '$lib/components/Fieldset.svelte';
-	import P from '$lib/components/P.svelte';
+	import Button from '#lib/components/Button.svelte';
+	import Fieldset from '#lib/components/Fieldset.svelte';
+	import P from '#lib/components/P.svelte';
 	import {
 		knowledgeStore,
 		serversStore,
 		sessionsStore,
 		settingsStore,
 		StorageKey
-	} from '$lib/localStorage';
-	import { DEFAULT_SETTINGS } from '$lib/settings';
+	} from '#lib/localStorage.js';
+	import { DEFAULT_SETTINGS } from '#lib/settings.js';
 
 	interface DataSource {
 		storageKey: StorageKey;
