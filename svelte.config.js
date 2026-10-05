@@ -10,6 +10,11 @@ const adapterConfig = {
 	routes: {
 		include: ['/*'],
 		exclude: ['<all>']
+	},
+	// `vite preview` can start several emulators at once, and they crash fighting over a shared
+	// SQLite file in .wrangler/state. Hollama uses no Cloudflare bindings, so nothing needs persisting.
+	platformProxy: {
+		persist: false
 	}
 };
 

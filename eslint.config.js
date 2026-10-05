@@ -42,6 +42,12 @@ export default ts.config(
 				extraFileExtensions: ['.svelte'], // Crucial for Svelte files
 				svelteConfig // Pass svelte.config.js to the parser for richer context
 			}
+		},
+		rules: {
+			// Added to the recommended set after this codebase was written; adopting them means
+			// rewriting navigation and state code, which is tracked separately from dependency updates
+			'svelte/no-navigation-without-resolve': 'off',
+			'svelte/prefer-writable-derived': 'off'
 		}
 	},
 

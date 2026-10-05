@@ -55,7 +55,7 @@
 		@apply focus-within:border-shade-6 focus-within:outline focus-within:outline-shade-2;
 
 		&--text-editor {
-			@apply flex-grow gap-y-0  p-0;
+			@apply flex-grow gap-y-0 p-0;
 		}
 
 		&--disabled {
