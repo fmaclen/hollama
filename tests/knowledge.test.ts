@@ -144,6 +144,7 @@ test('knowledge cannot be used as a system prompt in a session after deletion', 
 	await expect(page.getByRole('option', { name: MOCK_KNOWLEDGE[1].name })).toBeVisible();
 
 	await page.getByRole('tab', { name: 'Knowledge' }).click();
+	await expect(page).toHaveURL('/knowledge');
 	await page.getByText(MOCK_KNOWLEDGE[0].name).click();
 	await expect(noKnowledgeSelectedMessage).not.toBeVisible();
 	await expect(timestamp).toBeVisible();
