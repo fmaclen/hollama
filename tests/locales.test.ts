@@ -188,4 +188,20 @@ test.describe('Locales', () => {
 			);
 		});
 	});
+
+	test.describe('Georgian', () => {
+		test.use({ locale: 'ka-GE' });
+		test('default language is georgian', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('ka-GE');
+
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Current version')).not.toBeVisible();
+			await expect(page.getByText('მიმდინარე ვერსია')).toBeVisible();
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"ka"'
+			);
+		});
+	});
 });
