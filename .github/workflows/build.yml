@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-15-intel, macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-15-intel, macos-15, ubuntu-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v4
