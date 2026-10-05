@@ -48,8 +48,13 @@ test('can navigate between session messages and controls', async ({ page }) => {
 
 	// Check it scrolls to the bottom when the page loads
 	const sessionHistory = page.locator('.session__history');
-	const initialScrollTop = await sessionHistory.evaluate((el) => el.scrollTop);
-	await sessionHistory.evaluate((el) => el.scrollTop);
+	const scrollTop = () => sessionHistory.evaluate((el) => el.scrollTop);
+	// The app scrolls on the next animation frame, so wait for it to land
+	await expect
+		.poll(() => sessionHistory.evaluate((el) => el.scrollHeight - el.clientHeight - el.scrollTop))
+		.toBeLessThanOrEqual(1);
+	const initialScrollTop = await scrollTop();
+	expect(initialScrollTop).toBeGreaterThan(0);
 
 	// Switch to Controls
 	await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
@@ -61,8 +66,7 @@ test('can navigate between session messages and controls', async ({ page }) => {
 	await expect(page.getByText('Zulu')).toBeVisible();
 	await expect(page.getByText('System prompt')).not.toBeVisible();
 	// Check it scrolls to the bottom after switching back to Messages
-	const currentScrollTop = await sessionHistory.evaluate((el) => el.scrollTop);
-	expect(currentScrollTop).toBe(initialScrollTop);
+	await expect.poll(scrollTop).toBe(initialScrollTop);
 });
 
 test('can set ollama model and runtime options', async ({ page }) => {

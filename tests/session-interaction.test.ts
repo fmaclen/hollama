@@ -492,7 +492,14 @@ test.describe('Session interaction', () => {
 		await promptTextarea.fill('Who would win in a fight between Emma Watson and Jessica Alba?');
 		await mockCompletionResponse(page, MOCK_SESSION_1_RESPONSE_3);
 		await page.getByText('Run').click();
+		await expect(
+			page.getByText('by providing their respective statistics as inputs')
+		).toBeVisible();
 
+		// The app scrolls on the next animation frame, so wait for it to land
+		await expect
+			.poll(() => sessionHistory.evaluate((el) => el.scrollHeight - el.clientHeight - el.scrollTop))
+			.toBeLessThanOrEqual(1);
 		const finalScrollTop = await sessionHistory.evaluate((el) => el.scrollTop);
 		const finalScrollHeight = await sessionHistory.evaluate((el) => el.scrollHeight);
 		const finalClientHeight = await sessionHistory.evaluate((el) => el.clientHeight);

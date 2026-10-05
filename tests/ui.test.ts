@@ -52,11 +52,17 @@ test.describe('FieldSelect', () => {
 			page.locator('[aria-selected=true]', { hasText: MOCK_API_TAGS_RESPONSE.models[1].name })
 		).not.toBeVisible();
 
+		// Close the menu first: whether clicking the X also closes an open menu depends on how
+		// long the menu has been open, so clear from a known state
+		await page.keyboard.press('Escape');
+		await expect(page.getByRole('option')).toHaveCount(0);
+
 		// Clear selection using X button
 		await page.getByTitle('Clear').click();
 		await expect(modelCombobox).toHaveValue('');
 
 		// Select an option again
+		await modelCombobox.click();
 		await page.getByRole('option', { name: MOCK_API_TAGS_RESPONSE.models[1].name }).click();
 		await expect(modelCombobox).toHaveValue(MOCK_API_TAGS_RESPONSE.models[1].name);
 
