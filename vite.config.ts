@@ -7,6 +7,8 @@ import { defineConfig } from 'vite';
 
 dotenv.config({ quiet: true });
 
+const isNodeAdapter = ['docker-node', 'electron-node'].includes(process.env.PUBLIC_ADAPTER ?? '');
+
 const adapterConfig = {
 	// See below for an explanation of these options
 	routes: { include: ['/*'], exclude: ['<all>'] }
@@ -22,13 +24,14 @@ export default defineConfig({
 			// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
 			// If your environment is not supported or you settled on a specific environment, switch out the adapter.
 			// See https://kit.svelte.dev/docs/adapters for more information about adapters.
-			adapter: ['docker-node', 'electron-node'].includes(process.env.PUBLIC_ADAPTER ?? '')
-				? adapterNode()
-				: adapterCloudflare(adapterConfig),
+			adapter: isNodeAdapter ? adapterNode() : adapterCloudflare(adapterConfig),
 			version: { name: process.env.npm_package_version },
 			alias: { $i18n: 'src/i18n' }
 		})
 	],
+	// SvelteKit writes server source maps by default. Node ignores them at runtime,
+	// so the Docker image and the desktop app ship without them.
+	environments: { ssr: { build: { sourcemap: !isNodeAdapter } } },
 	preview: {
 		// Allow all hosts in preview mode
 		host: true,
