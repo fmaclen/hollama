@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Brain } from 'lucide-svelte';
+	import { Brain } from '@lucide/svelte';
 
 	import LL from '$i18n/i18n-svelte';
 	import Button from '$lib/components/Button.svelte';

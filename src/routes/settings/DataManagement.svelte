@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Download, FolderUp, Trash2 } from 'lucide-svelte';
+	import { Download, FolderUp, Trash2 } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';

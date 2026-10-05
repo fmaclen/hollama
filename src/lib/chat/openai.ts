@@ -23,7 +23,8 @@ export class OpenAIStrategy implements ChatStrategy {
 	constructor(private server: Server) {
 		this.openai = new OpenAI({
 			baseURL: this.server.baseUrl,
-			apiKey: this.server.apiKey || '',
+			// The SDK rejects an empty key, but servers like llama.cpp don't need one
+			apiKey: this.server.apiKey || 'none',
 			dangerouslyAllowBrowser: true
 		});
 	}

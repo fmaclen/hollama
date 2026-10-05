@@ -1,8 +1,8 @@
 <script lang="ts">
 	import hljs from 'highlight.js';
 	import katex from 'katex';
+	import MarkdownIt from 'markdown-it';
 	import texmath from 'markdown-it-texmath';
-	import MarkdownIt from 'markdown-it/lib/index.mjs';
 	import { mount } from 'svelte';
 
 	import 'highlight.js/styles/github.min.css';
@@ -42,7 +42,7 @@
 		return `<pre id="${CODE_SNIPPET_ID}"><code class="hljs">${code}</code></pre>`;
 	}
 
-	const md: MarkdownIt = new MarkdownIt({
+	const md: InstanceType<typeof MarkdownIt> = new MarkdownIt({
 		highlight: function (str, lang) {
 			if (lang && hljs.getLanguage(lang)) {
 				try {
