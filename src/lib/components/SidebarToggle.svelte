@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PanelLeftClose, PanelLeftOpen } from 'lucide-svelte';
+	import { PanelLeftClose, PanelLeftOpen } from '@lucide/svelte';
 
 	import LL from '$i18n/i18n-svelte';
 	import { settingsStore } from '$lib/localStorage';

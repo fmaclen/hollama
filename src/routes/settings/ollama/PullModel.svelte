@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CloudDownload } from 'lucide-svelte';
+	import { CloudDownload } from '@lucide/svelte';
 	import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 	import { toast } from 'svelte-sonner';
 

@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { Check, ChevronsUpDown, X } from '@lucide/svelte';
 	import { Combobox, type Selected } from 'bits-ui';
-	import { Check, ChevronsUpDown, X } from 'lucide-svelte';
 	import type { LocalizedString } from 'typesafe-i18n';
 
 	import LL from '$i18n/i18n-svelte';

@@ -61,6 +61,10 @@ export default ts.config(
 				...globals.browser,
 				...globals.node
 			}
+		},
+		rules: {
+			// Added to `js.configs.recommended` in ESLint 10, same reasoning as the Svelte rules above
+			'no-useless-assignment': 'off'
 		}
 	},
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Brain, CircleStop, Image, LoaderCircle, UnfoldVertical } from 'lucide-svelte';
-	import MessageSquareText from 'lucide-svelte/icons/message-square-text';
-	import Settings_2 from 'lucide-svelte/icons/settings-2';
-	import Trash_2 from 'lucide-svelte/icons/trash-2';
+	import { Brain, CircleStop, Image, LoaderCircle, UnfoldVertical } from '@lucide/svelte';
+	import MessageSquareText from '@lucide/svelte/icons/message-square-text';
+	import Settings_2 from '@lucide/svelte/icons/settings-2';
+	import Trash_2 from '@lucide/svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';
@@ -321,8 +321,7 @@
 					bind:this={editor.promptTextarea}
 					bind:value={editor.prompt}
 					onkeydown={handleKeyDown}
-					onpaste={handlePaste}
-				></textarea>
+					onpaste={handlePaste}></textarea>
 			</Field>
 		{/if}
 

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import {
 		Brain,
-		Github,
+		GitBranch,
 		MessageSquareText,
 		Moon,
 		NotebookText,
 		Settings2,
 		Sun
-	} from 'lucide-svelte';
+	} from '@lucide/svelte';
 	import { fade, slide } from 'svelte/transition';
 
 	import LL from '$i18n/i18n-svelte';
@@ -192,7 +192,7 @@
 					rel="noopener noreferrer"
 					class="duration-25 flex items-center gap-3 px-4 py-3 text-sm font-medium text-muted transition-colors hover:text-active"
 				>
-					<Github class="h-4 w-4" />
+					<GitBranch class="h-4 w-4" />
 					GitHub
 				</a>
 

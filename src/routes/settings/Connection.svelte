@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { LoaderCircle } from 'lucide-svelte';
-	import Trash_2 from 'lucide-svelte/icons/trash-2';
+	import { LoaderCircle } from '@lucide/svelte';
+	import Trash_2 from '@lucide/svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
 
 	import LL from '$i18n/i18n-svelte';

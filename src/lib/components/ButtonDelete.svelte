@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Check, Trash2, X } from 'lucide-svelte';
+	import { Check, Trash2, X } from '@lucide/svelte';
 
 	import LL from '$i18n/i18n-svelte';
 	import { goto } from '$app/navigation';

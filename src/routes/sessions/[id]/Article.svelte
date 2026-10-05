@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Brain, ChevronDown, ChevronUp, Pencil, RefreshCw, Trash2 } from 'lucide-svelte';
+	import { Brain, ChevronDown, ChevronUp, Pencil, RefreshCw, Trash2 } from '@lucide/svelte';
 	import { quadInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
 
