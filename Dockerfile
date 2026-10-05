@@ -1,5 +1,6 @@
 # Build stage
-FROM node:24-alpine AS builder
+# Keep the Alpine version in sync with the production stage, which reuses this node binary
+FROM node:24-alpine3.24 AS builder
 
 WORKDIR /app
 
@@ -19,10 +20,13 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:24-alpine
+# Plain Alpine plus the node binary, without npm, yarn or corepack
+FROM alpine:3.24
 
-# Create non-root user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Install node's shared libraries and create non-root user
+RUN apk add --no-cache libstdc++ && addgroup -S appgroup && adduser -S appuser -G appgroup
+
+COPY --from=builder /usr/local/bin/node /usr/local/bin/node
 
 WORKDIR /app
 

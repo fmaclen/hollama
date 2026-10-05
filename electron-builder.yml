@@ -4,7 +4,7 @@ artifactName: ${productName}_${version}-${os}-${arch}.${ext}
 
 files:
   - build/**/*
-  - electron/**/*
+  - electron/main.js
 
 mac:
   category: public.app-category.developer-tools
