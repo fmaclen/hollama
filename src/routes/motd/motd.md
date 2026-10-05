@@ -18,13 +18,6 @@
 - **Copy & paste images** directly into the prompt field for quick image attachments.
 - **Improved stop completion** now preserves partial responses instead of discarding them.
 
-#### What's next?
-
-- **Reasoning levels** for models that support them
-- **A redesigned interface**
-- [In the works](https://github.com/fmaclen/hollama/pulls)
-- [Short-term priorities](https://github.com/fmaclen/hollama/issues?q=is%3Aissue+is%3Aopen+label%3Apriority)
-
 #### Community Resources
 
 - [Deploying Hollama & Ollama on Kubernetes](https://github.com/prudhvikrishnap/h-ollama-on-k8s/blob/main/guide.md) by [@prudhvikrishnap](https://github.com/prudhvikrishnap/h-ollama-on-k8s/commits?author=prudhvikrishnap)
