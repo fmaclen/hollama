@@ -421,8 +421,7 @@ export async function mockOpenAIModelsResponse(page: Page, models: OpenAI.Models
 export async function mockOpenAICompletionResponse(
 	page: Page,
 	responseChunks:
-		| OpenAI.Chat.Completions.ChatCompletionChunk
-		| OpenAI.Chat.Completions.ChatCompletionChunk[]
+		OpenAI.Chat.Completions.ChatCompletionChunk | OpenAI.Chat.Completions.ChatCompletionChunk[]
 ) {
 	await page.route('**/v1/chat/completions', async (route: Route) => {
 		const encoder = new TextEncoder();
