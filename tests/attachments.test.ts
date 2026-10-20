@@ -462,6 +462,45 @@ test.describe('Attachments', () => {
 		await expect(page.getByText('Description of one image')).toBeVisible(); // Check assistant response
 	});
 
+	test('can send images that share a file name', async ({ page }) => {
+		const __filename = fileURLToPath(import.meta.url);
+		const __dirname = path.dirname(__filename);
+		const fs = await import('fs');
+		const buffer = fs.readFileSync(path.resolve(__dirname, 'docs.test.ts-snapshots', 'motd.png'));
+
+		await page.goto('/');
+		await page.getByRole('tab', { name: 'Sessions' }).click();
+		await page.getByTestId('new-session').click();
+		await chooseModel(page, MOCK_API_TAGS_RESPONSE.models[0].name);
+
+		// iOS names every photo taken from the camera "image.jpg"
+		const [fileChooser] = await Promise.all([
+			page.waitForEvent('filechooser'),
+			page.getByTestId('image-attachment').click()
+		]);
+		await fileChooser.setFiles([
+			{ name: 'image.jpg', mimeType: 'image/png', buffer },
+			{ name: 'image.jpg', mimeType: 'image/png', buffer }
+		]);
+		await expect(
+			page.locator('.prompt-editor').getByTestId('attachment-image-preview')
+		).toHaveCount(2);
+
+		await page.route('**/chat', async (route) => {
+			await route.fulfill({
+				status: 200,
+				contentType: 'text/event-stream',
+				body: JSON.stringify({ message: { role: 'assistant', content: 'Two photos' } }) + '\n'
+			});
+		});
+		await page.locator('.prompt-editor__textarea').fill('Compare these photos');
+		await page.getByText('Run').click();
+
+		const userMessageArticle = page.locator('article', { hasText: 'Compare these photos' });
+		await expect(userMessageArticle.getByTestId('attachment-image-preview')).toHaveCount(2);
+		await expect(page.locator('article', { hasText: 'Two photos' })).toBeVisible();
+	});
+
 	test('can attach and send an image (OpenAI vision payload)', async ({ page }) => {
 		const { mockOpenAIModelsResponse } = await import('./utils');
 		const { MOCK_OPENAI_MODELS } = await import('./utils');
