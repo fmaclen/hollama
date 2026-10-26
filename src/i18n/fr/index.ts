@@ -10,9 +10,15 @@ const fr = {
 	areYouSureYouWantToDeleteAllKnowledge:
 		'Êtes-vous sûr de vouloir supprimer toute la connaissance?',
 	areYouSureYouWantToDeleteAllSessions: 'Êtes-vous sûr de vouloir supprimer toutes les sessions?',
+	areYouSureYouWantToDeleteAllPreferences:
+		'Êtes-vous sûr de vouloir supprimer toutes les préférences?',
+	areYouSureYouWantToDeleteAllServers: 'Êtes-vous sûr de vouloir supprimer tous les serveurs?',
+	areYouSureYouWantToImportData:
+		'Êtes-vous sûr de vouloir importer? Cela écrasera toutes les données existantes',
 	areYouSureYouWantToDeleteAllSettings: 'Êtes-vous sûr de vouloir supprimer tous les paramètres?',
 	areYouSureYouWantToLeave: "Êtes-vous sûr de vouloir quitter?\nLa complétion en cours s'arrêtera",
 	assistant: 'Assistant',
+	attachImage: 'Joindre une image',
 	automatic: 'Auto',
 	automaticallyCheckForUpdates: 'Vérifier automatiquement les mises à jour',
 	availableModels: 'Modèles disponibles',
@@ -26,6 +32,7 @@ const fr = {
 	checkNow: 'Vérifier maintenant',
 	clear: 'Effacer',
 	confirmDeletion: 'Confirmer la suppression',
+	confirmEdit: 'Confirmer la modification',
 	connectionType: 'Type de connexion',
 	connectionLabelHelp: 'Identifie la connexion dans la liste des modèles',
 	connecting: 'Connexion...',
@@ -43,6 +50,7 @@ const fr = {
 	currentVersion: 'Version actuelle',
 	dangerZone: 'Zone dangereuse',
 	dark: 'Sombre',
+	delete: 'Supprimer',
 	deleteKnowledge: 'Supprimer la connaissance',
 	deleteServer: 'Supprimer le serveur',
 	deleteSession: 'Supprimer la session',
@@ -50,9 +58,11 @@ const fr = {
 	dismiss: 'Ignorer',
 	downloadModel: 'Télécharger le modèle',
 	edit: 'Éditer',
+	editTitle: 'Modifier le titre',
 	emptyKnowledge: 'Aucune connaissance',
 	emptySessions: 'Aucune session',
 	error: 'Erreur',
+	export: 'Exporter',
 	f16Kv: 'F16 KV',
 	frequencyPenalty: 'Pénalité de fréquence',
 	genericError: 'Désolé, quelque chose s’est mal passé',
@@ -61,6 +71,7 @@ const fr = {
 	goToReleases: 'Aller aux versions',
 	howToObtainOpenAIKey: 'Comment obtenir une clé API d’OpenAI?',
 	howToUpdateDocker: 'Comment mettre à jour le conteneur Docker?',
+	import: 'Importer',
 	interface: 'Interface',
 	internalServerError: 'Il y a eu une erreur interne du serveur, veuillez réessayer plus tard',
 	isCurrentVersionLatest: 'Vous êtes sur la dernière version',
@@ -107,6 +118,7 @@ const fr = {
 	openAICompatible: 'OpenAI : Serveurs compatibles (ex. llama.cpp)',
 	otherModels: 'Autres modèles',
 	penalizeNewline: 'Pénaliser le retour à la ligne',
+	preferences: 'Préférences',
 	presencePenalty: 'Pénalité de présence',
 	prompt: 'Invite',
 	promptPlaceholder: 'Écrivez littéralement n’importe quoi',
@@ -148,6 +160,8 @@ const fr = {
 	tryingToConnectNotLocalhost:
 		'Si vous voulez vous connecter à un serveur Ollama non disponible sur {hostname:string} ou {ip:string}, essayez',
 	typicalP: 'Typical P',
+	unsavedChangesWillBeLost:
+		'Vous avez des modifications non enregistrées qui seront perdues. Continuer?',
 	useMlock: 'Utiliser MLOCK',
 	useMmap: 'Utiliser MMAP',
 	useModelsFromThisServer: 'Utiliser les modèles de ce serveur',
@@ -157,7 +171,17 @@ const fr = {
 	writePromptToStart: 'Écrivez une invite pour démarrer une nouvelle session',
 	you: 'Vous',
 	copiedNotPrivate: 'Contenu copié, mais votre connexion n’est pas privée',
-	notCopiedNotPrivate: 'Impossible de copier le contenu. La connexion n’est pas privée'
+	notCopiedNotPrivate: 'Impossible de copier le contenu. La connexion n’est pas privée',
+	importSuccess: 'Importation réussie',
+	importError: 'Échec de l’importation',
+	deleteSuccess: 'Supprimé avec succès',
+	serversDescription: 'Connexions, filtres de modèles et étiquettes',
+	preferencesDescription: 'Langue, thème, modèles utilisés récemment, etc.',
+	sessionsDescription:
+		'Historique complet des sessions, pièces jointes et paramètres de modèle personnalisés',
+	knowledgeDescription: 'Base de connaissances complète',
+	expandSidebar: 'Déplier la barre latérale',
+	collapseSidebar: 'Replier la barre latérale'
 } satisfies BaseTranslation;
 
 export default fr;

@@ -9,11 +9,17 @@ const de = {
 	apiKey: 'API-Schlüssel',
 	areYouSureYouWantToDeleteAllKnowledge: 'Sind Sie sicher, dass Sie alles Wissen löschen möchten?',
 	areYouSureYouWantToDeleteAllSessions: 'Sind Sie sicher, dass Sie alle Sitzungen löschen möchten?',
+	areYouSureYouWantToDeleteAllPreferences:
+		'Sind Sie sicher, dass Sie alle Präferenzen löschen möchten?',
+	areYouSureYouWantToDeleteAllServers: 'Sind Sie sicher, dass Sie alle Server löschen möchten?',
+	areYouSureYouWantToImportData:
+		'Sind Sie sicher, dass Sie importieren möchten? Dadurch werden alle vorhandenen Daten überschrieben',
 	areYouSureYouWantToDeleteAllSettings:
 		'Sind Sie sicher, dass Sie alle Einstellungen löschen möchten?',
 	areYouSureYouWantToLeave:
 		'Sind Sie sicher, dass Sie die Seite verlassen möchten?\nDie laufende Ausführung wird gestoppt',
 	assistant: 'Assistent',
+	attachImage: 'Bild anhängen',
 	automatic: 'Automatisch',
 	automaticallyCheckForUpdates: 'Automatisch auf Updates prüfen',
 	availableModels: 'Verfügbare Modelle',
@@ -27,6 +33,7 @@ const de = {
 	checkNow: 'Jetzt prüfen',
 	clear: 'Leeren',
 	confirmDeletion: 'Löschen bestätigen',
+	confirmEdit: 'Bearbeitung bestätigen',
 	connectionType: 'Verbindungstyp',
 	connectionLabelHelp: 'Bestimmt die Verbindung in der Modellliste',
 	connecting: 'Verbinde...',
@@ -44,6 +51,7 @@ const de = {
 	currentVersion: 'Aktuelle Version',
 	dangerZone: 'Gefahrenzone',
 	dark: 'Dunkel',
+	delete: 'Löschen',
 	deleteKnowledge: 'Wissen löschen',
 	deleteServer: 'Server löschen',
 	deleteSession: 'Sitzung löschen',
@@ -51,9 +59,11 @@ const de = {
 	dismiss: 'Verwerfen',
 	downloadModel: 'Modell herunterladen',
 	edit: 'Bearbeiten',
+	editTitle: 'Titel bearbeiten',
 	emptyKnowledge: 'Kein Wissen',
 	emptySessions: 'Keine Sitzungen',
 	error: 'Fehler',
+	export: 'Exportieren',
 	f16Kv: 'F16 KV',
 	frequencyPenalty: 'Frequenzstrafe',
 	genericError: 'Entschuldigung, etwas ist schiefgelaufen',
@@ -62,6 +72,7 @@ const de = {
 	goToReleases: 'Zu Veröffentlichungen gehen',
 	howToObtainOpenAIKey: 'Wie erhält man einen API-Schlüssel von OpenAI?',
 	howToUpdateDocker: 'Wie aktualisiert man den Docker-Container?',
+	import: 'Importieren',
 	interface: 'Oberfläche',
 	internalServerError: 'Es gab einen internen Serverfehler. Bitte versuchen Sie es später erneut',
 	isCurrentVersionLatest: 'Sie verwenden die neueste Version',
@@ -108,6 +119,7 @@ const de = {
 	openAICompatible: 'OpenAI: Kompatible Server (z. B. llama.cpp)',
 	otherModels: 'Andere Modelle',
 	penalizeNewline: 'Neue Zeilen bestrafen',
+	preferences: 'Präferenzen',
 	presencePenalty: 'Präsenzstrafe',
 	prompt: 'Anweisung',
 	promptPlaceholder: 'Schreiben Sie buchstäblich alles',
@@ -115,6 +127,7 @@ const de = {
 	pullModelPlaceholder: 'Modell-Tag (z.B. llama3.1)',
 	pullingModel: 'Modell wird abgerufen',
 	random: 'Zufällig',
+	reasoning: 'Denkprozess',
 	refreshToUpdate: 'Neu laden, um zu aktualisieren',
 	releaseHistory: 'Versionsverlauf',
 	repeatLastN: 'Letzte N wiederholen',
@@ -148,6 +161,7 @@ const de = {
 	tryingToConnectNotLocalhost:
 		'Wenn Sie versuchen, eine Verbindung zu einem Ollama-Server herzustellen, der nicht unter {hostname:string} oder {ip:string} verfügbar ist, versuchen Sie',
 	typicalP: 'Typisches P',
+	unsavedChangesWillBeLost: 'Sie haben ungespeicherte Änderungen, die verloren gehen. Fortfahren?',
 	useMlock: 'MLOCK verwenden',
 	useMmap: 'MMAP verwenden',
 	useModelsFromThisServer: 'Modelle von diesem Server verwenden',
@@ -155,7 +169,19 @@ const de = {
 	version: 'Version',
 	vocabOnly: 'Nur Vokabular',
 	writePromptToStart: 'Schreiben Sie eine Anweisung, um eine neue Sitzung zu starten',
-	you: 'Sie'
+	you: 'Sie',
+	copiedNotPrivate: 'Inhalt kopiert, aber Ihre Verbindung ist nicht privat',
+	notCopiedNotPrivate: 'Inhalt konnte nicht kopiert werden. Die Verbindung ist nicht privat',
+	importSuccess: 'Import erfolgreich',
+	importError: 'Import fehlgeschlagen',
+	deleteSuccess: 'Erfolgreich gelöscht',
+	serversDescription: 'Verbindungen, Modellfilter und Labels',
+	preferencesDescription: 'Sprache, Design, zuletzt verwendete Modelle usw.',
+	sessionsDescription:
+		'Gesamter Sitzungsverlauf, Anhänge und benutzerdefinierte Modelleinstellungen',
+	knowledgeDescription: 'Gesamte Wissensdatenbank',
+	expandSidebar: 'Seitenleiste ausklappen',
+	collapseSidebar: 'Seitenleiste einklappen'
 } satisfies BaseTranslation;
 
 export default de;
