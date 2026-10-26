@@ -152,7 +152,7 @@ test.describe('Servers', () => {
 		await page.getByTestId('new-session').click();
 
 		const modelCombobox = page.getByLabel('Available models');
-		expect(modelCombobox).not.toBeDisabled();
+		await expect(modelCombobox).not.toBeDisabled();
 
 		await modelCombobox.click();
 		await expect(page.getByRole('option')).toHaveCount(MOCK_API_TAGS_RESPONSE.models.length);
@@ -272,7 +272,7 @@ test.describe('Servers', () => {
 
 		await page.getByTestId('new-session').click();
 		const modelCombobox = page.getByLabel('Available models');
-		expect(modelCombobox).not.toBeDisabled();
+		await expect(modelCombobox).not.toBeDisabled();
 
 		await modelCombobox.click();
 		const modelOption = page.locator('.field-combobox-item-label');
