@@ -167,5 +167,13 @@
 	"sessionsDescription": "სესიების სრული ისტორია, მიმაგრებული ფაილები და მოდელების მორგებული პარამეტრები",
 	"knowledgeDescription": "ცოდნის სრული ბაზა",
 	"expandSidebar": "გვერდითი პანელის გაშლა",
-	"collapseSidebar": "გვერდითი პანელის აკეცვა"
+	"collapseSidebar": "გვერდითი პანელის აკეცვა",
+	"mainNavigation": "მთავარი ნავიგაცია",
+	"contentSections": "კონტენტის განყოფილებები",
+	"hollamaLogo": "Hollama-ს ლოგო",
+	"dataManagement": "მონაცემების მართვა",
+	"unknownError": "უცნობი შეცდომა",
+	"localStorageIsFull": "ლოკალური მეხსიერება სავსეა",
+	"localStorageFullDescription": "თქვენი ბრაუზერის მეხსიერების ლიმიტი ამოიწურა. სივრცის გასათავისუფლებლად წაშალეთ რამდენიმე სესია, ცოდნა ან პარამეტრი.",
+	"localStorageSaveFailed": "localStorage-ში შენახვა ვერ მოხერხდა"
 }

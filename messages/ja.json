@@ -167,5 +167,13 @@
 	"sessionsDescription": "セッション履歴全体、添付ファイル、カスタムモデル設定",
 	"knowledgeDescription": "ナレッジベース全体",
 	"expandSidebar": "サイドバーを展開",
-	"collapseSidebar": "サイドバーを折りたたむ"
+	"collapseSidebar": "サイドバーを折りたたむ",
+	"mainNavigation": "メインナビゲーション",
+	"contentSections": "コンテンツセクション",
+	"hollamaLogo": "Hollamaのロゴ",
+	"dataManagement": "データ管理",
+	"unknownError": "不明なエラー",
+	"localStorageIsFull": "ローカルストレージがいっぱいです",
+	"localStorageFullDescription": "ブラウザのストレージ上限に達しました。空き容量を確保するため、セッション、ナレッジ、または環境設定をいくつか削除してください。",
+	"localStorageSaveFailed": "localStorageへの保存に失敗しました"
 }

@@ -167,5 +167,13 @@
 	"sessionsDescription": "Gesamter Sitzungsverlauf, Anhänge und benutzerdefinierte Modelleinstellungen",
 	"knowledgeDescription": "Gesamte Wissensdatenbank",
 	"expandSidebar": "Seitenleiste ausklappen",
-	"collapseSidebar": "Seitenleiste einklappen"
+	"collapseSidebar": "Seitenleiste einklappen",
+	"mainNavigation": "Hauptnavigation",
+	"contentSections": "Inhaltsbereiche",
+	"hollamaLogo": "Hollama-Logo",
+	"dataManagement": "Datenverwaltung",
+	"unknownError": "Unbekannter Fehler",
+	"localStorageIsFull": "Der lokale Speicher ist voll",
+	"localStorageFullDescription": "Sie haben das Speicherlimit Ihres Browsers erreicht. Bitte löschen Sie einige Sitzungen, Wissenseinträge oder Präferenzen, um Speicherplatz freizugeben.",
+	"localStorageSaveFailed": "Speichern im localStorage fehlgeschlagen"
 }

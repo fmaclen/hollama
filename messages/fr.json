@@ -167,5 +167,13 @@
 	"sessionsDescription": "Historique complet des sessions, pièces jointes et paramètres de modèle personnalisés",
 	"knowledgeDescription": "Base de connaissances complète",
 	"expandSidebar": "Déplier la barre latérale",
-	"collapseSidebar": "Replier la barre latérale"
+	"collapseSidebar": "Replier la barre latérale",
+	"mainNavigation": "Navigation principale",
+	"contentSections": "Sections de contenu",
+	"hollamaLogo": "Logo de Hollama",
+	"dataManagement": "Gestion des données",
+	"unknownError": "Erreur inconnue",
+	"localStorageIsFull": "Le stockage local est plein",
+	"localStorageFullDescription": "Vous avez atteint la limite de stockage de votre navigateur. Veuillez supprimer des sessions, des connaissances ou des préférences pour libérer de l'espace.",
+	"localStorageSaveFailed": "Échec de l'enregistrement dans localStorage"
 }

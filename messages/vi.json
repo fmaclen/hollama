@@ -167,5 +167,13 @@
 	"sessionsDescription": "Toàn bộ lịch sử phiên, tệp đính kèm và cài đặt mô hình tùy chỉnh",
 	"knowledgeDescription": "Toàn bộ cơ sở kiến thức",
 	"expandSidebar": "Mở rộng thanh bên",
-	"collapseSidebar": "Thu gọn thanh bên"
+	"collapseSidebar": "Thu gọn thanh bên",
+	"mainNavigation": "Điều hướng chính",
+	"contentSections": "Các mục nội dung",
+	"hollamaLogo": "Logo Hollama",
+	"dataManagement": "Quản lý dữ liệu",
+	"unknownError": "Lỗi không xác định",
+	"localStorageIsFull": "Bộ nhớ cục bộ đã đầy",
+	"localStorageFullDescription": "Bạn đã đạt đến giới hạn lưu trữ của trình duyệt. Vui lòng xóa bớt một số phiên, kiến thức hoặc tùy chọn để giải phóng dung lượng.",
+	"localStorageSaveFailed": "Không thể lưu vào localStorage"
 }

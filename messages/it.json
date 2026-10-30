@@ -167,5 +167,13 @@
 	"sessionsDescription": "Tutta la cronologia di sessione, allegati e impostazioni personalizzate dei modelli",
 	"knowledgeDescription": "Tutta la base di conoscenza",
 	"expandSidebar": "Espandi sidebar",
-	"collapseSidebar": "Comprimi sidebar"
+	"collapseSidebar": "Comprimi sidebar",
+	"mainNavigation": "Navigazione principale",
+	"contentSections": "Sezioni di contenuto",
+	"hollamaLogo": "Logo di Hollama",
+	"dataManagement": "Gestione dei dati",
+	"unknownError": "Errore sconosciuto",
+	"localStorageIsFull": "L'archiviazione locale è piena",
+	"localStorageFullDescription": "Hai raggiunto il limite di archiviazione del browser. Elimina alcune sessioni, conoscenze o preferenze per liberare spazio.",
+	"localStorageSaveFailed": "Impossibile salvare in localStorage"
 }
