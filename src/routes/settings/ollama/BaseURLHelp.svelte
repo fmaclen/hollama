@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import LL from '$i18n/i18n-svelte';
 	import Badge from '#lib/components/Badge.svelte';
 	import Button from '#lib/components/Button.svelte';
 	import FieldHelp from '#lib/components/FieldHelp.svelte';
 	import P from '#lib/components/P.svelte';
 	import type { Server } from '#lib/connections.js';
+	import { m } from '#lib/paraglide/messages.js';
 
 	interface Props {
 		server: Server;
@@ -30,23 +30,23 @@
 {#if ollamaURL && !server.isVerified}
 	<FieldHelp>
 		<P>
-			{$LL.allowConnections()}
+			{m.allowConnections()}
 			<Badge>{ollamaURL.origin}</Badge>
 			<Button
 				variant="link"
 				href="https://github.com/jmorganca/ollama/blob/main/docs/faq.md#how-can-i-allow-additional-web-origins-to-access-ollama"
 				target="_blank"
 			>
-				{$LL.seeDocs()}
+				{m.seeDocs()}
 			</Button>
 		</P>
 		<P>
-			{$LL.checkBrowserExtensions()}
+			{m.checkBrowserExtensions()}
 		</P>
 		{#if ollamaURL.protocol === 'https:'}
 			<P>
 				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-				{@html $LL.tryingToConnectNotLocalhost({
+				{@html m.tryingToConnectNotLocalhost({
 					hostname: '<code class="badge">localhost</code>',
 					ip: '<code class="badge">127.0.0.1</code>'
 				})}
@@ -54,13 +54,13 @@
 					href="https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/get-started/"
 					target="_blank"
 				>
-					{$LL.creatingTunnel()}
+					{m.creatingTunnel()}
 				</a>
 				<a
 					href="https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_locally_delivered_mixed-resources"
 					target="_blank"
 				>
-					{$LL.allowMixedContent()}
+					{m.allowMixedContent()}
 				</a>.
 			</P>
 		{/if}

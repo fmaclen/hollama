@@ -12,9 +12,10 @@ pnpm-lock.yaml
 package-lock.json
 yarn.lock
 
-# Ignore files for typesafe-i18n auto-generated files
-src/i18n/i18n-svelte.ts
-src/i18n/i18n-types.ts
-src/i18n/i18n-util.async.ts
-src/i18n/i18n-util.sync.ts
-src/i18n/i18n-util.ts
+# Messages compiled by Paraglide
+src/lib/paraglide
+
+# inlang's own files, everything but the config is ignored by project.inlang/.gitignore
+project.inlang/*
+!project.inlang/settings.json
+!project.inlang/paraglide.config.ts

@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { onMount, type Snippet } from 'svelte';
 	import { toast, Toaster } from 'svelte-sonner';
-	import { navigatorDetector } from 'typesafe-i18n/detectors';
-
-	import LL, { setLocale } from '$i18n/i18n-svelte';
-	import { detectLocale } from '$i18n/i18n-util';
-	import { loadLocale } from '$i18n/i18n-util.sync';
 
 	import '../app.pcss';
 
@@ -20,6 +15,7 @@
 	import SidebarToggle from '#lib/components/SidebarToggle.svelte';
 	import { ConnectionType, getDefaultServer } from '#lib/connections.js';
 	import { serversStore, settingsStore, StorageKey } from '#lib/localStorage.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { checkForUpdates } from '#lib/updates.js';
 
 	let { children }: { children: Snippet } = $props();
@@ -39,12 +35,6 @@
 		}
 	});
 
-	$effect(() => {
-		if (!$settingsStore.userLanguage) return;
-		loadLocale($settingsStore.userLanguage);
-		setLocale($settingsStore.userLanguage);
-	});
-
 	$effect(() =>
 		document.documentElement.setAttribute('data-color-theme', $settingsStore.userTheme)
 	);
@@ -54,12 +44,6 @@
 	});
 
 	onMount(() => {
-		// Language
-		if (!$settingsStore.userLanguage) $settingsStore.userLanguage = detectLocale(navigatorDetector);
-
-		loadLocale($settingsStore.userLanguage);
-		setLocale($settingsStore.userLanguage);
-
 		// Migrate old server settings to new format
 		const settingsLocalStorage = localStorage.getItem(StorageKey.HollamaPreferences);
 		if (settingsLocalStorage) {
@@ -104,7 +88,7 @@
 				settingsStore.set(settings);
 
 				// Ask the user to re-verify the server connections
-				toast.warning($LL.serverSettingsUpdated());
+				toast.warning(m.serverSettingsUpdated());
 			}
 		}
 
@@ -145,11 +129,14 @@
 />
 
 <div class="relative flex h-dvh w-screen bg-shade-2 lg:p-4">
-	<CollapsibleSidebar />
-	<div class="relative flex-1">
-		<SidebarToggle />
-		{@render children()}
-	</div>
+	<!-- Messages aren't reactive, so re-render everything when the language changes -->
+	{#key $settingsStore.userLanguage}
+		<CollapsibleSidebar />
+		<div class="relative flex-1">
+			<SidebarToggle />
+			{@render children()}
+		</div>
+	{/key}
 </div>
 
 <style lang="postcss">

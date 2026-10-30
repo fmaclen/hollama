@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Check, Trash2, X } from '@lucide/svelte';
 
-	import LL from '$i18n/i18n-svelte';
 	import { goto } from '$app/navigation';
 	import { deleteStoreItem, knowledgeStore, sessionsStore } from '#lib/localStorage.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { Sitemap } from '#lib/sitemap.js';
 
 	import Button from './Button.svelte';
@@ -44,7 +44,7 @@
 			variant="icon"
 			class="delete-button__confirm"
 			on:click={deleteRecord}
-			title={$LL.confirmDeletion()}
+			title={m.confirmDeletion()}
 		>
 			<Check class="base-icon" />
 		</Button>
@@ -53,7 +53,7 @@
 			variant="icon"
 			class="delete__cancel"
 			on:click={() => updateConfirmDeletion(false)}
-			title={$LL.dismiss()}
+			title={m.dismiss()}
 		>
 			<X class="base-icon" />
 		</Button>
@@ -62,7 +62,7 @@
 			variant="icon"
 			class="delete__trash"
 			on:click={() => updateConfirmDeletion(true)}
-			title={sitemap === Sitemap.KNOWLEDGE ? $LL.deleteKnowledge() : $LL.deleteSession()}
+			title={sitemap === Sitemap.KNOWLEDGE ? m.deleteKnowledge() : m.deleteSession()}
 		>
 			<Trash2 class="base-icon" />
 		</Button>

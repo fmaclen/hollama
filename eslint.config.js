@@ -21,7 +21,7 @@ export default ts.config(
 			'**/pnpm-lock.yaml',
 			'**/package-lock.json',
 			'**/yarn.lock',
-			'src/i18n/**', // Ignore auto-generated i18n files
+			'src/lib/paraglide/**', // Ignore messages compiled by Paraglide
 			'postcss.config.cjs', // Ignore postcss.config.cjs
 			'tailwind.config.js' // Ignore tailwind.config.js
 		]

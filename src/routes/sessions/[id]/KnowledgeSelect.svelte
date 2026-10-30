@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { Brain } from '@lucide/svelte';
 
-	import LL from '$i18n/i18n-svelte';
 	import Button from '#lib/components/Button.svelte';
 	import { generateNewUrl } from '#lib/components/ButtonNew.js';
 	import FieldSelect from '#lib/components/FieldSelect.svelte';
 	import { type Knowledge } from '#lib/knowledge.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { Sitemap } from '#lib/sitemap.js';
 
 	export let value: string | undefined = undefined;
@@ -19,11 +19,11 @@
 
 <FieldSelect
 	bind:value
-	label={$LL.knowledge()}
+	label={m.knowledge()}
 	isLabelVisible={showLabel}
 	name={fieldId}
 	disabled={!options.length}
-	placeholder={!options.length ? $LL.emptyKnowledge() : !showLabel ? $LL.knowledge() : ''}
+	placeholder={!options.length ? m.emptyKnowledge() : !showLabel ? m.knowledge() : ''}
 	options={options?.map((k) => ({ value: k.id, label: k.name }))}
 	onChange={(option) => onChange?.(option.value)}
 	{allowClear}
@@ -31,7 +31,7 @@
 	<svelte:fragment slot="nav">
 		{#if showNav}
 			<Button
-				aria-label={$LL.newKnowledge()}
+				aria-label={m.newKnowledge()}
 				variant="outline"
 				href={generateNewUrl(Sitemap.KNOWLEDGE)}
 				class="h-full text-muted"

@@ -1,7 +1,5 @@
 <script lang="ts">
-	import type { LocalizedString } from 'typesafe-i18n';
-
-	export let title: LocalizedString | LocalizedString[] | string | string[] | undefined = undefined;
+	export let title: string | string[] | undefined = undefined;
 	const SEPARATOR = ' • ';
 	$: formattedTitle = title
 		? (Array.isArray(title) ? title.join(SEPARATOR) : title) + SEPARATOR + 'Hollama'

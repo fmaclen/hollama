@@ -1,6 +1,6 @@
-import type { Locales } from '$i18n/i18n-types';
 import { version } from '$app/env';
 import { PUBLIC_ADAPTER } from '$app/env/public';
+import type { Locale } from '#lib/paraglide/runtime.js';
 
 import type { HollamaMetadata } from '../routes/api/metadata/+server';
 
@@ -18,7 +18,7 @@ export interface Settings {
 	lastUpdateCheck: number | null;
 	autoCheckForUpdates: boolean;
 	userTheme: 'light' | 'dark';
-	userLanguage: Locales | null;
+	userLanguage: Locale | null;
 	sidebarExpanded: boolean;
 	hollamaMetadata: HollamaMetadata;
 }

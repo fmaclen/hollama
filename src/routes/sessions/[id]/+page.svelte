@@ -2,7 +2,6 @@
 	import { onMount, tick } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
-	import LL from '$i18n/i18n-svelte';
 	import { beforeNavigate } from '$app/navigation';
 	import { type ChatRequest, type ChatStrategy } from '#lib/chat/index.js';
 	import { OllamaStrategy } from '#lib/chat/ollama.js';
@@ -15,6 +14,7 @@
 	import Metadata from '#lib/components/Metadata.svelte';
 	import { ConnectionType } from '#lib/connections.js';
 	import { serversStore, settingsStore } from '#lib/localStorage.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import {
 		formatSessionMetadata,
 		getSessionTitle,
@@ -77,7 +77,7 @@
 		if (navigation.shallow) return;
 
 		if (editor.isCompletionInProgress) {
-			const userConfirmed = confirm($LL.areYouSureYouWantToLeave());
+			const userConfirmed = confirm(m.areYouSureYouWantToLeave());
 			if (userConfirmed) {
 				stopCompletion();
 				return;
@@ -92,7 +92,7 @@
 			editor.prompt.trim() !== '' &&
 			!navigation.to?.url.pathname.startsWith('/sessions/')
 		) {
-			const userConfirmed = confirm($LL.unsavedChangesWillBeLost());
+			const userConfirmed = confirm(m.unsavedChangesWillBeLost());
 			if (!userConfirmed) {
 				navigation.cancel();
 			}
@@ -270,9 +270,9 @@
 
 	function handleError(error: Error) {
 		if (error.message === 'Failed to fetch') {
-			toast.error($LL.genericError(), { description: $LL.cantConnectToOllamaServer() });
+			toast.error(m.genericError(), { description: m.cantConnectToOllamaServer() });
 		} else {
-			toast.error($LL.genericError(), { description: error.toString() });
+			toast.error(m.genericError(), { description: error.toString() });
 		}
 
 		// For errors, restore the prompt so user can retry
@@ -304,17 +304,15 @@
 </script>
 
 <div class="session">
-	<Head
-		title={[editor.isNewSession ? $LL.newSession() : getSessionTitle(session), $LL.sessions()]}
-	/>
+	<Head title={[editor.isNewSession ? m.newSession() : getSessionTitle(session), m.sessions()]} />
 	<Header confirmDeletion={shouldConfirmDeletion}>
 		{#snippet headline()}
 			<p data-testid="session-id" class="font-bold leading-none">
-				{$LL.session()}
+				{m.session()}
 				<Button variant="link" href={`/sessions/${session.id}`}>#{session.id}</Button>
 			</p>
 			<Metadata dataTestid="session-metadata">
-				{editor.isNewSession ? $LL.newSession() : formatSessionMetadata(session)}
+				{editor.isNewSession ? m.newSession() : formatSessionMetadata(session)}
 			</Metadata>
 		{/snippet}
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
 	import Head from '#lib/components/Head.svelte';
+	import { m } from '#lib/paraglide/messages.js';
 
 	import DataManagement from './DataManagement.svelte';
 	import Interface from './Interface.svelte';
@@ -8,7 +8,7 @@
 	import Version from './Version.svelte';
 </script>
 
-<Head title={$LL.settings()} />
+<Head title={m.settings()} />
 
 <section class="settings">
 	<div class="settings-fieldsets">

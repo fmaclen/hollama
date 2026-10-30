@@ -1,6 +1,6 @@
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
 	import { serversStore, settingsStore } from '#lib/localStorage.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { type Model } from '#lib/settings.js';
 
 	import FieldSelect from './FieldSelect.svelte';
@@ -42,13 +42,13 @@
 <FieldSelect
 	name="model"
 	{disabled}
-	placeholder={isLabelVisible ? $LL.search() : $LL.availableModels()}
-	label={$LL.availableModels()}
+	placeholder={isLabelVisible ? m.search() : m.availableModels()}
+	label={m.availableModels()}
 	{isLabelVisible}
 	options={[
 		// Only include lastUsedModels if they exist
-		...(lastUsedModels?.length ? [{ label: $LL.lastUsedModels(), options: lastUsedModels }] : []),
-		{ label: $LL.otherModels(), options: otherModels }
+		...(lastUsedModels?.length ? [{ label: m.lastUsedModels(), options: lastUsedModels }] : []),
+		{ label: m.otherModels(), options: otherModels }
 	]}
 	bind:value
 />

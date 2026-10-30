@@ -5,7 +5,6 @@
 	import Trash_2 from '@lucide/svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
 
-	import LL from '$i18n/i18n-svelte';
 	import Button from '#lib/components/Button.svelte';
 	import ButtonSubmit from '#lib/components/ButtonSubmit.svelte';
 	import Field from '#lib/components/Field.svelte';
@@ -14,6 +13,7 @@
 	import { ConnectionType } from '#lib/connections.js';
 	import { loadKnowledge, type Knowledge } from '#lib/knowledge.js';
 	import { knowledgeStore, serversStore } from '#lib/localStorage.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import type { Editor, Message, Session } from '#lib/sessions.js';
 	import { generateRandomId } from '#lib/utils.js';
 
@@ -82,7 +82,7 @@
 
 	function switchToControls() {
 		if (!isOllamaFamily) {
-			toast.warning($LL.controlsOnlyAvailableForOllama());
+			toast.warning(m.controlsOnlyAvailableForOllama());
 			return;
 		}
 		editor.view = 'controls';
@@ -275,7 +275,7 @@
 						: ''}"
 				>
 					<Button
-						aria-label={$LL.messages()}
+						aria-label={m.messages()}
 						variant="icon"
 						onclick={switchToMessages}
 						class="h-full"
@@ -290,7 +290,7 @@
 						: ''}"
 				>
 					<Button
-						aria-label={$LL.controls()}
+						aria-label={m.controls()}
 						variant="icon"
 						onclick={switchToControls}
 						class="h-full"
@@ -311,13 +311,13 @@
 		</div>
 
 		{#if editor.isCodeEditor}
-			<FieldTextEditor label={$LL.prompt()} handleSubmit={submit} bind:value={editor.prompt} />
+			<FieldTextEditor label={m.prompt()} handleSubmit={submit} bind:value={editor.prompt} />
 		{:else}
 			<Field name="prompt">
 				<textarea
 					name="prompt"
 					class="prompt-editor__textarea"
-					placeholder={$LL.promptPlaceholder()}
+					placeholder={m.promptPlaceholder()}
 					bind:this={editor.promptTextarea}
 					bind:value={editor.prompt}
 					onkeydown={handleKeyDown}
@@ -381,7 +381,7 @@
 					variant="outline"
 					onclick={handleImageUploadClick}
 					data-testid="image-attachment"
-					title={$LL.attachImage()}
+					title={m.attachImage()}
 				>
 					<Image class="base-icon" />
 				</Button>
@@ -398,7 +398,7 @@
 							editor.isCodeEditor = false;
 						}}
 					>
-						{$LL.cancel()}
+						{m.cancel()}
 					</Button>
 				{/if}
 
@@ -409,13 +409,13 @@
 						!session.model ||
 						editor.isCompletionInProgress}
 				>
-					{$LL.run()}
+					{m.run()}
 				</ButtonSubmit>
 
 				{#if editor.isCompletionInProgress}
 					<Button
 						class="h-full"
-						title={$LL.stopCompletion()}
+						title={m.stopCompletion()}
 						variant="outline"
 						onclick={stopCompletion}
 					>

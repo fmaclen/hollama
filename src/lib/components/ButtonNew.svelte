@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import LL from '$i18n/i18n-svelte';
+	import { m } from '#lib/paraglide/messages.js';
 	import { Sitemap } from '#lib/sitemap.js';
 	import { generateRandomId } from '#lib/utils.js';
 
@@ -32,6 +32,6 @@
 		{href}
 		onclick={setId}
 	>
-		{sitemap === Sitemap.SESSIONS ? $LL.newSession() : $LL.newKnowledge()}
+		{sitemap === Sitemap.SESSIONS ? m.newSession() : m.newKnowledge()}
 	</Button>
 </div>

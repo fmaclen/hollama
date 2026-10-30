@@ -2,10 +2,10 @@
 	import { Brain, MessageSquareText, Moon, NotebookText, Settings2, Sun } from '@lucide/svelte';
 	import { fade, slide } from 'svelte/transition';
 
-	import LL from '$i18n/i18n-svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { knowledgeStore, sessionsStore, settingsStore } from '#lib/localStorage.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { formatSessionMetadata, getSessionTitle } from '#lib/sessions.js';
 	import { Sitemap } from '#lib/sitemap.js';
 	import { updateStatusStore } from '#lib/updates.js';
@@ -54,12 +54,12 @@
 		flex h-full w-[90vw] flex-shrink-0 flex-col bg-shade-1 lg:mr-4 lg:w-96 lg:rounded-xl lg:border
 	"
 			transition:slide={{ delay: 50, duration: 100, axis: 'x' }}
-			aria-label={$LL.mainNavigation()}
+			aria-label={m.mainNavigation()}
 			data-testid="sidebar"
 		>
 			<div class="flex items-center justify-between border-b py-4">
 				<a href="/" class="mx-auto flex items-center gap-2 pr-4">
-					<img class="h-8 w-8" src="/favicon.png" alt={$LL.hollamaLogo()} />
+					<img class="h-8 w-8" src="/favicon.png" alt={m.hollamaLogo()} />
 					<span class="text-lg font-semibold tracking-tight">Hollama</span>
 				</a>
 			</div>
@@ -67,7 +67,7 @@
 			<div
 				class="flex bg-shade-2 px-3 py-2 text-sm"
 				role="tablist"
-				aria-label={$LL.contentSections()}
+				aria-label={m.contentSections()}
 			>
 				<button
 					onclick={() => setActiveSection('sessions')}
@@ -82,7 +82,7 @@
 					aria-controls="sessions-panel"
 				>
 					<MessageSquareText class="h-4 w-4" />
-					{$LL.sessions()}
+					{m.sessions()}
 				</button>
 				<button
 					onclick={() => setActiveSection('knowledge')}
@@ -95,7 +95,7 @@
 					aria-controls="knowledge-panel"
 				>
 					<Brain class="h-4 w-4" />
-					{$LL.knowledge()}
+					{m.knowledge()}
 				</button>
 			</div>
 			<div class="border-b bg-shade-2 px-3 pb-3 pt-0">
@@ -122,7 +122,7 @@
 										/>
 									{/each}
 								{:else}
-									<EmptyMessage>{$LL.emptySessions()}</EmptyMessage>
+									<EmptyMessage>{m.emptySessions()}</EmptyMessage>
 								{/if}
 							</SectionList>
 						{/if}
@@ -145,7 +145,7 @@
 										/>
 									{/each}
 								{:else}
-									<EmptyMessage>{$LL.emptyKnowledge()}</EmptyMessage>
+									<EmptyMessage>{m.emptyKnowledge()}</EmptyMessage>
 								{/if}
 							</SectionList>
 						{/if}
@@ -164,7 +164,7 @@
 					aria-current={pathname.includes('/motd') ? 'page' : undefined}
 				>
 					<NotebookText class="h-4 w-4" />
-					{$LL.motd()}
+					{m.motd()}
 				</a>
 
 				<a
@@ -179,7 +179,7 @@
 					aria-current={pathname.includes('/settings') ? 'page' : undefined}
 				>
 					<Settings2 class="h-4 w-4" />
-					{$LL.settings()}
+					{m.settings()}
 				</a>
 
 				<a
@@ -203,10 +203,10 @@
 				>
 					{#if $settingsStore.userTheme === 'light'}
 						<Moon class="h-4 w-4" />
-						{$LL.dark()}
+						{m.dark()}
 					{:else}
 						<Sun class="h-4 w-4" />
-						{$LL.light()}
+						{m.light()}
 					{/if}
 				</button>
 			</div>

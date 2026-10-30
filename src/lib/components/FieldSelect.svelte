@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { Check, ChevronsUpDown, X } from '@lucide/svelte';
 	import { Combobox, type Selected } from 'bits-ui';
-	import type { LocalizedString } from 'typesafe-i18n';
 
-	import LL from '$i18n/i18n-svelte';
 	import Badge from '#lib/components/Badge.svelte';
 	import Button from '#lib/components/Button.svelte';
 	import Field from '#lib/components/Field.svelte';
+	import { m } from '#lib/paraglide/messages.js';
 
 	export let name: string;
-	export let label: LocalizedString;
+	export let label: string;
 	export let disabled: boolean | undefined = false;
 	export let options: OptionOrGroup[] = [];
 	export let value: string | undefined = undefined;
@@ -110,7 +109,7 @@
 					<Button
 						variant="icon"
 						on:click={handleClear}
-						title={$LL.clear()}
+						title={m.clear()}
 						class="pointer-events-auto"
 					>
 						<X class="base-icon" />
@@ -165,7 +164,7 @@
 								{/if}
 							{/each}
 						{:else}
-							<span class="field-select-empty">{$LL.noRecentModels()}</span>
+							<span class="field-select-empty">{m.noRecentModels()}</span>
 						{/if}
 					</div>
 				{:else}
@@ -182,7 +181,7 @@
 					</Combobox.Item>
 				{/if}
 			{:else}
-				<span class="field-select-empty">{$LL.searchEmpty()}</span>
+				<span class="field-select-empty">{m.searchEmpty()}</span>
 			{/each}
 		</Combobox.Content>
 	</Combobox.Root>

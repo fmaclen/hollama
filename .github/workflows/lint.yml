@@ -14,3 +14,5 @@ jobs:
           node-version: '24'
       - run: npm ci
       - run: npm run lint
+      # Lists untranslated messages per language, without failing the build
+      - run: npm run i18n:check

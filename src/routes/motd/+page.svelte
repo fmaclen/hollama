@@ -1,12 +1,12 @@
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
 	import Head from '#lib/components/Head.svelte';
 	import Markdown from '#lib/components/Markdown.svelte';
+	import { m } from '#lib/paraglide/messages.js';
 
 	export let data: { motd: string };
 </script>
 
-<Head title={$LL.messageOfTheDay()} />
+<Head title={m.messageOfTheDay()} />
 
 <section class="motd">
 	<div class="motd-markdown">
