@@ -59,3 +59,4 @@ eslint.config.js
 # Environment files
 .env
 .env.*
+.worktrees/

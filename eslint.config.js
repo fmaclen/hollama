@@ -12,6 +12,7 @@ export default ts.config(
 		// Global ignores translated from .eslintignore
 		ignores: [
 			'**/node_modules/**',
+			'.worktrees/**',
 			'build/**',
 			'.svelte-kit/**',
 			'package/**',
