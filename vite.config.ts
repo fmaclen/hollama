@@ -32,7 +32,15 @@ export default defineConfig({
 	// SvelteKit writes server source maps by default. Node ignores them at runtime,
 	// so the Docker image and the desktop app ship without them.
 	environments: { ssr: { build: { sourcemap: !isNodeAdapter } } },
+	// Worktrees set PORT and PREVIEW_PORT in .env; strictPort fails on a taken port instead of moving
+	server: {
+		port: Number(process.env.PORT) || 5173,
+		strictPort: true,
+		allowedHosts: ['.ts.net']
+	},
 	preview: {
+		port: Number(process.env.PREVIEW_PORT) || 4173,
+		strictPort: true,
 		// Allow all hosts in preview mode
 		host: true,
 		// Use environment variable for allowed hosts, falling back to localhost

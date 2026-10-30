@@ -3,6 +3,7 @@ node_modules
 /build
 /dist
 /.svelte-kit
+/.wrangler
 /package
 .env
 .env.*
@@ -13,3 +14,4 @@ vite.config.ts.timestamp-*
 /test-results
 /ai/models
 /sessions/*.json
+.worktrees/
