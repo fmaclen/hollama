@@ -44,6 +44,52 @@ test.describe('Locales', () => {
 		);
 	});
 
+	test('can switch language to catalan and back to english', async ({ page }) => {
+		await mockOllamaModelsResponse(page);
+		const languageCombobox = page.getByLabel('Language');
+		const idiomaCombobox = page.getByLabel('Idioma');
+
+		await page.goto('/settings');
+		await expect(languageCombobox).toHaveValue('English');
+		await expect(page.getByTestId('data-management-hollama-servers')).toContainText('Servers');
+
+		await languageCombobox.click();
+		await expect(page.getByRole('option', { name: 'Català' })).toBeVisible();
+		await page.getByRole('option', { name: 'Català' }).click();
+
+		await expect(idiomaCombobox).toHaveValue('Català');
+		let localStorageValue = await page.evaluate(() =>
+			window.localStorage.getItem('hollama-settings')
+		);
+		expect(localStorageValue).toContain('"userLanguage":"ca"');
+		await expect(page.getByTestId('data-management-hollama-servers')).toContainText('Servidors');
+		await expect(page.locator('html')).toHaveAttribute('lang', 'ca');
+
+		await idiomaCombobox.click();
+		await page.getByRole('option', { name: 'English' }).click();
+
+		localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
+		expect(localStorageValue).toContain('"userLanguage":"en"');
+		await expect(page.getByTestId('data-management-hollama-servers')).toContainText('Servers');
+		await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+	});
+
+	test.describe('Catalan', () => {
+		test.use({ locale: 'ca-ES' });
+		test('default language is catalan', async ({ page }) => {
+			await page.goto('/settings');
+			expect(await page.evaluate(() => navigator.language)).toBe('ca-ES');
+
+			await page.evaluate(() => window.localStorage.clear());
+			await page.reload();
+			await expect(page.getByText('Servers')).not.toBeVisible();
+			await expect(page.getByTestId('data-management-hollama-servers')).toContainText('Servidors');
+			expect(await page.evaluate(() => window.localStorage.getItem('hollama-settings'))).toContain(
+				'"userLanguage":"ca"'
+			);
+		});
+	});
+
 	test.describe('Spanish', () => {
 		test.use({ locale: 'es-ES' });
 		test('default language is spanish', async ({ page }) => {
