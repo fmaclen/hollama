@@ -3,13 +3,13 @@
 	import type { ErrorResponse, ProgressResponse, StatusResponse } from 'ollama/browser';
 	import { toast } from 'svelte-sonner';
 
-	import LL from '$i18n/i18n-svelte';
 	import { OllamaStrategy } from '#lib/chat/ollama.js';
 	import Button from '#lib/components/Button.svelte';
 	import FieldHelp from '#lib/components/FieldHelp.svelte';
 	import FieldInput from '#lib/components/FieldInput.svelte';
 	import P from '#lib/components/P.svelte';
 	import type { Server } from '#lib/connections.js';
+	import { m } from '#lib/paraglide/messages.js';
 
 	interface Props {
 		server: Server;
@@ -24,25 +24,25 @@
 	async function pullModel() {
 		if (!modelTag) return;
 		isPullInProgress = true;
-		const toastId = toast.loading($LL.pullingModel(), { description: modelTag });
+		const toastId = toast.loading(m.pullingModel(), { description: modelTag });
 
 		try {
 			await strategy.pull(
 				{ model: modelTag, stream: true },
 				(response: ProgressResponse | StatusResponse | ErrorResponse) => {
 					if ('status' in response && response.status === 'success') {
-						toast.success($LL.success(), {
+						toast.success(m.success(), {
 							id: toastId,
 							// HACK: `modelTag` is inferred as `string | undefined`
 							// but it should be a `string` based on the guard clause above
-							description: $LL.modelWasDownloaded({ model: modelTag as string })
+							description: m.modelWasDownloaded({ model: modelTag as string })
 						});
 						modelTag = '';
 						return;
 					}
 
 					if ('error' in response) {
-						toast.error($LL.genericError(), { id: toastId, description: response.error });
+						toast.error(m.genericError(), { id: toastId, description: response.error });
 						return;
 					}
 
@@ -59,11 +59,11 @@
 		} catch (error) {
 			const typedError = error instanceof Error ? error : new Error(String(error));
 
-			toast.error($LL.genericError(), {
+			toast.error(m.genericError(), {
 				id: toastId,
 				description:
 					typedError.message === 'Failed to fetch'
-						? $LL.couldntConnectToOllamaServer()
+						? m.couldntConnectToOllamaServer()
 						: typedError.message
 			});
 		}
@@ -73,14 +73,14 @@
 
 <FieldInput
 	name={`pull-model-${server.id}`}
-	label={$LL.pullModel()}
-	placeholder={$LL.pullModelPlaceholder()}
+	label={m.pullModel()}
+	placeholder={m.pullModelPlaceholder()}
 	bind:value={modelTag}
 	disabled={isPullInProgress || !server.isVerified}
 >
 	<svelte:fragment slot="nav">
 		<Button
-			aria-label={$LL.downloadModel()}
+			aria-label={m.downloadModel()}
 			class="h-full text-muted"
 			isLoading={isPullInProgress}
 			disabled={!modelTag || isPullInProgress || !server.isVerified}
@@ -92,9 +92,9 @@
 	<svelte:fragment slot="help">
 		<FieldHelp>
 			<P>
-				{$LL.browseModels()}
+				{m.browseModels()}
 				<Button href="https://ollama.com/library" variant="link" target="_blank">
-					{$LL.ollamaLibrary()}
+					{m.ollamaLibrary()}
 				</Button>
 			</P>
 		</FieldHelp>

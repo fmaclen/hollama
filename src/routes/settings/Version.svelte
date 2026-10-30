@@ -1,5 +1,4 @@
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
 	import { version } from '$app/env';
 	import Badge from '#lib/components/Badge.svelte';
 	import Button from '#lib/components/Button.svelte';
@@ -9,6 +8,7 @@
 	import P from '#lib/components/P.svelte';
 	import { GITHUB_RELEASES_URL } from '#lib/github.js';
 	import { settingsStore } from '#lib/localStorage.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { checkForUpdates, updateStatusStore } from '#lib/updates.js';
 
 	// If this component is mounted we don't want the sidebar notification badge to be visible
@@ -16,13 +16,13 @@
 </script>
 
 <Fieldset>
-	<P><strong>{$LL.currentVersion()}</strong></P>
+	<P><strong>{m.currentVersion()}</strong></P>
 
 	<div class="field-version">
 		<div class="field-version__updates">
 			<Badge>{version}</Badge>
 			<FieldCheckbox
-				label={$LL.automaticallyCheckForUpdates()}
+				label={m.automaticallyCheckForUpdates()}
 				bind:checked={$settingsStore.autoCheckForUpdates}
 			/>
 			<Button
@@ -30,35 +30,35 @@
 				disabled={$updateStatusStore.isCheckingForUpdates}
 				on:click={async () => await checkForUpdates(true)}
 			>
-				{$LL.checkNow()}
+				{m.checkNow()}
 			</Button>
 		</div>
 
 		{#if $updateStatusStore.isCheckingForUpdates || $updateStatusStore.couldntCheckForUpdates || $updateStatusStore.isCurrentVersionLatest || $updateStatusStore.latestVersion}
 			<FieldHelp>
 				{#if $updateStatusStore.isCheckingForUpdates}
-					<P>{$LL.checkingForUpdates()}</P>
+					<P>{m.checkingForUpdates()}</P>
 				{:else if $updateStatusStore.couldntCheckForUpdates}
 					<P>
-						{$LL.couldntCheckForUpdates()}
+						{m.couldntCheckForUpdates()}
 						<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
-							{$LL.goToReleases()}
+							{m.goToReleases()}
 						</Button>
 					</P>
 				{:else if $updateStatusStore.isCurrentVersionLatest}
 					<P>
-						{$LL.isCurrentVersionLatest()}
+						{m.isCurrentVersionLatest()}
 						<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
-							{$LL.releaseHistory()}
+							{m.releaseHistory()}
 						</Button>
 					</P>
 				{:else if $updateStatusStore.latestVersion}
 					<P>
-						{$LL.isLatestVersion()}
+						{m.isLatestVersion()}
 						<Badge variant="warning">{$updateStatusStore.latestVersion}</Badge>
 						{#if $updateStatusStore.canRefreshToUpdate}
 							<Button variant="link" on:click={() => window.location.reload()}>
-								{$LL.refreshToUpdate()}
+								{m.refreshToUpdate()}
 							</Button>
 						{:else if $settingsStore.hollamaMetadata.isDocker}
 							<Button
@@ -66,11 +66,11 @@
 								href="https://github.com/fmaclen/hollama/blob/main/SELF_HOSTING.md#updating-to-the-latest-version"
 								target="_blank"
 							>
-								{$LL.howToUpdateDocker()}
+								{m.howToUpdateDocker()}
 							</Button>
 						{:else}
 							<Button variant="link" href={GITHUB_RELEASES_URL} target="_blank">
-								{$LL.goToDownloads()}
+								{m.goToDownloads()}
 							</Button>
 						{/if}
 					</P>

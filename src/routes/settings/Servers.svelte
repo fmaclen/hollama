@@ -1,5 +1,4 @@
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
 	import Button from '#lib/components/Button.svelte';
 	import EmptyMessage from '#lib/components/EmptyMessage.svelte';
 	import FieldSelect from '#lib/components/FieldSelect.svelte';
@@ -7,6 +6,7 @@
 	import P from '#lib/components/P.svelte';
 	import { ConnectionType, getDefaultServer } from '#lib/connections.js';
 	import { serversStore } from '#lib/localStorage.js';
+	import { m } from '#lib/paraglide/messages.js';
 
 	import Connection from './Connection.svelte';
 
@@ -22,7 +22,7 @@
 
 <Fieldset>
 	<P>
-		<strong>{$LL.servers()}</strong>
+		<strong>{m.servers()}</strong>
 	</P>
 
 	<div class="connections">
@@ -31,18 +31,18 @@
 				<FieldSelect
 					name="connectionType"
 					isLabelVisible={false}
-					label={$LL.connectionType()}
-					placeholder={$LL.connectionType()}
+					label={m.connectionType()}
+					placeholder={m.connectionType()}
 					options={[
-						{ value: ConnectionType.Ollama, label: $LL.ollama() },
-						{ value: ConnectionType.OpenAI, label: $LL.openAIOfficialAPI() },
-						{ value: ConnectionType.OpenAICompatible, label: $LL.openAICompatible() }
+						{ value: ConnectionType.Ollama, label: m.ollama() },
+						{ value: ConnectionType.OpenAI, label: m.openAIOfficialAPI() },
+						{ value: ConnectionType.OpenAICompatible, label: m.openAICompatible() }
 					]}
 					bind:value={newConnectionType}
 				/>
 			{/key}
 			<Button disabled={!newConnectionType} on:click={addServer}>
-				{$LL.addConnection()}
+				{m.addConnection()}
 			</Button>
 		</div>
 	</div>
@@ -52,7 +52,7 @@
 			<div
 				class="col-span-full -mt-3 flex text-balance rounded-md border border-shade-3 text-center"
 			>
-				<EmptyMessage>{$LL.noServerConnections()}</EmptyMessage>
+				<EmptyMessage>{m.noServerConnections()}</EmptyMessage>
 			</div>
 		{/if}
 

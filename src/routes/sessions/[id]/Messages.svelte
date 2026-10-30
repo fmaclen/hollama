@@ -1,6 +1,6 @@
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
 	import EmptyMessage from '#lib/components/EmptyMessage.svelte';
+	import { m } from '#lib/paraglide/messages.js';
 	import { saveSession, type Editor, type Message, type Session } from '#lib/sessions.js';
 
 	import Article from './Article.svelte';
@@ -33,7 +33,7 @@
 </script>
 
 {#if editor.isNewSession}
-	<EmptyMessage>{$LL.writePromptToStart()}</EmptyMessage>
+	<EmptyMessage>{m.writePromptToStart()}</EmptyMessage>
 {/if}
 
 {#each session.messages as message, i (session.id + i)}

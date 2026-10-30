@@ -2,7 +2,7 @@
 	import { Files } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 
-	import LL from '$i18n/i18n-svelte';
+	import { m } from '#lib/paraglide/messages.js';
 
 	import Button from './Button.svelte';
 
@@ -21,10 +21,10 @@
 			textArea.select();
 			try {
 				document.execCommand('copy');
-				toast.warning($LL.copiedNotPrivate());
+				toast.warning(m.copiedNotPrivate());
 			} catch (e) {
 				console.error(e);
-				toast.error($LL.notCopiedNotPrivate());
+				toast.error(m.notCopiedNotPrivate());
 			}
 			document.body.removeChild(textArea);
 		}
@@ -32,7 +32,7 @@
 </script>
 
 <div class="copy-button">
-	<Button title={$LL.copy()} variant="icon" on:click={copyContent}>
+	<Button title={m.copy()} variant="icon" on:click={copyContent}>
 		<Files class="base-icon" />
 	</Button>
 </div>

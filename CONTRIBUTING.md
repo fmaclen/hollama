@@ -10,12 +10,13 @@ Here's ways in which you can contribute:
 
 ## Developing
 
-Hollama is a static site built with:
+Hollama is a single-page app that runs entirely in the browser, built with:
 
 - TypeScript
 - Svelte & SvelteKit
 - Vite
 - Tailwind CSS
+- Paraglide JS
 - Playwright
 - Electron
 
@@ -43,3 +44,20 @@ npm run electron:build
 ```
 
 You can preview the production build with `npm run preview`.
+
+## Translations
+
+Each language has a file in `messages/`, named after its locale (e.g. `messages/de.json`). English (`messages/en.json`) is the source: any message a language leaves out falls back to English, so a partial translation is fine.
+
+To update a language, edit its file. To add a new one:
+
+1. Copy `messages/en.json` to `messages/<locale>.json` and translate what you can
+2. Add the locale to `locales` in `project.inlang/settings.json`
+3. Add it to the language picker in `src/routes/settings/Interface.svelte`, labeled in its own language
+4. Add a test for it in `tests/locales.test.ts`
+
+Placeholders like `{model}` must stay as they are. To see which messages are still untranslated in each language, run:
+
+```bash
+npm run i18n:check
+```

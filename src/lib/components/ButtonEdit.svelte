@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Check, Pencil, X } from '@lucide/svelte';
 
-	import LL from '$i18n/i18n-svelte';
+	import { m } from '#lib/paraglide/messages.js';
 
 	import Button from './Button.svelte';
 
@@ -32,7 +32,7 @@
 			variant="icon"
 			class="edit-button__confirm"
 			on:click={handleConfirm}
-			title={$LL.confirmEdit()}
+			title={m.confirmEdit()}
 		>
 			<Check class="base-icon" />
 		</Button>
@@ -41,7 +41,7 @@
 			variant="icon"
 			class="edit__cancel"
 			on:click={() => updateConfirmEdit(false)}
-			title={$LL.dismiss()}
+			title={m.dismiss()}
 		>
 			<X class="base-icon" />
 		</Button>
@@ -50,7 +50,7 @@
 			variant="icon"
 			class="edit__pencil"
 			on:click={() => updateConfirmEdit(true)}
-			title={$LL.editTitle()}
+			title={m.editTitle()}
 		>
 			<Pencil class="base-icon" />
 		</Button>

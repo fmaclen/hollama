@@ -1,7 +1,7 @@
 <script lang="ts">
-	import LL from '$i18n/i18n-svelte';
 	import { page } from '$app/state';
 	import { sessionsStore } from '#lib/localStorage.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { saveSession } from '#lib/sessions.js';
 	import { Sitemap } from '#lib/sitemap.js';
 
@@ -67,14 +67,14 @@
 					onkeydown={handleKeydown}
 				/>
 				<Metadata>
-					{$LL.editTitle()}
+					{m.editTitle()}
 				</Metadata>
 			</div>
 		{:else}
 			<a
 				class="section-list-item__a"
 				data-testid={isSession ? 'session-item' : 'knowledge-item'}
-				aria-label={(isSession ? $LL.session() : $LL.knowledge()) + `: ${id}`}
+				aria-label={(isSession ? m.session() : m.knowledge()) + `: ${id}`}
 				href={`/${sitemap}/${id}`}
 			>
 				<p class="section-list-item__title">

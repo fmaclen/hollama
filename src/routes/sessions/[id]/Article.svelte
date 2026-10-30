@@ -3,12 +3,12 @@
 	import { quadInOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
 
-	import LL from '$i18n/i18n-svelte';
 	import Badge from '#lib/components/Badge.svelte';
 	import Button from '#lib/components/Button.svelte';
 	import ButtonCopy from '#lib/components/ButtonCopy.svelte';
 	import { generateNewUrl } from '#lib/components/ButtonNew.js';
 	import Markdown from '#lib/components/Markdown.svelte';
+	import { m } from '#lib/paraglide/messages.js';
 	import { type Message } from '#lib/sessions.js';
 	import { Sitemap } from '#lib/sitemap.js';
 
@@ -97,18 +97,18 @@
 			<div data-testid="session-role" class="article__role">
 				<Badge>
 					{#if isUserRole}
-						{$LL.you()}
+						{m.you()}
 					{:else if message.role === 'assistant'}
-						{$LL.assistant()}
+						{m.assistant()}
 					{:else}
-						{$LL.system()}
+						{m.system()}
 					{/if}
 				</Badge>
 			</div>
 			<div class="article__interactive">
 				{#if retryIndex}
 					<Button
-						title={$LL.retry()}
+						title={m.retry()}
 						variant="icon"
 						id="retry-index-{retryIndex}"
 						onclick={() => handleRetry && handleRetry(retryIndex)}
@@ -118,7 +118,7 @@
 				{/if}
 				{#if isUserRole}
 					<Button
-						title={$LL.edit()}
+						title={m.edit()}
 						variant="icon"
 						onclick={() => handleEditMessage && handleEditMessage(message)}
 					>
@@ -132,7 +132,7 @@
 		{#if message.reasoning}
 			<div class="reasoning" transition:slide={{ easing: quadInOut, duration: 200 }}>
 				<button class="reasoning__button" onclick={toggleReasoningVisibility}>
-					{$LL.reasoning()}
+					{m.reasoning()}
 					{#if isReasoningVisible}
 						<ChevronUp class="base-icon" />
 					{:else}

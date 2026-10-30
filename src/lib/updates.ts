@@ -1,4 +1,3 @@
-import { getUnixTime } from 'date-fns';
 import semver from 'semver';
 import { get, writable } from 'svelte/store';
 
@@ -49,7 +48,7 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 
 	// If the user hasn't initiated the check we check if the last update check
 	// was made more than a week ago
-	const oneWeekAgoInSeconds = getUnixTime(new Date()) - ONE_WEEK_IN_SECONDS;
+	const oneWeekAgoInSeconds = Math.floor(Date.now() / 1000) - ONE_WEEK_IN_SECONDS;
 	if (!settings.lastUpdateCheck) settings.lastUpdateCheck = oneWeekAgoInSeconds - 1;
 	if (!isUserInitiated && settings.lastUpdateCheck > oneWeekAgoInSeconds) return;
 
@@ -102,6 +101,6 @@ export async function checkForUpdates(isUserInitiated = false): Promise<void> {
 	}
 
 	// Update the settings store with today's date so we don't check again for updates
-	settings.lastUpdateCheck = getUnixTime(new Date());
+	settings.lastUpdateCheck = Math.floor(Date.now() / 1000);
 	settingsStore.set(settings);
 }

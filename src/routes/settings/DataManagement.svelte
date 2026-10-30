@@ -2,7 +2,6 @@
 	import { Download, FolderUp, Trash2 } from '@lucide/svelte';
 	import { toast } from 'svelte-sonner';
 
-	import LL from '$i18n/i18n-svelte';
 	import Button from '#lib/components/Button.svelte';
 	import Fieldset from '#lib/components/Fieldset.svelte';
 	import P from '#lib/components/P.svelte';
@@ -13,6 +12,7 @@
 		settingsStore,
 		StorageKey
 	} from '#lib/localStorage.js';
+	import { m } from '#lib/paraglide/messages.js';
 	import { DEFAULT_SETTINGS } from '#lib/settings.js';
 
 	interface DataSource {
@@ -62,13 +62,15 @@
 		if (!input.files || input.files.length === 0) return;
 		const file = input.files[0];
 
-		if (!confirm($LL.areYouSureYouWantToImportData())) {
+		if (!confirm(m.areYouSureYouWantToImportData())) {
 			input.value = ''; // Reset the file input
 			return;
 		}
 
 		const reader = new FileReader();
 		reader.onload = (e) => {
+			// Imported preferences can switch the language, so word the toast in the current one
+			const importSuccess = m.importSuccess();
 			try {
 				const data = JSON.parse(e.target?.result as string);
 				localStorage.setItem(storageKey, JSON.stringify(data));
@@ -86,11 +88,11 @@
 						$knowledgeStore = data;
 						break;
 				}
-				toast.success($LL.importSuccess());
+				toast.success(importSuccess);
 			} catch (error) {
 				console.error(error);
-				toast.error($LL.importError(), {
-					description: error instanceof Error ? error.message : $LL.unknownError()
+				toast.error(m.importError(), {
+					description: error instanceof Error ? error.message : m.unknownError()
 				});
 			}
 		};
@@ -102,20 +104,22 @@
 
 		switch (storageKey) {
 			case StorageKey.HollamaPreferences:
-				confirmDelete = $LL.areYouSureYouWantToDeleteAllPreferences();
+				confirmDelete = m.areYouSureYouWantToDeleteAllPreferences();
 				break;
 			case StorageKey.HollamaServers:
-				confirmDelete = $LL.areYouSureYouWantToDeleteAllServers();
+				confirmDelete = m.areYouSureYouWantToDeleteAllServers();
 				break;
 			case StorageKey.HollamaSessions:
-				confirmDelete = $LL.areYouSureYouWantToDeleteAllSessions();
+				confirmDelete = m.areYouSureYouWantToDeleteAllSessions();
 				break;
 			case StorageKey.HollamaKnowledge:
-				confirmDelete = $LL.areYouSureYouWantToDeleteAllKnowledge();
+				confirmDelete = m.areYouSureYouWantToDeleteAllKnowledge();
 				break;
 		}
 
 		if (confirm(confirmDelete)) {
+			// Deleting preferences resets the language, so word the toast in the current one
+			const deleteSuccess = m.deleteSuccess();
 			localStorage.removeItem(storageKey);
 			switch (storageKey) {
 				case StorageKey.HollamaPreferences:
@@ -131,13 +135,13 @@
 					$knowledgeStore = [];
 					break;
 			}
-			toast.info($LL.deleteSuccess());
+			toast.info(deleteSuccess);
 		}
 	}
 </script>
 
 <Fieldset>
-	<P><strong>{$LL.dataManagement()}</strong></P>
+	<P><strong>{m.dataManagement()}</strong></P>
 	{#each dataSources as dataSource (dataSource.storageKey)}
 		<div
 			class="flex flex-grow flex-col gap-2 sm:flex-row"
@@ -156,17 +160,17 @@
 				<div class="flex flex-col">
 					<!-- HACK: because the labels are reactive we need to define them here -->
 					{#if dataSource.storageKey === StorageKey.HollamaServers}
-						<P><strong>{$LL.servers()}</strong></P>
-						<span class="text-xs text-muted">{$LL.serversDescription()}</span>
+						<P><strong>{m.servers()}</strong></P>
+						<span class="text-xs text-muted">{m.serversDescription()}</span>
 					{:else if dataSource.storageKey === StorageKey.HollamaPreferences}
-						<P><strong>{$LL.preferences()}</strong></P>
-						<span class="text-xs text-muted">{$LL.preferencesDescription()}</span>
+						<P><strong>{m.preferences()}</strong></P>
+						<span class="text-xs text-muted">{m.preferencesDescription()}</span>
 					{:else if dataSource.storageKey === StorageKey.HollamaSessions}
-						<P><strong>{$LL.sessions()}</strong></P>
-						<span class="text-xs text-muted">{$LL.sessionsDescription()}</span>
+						<P><strong>{m.sessions()}</strong></P>
+						<span class="text-xs text-muted">{m.sessionsDescription()}</span>
 					{:else if dataSource.storageKey === StorageKey.HollamaKnowledge}
-						<P><strong>{$LL.knowledge()}</strong></P>
-						<span class="text-xs text-muted">{$LL.knowledgeDescription()}</span>
+						<P><strong>{m.knowledge()}</strong></P>
+						<span class="text-xs text-muted">{m.knowledgeDescription()}</span>
 					{/if}
 				</div>
 
@@ -177,7 +181,7 @@
 							exportData(dataSource.storageKey, dataSource.fileName, dataSource.defaultValue)}
 					>
 						<Download class="base-icon" />
-						{$LL.export()}
+						{m.export()}
 					</Button>
 					<Button
 						variant="icon"
@@ -187,11 +191,11 @@
 								?.click()}
 					>
 						<FolderUp class="base-icon" />
-						{$LL.import()}
+						{m.import()}
 					</Button>
 					<Button variant="icon" onclick={() => deleteData(dataSource.storageKey)}>
 						<Trash2 class="base-icon" />
-						{$LL.delete()}
+						{m.delete()}
 					</Button>
 				</nav>
 			</div>

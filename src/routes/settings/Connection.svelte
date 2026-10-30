@@ -3,7 +3,6 @@
 	import Trash_2 from '@lucide/svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
 
-	import LL from '$i18n/i18n-svelte';
 	import { OllamaStrategy } from '#lib/chat/ollama.js';
 	import { OpenAIStrategy } from '#lib/chat/openai.js';
 	import Badge from '#lib/components/Badge.svelte';
@@ -15,6 +14,7 @@
 	import P from '#lib/components/P.svelte';
 	import { ConnectionType, type Server } from '#lib/connections.js';
 	import { serversStore } from '#lib/localStorage.js';
+	import { m } from '#lib/paraglide/messages.js';
 
 	import OllamaBaseURLHelp from './ollama/BaseURLHelp.svelte';
 	import PullModel from './ollama/PullModel.svelte';
@@ -42,16 +42,16 @@
 
 	async function verifyServer() {
 		isLoading = true;
-		const toastId = toast.loading($LL.connecting());
+		const toastId = toast.loading(m.connecting());
 
 		strategy = isOpenAiFamily ? new OpenAIStrategy(server) : new OllamaStrategy(server);
 		server.isVerified = (await strategy.verifyServer()) ? new Date() : null;
 
 		if (server.isVerified) {
 			server.isEnabled = true;
-			toast.success($LL.connectionIsVerified(), { id: toastId });
+			toast.success(m.connectionIsVerified(), { id: toastId });
 		} else {
-			toast.error($LL.connectionFailedToVerify(), { id: toastId });
+			toast.error(m.connectionFailedToVerify(), { id: toastId });
 		}
 		isLoading = false;
 	}
@@ -76,13 +76,13 @@
 
 		<Fieldset>
 			<nav class="flex items-stretch gap-x-2">
-				<FieldCheckbox label={$LL.useModelsFromThisServer()} bind:checked={server.isEnabled} />
+				<FieldCheckbox label={m.useModelsFromThisServer()} bind:checked={server.isEnabled} />
 
 				<Button
 					class="max-h-full"
 					variant="outline"
 					on:click={deleteServer}
-					aria-label={$LL.deleteServer()}
+					aria-label={m.deleteServer()}
 				>
 					<Trash_2 class="base-icon" />
 				</Button>
@@ -95,7 +95,7 @@
 					{#if isLoading}
 						<LoaderCircle class="base-icon animate-spin" />
 					{:else}
-						{server.isVerified ? $LL.reVerify() : $LL.verify()}
+						{server.isVerified ? m.reVerify() : m.verify()}
 					{/if}
 				</Button>
 			</nav>
@@ -104,7 +104,7 @@
 				<div class="col-span-2 grid gap-2 {isOpenAiFamily ? 'sm:grid sm:grid-cols-2' : ''}">
 					<FieldInput
 						name={`server-${server.id}`}
-						label={$LL.baseUrl()}
+						label={m.baseUrl()}
 						placeholder={server.baseUrl}
 						bind:value={server.baseUrl}
 					>
@@ -119,7 +119,7 @@
 						<FieldInput
 							type="password"
 							name={`apiKey-${server.id}`}
-							label={$LL.apiKey()}
+							label={m.apiKey()}
 							bind:value={server.apiKey}
 						>
 							<svelte:fragment slot="help">
@@ -131,7 +131,7 @@
 												href="https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key"
 												target="_blank"
 											>
-												{$LL.howToObtainOpenAIKey()}
+												{m.howToObtainOpenAIKey()}
 											</Button>
 										</P>
 									</FieldHelp>
@@ -142,14 +142,14 @@
 				</div>
 				<FieldInput
 					name={`modelsFilter-${server.id}`}
-					label={$LL.modelsFilter()}
+					label={m.modelsFilter()}
 					placeholder="gpt"
 					bind:value={server.modelFilter}
 				>
 					<svelte:fragment slot="help">
 						<FieldHelp>
 							<P>
-								{$LL.modelsFilterHelp()}
+								{m.modelsFilterHelp()}
 							</P>
 						</FieldHelp>
 					</svelte:fragment>
@@ -157,13 +157,13 @@
 
 				<FieldInput
 					name={`label-${server.id}`}
-					label={$LL.label()}
+					label={m.label()}
 					bind:value={server.label}
 					placeholder="my-llama-server"
 				>
 					<svelte:fragment slot="help">
 						<FieldHelp>
-							<P>{$LL.connectionLabelHelp()}</P>
+							<P>{m.connectionLabelHelp()}</P>
 						</FieldHelp>
 					</svelte:fragment>
 				</FieldInput>
