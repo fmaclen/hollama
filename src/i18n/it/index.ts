@@ -1,6 +1,8 @@
-import type { BaseTranslation } from '../i18n-types';
+import en from '../en';
+import type { BaseTranslation, Translation } from '../i18n-types';
 
 const it = {
+	...(en as Translation),
 	addConnection: 'Aggiungi connessione',
 	allowConnections: 'Modifica le impostazioni del server per consentire le connessioni da',
 	allowMixedContent: 'Permetti contenuti misti',

@@ -54,17 +54,21 @@
 		flex h-full w-[90vw] flex-shrink-0 flex-col bg-shade-1 lg:mr-4 lg:w-96 lg:rounded-xl lg:border
 	"
 			transition:slide={{ delay: 50, duration: 100, axis: 'x' }}
-			aria-label="Main navigation"
+			aria-label={$LL.mainNavigation()}
 			data-testid="sidebar"
 		>
 			<div class="flex items-center justify-between border-b py-4">
 				<a href="/" class="mx-auto flex items-center gap-2 pr-4">
-					<img class="h-8 w-8" src="/favicon.png" alt="Hollama logo" />
+					<img class="h-8 w-8" src="/favicon.png" alt={$LL.hollamaLogo()} />
 					<span class="text-lg font-semibold tracking-tight">Hollama</span>
 				</a>
 			</div>
 
-			<div class="flex bg-shade-2 px-3 py-2 text-sm" role="tablist" aria-label="Content sections">
+			<div
+				class="flex bg-shade-2 px-3 py-2 text-sm"
+				role="tablist"
+				aria-label={$LL.contentSections()}
+			>
 				<button
 					onclick={() => setActiveSection('sessions')}
 					class="duration-25 flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 font-medium transition-colors hover:text-active {activeSection ===

@@ -173,7 +173,16 @@ const en = {
 	sessionsDescription: 'Entire session history, attachments and custom model settings',
 	knowledgeDescription: 'Entire knowledge base',
 	expandSidebar: 'Expand sidebar',
-	collapseSidebar: 'Collapse sidebar'
+	collapseSidebar: 'Collapse sidebar',
+	mainNavigation: 'Main navigation',
+	contentSections: 'Content sections',
+	hollamaLogo: 'Hollama logo',
+	dataManagement: 'Data management',
+	unknownError: 'Unknown error',
+	localStorageIsFull: 'Local storage is full',
+	localStorageFullDescription:
+		'You have reached the storage limit for your browser. Please delete some sessions, knowledge, or preferences to free up space.',
+	localStorageSaveFailed: 'Failed to save to localStorage'
 } satisfies BaseTranslation;
 
 export default en;

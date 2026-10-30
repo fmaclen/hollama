@@ -1,6 +1,8 @@
 import { toast } from 'svelte-sonner';
 import { get, writable, type Updater } from 'svelte/store';
 
+import en from '$i18n/en';
+import LL from '$i18n/i18n-svelte';
 import { browser } from '$app/env';
 import type { Session } from '#lib/sessions.js';
 
@@ -29,15 +31,16 @@ function createLocalStorageStore<T>(key: string, defaultValue: T) {
 				localStorage.setItem(key, JSON.stringify(value));
 			} catch (error) {
 				// Handle localStorage quota exceeded error
+				// The i18n store can still be empty while the app boots, so fall back to English
+				const t = get(LL);
 				if (error instanceof DOMException && error.name === 'QuotaExceededError') {
-					toast.warning('Local storage is full', {
+					toast.warning(t.localStorageIsFull() || en.localStorageIsFull, {
 						id: 'localstorage-full-toast',
-						description:
-							'You have reached the storage limit for your browser. Please delete some sessions, knowledge, or preferences to free up space.'
+						description: t.localStorageFullDescription() || en.localStorageFullDescription
 					});
 				} else {
 					// Handle other errors, such as JSON serialization issues
-					toast.warning('Failed to save to localStorage', {
+					toast.warning(t.localStorageSaveFailed() || en.localStorageSaveFailed, {
 						id: 'localstorage-error-toast',
 						description: (error as Error).message
 					});

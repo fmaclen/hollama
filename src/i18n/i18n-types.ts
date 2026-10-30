@@ -6,6 +6,7 @@ export type BaseTranslation = BaseTranslationType
 export type BaseLocale = 'en'
 
 export type Locales =
+	| 'ca'
 	| 'de'
 	| 'en'
 	| 'es'
@@ -699,6 +700,38 @@ type RootTranslation = {
 	 * C​o​l​l​a​p​s​e​ ​s​i​d​e​b​a​r
 	 */
 	collapseSidebar: string
+	/**
+	 * M​a​i​n​ ​n​a​v​i​g​a​t​i​o​n
+	 */
+	mainNavigation: string
+	/**
+	 * C​o​n​t​e​n​t​ ​s​e​c​t​i​o​n​s
+	 */
+	contentSections: string
+	/**
+	 * H​o​l​l​a​m​a​ ​l​o​g​o
+	 */
+	hollamaLogo: string
+	/**
+	 * D​a​t​a​ ​m​a​n​a​g​e​m​e​n​t
+	 */
+	dataManagement: string
+	/**
+	 * U​n​k​n​o​w​n​ ​e​r​r​o​r
+	 */
+	unknownError: string
+	/**
+	 * L​o​c​a​l​ ​s​t​o​r​a​g​e​ ​i​s​ ​f​u​l​l
+	 */
+	localStorageIsFull: string
+	/**
+	 * Y​o​u​ ​h​a​v​e​ ​r​e​a​c​h​e​d​ ​t​h​e​ ​s​t​o​r​a​g​e​ ​l​i​m​i​t​ ​f​o​r​ ​y​o​u​r​ ​b​r​o​w​s​e​r​.​ ​P​l​e​a​s​e​ ​d​e​l​e​t​e​ ​s​o​m​e​ ​s​e​s​s​i​o​n​s​,​ ​k​n​o​w​l​e​d​g​e​,​ ​o​r​ ​p​r​e​f​e​r​e​n​c​e​s​ ​t​o​ ​f​r​e​e​ ​u​p​ ​s​p​a​c​e​.
+	 */
+	localStorageFullDescription: string
+	/**
+	 * F​a​i​l​e​d​ ​t​o​ ​s​a​v​e​ ​t​o​ ​l​o​c​a​l​S​t​o​r​a​g​e
+	 */
+	localStorageSaveFailed: string
 }
 
 export type TranslationFunctions = {
@@ -1375,6 +1408,38 @@ The completion in progress will stop
 	 * Collapse sidebar
 	 */
 	collapseSidebar: () => LocalizedString
+	/**
+	 * Main navigation
+	 */
+	mainNavigation: () => LocalizedString
+	/**
+	 * Content sections
+	 */
+	contentSections: () => LocalizedString
+	/**
+	 * Hollama logo
+	 */
+	hollamaLogo: () => LocalizedString
+	/**
+	 * Data management
+	 */
+	dataManagement: () => LocalizedString
+	/**
+	 * Unknown error
+	 */
+	unknownError: () => LocalizedString
+	/**
+	 * Local storage is full
+	 */
+	localStorageIsFull: () => LocalizedString
+	/**
+	 * You have reached the storage limit for your browser. Please delete some sessions, knowledge, or preferences to free up space.
+	 */
+	localStorageFullDescription: () => LocalizedString
+	/**
+	 * Failed to save to localStorage
+	 */
+	localStorageSaveFailed: () => LocalizedString
 }
 
 export type Formatters = {}

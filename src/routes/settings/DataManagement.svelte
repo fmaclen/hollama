@@ -90,7 +90,7 @@
 			} catch (error) {
 				console.error(error);
 				toast.error($LL.importError(), {
-					description: error instanceof Error ? error.message : 'Unknown error'
+					description: error instanceof Error ? error.message : $LL.unknownError()
 				});
 			}
 		};
@@ -137,7 +137,7 @@
 </script>
 
 <Fieldset>
-	<P><strong>Data management</strong></P>
+	<P><strong>{$LL.dataManagement()}</strong></P>
 	{#each dataSources as dataSource (dataSource.storageKey)}
 		<div
 			class="flex flex-grow flex-col gap-2 sm:flex-row"

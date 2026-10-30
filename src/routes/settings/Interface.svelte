@@ -33,6 +33,7 @@
 		onChange={changeLanguage}
 		options={[
 			{ value: 'en', label: 'English' },
+			{ value: 'ca', label: 'Català' },
 			{ value: 'de', label: 'Deutsch' },
 			{ value: 'zh-cn', label: '中文 (简体)' },
 			{ value: 'es', label: 'Español' },

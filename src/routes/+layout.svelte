@@ -49,6 +49,10 @@
 		document.documentElement.setAttribute('data-color-theme', $settingsStore.userTheme)
 	);
 
+	$effect(() => {
+		document.documentElement.setAttribute('lang', $settingsStore.userLanguage || 'en');
+	});
+
 	onMount(() => {
 		// Language
 		if (!$settingsStore.userLanguage) $settingsStore.userLanguage = detectLocale(navigatorDetector);

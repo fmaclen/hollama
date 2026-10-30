@@ -1,6 +1,8 @@
-import type { BaseTranslation } from '../i18n-types';
+import en from '../en';
+import type { BaseTranslation, Translation } from '../i18n-types';
 
 const ka = {
+	...(en as Translation),
 	addConnection: 'კავშირის დამატება',
 	allowConnections: 'შეცვალეთ თქვენი სერვერის პარამეტრები, რომ დაუშვათ კავშირი მისამართიდან',
 	allowMixedContent: 'შერეული შემცველობის დაშვება',
