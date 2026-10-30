@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${T3CODE_WORKTREE_PATH:-$PWD}"
+main=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")
+
+if [ ! -f .env ]; then
+  # Slot rule: lowest slot in 1..20 whose PORT no other .worktrees/*/.env claims
+  # and whose dev (5100+slot) and preview (6100+slot) ports have no listener.
+  slot=
+  for i in $(seq 1 20); do
+    port=$((5100 + i))
+    preview=$((6100 + i))
+    grep -qsx "PORT=$port" "$main"/.worktrees/*/.env && continue
+    lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1 && continue
+    lsof -nP -iTCP:"$preview" -sTCP:LISTEN >/dev/null 2>&1 && continue
+    slot=$i
+    break
+  done
+  if [ -z "$slot" ]; then
+    echo "worktree-setup: no free port slot in 1..20" >&2
+    exit 1
+  fi
+  printf 'PORT=%s\nPREVIEW_PORT=%s\n' "$((5100 + slot))" "$((6100 + slot))" > .env
+fi
+
+npm ci --no-audit --no-fund
+npx playwright install chromium
+echo "worktree ready: dev on $(grep -m1 ^PORT= .env | cut -d= -f2), preview on $(grep -m1 ^PREVIEW_PORT= .env | cut -d= -f2)"
