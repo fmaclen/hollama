@@ -47,7 +47,7 @@ test.describe('Locales', () => {
 	test('can switch language to catalan and back to english', async ({ page }) => {
 		await mockOllamaModelsResponse(page);
 		const languageCombobox = page.getByLabel('Language');
-		const idiomaCombobox = page.getByLabel('Idioma');
+		const llenguaCombobox = page.getByLabel('Llengua');
 
 		await page.goto('/settings');
 		await expect(languageCombobox).toHaveValue('English');
@@ -57,7 +57,7 @@ test.describe('Locales', () => {
 		await expect(page.getByRole('option', { name: 'Català' })).toBeVisible();
 		await page.getByRole('option', { name: 'Català' }).click();
 
-		await expect(idiomaCombobox).toHaveValue('Català');
+		await expect(llenguaCombobox).toHaveValue('Català');
 		let localStorageValue = await page.evaluate(() =>
 			window.localStorage.getItem('hollama-settings')
 		);
@@ -65,7 +65,7 @@ test.describe('Locales', () => {
 		await expect(page.getByTestId('data-management-hollama-servers')).toContainText('Servidors');
 		await expect(page.locator('html')).toHaveAttribute('lang', 'ca');
 
-		await idiomaCombobox.click();
+		await llenguaCombobox.click();
 		await page.getByRole('option', { name: 'English' }).click();
 
 		localStorageValue = await page.evaluate(() => window.localStorage.getItem('hollama-settings'));
