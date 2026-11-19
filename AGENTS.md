@@ -25,3 +25,14 @@ this checkout's `PORT`.
 
 Every test leaves a trace, screenshots included, under `test-results/`. Open one
 with `npx playwright show-trace <path>/trace.zip`.
+
+## Pull requests
+
+Keep the description to a few short sentences: what the feature or problem is,
+and how the change solves it, at a high level. File-by-file detail belongs in
+the diff.
+
+When the UI changes, show it with screenshots. `gh` can't upload images, so
+commit them to a `pr-assets/<branch>` branch with `git hash-object`,
+`git mktree` and `git commit-tree`, push that commit, and embed
+`https://raw.githubusercontent.com/fmaclen/hollama/<sha>/<file>.png`.

@@ -1,5 +1,6 @@
 import { version } from '$app/env';
 import { PUBLIC_ADAPTER } from '$app/env/public';
+import type { ThinkLevel } from '#lib/chat/ollama.js';
 import type { Locale } from '#lib/paraglide/runtime.js';
 
 import type { HollamaMetadata } from '../routes/api/metadata/+server';
@@ -21,6 +22,7 @@ export interface Settings {
 	userLanguage: Locale | null;
 	sidebarExpanded: boolean;
 	hollamaMetadata: HollamaMetadata;
+	reasoningLevels?: Record<string, ThinkLevel>;
 }
 
 export const DEFAULT_SETTINGS: Settings = {

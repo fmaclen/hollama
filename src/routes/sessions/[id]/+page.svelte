@@ -184,6 +184,7 @@
 		let chatRequest: ChatRequest = {
 			model: session.model.name,
 			options: session.options,
+			think: $settingsStore.reasoningLevels?.[session.model.name],
 			messages: chatMessagesForRequest
 		};
 

@@ -20,6 +20,13 @@ type OllamaChatLine = Partial<ChatResponse> & {
 	error?: string;
 };
 
+export type ThinkLevel = NonNullable<ChatRequest['think']>;
+
+export interface ThinkingLevels {
+	values: ThinkLevel[];
+	default: ThinkLevel;
+}
+
 export interface OllamaOptions {
 	numa: boolean;
 	num_ctx: number;
@@ -125,6 +132,18 @@ export class OllamaStrategy implements ChatStrategy {
 				parameterSize: model.details.parameter_size,
 				modifiedAt: new Date(model.modified_at)
 			}));
+	}
+
+	async getThinkingLevels(model: string): Promise<ThinkingLevels | undefined> {
+		const response = await fetch(`${this.server.baseUrl}/api/show`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ model })
+		});
+		if (!response.ok) throw new Error('Failed to fetch Ollama model details');
+
+		const data: { thinking?: ThinkingLevels } = await response.json();
+		return data.thinking?.values?.length ? data.thinking : undefined;
 	}
 
 	async pull(
