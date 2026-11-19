@@ -20,6 +20,15 @@ type OllamaChatLine = Partial<ChatResponse> & {
 	error?: string;
 };
 
+// A reasoning model's `think` setting. What it accepts varies by model: qwen3
+// takes `false` or `true`, gpt-oss takes `"low"`, `"medium"` or `"high"`.
+export type ThinkLevel = NonNullable<ChatRequest['think']>;
+
+export interface ThinkingLevels {
+	values: ThinkLevel[];
+	default: ThinkLevel;
+}
+
 export interface OllamaOptions {
 	numa: boolean;
 	num_ctx: number;
@@ -125,6 +134,19 @@ export class OllamaStrategy implements ChatStrategy {
 				parameterSize: model.details.parameter_size,
 				modifiedAt: new Date(model.modified_at)
 			}));
+	}
+
+	// Returns undefined for models that don't reason, as `/api/show` leaves out `thinking`.
+	async getThinkingLevels(model: string): Promise<ThinkingLevels | undefined> {
+		const response = await fetch(`${this.server.baseUrl}/api/show`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ model })
+		});
+		if (!response.ok) throw new Error('Failed to fetch Ollama model details');
+
+		const data: { thinking?: ThinkingLevels } = await response.json();
+		return data.thinking?.values?.length ? data.thinking : undefined;
 	}
 
 	async pull(

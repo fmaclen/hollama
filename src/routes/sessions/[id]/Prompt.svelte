@@ -19,6 +19,7 @@
 
 	import AttachmentImage from './AttachmentImage.svelte';
 	import KnowledgeSelect from './KnowledgeSelect.svelte';
+	import ReasoningSelect from './ReasoningSelect.svelte';
 
 	type KnowledgeAttachment = {
 		type: 'knowledge';
@@ -267,6 +268,7 @@
 	<div class="prompt-editor__form">
 		<div class="prompt-editor__project">
 			<FieldSelectModel isLabelVisible={false} bind:value={modelName} />
+			<ReasoningSelect bind:session />
 
 			<nav class="segmented-nav">
 				<div
@@ -443,7 +445,17 @@
 	}
 
 	.prompt-editor__project {
-		@apply grid grid-cols-[auto,max-content,max-content] items-end gap-x-2;
+		/* The model picker takes the free space, and the reasoning picker only appears for models that reason */
+		@apply grid auto-cols-max grid-flow-col grid-cols-[minmax(0,1fr)] items-end gap-x-2;
+
+		/* On narrow screens the model picker gets its own row so its name stays readable */
+		&:has(:global(.reasoning-select)) {
+			@apply max-md:grid-flow-row max-md:grid-cols-[minmax(0,1fr),auto,auto] max-md:gap-y-2;
+
+			& > :global(:first-child) {
+				@apply max-md:col-span-full;
+			}
+		}
 	}
 
 	:global(.prompt-editor__toggle) {

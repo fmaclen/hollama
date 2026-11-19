@@ -4,7 +4,7 @@ import { get } from 'svelte/store';
 import { sessionsStore, settingsStore } from '#lib/localStorage.js';
 import type { Model } from '#lib/settings.js';
 
-import { type OllamaOptions } from './ollama';
+import { type OllamaOptions, type ThinkLevel } from './ollama';
 
 export interface Message {
 	role: 'user' | 'assistant' | 'system';
@@ -17,6 +17,7 @@ export interface ChatRequest {
 	messages: Message[];
 	stream?: boolean;
 	options?: Partial<OllamaOptions>;
+	think?: ThinkLevel;
 }
 
 export interface ChatChunk {
