@@ -117,6 +117,11 @@
 	"pullingModel": "Pulling model",
 	"random": "Random",
 	"reasoning": "Reasoning",
+	"reasoningHigh": "High",
+	"reasoningLow": "Low",
+	"reasoningMedium": "Medium",
+	"reasoningOff": "Off",
+	"reasoningOn": "On",
 	"refreshToUpdate": "Refresh to update",
 	"releaseHistory": "Release history",
 	"repeatLastN": "Repeat last N",
@@ -175,11 +180,5 @@
 	"unknownError": "Unknown error",
 	"localStorageIsFull": "Local storage is full",
 	"localStorageFullDescription": "You have reached the storage limit for your browser. Please delete some sessions, knowledge, or preferences to free up space.",
-	"localStorageSaveFailed": "Failed to save to localStorage",
-	"reasoning": "Reasoning",
-	"reasoningOff": "Off",
-	"reasoningOn": "On",
-	"reasoningLow": "Low",
-	"reasoningMedium": "Medium",
-	"reasoningHigh": "High"
+	"localStorageSaveFailed": "Failed to save to localStorage"
 }
