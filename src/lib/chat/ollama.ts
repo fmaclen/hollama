@@ -33,12 +33,7 @@ export interface OllamaOptions {
 	num_batch: number;
 	num_gpu: number;
 	main_gpu: number;
-	low_vram: boolean;
-	f16_kv: boolean;
-	// logits_all: boolean; // REF https://github.com/ollama/ollama-js/issues/145
-	vocab_only: boolean;
 	use_mmap: boolean;
-	use_mlock: boolean;
 	// embedding_only: boolean; // REF https://github.com/ollama/ollama-js/issues/145
 	num_thread: number;
 
@@ -56,10 +51,6 @@ export interface OllamaOptions {
 	repeat_penalty: number;
 	presence_penalty: number;
 	frequency_penalty: number;
-	mirostat: number;
-	mirostat_tau: number;
-	mirostat_eta: number;
-	penalize_newline: boolean;
 	stop: string[];
 }
 

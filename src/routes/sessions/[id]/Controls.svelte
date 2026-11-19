@@ -10,9 +10,6 @@
 
 	import KnowledgeSelect from './KnowledgeSelect.svelte';
 
-	const DEFAULT_MIROSTAT = '0';
-	const DEFAULT_MIROSTAT_ETA = '0.1';
-	const DEFAULT_MIROSTAT_TAU = '5.0';
 	const DEFAULT_NUM_CTX = '2048';
 	const DEFAULT_REPEAT_LAST_N = '64';
 	const DEFAULT_REPEAT_PENALTY = '1.1';
@@ -194,44 +191,11 @@
 				bind:value={session.options.frequency_penalty}
 			/>
 			<FieldInput
-				name="mirostat"
-				label={m.mirostat()}
-				type="number"
-				min={0}
-				max={2}
-				step={1}
-				placeholder={DEFAULT_MIROSTAT}
-				bind:value={session.options.mirostat}
-			/>
-			<FieldInput
-				name="mirostat_tau"
-				label={m.mirostatTau()}
-				type="number"
-				step={0.1}
-				placeholder={DEFAULT_MIROSTAT_TAU}
-				bind:value={session.options.mirostat_tau}
-			/>
-			<FieldInput
-				name="mirostat_eta"
-				label={m.mirostatEta()}
-				type="number"
-				step={0.01}
-				placeholder={DEFAULT_MIROSTAT_ETA}
-				bind:value={session.options.mirostat_eta}
-			/>
-			<FieldInput
 				name="stop"
 				label={m.stop()}
 				type="text"
 				placeholder={DEFAULT_STOP}
 				bind:value={stop}
-			/>
-		</div>
-		<div class="control-checkboxes">
-			<FieldCheckbox
-				label={m.penalizeNewline()}
-				bind:checked={session.options.penalize_newline}
-				name="penalize_newline"
 			/>
 		</div>
 	</Fieldset>
@@ -287,19 +251,7 @@
 		</div>
 		<div class="control-checkboxes">
 			<FieldCheckbox label={m.numa()} bind:checked={session.options.numa} name="numa" />
-			<FieldCheckbox label={m.lowVram()} bind:checked={session.options.low_vram} name="low_vram" />
-			<FieldCheckbox label={m.f16Kv()} bind:checked={session.options.f16_kv} name="f16_kv" />
-			<FieldCheckbox
-				label={m.vocabOnly()}
-				bind:checked={session.options.vocab_only}
-				name="vocab_only"
-			/>
 			<FieldCheckbox label={m.useMmap()} bind:checked={session.options.use_mmap} name="use_mmap" />
-			<FieldCheckbox
-				label={m.useMlock()}
-				bind:checked={session.options.use_mlock}
-				name="use_mlock"
-			/>
 		</div>
 	</Fieldset>
 </div>

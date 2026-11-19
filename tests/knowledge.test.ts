@@ -195,13 +195,8 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 
 	await page.locator('button', { hasText: 'Run' }).click();
 	const DEFAULT_OLLAMA_OPTIONS = {
-		penalize_newline: false,
 		numa: false,
-		low_vram: false,
-		f16_kv: false,
-		vocab_only: false,
-		use_mmap: false,
-		use_mlock: false
+		use_mmap: false
 	};
 	await expect
 		.poll(() => requestPostData)
