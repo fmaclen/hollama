@@ -22,7 +22,6 @@ export interface Session {
 	messages: Message[];
 	systemPrompt: Message;
 	options: Partial<OllamaOptions>;
-	// Unset until the user picks a reasoning level, so the model's default applies
 	think?: ThinkLevel;
 	model?: Model;
 	updatedAt?: string;

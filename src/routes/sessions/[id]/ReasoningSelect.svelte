@@ -17,7 +17,6 @@
 	const server = $derived($serversStore.find((s) => s.id === session.model?.serverId));
 	const modelName = $derived(session.model?.name);
 
-	// Only Ollama reports which reasoning levels a model accepts
 	$effect(() => {
 		const name = modelName;
 		levels = undefined;
@@ -28,7 +27,7 @@
 			.then((result) => {
 				if (modelName !== name) return;
 				levels = result;
-				// A level picked for another model may not be valid for this one
+				// Ollama errors when sent a level the model doesn't support
 				if (session.think !== undefined && !result?.values.includes(session.think)) {
 					session.think = undefined;
 				}
@@ -89,7 +88,6 @@
 		@apply md:w-28;
 	}
 
-	/* No clear button here, so the text only needs room for the chevron */
 	.reasoning-select :global(.field-combobox-input) {
 		@apply pr-8;
 	}
