@@ -2,20 +2,20 @@
 	import { OllamaStrategy, type ThinkingLevels, type ThinkLevel } from '#lib/chat/ollama.js';
 	import FieldSelect from '#lib/components/FieldSelect.svelte';
 	import { ConnectionType } from '#lib/connections.js';
-	import { serversStore } from '#lib/localStorage.js';
+	import { serversStore, settingsStore } from '#lib/localStorage.js';
 	import { m } from '#lib/paraglide/messages.js';
-	import type { Session } from '#lib/sessions.js';
+	import type { Model } from '#lib/settings.js';
 
 	interface Props {
-		session: Session;
+		model: Model | undefined;
 	}
 
-	let { session = $bindable() }: Props = $props();
+	let { model }: Props = $props();
 
 	let levels: ThinkingLevels | undefined = $state();
 
-	const server = $derived($serversStore.find((s) => s.id === session.model?.serverId));
-	const modelName = $derived(session.model?.name);
+	const server = $derived($serversStore.find((s) => s.id === model?.serverId));
+	const modelName = $derived(model?.name);
 
 	$effect(() => {
 		const name = modelName;
@@ -25,12 +25,7 @@
 		new OllamaStrategy(server)
 			.getThinkingLevels(name)
 			.then((result) => {
-				if (modelName !== name) return;
-				levels = result;
-				// Ollama errors when sent a level the model doesn't support
-				if (session.think !== undefined && !result?.values.includes(session.think)) {
-					session.think = undefined;
-				}
+				if (modelName === name) levels = result;
 			})
 			.catch(() => {
 				levels = undefined;
@@ -58,13 +53,20 @@
 		levels?.values.map((level) => ({ value: String(level), label: formatLevel(level) })) ?? []
 	);
 
-	const value = $derived(levels ? String(session.think ?? levels.default) : undefined);
+	const value = $derived(
+		levels && modelName
+			? String($settingsStore.reasoningLevels?.[modelName] ?? levels.default)
+			: undefined
+	);
 
 	function handleChange({ value }: { value: string }) {
 		const level = levels?.values.find((l) => String(l) === value);
-		if (level === undefined) return;
+		if (level === undefined || !modelName) return;
 		// Leave `think` out of requests while it matches the model's default
-		session.think = level === levels?.default ? undefined : level;
+		const reasoningLevels = { ...$settingsStore.reasoningLevels };
+		if (level === levels?.default) delete reasoningLevels[modelName];
+		else reasoningLevels[modelName] = level;
+		$settingsStore.reasoningLevels = reasoningLevels;
 	}
 </script>
 

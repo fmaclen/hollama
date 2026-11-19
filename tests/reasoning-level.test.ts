@@ -69,29 +69,27 @@ test.describe('Reasoning level', () => {
 		expect(requests[1].think).toBe('high');
 	});
 
-	test('hides for models that do not reason and drops levels another model rejects', async ({
-		page
-	}) => {
+	test('hides for models that do not reason', async ({ page }) => {
+		await page.goto('/sessions/new');
+		await chooseModel(page, 'gemma:7b');
+		await expect(page.getByLabel('Available models')).toHaveValue('gemma:7b');
+		await expect(page.getByLabel('Reasoning', { exact: true })).not.toBeVisible();
+	});
+
+	test('remembers the level per model in new sessions', async ({ page }) => {
 		const requests = await captureChatRequests(page);
 		const reasoning = page.getByLabel('Reasoning', { exact: true });
 
 		await page.goto('/sessions/new');
-		await chooseModel(page, 'gemma:7b');
-		await expect(page.getByLabel('Available models')).toHaveValue('gemma:7b');
-		await expect(reasoning).not.toBeVisible();
-
 		await chooseModel(page, 'openhermes2.5-mistral:latest');
-		await chooseFromCombobox(page, 'Reasoning', 'Low');
-
+		await chooseFromCombobox(page, 'Reasoning', 'High');
 		await chooseModel(page, 'TheBloke/CodeLlama-70B-Python-AWQ');
 		await expect(reasoning).toHaveValue('On');
-		await chooseFromCombobox(page, 'Reasoning', 'Off');
-		await send(page, 'Hello');
-		expect(requests[0].think).toBe(false);
 
-		await chooseModel(page, 'gemma:7b');
-		await expect(reasoning).not.toBeVisible();
-		await send(page, 'Again');
-		expect(requests[1]).not.toHaveProperty('think');
+		await page.goto('/sessions/new');
+		await chooseModel(page, 'openhermes2.5-mistral:latest');
+		await expect(reasoning).toHaveValue('High');
+		await send(page, 'Hello');
+		expect(requests[0].think).toBe('high');
 	});
 });

@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 
-import type { OllamaOptions, ThinkLevel } from '#lib/chat/ollama.js';
+import type { OllamaOptions } from '#lib/chat/ollama.js';
 import { sessionsStore, settingsStore, sortStore } from '#lib/localStorage.js';
 
 import { getLastUsedModels } from './chat';
@@ -22,7 +22,6 @@ export interface Session {
 	messages: Message[];
 	systemPrompt: Message;
 	options: Partial<OllamaOptions>;
-	think?: ThinkLevel;
 	model?: Model;
 	updatedAt?: string;
 	title?: string;

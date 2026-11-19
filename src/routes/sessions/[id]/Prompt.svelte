@@ -268,7 +268,7 @@
 	<div class="prompt-editor__form">
 		<div class="prompt-editor__project">
 			<FieldSelectModel isLabelVisible={false} bind:value={modelName} />
-			<ReasoningSelect bind:session />
+			<ReasoningSelect model={session.model} />
 
 			<nav class="segmented-nav">
 				<div
