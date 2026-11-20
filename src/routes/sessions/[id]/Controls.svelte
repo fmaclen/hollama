@@ -16,7 +16,6 @@
 	const DEFAULT_TEMPERATURE = '0.8';
 	const DEFAULT_SEED = m.random();
 	const DEFAULT_STOP = m.automatic();
-	const DEFAULT_TFS_Z = '1';
 	const DEFAULT_NUM_PREDICT = '128';
 	const DEFAULT_TOP_K = '40';
 	const DEFAULT_TOP_P = '0.9';
@@ -26,7 +25,6 @@
 	const DEFAULT_MAIN_GPU = m.automatic();
 	const DEFAULT_NUM_THREAD = m.automatic();
 	const DEFAULT_NUM_KEEP = m.automatic();
-	const DEFAULT_TYPICAL_P = m.automatic();
 	const DEFAULT_PRESENCE_PENALTY = m.automatic();
 	const DEFAULT_FREQUENCY_PENALTY = m.automatic();
 
@@ -127,25 +125,6 @@
 				step={0.01}
 				placeholder={DEFAULT_MIN_P}
 				bind:value={session.options.min_p}
-			/>
-			<FieldInput
-				name="tfs_z"
-				label={m.tfsZ()}
-				type="number"
-				min={1}
-				step={0.1}
-				placeholder={DEFAULT_TFS_Z}
-				bind:value={session.options.tfs_z}
-			/>
-			<FieldInput
-				name="typical_p"
-				label={m.typicalP()}
-				type="number"
-				min={0}
-				max={1}
-				step={0.01}
-				placeholder={DEFAULT_TYPICAL_P}
-				bind:value={session.options.typical_p}
 			/>
 			<FieldInput
 				name="repeat_last_n"
@@ -250,7 +229,6 @@
 			/>
 		</div>
 		<div class="control-checkboxes">
-			<FieldCheckbox label={m.numa()} bind:checked={session.options.numa} name="numa" />
 			<FieldCheckbox label={m.useMmap()} bind:checked={session.options.use_mmap} name="use_mmap" />
 		</div>
 	</Fieldset>

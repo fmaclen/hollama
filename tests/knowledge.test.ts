@@ -195,7 +195,6 @@ test('can use knowledge as system prompt in the session', async ({ page }) => {
 
 	await page.locator('button', { hasText: 'Run' }).click();
 	const DEFAULT_OLLAMA_OPTIONS = {
-		numa: false,
 		use_mmap: false
 	};
 	await expect

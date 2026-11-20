@@ -137,8 +137,6 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await page.getByLabel('Top K').fill('50');
 	await page.getByLabel('Top P').fill('0.95');
 	await page.getByLabel('Min P').fill('0.05');
-	await page.getByLabel('TFS Z').fill('0.5');
-	await page.getByLabel('Typical P').fill('0.7');
 	await page.getByLabel('Repeat last N').fill('32');
 	await page.getByLabel('Temperature').fill('0.7');
 	await page.getByLabel('Repeat penalty').fill('1.2');
@@ -152,7 +150,6 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await page.getByLabel('Num GPU').fill('1');
 	await page.getByLabel('Main GPU').fill('0');
 	await page.getByLabel('Number of threads').fill('8');
-	await page.getByLabel('NUMA').check();
 	await page.getByLabel('Use MMAP').check();
 
 	await promptTextarea.fill('Whatever...');
@@ -171,8 +168,6 @@ test('can set ollama model and runtime options', async ({ page }) => {
 		top_k: 50,
 		top_p: 0.95,
 		min_p: 0.05,
-		tfs_z: 0.5,
-		typical_p: 0.7,
 		repeat_last_n: 32,
 		temperature: 0.7,
 		repeat_penalty: 1.2,
@@ -185,7 +180,6 @@ test('can set ollama model and runtime options', async ({ page }) => {
 		num_gpu: 1,
 		main_gpu: 0,
 		num_thread: 8,
-		numa: true,
 		use_mmap: true
 	};
 
@@ -323,8 +317,6 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await expect(page.getByLabel('Top K')).toHaveValue('50');
 	await expect(page.getByLabel('Top P')).toHaveValue('0.95');
 	await expect(page.getByLabel('Min P')).toHaveValue('0.05');
-	await expect(page.getByLabel('TFS Z')).toHaveValue('0.5');
-	await expect(page.getByLabel('Typical P')).toHaveValue('0.7');
 	await expect(page.getByLabel('Repeat last N')).toHaveValue('32');
 	await expect(page.getByLabel('Temperature')).toHaveValue('0.7');
 	await expect(page.getByLabel('Repeat penalty')).toHaveValue('1.2');
@@ -337,7 +329,6 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await expect(page.getByLabel('Num GPU')).toHaveValue('1');
 	await expect(page.getByLabel('Main GPU')).toHaveValue('0');
 	await expect(page.getByLabel('Number of threads')).toHaveValue('8');
-	await expect(page.getByLabel('NUMA')).toBeChecked();
 	await expect(page.getByLabel('Use MMAP')).toBeChecked();
 
 	// Check the options were saved to localStorage

@@ -28,7 +28,6 @@ export interface ThinkingLevels {
 }
 
 export interface OllamaOptions {
-	numa: boolean;
 	num_ctx: number;
 	num_batch: number;
 	num_gpu: number;
@@ -44,8 +43,6 @@ export interface OllamaOptions {
 	top_k: number;
 	top_p: number;
 	min_p: number; // REF https://github.com/ollama/ollama-js/issues/145
-	tfs_z: number;
-	typical_p: number;
 	repeat_last_n: number;
 	temperature: number;
 	repeat_penalty: number;
