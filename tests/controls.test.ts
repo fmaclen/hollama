@@ -137,18 +137,12 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await page.getByLabel('Top K').fill('50');
 	await page.getByLabel('Top P').fill('0.95');
 	await page.getByLabel('Min P').fill('0.05');
-	await page.getByLabel('TFS Z').fill('0.5');
-	await page.getByLabel('Typical P').fill('0.7');
 	await page.getByLabel('Repeat last N').fill('32');
 	await page.getByLabel('Temperature').fill('0.7');
 	await page.getByLabel('Repeat penalty').fill('1.2');
 	await page.getByLabel('Presence penalty').fill('0.5');
 	await page.getByLabel('Frequency penalty').fill('0.5');
-	await page.getByLabel('Mirostat', { exact: true }).fill('1');
-	await page.getByLabel('Mirostat Tau').fill('3.9');
-	await page.getByLabel('Mirostat ETA').fill('0.15');
 	await page.getByLabel('Stop sequence').fill('AI assistant:');
-	await page.getByLabel('Penalize newline').check();
 
 	// Runtime options
 	await page.getByLabel('Context size').fill('4096');
@@ -156,12 +150,7 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await page.getByLabel('Num GPU').fill('1');
 	await page.getByLabel('Main GPU').fill('0');
 	await page.getByLabel('Number of threads').fill('8');
-	await page.getByLabel('NUMA').check();
-	await page.getByLabel('Low VRAM').check();
-	await page.getByLabel('F16 KV').check();
-	await page.getByLabel('Vocab only').check();
 	await page.getByLabel('Use MMAP').check();
-	await page.getByLabel('Use MLOCK').check();
 
 	await promptTextarea.fill('Whatever...');
 	await page.getByRole('button', { name: 'Run' }).click();
@@ -179,30 +168,19 @@ test('can set ollama model and runtime options', async ({ page }) => {
 		top_k: 50,
 		top_p: 0.95,
 		min_p: 0.05,
-		tfs_z: 0.5,
-		typical_p: 0.7,
 		repeat_last_n: 32,
 		temperature: 0.7,
 		repeat_penalty: 1.2,
 		presence_penalty: 0.5,
 		frequency_penalty: 0.5,
-		mirostat: 1,
-		mirostat_tau: 3.9,
-		mirostat_eta: 0.15,
 		stop: ['AI assistant:'],
-		penalize_newline: true,
 		// Runtime options
 		num_ctx: 4096,
 		num_batch: 512,
 		num_gpu: 1,
 		main_gpu: 0,
 		num_thread: 8,
-		numa: true,
-		low_vram: true,
-		f16_kv: true,
-		vocab_only: true,
-		use_mmap: true,
-		use_mlock: true
+		use_mmap: true
 	};
 
 	await expect
@@ -339,30 +317,19 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await expect(page.getByLabel('Top K')).toHaveValue('50');
 	await expect(page.getByLabel('Top P')).toHaveValue('0.95');
 	await expect(page.getByLabel('Min P')).toHaveValue('0.05');
-	await expect(page.getByLabel('TFS Z')).toHaveValue('0.5');
-	await expect(page.getByLabel('Typical P')).toHaveValue('0.7');
 	await expect(page.getByLabel('Repeat last N')).toHaveValue('32');
 	await expect(page.getByLabel('Temperature')).toHaveValue('0.7');
 	await expect(page.getByLabel('Repeat penalty')).toHaveValue('1.2');
 	await expect(page.getByLabel('Presence penalty')).toHaveValue('0.5');
 	await expect(page.getByLabel('Frequency penalty')).toHaveValue('0.5');
-	await expect(page.getByLabel('Mirostat', { exact: true })).toHaveValue('1');
-	await expect(page.getByLabel('Mirostat Tau')).toHaveValue('3.9');
-	await expect(page.getByLabel('Mirostat ETA')).toHaveValue('0.15');
 	await expect(page.getByLabel('Stop sequence')).toHaveValue('AI assistant:');
-	await expect(page.getByLabel('Penalize newline')).toBeChecked();
 	// Runtime options
 	await expect(page.getByLabel('Context size')).toHaveValue('4096');
 	await expect(page.getByLabel('Num batch')).toHaveValue('512');
 	await expect(page.getByLabel('Num GPU')).toHaveValue('1');
 	await expect(page.getByLabel('Main GPU')).toHaveValue('0');
 	await expect(page.getByLabel('Number of threads')).toHaveValue('8');
-	await expect(page.getByLabel('NUMA')).toBeChecked();
-	await expect(page.getByLabel('Low VRAM')).toBeChecked();
-	await expect(page.getByLabel('F16 KV')).toBeChecked();
-	await expect(page.getByLabel('Vocab only')).toBeChecked();
 	await expect(page.getByLabel('Use MMAP')).toBeChecked();
-	await expect(page.getByLabel('Use MLOCK')).toBeChecked();
 
 	// Check the options were saved to localStorage
 	const savedSessions = await page.evaluate(() => window.localStorage.getItem('hollama-sessions'));

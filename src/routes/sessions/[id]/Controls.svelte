@@ -10,16 +10,12 @@
 
 	import KnowledgeSelect from './KnowledgeSelect.svelte';
 
-	const DEFAULT_MIROSTAT = '0';
-	const DEFAULT_MIROSTAT_ETA = '0.1';
-	const DEFAULT_MIROSTAT_TAU = '5.0';
 	const DEFAULT_NUM_CTX = '2048';
 	const DEFAULT_REPEAT_LAST_N = '64';
 	const DEFAULT_REPEAT_PENALTY = '1.1';
 	const DEFAULT_TEMPERATURE = '0.8';
 	const DEFAULT_SEED = m.random();
 	const DEFAULT_STOP = m.automatic();
-	const DEFAULT_TFS_Z = '1';
 	const DEFAULT_NUM_PREDICT = '128';
 	const DEFAULT_TOP_K = '40';
 	const DEFAULT_TOP_P = '0.9';
@@ -29,7 +25,6 @@
 	const DEFAULT_MAIN_GPU = m.automatic();
 	const DEFAULT_NUM_THREAD = m.automatic();
 	const DEFAULT_NUM_KEEP = m.automatic();
-	const DEFAULT_TYPICAL_P = m.automatic();
 	const DEFAULT_PRESENCE_PENALTY = m.automatic();
 	const DEFAULT_FREQUENCY_PENALTY = m.automatic();
 
@@ -132,25 +127,6 @@
 				bind:value={session.options.min_p}
 			/>
 			<FieldInput
-				name="tfs_z"
-				label={m.tfsZ()}
-				type="number"
-				min={1}
-				step={0.1}
-				placeholder={DEFAULT_TFS_Z}
-				bind:value={session.options.tfs_z}
-			/>
-			<FieldInput
-				name="typical_p"
-				label={m.typicalP()}
-				type="number"
-				min={0}
-				max={1}
-				step={0.01}
-				placeholder={DEFAULT_TYPICAL_P}
-				bind:value={session.options.typical_p}
-			/>
-			<FieldInput
 				name="repeat_last_n"
 				label={m.repeatLastN()}
 				type="number"
@@ -194,44 +170,11 @@
 				bind:value={session.options.frequency_penalty}
 			/>
 			<FieldInput
-				name="mirostat"
-				label={m.mirostat()}
-				type="number"
-				min={0}
-				max={2}
-				step={1}
-				placeholder={DEFAULT_MIROSTAT}
-				bind:value={session.options.mirostat}
-			/>
-			<FieldInput
-				name="mirostat_tau"
-				label={m.mirostatTau()}
-				type="number"
-				step={0.1}
-				placeholder={DEFAULT_MIROSTAT_TAU}
-				bind:value={session.options.mirostat_tau}
-			/>
-			<FieldInput
-				name="mirostat_eta"
-				label={m.mirostatEta()}
-				type="number"
-				step={0.01}
-				placeholder={DEFAULT_MIROSTAT_ETA}
-				bind:value={session.options.mirostat_eta}
-			/>
-			<FieldInput
 				name="stop"
 				label={m.stop()}
 				type="text"
 				placeholder={DEFAULT_STOP}
 				bind:value={stop}
-			/>
-		</div>
-		<div class="control-checkboxes">
-			<FieldCheckbox
-				label={m.penalizeNewline()}
-				bind:checked={session.options.penalize_newline}
-				name="penalize_newline"
 			/>
 		</div>
 	</Fieldset>
@@ -286,20 +229,7 @@
 			/>
 		</div>
 		<div class="control-checkboxes">
-			<FieldCheckbox label={m.numa()} bind:checked={session.options.numa} name="numa" />
-			<FieldCheckbox label={m.lowVram()} bind:checked={session.options.low_vram} name="low_vram" />
-			<FieldCheckbox label={m.f16Kv()} bind:checked={session.options.f16_kv} name="f16_kv" />
-			<FieldCheckbox
-				label={m.vocabOnly()}
-				bind:checked={session.options.vocab_only}
-				name="vocab_only"
-			/>
 			<FieldCheckbox label={m.useMmap()} bind:checked={session.options.use_mmap} name="use_mmap" />
-			<FieldCheckbox
-				label={m.useMlock()}
-				bind:checked={session.options.use_mlock}
-				name="use_mlock"
-			/>
 		</div>
 	</Fieldset>
 </div>
