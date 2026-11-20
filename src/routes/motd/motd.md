@@ -1,4 +1,4 @@
-`2026-10-05`
+`2026-11-20`
 
 ### Message of the day
 
@@ -6,17 +6,18 @@
 
 #### What's new?
 
+- **Pick a reasoning level** for thinking models, right from the chat composer.
+- **Controls show each model's real defaults** as placeholders, and now open for OpenAI-compatible servers too.
+- **Catalan translation**, thanks to [@alcachofos](https://github.com/alcachofos)!
+- **Missing translations fall back to English** instead of showing up blank.
+- **Removed options Ollama no longer supports** from Controls. Thanks [@peremunoz](https://github.com/peremunoz)!
+
+#### Previously, in Hollama
+
 - **Reasoning is back** for thinking models like `qwen3` and `gpt-oss`, on Ollama and OpenAI-compatible servers. Thanks [@AndSDev](https://github.com/AndSDev)!
 - **Italian and Georgian translations**, thanks to [@Manu-sh](https://github.com/Manu-sh) and [@EkaterinePapava](https://github.com/EkaterinePapava).
 - **Multiple tabs stay in sync** and no longer overwrite each other's sessions.
 - **Desktop app** opens links in your browser, and the download is less than half the size.
-
-#### Previously, in Hollama
-
-- **Submit images as prompts** without entering text.
-- **Redesigned sidebar navigation** with improved accessibility and mobile experience.
-- **Copy & paste images** directly into the prompt field for quick image attachments.
-- **Improved stop completion** now preserves partial responses instead of discarding them.
 
 #### Community Resources
 
