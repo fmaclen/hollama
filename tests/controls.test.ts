@@ -1,15 +1,24 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import {
 	chooseFromCombobox,
 	chooseModel,
 	MOCK_API_TAGS_RESPONSE,
+	MOCK_OPENAI_MODELS,
 	MOCK_SESSION_1_RESPONSE_1,
 	MOCK_SESSION_1_RESPONSE_2,
 	MOCK_SESSION_1_RESPONSE_3,
 	MOCK_SESSION_2_RESPONSE_1,
-	mockOllamaModelsResponse
+	mockOllamaModelsResponse,
+	mockOpenAIModelsResponse
 } from './utils';
+
+async function openControls(page: Page, modelName: string) {
+	await page.goto('/sessions/new');
+	await chooseModel(page, modelName);
+	await page.getByLabel('Controls').click();
+	await expect(page.getByText('System prompt')).toBeVisible();
+}
 
 test.beforeEach(async ({ page }) => {
 	await mockOllamaModelsResponse(page);
@@ -130,7 +139,6 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await expect(page.locator('article', { hasText: 'Whatever...' })).not.toBeVisible();
 	await expect(page.getByText('System prompt')).toBeVisible();
 
-	// Model options
 	await page.getByLabel('Num keep').fill('5');
 	await page.getByLabel('Seed').fill('42');
 	await page.getByLabel('Num predict').fill('100');
@@ -144,13 +152,12 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await page.getByLabel('Frequency penalty').fill('0.5');
 	await page.getByLabel('Stop sequence').fill('AI assistant:');
 
-	// Runtime options
 	await page.getByLabel('Context size').fill('4096');
 	await page.getByLabel('Num batch').fill('512');
 	await page.getByLabel('Num GPU').fill('1');
 	await page.getByLabel('Main GPU').fill('0');
 	await page.getByLabel('Number of threads').fill('8');
-	await page.getByLabel('Use MMAP').check();
+	await chooseFromCombobox(page, 'Use MMAP', 'On');
 
 	await promptTextarea.fill('Whatever...');
 	await page.getByRole('button', { name: 'Run' }).click();
@@ -161,7 +168,6 @@ test('can set ollama model and runtime options', async ({ page }) => {
 
 	// Assert the options were submitted correctly
 	const customizedOptions = {
-		// Model options
 		num_keep: 5,
 		seed: 42,
 		num_predict: 100,
@@ -174,7 +180,6 @@ test('can set ollama model and runtime options', async ({ page }) => {
 		presence_penalty: 0.5,
 		frequency_penalty: 0.5,
 		stop: ['AI assistant:'],
-		// Runtime options
 		num_ctx: 4096,
 		num_batch: 512,
 		num_gpu: 1,
@@ -310,7 +315,6 @@ test('can set ollama model and runtime options', async ({ page }) => {
 		});
 
 	await page.getByLabel('Controls').click();
-	// Model options
 	await expect(page.getByLabel('Num keep')).toHaveValue('5');
 	await expect(page.getByLabel('Seed')).toHaveValue('42');
 	await expect(page.getByLabel('Num predict')).toHaveValue('100');
@@ -323,13 +327,12 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	await expect(page.getByLabel('Presence penalty')).toHaveValue('0.5');
 	await expect(page.getByLabel('Frequency penalty')).toHaveValue('0.5');
 	await expect(page.getByLabel('Stop sequence')).toHaveValue('AI assistant:');
-	// Runtime options
 	await expect(page.getByLabel('Context size')).toHaveValue('4096');
 	await expect(page.getByLabel('Num batch')).toHaveValue('512');
 	await expect(page.getByLabel('Num GPU')).toHaveValue('1');
 	await expect(page.getByLabel('Main GPU')).toHaveValue('0');
 	await expect(page.getByLabel('Number of threads')).toHaveValue('8');
-	await expect(page.getByLabel('Use MMAP')).toBeChecked();
+	await expect(page.getByLabel('Use MMAP')).toHaveValue('On');
 
 	// Check the options were saved to localStorage
 	const savedSessions = await page.evaluate(() => window.localStorage.getItem('hollama-sessions'));
@@ -340,4 +343,73 @@ test('can set ollama model and runtime options', async ({ page }) => {
 	for (const [key, value] of Object.entries(customizedOptions)) {
 		expect(savedOptions).toHaveProperty(key, value);
 	}
+});
+
+test('placeholders show the model parameters, then Ollama defaults', async ({ page }) => {
+	let showRequests = 0;
+	await page.route('**/api/show', async (route) => {
+		showRequests++;
+		await route.fulfill({
+			json: {
+				parameters:
+					'temperature                    0.6\ntop_p                          0.95\nstop                           "<|im_end|>"\nstop                           "<|im_start|>"'
+			}
+		});
+	});
+
+	await openControls(page, 'gemma:7b');
+
+	// Set by the model
+	await expect(page.getByLabel('Temperature')).toHaveAttribute('placeholder', '0.6');
+	await expect(page.getByLabel('Top P')).toHaveAttribute('placeholder', '0.95');
+	await expect(page.getByLabel('Stop sequence')).toHaveAttribute('placeholder', '<|im_end|>');
+
+	// Not set by the model
+	await expect(page.getByLabel('Top K')).toHaveAttribute('placeholder', '40');
+	await expect(page.getByLabel('Num predict')).toHaveAttribute('placeholder', '-1');
+	await expect(page.getByLabel('Repeat penalty')).toHaveAttribute('placeholder', '1.0');
+	await expect(page.getByLabel('Context size')).toHaveAttribute('placeholder', 'Auto');
+
+	// Managed by Ollama
+	await expect(page.getByLabel('Num keep')).toHaveAttribute('placeholder', 'Auto');
+	await expect(page.getByLabel('Num batch')).toHaveAttribute('placeholder', 'Auto');
+
+	expect(showRequests).toBe(1);
+});
+
+test('hides the Ollama options for OpenAI models', async ({ page }) => {
+	await mockOpenAIModelsResponse(page, MOCK_OPENAI_MODELS);
+	await openControls(page, 'gpt-4');
+
+	await expect(page.getByLabel('Knowledge', { exact: true })).toBeVisible();
+	await expect(page.getByText('Model options')).not.toBeVisible();
+	await expect(page.getByText('Advanced options')).not.toBeVisible();
+	await expect(page.getByLabel('Temperature')).not.toBeVisible();
+});
+
+test('sends use_mmap only when it is not Auto', async ({ page }) => {
+	const requests: { options: Record<string, unknown> }[] = [];
+	await page.route('**/api/chat', async (route) => {
+		requests.push(route.request().postDataJSON());
+		await route.fulfill({ json: MOCK_SESSION_1_RESPONSE_1 });
+	});
+	const send = async (count: number) => {
+		await page.locator('.prompt-editor__textarea').fill('Hello');
+		await page.getByRole('button', { name: 'Run' }).click();
+		await expect.poll(() => requests.length).toBe(count);
+		await page.getByLabel('Controls').click();
+	};
+
+	await openControls(page, 'gemma:7b');
+	await expect(page.getByLabel('Use MMAP')).toHaveValue('Auto');
+	await send(1);
+	expect(requests[0].options).toEqual({});
+
+	await chooseFromCombobox(page, 'Use MMAP', 'Off');
+	await send(2);
+	expect(requests[1].options).toEqual({ use_mmap: false });
+
+	await chooseFromCombobox(page, 'Use MMAP', 'Auto');
+	await send(3);
+	expect(requests[2].options).toEqual({});
 });

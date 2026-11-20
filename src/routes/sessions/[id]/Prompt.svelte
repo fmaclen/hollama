@@ -5,14 +5,14 @@
 	import Trash_2 from '@lucide/svelte/icons/trash-2';
 	import { toast } from 'svelte-sonner';
 
+	import type { ThinkingLevels } from '#lib/chat/ollama.js';
 	import Button from '#lib/components/Button.svelte';
 	import ButtonSubmit from '#lib/components/ButtonSubmit.svelte';
 	import Field from '#lib/components/Field.svelte';
 	import FieldSelectModel from '#lib/components/FieldSelectModel.svelte';
 	import FieldTextEditor from '#lib/components/FieldTextEditor.svelte';
-	import { ConnectionType } from '#lib/connections.js';
 	import { loadKnowledge, type Knowledge } from '#lib/knowledge.js';
-	import { knowledgeStore, serversStore } from '#lib/localStorage.js';
+	import { knowledgeStore } from '#lib/localStorage.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import type { Editor, Message, Session } from '#lib/sessions.js';
 	import { generateRandomId } from '#lib/utils.js';
@@ -40,6 +40,7 @@
 		editor: Editor;
 		session: Session;
 		modelName: string | undefined;
+		thinkingLevels: ThinkingLevels | undefined;
 		handleSubmit: (images?: { data: string; filename: string }[]) => void;
 		stopCompletion: () => void;
 		scrollToBottom: (shouldForceScroll: boolean) => void;
@@ -49,17 +50,13 @@
 		editor = $bindable(),
 		session = $bindable(),
 		modelName = $bindable(),
+		thinkingLevels,
 		handleSubmit,
 		stopCompletion,
 		scrollToBottom
 	}: Props = $props();
 
 	let attachments: Attachment[] = $state([]);
-
-	const isOllamaFamily = $derived(
-		$serversStore.find((s) => s.id === session.model?.serverId)?.connectionType ===
-			ConnectionType.Ollama
-	);
 
 	$effect(() => {
 		if (attachments.length) scrollToBottom(true);
@@ -82,10 +79,6 @@
 	}
 
 	function switchToControls() {
-		if (!isOllamaFamily) {
-			toast.warning(m.controlsOnlyAvailableForOllama());
-			return;
-		}
 		editor.view = 'controls';
 	}
 
@@ -268,7 +261,7 @@
 	<div class="prompt-editor__form">
 		<div class="prompt-editor__project">
 			<FieldSelectModel isLabelVisible={false} bind:value={modelName} />
-			<ReasoningSelect model={session.model} />
+			<ReasoningSelect model={session.model} levels={thinkingLevels} />
 
 			<nav class="segmented-nav">
 				<div

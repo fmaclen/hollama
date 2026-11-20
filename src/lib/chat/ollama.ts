@@ -27,6 +27,14 @@ export interface ThinkingLevels {
 	default: ThinkLevel;
 }
 
+// The model's own parameters from its Modelfile, as Ollama's `/api/show` reports them
+export type ModelParameters = Partial<Record<keyof OllamaOptions, string>>;
+
+export interface ModelDetails {
+	thinking?: ThinkingLevels;
+	parameters: ModelParameters;
+}
+
 export interface OllamaOptions {
 	num_ctx: number;
 	num_batch: number;
@@ -122,7 +130,7 @@ export class OllamaStrategy implements ChatStrategy {
 			}));
 	}
 
-	async getThinkingLevels(model: string): Promise<ThinkingLevels | undefined> {
+	async getModelDetails(model: string): Promise<ModelDetails> {
 		const response = await fetch(`${this.server.baseUrl}/api/show`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -130,8 +138,11 @@ export class OllamaStrategy implements ChatStrategy {
 		});
 		if (!response.ok) throw new Error('Failed to fetch Ollama model details');
 
-		const data: { thinking?: ThinkingLevels } = await response.json();
-		return data.thinking?.values?.length ? data.thinking : undefined;
+		const data: { thinking?: ThinkingLevels; parameters?: string } = await response.json();
+		return {
+			thinking: data.thinking?.values?.length ? data.thinking : undefined,
+			parameters: parseParameters(data.parameters)
+		};
 	}
 
 	async pull(
@@ -177,4 +188,17 @@ export class OllamaStrategy implements ChatStrategy {
 			return false;
 		}
 	}
+}
+
+// Parses lines like `temperature 0.6` or `stop "<|im_end|>"`. A key can repeat
+// (stop does), and the first value wins.
+function parseParameters(text = ''): ModelParameters {
+	const parameters: Record<string, string> = {};
+	for (const line of text.split('\n')) {
+		const match = line.trim().match(/^(\S+)\s+(.+)$/);
+		if (match && !(match[1] in parameters)) {
+			parameters[match[1]] = match[2].replace(/^"(.*)"$/, '$1');
+		}
+	}
+	return parameters;
 }
