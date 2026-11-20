@@ -72,6 +72,8 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Docker image
     runs-on: ubuntu-latest
+    # The emulated arm64 build has hung before; a normal run takes about 15 minutes
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v4
