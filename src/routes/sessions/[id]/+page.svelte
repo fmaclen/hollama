@@ -4,7 +4,7 @@
 
 	import { beforeNavigate } from '$app/navigation';
 	import { type ChatRequest, type ChatStrategy } from '#lib/chat/index.js';
-	import { OllamaStrategy } from '#lib/chat/ollama.js';
+	import { OllamaStrategy, type ModelDetails } from '#lib/chat/ollama.js';
 	import { OpenAIStrategy } from '#lib/chat/openai.js';
 	import Button from '#lib/components/Button.svelte';
 	import ButtonCopy from '#lib/components/ButtonCopy.svelte';
@@ -51,6 +51,10 @@
 	let modelName: string | undefined = $state();
 	let userScrolledUp = $state(false);
 	let shouldConfirmDeletion = $state(false);
+	let modelDetails: ModelDetails | undefined = $state();
+
+	const modelServer = $derived($serversStore.find((s) => s.id === session.model?.serverId));
+	const isOllamaModel = $derived(modelServer?.connectionType === ConnectionType.Ollama);
 
 	$effect(() => {
 		if (data.id !== session.id) handleSessionChange();
@@ -58,6 +62,23 @@
 
 	$effect(() => {
 		session.model = $settingsStore.models.find((m) => m.name === modelName);
+	});
+
+	// One `/api/show` per model change feeds both the reasoning picker and Controls
+	$effect(() => {
+		const name = session.model?.name;
+		const server = modelServer;
+		modelDetails = undefined;
+		if (!name || !server || !isOllamaModel) return;
+
+		new OllamaStrategy(server)
+			.getModelDetails(name)
+			.then((details) => {
+				if (session.model?.name === name) modelDetails = details;
+			})
+			.catch(() => {
+				modelDetails = undefined;
+			});
 	});
 
 	$effect(() => {
@@ -328,7 +349,7 @@
 	</Header>
 
 	{#if editor.view === 'controls'}
-		<Controls bind:session />
+		<Controls bind:session {isOllamaModel} modelParameters={modelDetails?.parameters} />
 	{:else}
 		<div class="session__history" bind:this={messagesWindow}>
 			<Messages bind:session bind:editor {handleRetry} />
@@ -339,6 +360,7 @@
 		bind:session
 		bind:editor
 		bind:modelName
+		thinkingLevels={modelDetails?.thinking}
 		{handleSubmit}
 		{stopCompletion}
 		{scrollToBottom}

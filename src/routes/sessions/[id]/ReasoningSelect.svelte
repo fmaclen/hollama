@@ -1,36 +1,18 @@
 <script lang="ts">
-	import { OllamaStrategy, type ThinkingLevels, type ThinkLevel } from '#lib/chat/ollama.js';
+	import type { ThinkingLevels, ThinkLevel } from '#lib/chat/ollama.js';
 	import FieldSelect from '#lib/components/FieldSelect.svelte';
-	import { ConnectionType } from '#lib/connections.js';
-	import { serversStore, settingsStore } from '#lib/localStorage.js';
+	import { settingsStore } from '#lib/localStorage.js';
 	import { m } from '#lib/paraglide/messages.js';
 	import type { Model } from '#lib/settings.js';
 
 	interface Props {
 		model: Model | undefined;
+		levels: ThinkingLevels | undefined;
 	}
 
-	let { model }: Props = $props();
+	let { model, levels }: Props = $props();
 
-	let levels: ThinkingLevels | undefined = $state();
-
-	const server = $derived($serversStore.find((s) => s.id === model?.serverId));
 	const modelName = $derived(model?.name);
-
-	$effect(() => {
-		const name = modelName;
-		levels = undefined;
-		if (!name || server?.connectionType !== ConnectionType.Ollama) return;
-
-		new OllamaStrategy(server)
-			.getThinkingLevels(name)
-			.then((result) => {
-				if (modelName === name) levels = result;
-			})
-			.catch(() => {
-				levels = undefined;
-			});
-	});
 
 	function formatLevel(level: ThinkLevel): string {
 		switch (level) {
